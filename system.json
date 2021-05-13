@@ -1,42 +1,29 @@
 {
-    "name": "exalted-essence",
-    "title": "Exalted Essence",
-    "description": "Exalted essence.",
-    "version": "0.0.1",
-    "templateVersion": 1,
-    "author": "John Doe",
-    "scripts": [
-      "scripts/system-script-1.js",
-      "scripts/system-script-2.js"
-    ],
-    "esmodules": [
-      "scripts/system-module-1.mjs"
-    ],
-    "styles": [
-      "styles/system-styles-1.css",
-      "styles/system-styles-2.css"
-    ],
-    "packs": [
-      {
-        "name": "items",
-        "label": "My Items",
-        "path": "packs/items.db",
-        "entity": "Item"
-      }
-    ],
-    "languages": [
-      {
-        "lang": "en",
-        "name": "English",
-        "path": "lang/en.json"
-      }
-    ],
-    "socket": false,
-    "gridDistance": 10,
-    "gridUnits": "ft",
-    "primaryTokenAttribute": "resources.health",
-    "secondaryTokenAttribute": "resources.power",
-    "url": "https://your/hosted/system/repo/",
-    "manifest": "https://your/hosted/system/repo/system.json",
-    "download": "https://your/packaged/download/archive.zip"
-  }
+  "name": "exaltedessence",
+  "title": "ExaltedEssence",
+  "description": "The Exalted Essence system for FoundryVTT!",
+  "version": "0.0.1", 
+  "minimumCoreVersion": "0.7.5",
+  "compatibleCoreVersion": "0.7.9",
+  "templateVersion": 2,
+  "author": "John Doe",
+  "esmodules": ["module/exaltedessence.js"],
+  "styles": ["css/exaltedessence.css"],
+  "scripts": [],
+  "packs": [],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "gridDistance": 5,
+  "gridUnits": "ft",
+  "primaryTokenAttribute": "health",
+  "secondaryTokenAttribute": "power",
+  "url": "",
+  "manifest": "",
+  "download": "",
+  "license": "LICENSE.txt"
+}

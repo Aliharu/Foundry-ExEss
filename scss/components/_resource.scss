@@ -1,0 +1,7 @@
+.resource-label {
+  font-weight: bold;
+}
+
+.resource-label::first-letter {
+  text-transform: uppercase;
+}

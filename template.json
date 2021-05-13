@@ -1,0 +1,128 @@
+{
+  "Actor": {
+    "types": [
+      "character"
+    ],
+    "templates": {
+      "base": {
+        "health": {
+          "value": 0,
+          "min": 0,
+          "max": 50
+        },
+        "power": {
+          "value": 0,
+          "min": 0,
+          "max": 50
+        }
+      }
+    },
+    "character": {
+      "templates": [
+        "base"
+      ],
+      "biography": "",
+      "stats": {
+        "essence": {
+          "value": 1
+        }
+      },
+      "attributes": {
+        "force": {
+          "value": 0
+        },
+        "finesse": {
+          "value": 0
+        },
+        "fortitude": {
+          "value": 0
+        }
+      },
+      "abilities": {
+        "athletics": {
+          "value": 0
+        },
+        "awareness": {
+          "value": 0
+        },
+        "close": {
+          "value": 0
+        },
+        "craft": {
+          "value": 0
+        },
+        "embassy": {
+          "value": 0
+        },
+        "integrity": {
+          "value": 0
+        },
+        "navigate": {
+          "value": 0
+        },
+        "performance": {
+          "value": 0
+        },
+        "physique": {
+          "value": 0
+        },
+        "presence": {
+          "value": 0
+        },
+        "ranged": {
+          "value": 0
+        },
+        "sagacity": {
+          "value": 0
+        },
+        "stealth": {
+          "value": 0
+        },
+        "war": {
+          "value": 0
+        }
+      },
+      "details": {
+        "virtue": ""
+      }
+    }
+  },
+  "Item": {
+    "types": [
+      "item",
+      "feature",
+      "merit",
+      "charm",
+      "anima",
+      "spell"
+    ],
+    "templates": {
+      "base": {
+        "description": ""
+      }
+    },
+    "item": {
+      "templates": [
+        "base"
+      ],
+      "quantity": 1,
+      "weight": 0
+    },
+    "merit": {
+      "templates": [
+        "base"
+      ]
+    },
+    "feature": {
+      "templates": [
+        "base"
+      ]
+    },
+    "spell": {
+      "templates": [
+        "base"
+      ],
+      "spellcircle": 1
+    }
+  }
+}
