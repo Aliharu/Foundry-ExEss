@@ -98,6 +98,12 @@
   text-align: right;
 }
 
+.d-flex {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
 .flex-center {
   -webkit-box-align: center;
   -ms-flex-align: center;
@@ -248,4 +254,77 @@
   -ms-flex: 0 0 86px;
   flex: 0 0 86px;
   text-align: right;
+}
+
+.exaltedessence .window-content .abilities,
+.exaltedessence.sheet.actor .window-content .abilities {
+  border: none;
+}
+
+/* Resource boxes CSS */
+.exaltedessence .resource-value .resource-value-step {
+  height: 14px;
+  width: 14px;
+  border: 1px solid black;
+  display: inline-block;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.exaltedessence .resource-value .resource-value-step.active {
+  background-color: #F9B516;
+}
+
+.exaltedessence .resource-value-static .resource-value-static-step {
+  height: 14px;
+  width: 14px;
+  border: 1px solid black;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.exaltedessence .resource-value-static .resource-value-static-step.active {
+  background-color: #F9B516;
+}
+
+.exaltedessence .resource-value .resource-value-empty {
+  height: 14px;
+  width: 14px;
+  border: 1px solid black;
+  display: inline-block;
+  border-radius: 50%;
+  cursor: pointer;
+  background: -o-linear-gradient(45deg, transparent 0%, transparent 43%, black 45%, black 55%, transparent 57%, transparent 100%), -o-linear-gradient(315deg, transparent 0%, transparent 43%, black 45%, black 55%, transparent 57%, transparent 100%);
+  background: linear-gradient(45deg, transparent 0%, transparent 43%, black 45%, black 55%, transparent 57%, transparent 100%), linear-gradient(135deg, transparent 0%, transparent 43%, black 45%, black 55%, transparent 57%, transparent 100%);
+}
+
+.exaltedessence .resource-counter .resource-counter-step {
+  height: 14px;
+  width: 14px;
+  border: 1px solid black;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.exaltedessence .resource-counter .resource-counter-step[data-state="-"] {
+  background-color: #147c14;
+}
+
+.exaltedessence .resource-counter .resource-counter-step[data-state="/"] {
+  background: -o-linear-gradient(315deg, transparent 0%, transparent 43%, black 45%, black 55%, transparent 57%, transparent 100%);
+  background: linear-gradient(135deg, transparent 0%, transparent 43%, black 45%, black 55%, transparent 57%, transparent 100%);
+}
+
+.exaltedessence .resource-counter .resource-counter-step[data-state="x"] {
+  background: -o-linear-gradient(45deg, transparent 0%, transparent 43%, black 45%, black 55%, transparent 57%, transparent 100%), -o-linear-gradient(315deg, transparent 0%, transparent 43%, black 45%, black 55%, transparent 57%, transparent 100%);
+  background: linear-gradient(45deg, transparent 0%, transparent 43%, black 45%, black 55%, transparent 57%, transparent 100%), linear-gradient(135deg, transparent 0%, transparent 43%, black 45%, black 55%, transparent 57%, transparent 100%);
+}
+
+.exaltedessence .flex-group-center:not(.flexrow) .resource-value,
+.exaltedessence .flex-group-center:not(.flexrow) .resource-counter {
+  margin-top: 5px;
+}
+
+.exaltedessence .tab.disciplines .resource-value {
+  margin-top: 2px;
 }

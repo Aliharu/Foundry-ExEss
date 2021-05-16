@@ -1,1 +1,40 @@
-{}
+{
+    "ExEss.Name": "Name",
+    "ExEss.Exalt": "Exalt",
+    "ExEss.Caste": "Caste/Aspect",
+    "ExEss.Motes": "Motes",
+    "ExEss.Power": "Power",
+    "ExEss.Will": "Will",
+    "ExEss.Health": "Health",
+
+    "ExEss.Attributes": "Attributes",
+
+    "ExEss.Force": "Force",
+    "ExEss.Finesse": "Finesse",
+    "ExEss.Fortitude": "Fortitude",
+
+    "ExEss.Abilities": "Abilities",
+
+    "ExEss.Athletics": "Athletics",
+    "ExEss.Awareness": "Awareness",
+    "ExEss.CloseCombat": "Close Combat",
+    "ExEss.Craft": "Craft",
+    "ExEss.Embassy": "Embassy",
+    "ExEss.Integrity": "Integrity",
+    "ExEss.Navigate": "Navigate",
+    "ExEss.Performance": "Performance",
+    "ExEss.Physique": "Physique",
+    "ExEss.Presence": "Presence",
+    "ExEss.RangedCombat": "Ranged Combat",
+    "ExEss.Sagacity": "Sagacity",
+    "ExEss.Stealth": "Stealth",
+    "ExEss.War": "War",
+    "ExEss.CurrentPenalty": "Current Penalty",
+
+    "ExEss.Intimacy": "Imtimacy",
+    "ExEss.Stats": "Stats",
+    "ExEss.Description": "Description",
+    "ExEss.Items": "Items",
+    "ExEss.Advantages": "Advantages",
+    "ExEss.Charms": "Charms"
+}

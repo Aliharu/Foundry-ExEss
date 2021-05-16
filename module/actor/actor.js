@@ -26,8 +26,17 @@ export class ExaltedessenceActor extends Actor {
     const data = actorData.data;
 
     // Make modifications to data here. For example:
-
-    // Loop through ability scores, and add their modifiers to our sheet output.
+    // Calculate current wound penalty and total health for individual wound levels.
+    let totalHealth = 0;
+    let currentPenalty = 0;
+    for (let [key, health_level] of Object.entries(data.health.levels)) {
+      if(data.health.damage > totalHealth) {
+        currentPenalty = health_level.penalty
+      }
+      totalHealth += health_level.value;
+    }
+    data.health.total = totalHealth;
+    data.health.penalty = currentPenalty;
   }
 
 }

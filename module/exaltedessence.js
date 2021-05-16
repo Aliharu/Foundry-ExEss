@@ -18,7 +18,6 @@ Hooks.once('init', async function() {
    */
   CONFIG.Combat.initiative = {
     formula: "1d20",
-    decimals: 2
   };
 
   // Define custom Entity classes
@@ -45,6 +44,16 @@ Hooks.once('init', async function() {
   Handlebars.registerHelper('toLowerCase', function(str) {
     return str.toLowerCase();
   });
+
+  Handlebars.registerHelper('numLoop', function (num, options) {
+    let ret = ''
+
+    for (let i = 0, j = num; i < j; i++) {
+      ret = ret + options.fn(i)
+    }
+
+    return ret
+  })
 });
 
 Hooks.once("ready", async function() {
