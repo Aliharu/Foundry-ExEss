@@ -1,0 +1,68 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <header class="sheet-header">
+        <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+        <div class="header-fields">
+            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
+            <div>
+                <label class="resource-label">{{localize "ExEss.Ability"}}: </label>
+                <select name="data.ability" data-type="String">
+                    {{#select data.ability}}
+                        <option value="athletics">{{localize "ExEss.Athletics"}}</option>
+                        <option value="awareness">{{localize "ExEss.Awareness"}}</option>
+                        <option value="close">{{localize "ExEss.CloseCombat"}}</option>
+                        <option value="craft">{{localize "ExEss.Craft"}}</option>
+                        <option value="embassy">{{localize "ExEss.Embassy"}}</option>
+                        <option value="integrity">{{localize "ExEss.Integrity"}}</option>
+                        <option value="navigate">{{localize "ExEss.Navigate"}}</option>
+                        <option value="performance">{{localize "ExEss.Performance"}}</option>
+                        <option value="physique">{{localize "ExEss.Physique"}}</option>
+                        <option value="presence">{{localize "ExEss.Presence"}}</option>
+                        <option value="ranged">{{localize "ExEss.RangedCombat"}}</option>
+                        <option value="sagacity">{{localize "ExEss.Sagacity"}}</option>
+                        <option value="stealth">{{localize "ExEss.Stealth"}}</option>
+                        <option value="war">{{localize "ExEss.War"}}</option>
+                        <option value="martial">{{localize "ExEss.MartialArts"}}</option>
+                    {{/select}}
+                </select>
+            </div>
+        </div>
+    </header>
+
+    {{!-- Sheet Tab Navigation --}}
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item" data-tab="description">Description</a>
+        <a class="item" data-tab="attributes">Attributes</a>
+    </nav>
+
+    {{!-- Sheet Body --}}
+    <section class="sheet-body">
+
+        {{!-- Description Tab --}}
+        <div class="tab" data-group="primary" data-tab="description">
+            <div class="d-flex flex-center resources">
+                <div>
+                    <div>Motes</div>
+                    <input type="number" name="data.cost.motes" value="{{data.cost.motes}}" data-dtype="Number" />
+                </div>
+                <div>
+                    <div>Anima</div>
+                    <input type="number" name="data.cost.anima" value="{{data.cost.anima}}" data-dtype="Number" />
+                </div>
+                <div>
+                    <div>Health</div>
+                    <input type="number" name="data.cost.health" value="{{data.cost.health}}" data-dtype="Number" />
+                </div>
+                <div>
+                    <div>Stunt</div>
+                    <input type="number" name="data.cost.stunt" value="{{data.cost.stunt}}" data-dtype="Number" />
+                </div>
+            </div>
+            {{editor content=data.description target="data.description" button=true owner=owner editable=editable}}
+        </div>
+
+        {{!-- Attributes Tab --}}
+        <div class="tab attributes" data-group="primary" data-tab="attributes">
+            {{!-- As you add new fields, add them in here! --}}
+        </div>
+    </section>
+</form>

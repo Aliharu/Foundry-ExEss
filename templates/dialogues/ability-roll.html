@@ -1,0 +1,65 @@
+<form>
+    <div class="sheet-body">
+        <div class="resource grid grid-4col flex-center">
+            <label class="resource-label">{{localize "ExEss.Attribute"}}: </label>
+            <select id="attribute" name="attribute" data-type="String">
+                <option value="force">{{localize "ExEss.Force"}}</option>
+                <option value="finesse">{{localize "ExEss.Finesse"}}</option>
+                <option value="fortitude">{{localize "ExEss.Fortitude"}}</option>
+            </select>
+
+            <label class="resource-label">{{localize "ExEss.Excellency"}}: </label>
+            <input type="checkbox" id="attribute-excellency" name="data.rollable">
+
+            <label class="resource-label">{{localize "ExEss.Ability"}}: </label>
+            <select id="ability" name="ability" data-type="String">
+                <option value="athletics">{{localize "ExEss.Athletics"}}</option>
+                <option value="awareness">{{localize "ExEss.Awareness"}}</option>
+                <option value="close">{{localize "ExEss.CloseCombat"}}</option>
+                <option value="craft">{{localize "ExEss.Craft"}}</option>
+                <option value="embassy">{{localize "ExEss.Embassy"}}</option>
+                <option value="integrity">{{localize "ExEss.Integrity"}}</option>
+                <option value="navigate">{{localize "ExEss.Navigate"}}</option>
+                <option value="performance">{{localize "ExEss.Performance"}}</option>
+                <option value="physique">{{localize "ExEss.Physique"}}</option>
+                <option value="presence">{{localize "ExEss.Presence"}}</option>
+                <option value="ranged">{{localize "ExEss.RangedCombat"}}</option>
+                <option value="sagacity">{{localize "ExEss.Sagacity"}}</option>
+                <option value="stealth">{{localize "ExEss.Stealth"}}</option>
+                <option value="war">{{localize "ExEss.War"}}</option>
+                <option value="martial">{{localize "ExEss.MartialArts"}}</option>
+            </select>
+
+            <label class="resource-label">{{localize "ExEss.Excellency"}}: </label>
+            <input type="checkbox" id="ability-excellency" name="data.rollable">
+
+            <label class="check-button" style="align-items:center;display:flex;">
+                <input id="double-none" name="double-sevens" type="checkbox">
+                <span>Db 7+s</span>
+            </label>
+            <label class="check-button" style="align-items:center;display:flex;">
+                <input id="double-eights" name="double-eights" type="checkbox">
+                <span>Db 8+s</span>
+            </label>
+            <label class="check-button" style="align-items:center;display:flex;">
+                <input id="double-nines" name="double-nines" type="checkbox">
+                <span>Db 9+s</span>
+            </label>
+            <label class="check-button" style="align-items:center;display:flex;">
+                <input id="double-tens" name="double-tens" type="checkbox" checked>
+                <span>Db 10s</span>
+            </label>
+
+            <label class="resource-label">{{localize "ExEss.Stunt"}}: </label>
+            <input checked type="checkbox" id="stunt" name="data.rollable">
+
+            <label class="resource-label">{{localize "ExEss.WoundPenalty"}}: </label>
+            <input checked type="checkbox" id="wound-penalty" name="data.rollable">
+
+        </div>
+        <div class="resource grid grid-2col flex-center">
+            <input placeholder="Misc Bonuses" id="misc-bonus" type="num">
+            <input placeholder="Misc Penalty" id="misc-penalty" type="num">
+        </div>
+    </div>
+</form>

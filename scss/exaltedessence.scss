@@ -17,10 +17,10 @@
   @import 'components/items';
 }
 
-
 .exaltedessence .window-content .abilities,
 .exaltedessence.sheet.actor .window-content .abilities {
   border: none;
+  border-bottom: 1px solid #b5b3a4;
 }
 
 /* Resource boxes CSS */
@@ -132,4 +132,9 @@
 
 .exaltedessence .tab.disciplines .resource-value {
   margin-top: 2px;
+}
+
+.list-section-header {
+  margin-top: 20px;
+  border-bottom: 1px solid black;
 }

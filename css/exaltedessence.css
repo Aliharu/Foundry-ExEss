@@ -127,8 +127,8 @@
 
 .exaltedessence .sheet-header {
   -webkit-box-flex: 0;
-  -ms-flex: 0 0 210px;
-  flex: 0 0 210px;
+  -ms-flex: 0 0 240px;
+  flex: 0 0 240px;
   overflow: hidden;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -172,6 +172,10 @@
   margin: 0;
 }
 
+.exaltedessence .margin-right {
+  margin-right: 10px;
+}
+
 .exaltedessence .sheet-tabs {
   -webkit-box-flex: 0;
   -ms-flex: 0;
@@ -192,8 +196,21 @@
   padding: 0 8px;
 }
 
+.exaltedessence .check-button {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
 .exaltedessence .resource-label {
   font-weight: bold;
+}
+
+.exaltedessence .resource-calculated-value {
+  font-size: 35px;
 }
 
 .exaltedessence .resource-label::first-letter {
@@ -256,9 +273,24 @@
   text-align: right;
 }
 
+.exaltedessence .items-list .items-controls {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 172px;
+  flex: 0 0 172px;
+  text-align: right;
+}
+
+.exaltedessence .items-list .advantages-controls {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 210px;
+  flex: 0 0 210px;
+  text-align: right;
+}
+
 .exaltedessence .window-content .abilities,
 .exaltedessence.sheet.actor .window-content .abilities {
   border: none;
+  border-bottom: 1px solid #b5b3a4;
 }
 
 /* Resource boxes CSS */
@@ -327,4 +359,9 @@
 
 .exaltedessence .tab.disciplines .resource-value {
   margin-top: 2px;
+}
+
+.list-section-header {
+  margin-top: 20px;
+  border-bottom: 1px solid black;
 }

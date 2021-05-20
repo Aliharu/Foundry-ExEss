@@ -3,7 +3,7 @@
 }
 
 .sheet-header {
-  flex: 0 0 210px;
+  flex: 0 0 240px;
   overflow: hidden;
   display: flex;
   flex-direction: row;
@@ -34,6 +34,10 @@
   }
 }
 
+.margin-right {
+  margin-right: 10px;
+}
+
 .sheet-tabs {
   flex: 0;
 }
@@ -52,4 +56,9 @@
   .tox-edit-area {
     padding: 0 8px;
   }
+}
+
+.check-button {
+  display: flex;
+  align-items: center;
 }

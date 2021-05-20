@@ -2,18 +2,29 @@
     "ExEss.Name": "Name",
     "ExEss.Exalt": "Exalt",
     "ExEss.Caste": "Caste/Aspect",
+    "ExEss.Level": "Level",
+    "ExEss.Anima": "Anima",
     "ExEss.Motes": "Motes",
     "ExEss.Power": "Power",
     "ExEss.Will": "Will",
     "ExEss.Health": "Health",
+    "ExEss.HealthLevels": "Health Levels",
 
+    "ExEss.Attribute": "Attribute",
     "ExEss.Attributes": "Attributes",
 
     "ExEss.Force": "Force",
     "ExEss.Finesse": "Finesse",
     "ExEss.Fortitude": "Fortitude",
 
+    "ExEss.Ability": "Ability",
     "ExEss.Abilities": "Abilities",
+
+    "ExEss.Combat": "Combat",
+    "ExEss.Defence": "Defence",
+    "ExEss.Soak": "Soak",
+    "ExEss.Hardness": "Hardness",
+
 
     "ExEss.Athletics": "Athletics",
     "ExEss.Awareness": "Awareness",
@@ -29,12 +40,33 @@
     "ExEss.Sagacity": "Sagacity",
     "ExEss.Stealth": "Stealth",
     "ExEss.War": "War",
+    "ExEss.MartialArts": "Martial Arts",
     "ExEss.CurrentPenalty": "Current Penalty",
+    "ExEss.WoundPenalty": "Wound Penalty",
+    "ExEss.CurrentWoundPenalty": "Current Wound Penalty",
+
+    "ExEss.Excellency": "Excellency",
+    "ExEss.Stunt": "Stunt",
 
     "ExEss.Intimacy": "Imtimacy",
     "ExEss.Stats": "Stats",
     "ExEss.Description": "Description",
     "ExEss.Items": "Items",
     "ExEss.Advantages": "Advantages",
-    "ExEss.Charms": "Charms"
+    "ExEss.Merits": "Merits",
+    "ExEss.Charms": "Charms",
+
+    "ExEss.Spell": "Spell",
+    "ExEss.Spells": "Spells",
+    "ExEss.Circle": "Circle",
+
+    "ExEss.Emerald": "Emerald",
+    "ExEss.Sapphire": "Sapphire",
+    "ExEss.Adamant": "Adamant",
+
+    "ExEss.Points": "Points",
+
+    "ExEss.RollDice": "Roll Dice",
+    "ExEss.RollAbility": "Roll Ability"
+
 }

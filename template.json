@@ -25,7 +25,7 @@
             },
             "inc": {
               "value": 1,
-              "penalty": 4
+              "penalty": "inc"
             }
           },
           "damage": 0
@@ -41,6 +41,23 @@
         "motes": {
           "value": 0,
           "min": 0
+        },
+        "defence": {
+          "value": 0,
+          "min": 0
+        },
+        "soak": {
+          "value": 0,
+          "min": 0
+        },
+        "hardness": {
+          "value": 0,
+          "min": 0
+        },
+        "anima": {
+          "value": 0,
+          "min": 0,
+          "max": 10
         }
       }
     },
@@ -145,6 +162,14 @@
     "templates": {
       "base": {
         "description": ""
+      },
+      "charm": {
+        "cost": {
+          "motes": 0,
+          "anima": 0,
+          "health": 0,
+          "stunt": 0
+        }
       }
     },
     "item": {
@@ -154,9 +179,24 @@
       "quantity": 1,
       "weight": 0
     },
+    "charm": {
+      "templates": [
+        "base",
+        "charm"
+      ],
+      "ability": "athletics"
+    },
     "merit": {
       "templates": [
         "base"
+      ],
+      "merittype": "story",
+      "points": 0
+    },
+    "evocation": {
+      "templates": [
+        "base",
+        "charm"
       ]
     },
     "advantage": {
@@ -168,7 +208,7 @@
       "templates": [
         "base"
       ],
-      "circle": "terrestrial"
+      "circle": "emerald"
     },
     "intimacy": {
       "templates": [

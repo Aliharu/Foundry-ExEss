@@ -37,6 +37,14 @@ export class ExaltedessenceActor extends Actor {
     }
     data.health.total = totalHealth;
     data.health.penalty = currentPenalty;
+    let animaLevel = "dim";
+    if (data.anima.value > 2) {
+      animaLevel = "active";
+    }
+    if(data.anima.value == 10) {
+      animaLevel = "iconic";
+    }
+    data.anima.level = animaLevel;
   }
 
 }

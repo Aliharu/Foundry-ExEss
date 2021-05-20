@@ -1,4 +1,4 @@
-<form class="{{cssClass}} flexcol" autocomplete="off">
+<form class="{{cssClass}} flexcol character-sheet-background" autocomplete="off">
 
   {{!-- Sheet Header --}}
   <header class="sheet-header">
@@ -8,7 +8,7 @@
         <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
         <h1 class="charname"><input name="data.details.exalt" type="text" value="{{data.details.exalt}}"
             placeholder="Exalt" /></h1>
-        <h1 class="charname"><input name="data.headers.caste" type="text" value="{{data.details.caste}}"
+        <h1 class="charname"><input name="data.details.caste" type="text" value="{{data.details.caste}}"
             placeholder="Caste/Aspect" /></h1>
       </div>
       {{!-- The grid classes are defined in scss/global/_grid.scss. To use,
@@ -17,21 +17,20 @@
       <div class="resources grid grid-3col">
         <div class="resource-content flexrow flex-center flex-between">
           <div>
-            <label>{{localize "ExEss.Motes"}}</label>
+            <label class="resource-label">{{localize "ExEss.Motes"}}</label>
             <input type="number" name="data.motes.value" value="{{data.motes.value}}" data-dtype="Number" />
           </div>
         </div>
         <div class="resource-content flexrow flex-center flex-between">
           <div>
-            <label>{{localize "ExEss.Power"}}</label>
-            <input type="number" name="data.power.value" value="{{data.power.value}}" data-dtype="Number" />
+            <label class="resource-label">{{localize "ExEss.Anima"}}</label>
+            <input type="number" name="data.anima.value" value="{{data.anima.value}}" data-dtype="Number" />
+          </div>
+          <div>
+            <div class="resource-label" style="margin-top: 18px;">{{data.anima.level}}</div>
           </div>
         </div>
         <div class="resource-content flexrow flex-center flex-between">
-          <div>
-            <label>{{localize "ExEss.Will"}}</label>
-            <input type="number" name="data.will.value" value="{{data.will.value}}" data-dtype="Number" />
-          </div>
         </div>
       </div>
       <div class="resources grid grid-3col">
@@ -44,37 +43,48 @@
           </div>
           <div class="resource-content flexrow flex-center flex-between">
             <div class="resource-counter" data-states="/:damage" data-max="{{data.health.total}}"
-              data-damage="{{data.health.damage}}"
-              data-name="data.health">
+              data-damage="{{data.health.damage}}" data-name="data.health">
               {{#numLoop data.health.total}}
               <span class="resource-counter-step" data-index="{{this}}" data-state=""></span>
               {{/numLoop}}
             </div>
           </div>
         </div>
-        <div class="d-flex flex-center resources">
-          <div>
-            <div>-0</div>
-            <input type="number" name="data.health.levels.zero.value" value="{{data.health.levels.zero.value}}" data-dtype="Number" />
-          </div>
-          <div>
-            <div>-1</div>
-            <input type="number" name="data.health.levels.one.value" value="{{data.health.levels.one.value}}" data-dtype="Number" />
-          </div>
-          <div>
-            <div>-2</div>
-            <input type="number" name="data.health.levels.two.value" value="{{data.health.levels.two.value}}" data-dtype="Number" />
-          </div>
-          <div>
-            <div>-4</div>
-            <input type="number" name="data.health.levels.four.value" value="{{data.health.levels.four.value}}" data-dtype="Number" />
+        <div class="flex-center">
+          <label class="resource-label">{{localize "ExEss.HealthLevels"}}</label>
+          <div class="d-flex flex-center resources">
+            <div>
+              <div>-0</div>
+              <input type="number" name="data.health.levels.zero.value" value="{{data.health.levels.zero.value}}"
+                data-dtype="Number" />
+            </div>
+            <div>
+              <div>-1</div>
+              <input type="number" name="data.health.levels.one.value" value="{{data.health.levels.one.value}}"
+                data-dtype="Number" />
+            </div>
+            <div>
+              <div>-2</div>
+              <input type="number" name="data.health.levels.two.value" value="{{data.health.levels.two.value}}"
+                data-dtype="Number" />
+            </div>
+            <div>
+              <div>-4</div>
+              <input type="number" name="data.health.levels.four.value" value="{{data.health.levels.four.value}}"
+                data-dtype="Number" />
+            </div>
           </div>
         </div>
         <div>
-          <div>
-            {{localize "ExEss.CurrentPenalty"}}: -{{data.health.penalty}}
+          <div class="flex-center">
+            <div class="resource-label">{{localize "ExEss.CurrentWoundPenalty"}}</div>
+            <div class="resource-calculated-value">-{{data.health.penalty}}</div>
           </div>
         </div>
+      </div>
+      <div class="resources grid">
+        <button id="rollDice" class="rollButton">{{localize "ExEss.RollDice"}}</button>
+        <button id="rollAbility" class="rollButton">{{localize "ExEss.RollAbility"}}</button>
       </div>
     </div>
   </header>
@@ -82,7 +92,7 @@
   {{!-- Sheet Tab Navigation --}}
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item" data-tab="stats">{{localize "ExEss.Stats"}}</a>
-    <a class="item" data-tab="charms">{{localize "ExEss.Charms"}}</a>
+    <a class="item" data-tab="charms">{{localize "ExEss.Charms"}}/{{localize "ExEss.Spells"}}</a>
     <a class="item" data-tab="items">{{localize "ExEss.Items"}}</a>
     <a class="item" data-tab="advantages">{{localize "ExEss.Advantages"}}</a>
     <a class="item" data-tab="description">{{localize "ExEss.Description"}}</a>
@@ -125,29 +135,102 @@
         </div>
         {{/each}}
       </div>
+      <label class="resource-label">{{localize "ExEss.Combat"}}</label>
+      <div class="grid grid-2col flex-group-center">
+        <div class="resource-content flexrow flex-center flex-between">
+          <div>
+            <label class="resource-label">{{localize "ExEss.Power"}}</label>
+            <input type="number" name="data.power.value" value="{{data.power.value}}" data-dtype="Number" />
+          </div>
+        </div>
+        <div class="resource-content flexrow flex-center flex-between">
+          <div>
+            <label class="resource-label">{{localize "ExEss.Will"}}</label>
+            <input type="number" name="data.will.value" value="{{data.will.value}}" data-dtype="Number" />
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-3col flex-group-center">
+        <div class="resource-content flexrow flex-center flex-between">
+          <div>
+            <label class="resource-label">{{localize "ExEss.Defence"}}</label>
+            <input type="number" name="data.defence.value" value="{{data.defence.value}}" data-dtype="Number" />
+          </div>
+        </div>
+        <div class="resource-content flexrow flex-center flex-between">
+          <div>
+            <label class="resource-label">{{localize "ExEss.Soak"}}</label>
+            <input type="number" name="data.soak.value" value="{{data.soak.value}}" data-dtype="Number" />
+          </div>
+        </div>
+        <div class="resource-content flexrow flex-center flex-between">
+          <div>
+            <label class="resource-label">{{localize "ExEss.Hardness"}}</label>
+            <input type="number" name="data.hardness.value" value="{{data.hardness.value}}" data-dtype="Number" />
+          </div>
+        </div>
+      </div>
     </div>
 
     {{!-- Charms Tab --}}
-    <div class="tab items" data-group="primary" data-tab="items">
+    <div class="tab items" data-group="primary" data-tab="charms">
       <ol class="items-list">
         <li class="item flexrow item-header">
           <div class="item-image"></div>
-          <div class="item-name">Name</div>
-          <div class="item-controls">
-            <a class="item-control item-create" title="Create charm" data-type="charm"><i class="fas fa-plus"></i> Add
-              charm</a>
+          <div class="item-name"></div>
+          <div class="items-controls d-flex">
+            <a class="item-control margin-right item-create" title="Create charm" data-type="charm"><i
+                class="fas fa-plus"></i> Add charm</a>
+            <a class="item-control item-create" title="Create spell" data-type="spell"><i class="fas fa-plus"></i> Add
+              spell</a>
           </div>
         </li>
-        {{#each actor.charms as |charm id|}}
-        <li class="item flexrow" data-item-id="{{charm._id}}">
-          <div class="item-image"><img src="{{charm.img}}" title="{{charm.name}}" width="24" height="24" /></div>
-          <h4 class="item-name">{{charm.name}}</h4>
+        <li>
+          <div class="resource-label list-section-header">
+            {{localize "ExEss.Charms"}}
+          </div>
+        </li>
+        {{#each actor.charms as |charm ability|}}
+        {{#if charm.visible}}
+        <li class="item flexrow item-header flex-center">
+          <div class="item-name">{{localize charm.name}}</div>
+        </li>
+        {{#each charm.list as |item id|}}
+        <li class="item flexrow" data-item-id="{{item._id}}">
+          <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+          <h4 class="item-name">{{item.name}}</h4>
           <div class="item-controls">
-            <a class="item-control item-edit" title="Edit Charm"><i class="fas fa-edit"></i></a>
-            <a class="item-control item-delete" title="Delete Delete"><i class="fas fa-trash"></i></a>
+            <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
+            <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
           </div>
         </li>
         {{/each}}
+        {{/if}}
+        {{/each}}
+        <li>
+          <div class="resource-label list-section-header">
+            {{localize "ExEss.Spells"}}
+          </div>
+        </li>
+        <li>
+          {{#each actor.spells as |spell circle|}}
+          {{#if spell.visible}}
+        <li class="item flexrow item-header flex-center">
+          <div class="item-name">{{localize spell.name}}</div>
+        </li>
+        {{#each spell.list as |item id|}}
+        <li class="item flexrow" data-item-id="{{item._id}}">
+          <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+          <h4 class="item-name">{{item.name}}</h4>
+          <div class="item-controls">
+            <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
+            <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
+          </div>
+        </li>
+        {{/each}}
+        {{/if}}
+        {{/each}}
+        </li>
       </ol>
     </div>
 
@@ -181,15 +264,44 @@
         <li class="item flexrow item-header">
           <div class="item-image"></div>
           <div class="item-name">Name</div>
-          <div class="item-controls">
-            <a class="item-control item-create" title="Create item" data-type="advantage"><i class="fas fa-plus"></i>
-              Add item</a>
+          <div class="advantages-controls">
+            <a class="item-control margin-right item-create" title="Create merit" data-type="merit"><i
+                class="fas fa-plus"></i>
+              Add merit</a>
+            <a class="item-control item-create" title="Create advantage" data-type="advantage"><i
+                class="fas fa-plus"></i>
+              Add advantage</a>
+          </div>
+        </li>
+        <li>
+          <div class="resource-label list-section-header">
+            {{localize "ExEss.Advantages"}}
           </div>
         </li>
         {{#each actor.advantages as |item id|}}
         <li class="item flexrow" data-item-id="{{item._id}}">
           <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
           <h4 class="item-name">{{item.name}}</h4>
+          <div class="item-controls">
+            <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
+            <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
+          </div>
+        </li>
+        {{/each}}
+        <li>
+          <div class="resource-label list-section-header">
+            {{localize "ExEss.Merits"}}
+          </div>
+        </li>
+        {{#each actor.merits as |item id|}}
+        <li class="item flexrow" data-item-id="{{item._id}}">
+          <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+          <h4 class="item-name">{{item.name}}</h4>
+          <div class="resource-value-static" data-value="{{item.data.points}}" data-name="items.{{item._id}}">
+            {{#numLoop 5}}
+            <span class="resource-value-static-step" data-index="{{this}}"></span>
+            {{/numLoop}}
+          </div>
           <div class="item-controls">
             <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
             <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>

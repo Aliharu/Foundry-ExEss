@@ -3,15 +3,15 @@
         <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
         <div class="header-fields">
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
-            <div>
-                <label class="resource-label">{{localize "ExEss.Circle"}}: </label>
-                <select name="data.circle" data-type="String">
-                    {{#select data.circle}}
-                        <option value="emerald">{{localize "ExEss.Emerald"}}</option>
-                        <option value="sapphire">{{localize "ExEss.Sapphire"}}</option>
-                        <option value="adamant">{{localize "ExEss.Adamant"}}</option>
-                    {{/select}}
-                </select>
+            <div class="grid grid-2col">
+              <div class="resource">
+                <label class="resource-label">Quantity</label>
+                  <input type="text" name="data.quantity" value="{{data.quantity}}" data-dtype="Number"/>
+              </div>
+              <div class="resource">
+                <label class="resource-label">Weight</label>
+                  <input type="text" name="data.weight" value="{{data.weight}}" data-dtype="Number"/>
+              </div>
             </div>
         </div>
     </header>
@@ -24,6 +24,7 @@
 
     {{!-- Sheet Body --}}
     <section class="sheet-body">
+
         {{!-- Description Tab --}}
         <div class="tab" data-group="primary" data-tab="description">
             {{editor content=data.description target="data.description" button=true owner=owner editable=editable}}
@@ -32,6 +33,10 @@
         {{!-- Attributes Tab --}}
         <div class="tab attributes" data-group="primary" data-tab="attributes">
             {{!-- As you add new fields, add them in here! --}}
+            <div class="resource grid grid-4col flex-center">
+                <label class="resource-label">{{localize "ExEss.Points"}}: </label>
+                <input type="number" name="data.points" value="{{data.points}}" />
+            </div>
         </div>
     </section>
 </form>
