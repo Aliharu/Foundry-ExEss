@@ -50,7 +50,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const gear = [];
     const advantages = [];
     const merits = [];
-
+    const intimacies = [];
 
     const charms = {
       athletics: { name: 'ExEss.Athletics', visible: false, list: [] },
@@ -68,6 +68,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       stealth: { name: 'ExEss.Stealth', visible: false, list: [] },
       war: { name: 'ExEss.War', visible: false, list: [] },
       martial: { name: 'ExEss.MartialArts', visible: false, list: [] },
+      evocation: { name: 'ExEss.Evocations', visible: false, list: [] },
     }
 
     const spells = {
@@ -93,6 +94,9 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       else if (i.type === 'merit') {
         merits.push(i);
       }
+      else if (i.type === 'intimacy') {
+        intimacies.push(i);
+      }
       // Append to charms.
       else if (i.type === 'charm') {
         if (i.data.ability !== undefined) {
@@ -111,6 +115,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     // Assign and return
     actorData.gear = gear;
     actorData.merits = merits;
+    actorData.intimacies = intimacies;
     actorData.advantages = advantages;
     actorData.charms = charms;
     actorData.spells = spells;
@@ -191,6 +196,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         if (confirmed) {
           let doubleSuccess = this._calculateDoubleDice(html);
           let dice = parseInt(html.find('#num').val());
+          let bonusSuccesses = parseInt(html.find('#bonus-success').val());
+
           let roll = new Roll(`${dice}d${dieNum}cs>=${singleSuccess}`).roll();
           let dice_roll = roll.dice[0].results;
           let bonus = "";
@@ -205,6 +212,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           //let total = roll.total;
           let total = roll.total;
           if (bonus) total += bonus;
+          if (bonusSuccesses) total += bonusSuccesses;
           let the_content = `<div class="chat-card item-card"><div class="card-content">Dice Roll</div><div class="card-buttons"><div class="flexrow 1"><div>Dice Roller - Number of Successes<div class="dice-roll"><div class="dice-result"><div class="dice-formula">${roll.formula}</div><div class="dice-tooltip"><div class="dice"><ol class="dice-rolls">${get_dice}</ol></div></div><h4 class="dice-total">${total} Succeses</h4></div></div></div></div></div></div>`;
           ChatMessage.create({ user: game.user._id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.OOC });
         }
@@ -236,16 +244,13 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           let attributeExcellency = html.find('#attribute-excellency').is(':checked');
           let abilityExcellency = html.find('#ability-excellency').is(':checked');
 
-          let doubleSevens = html.find('#double-sevens').is(':checked');
-          let doubleEights = html.find('#double-eights').is(':checked');
-          let doubleNines = html.find('#double-nines').is(':checked');
-          let doubleTens = html.find('#double-tens').is(':checked');
-
           let stunt = html.find('#stunt').is(':checked');
           let woundPenalty = html.find('#wound-penalty').is(':checked');
 
           let miscBonus = parseInt(html.find('#misc-bonus').val());
           let miscPenalty = parseInt(html.find('#misc-penalty').val());
+
+          let bonusSuccesses = parseInt(html.find('#bonus-success').val());
 
           let attributeDice = data.attributes[attribute].value;
           let abilityDice = data.abilities[ability].value;
@@ -273,7 +278,6 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             abilityDice = abilityDice - miscPenalty;
           }
 
-
           let dice = attributeDice + abilityDice;
           let roll = new Roll(`${dice}d10cs>=${singleSuccess}`).roll();
           let dice_roll = roll.dice[0].results;
@@ -287,8 +291,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           }
           // if no double success uncomment below and remove the entry below that.
           //let total = roll.total;
+
           let total = roll.total;
           if (bonus) total += bonus;
+          if (bonusSuccesses) total += bonusSuccesses;
           let the_content = `<div class="chat-card item-card"><div class="card-content">Dice Roll</div><div class="card-buttons"><div class="flexrow 1"><div>Dice Roller - Number of Successes<div class="dice-roll"><div class="dice-result"><div class="dice-formula">${roll.formula}</div><div class="dice-tooltip"><div class="dice"><ol class="dice-rolls">${get_dice}</ol></div></div><h4 class="dice-total">${total} Succeses</h4></div></div></div></div></div></div>`;
           ChatMessage.create({ user: game.user._id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.OOC });
         }

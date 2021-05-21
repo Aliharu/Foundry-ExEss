@@ -157,7 +157,7 @@
       "charm",
       "anima",
       "spell",
-      "imtimacy"
+      "intimacy"
     ],
     "templates": {
       "base": {
@@ -193,12 +193,6 @@
       "merittype": "story",
       "points": 0
     },
-    "evocation": {
-      "templates": [
-        "base",
-        "charm"
-      ]
-    },
     "advantage": {
       "templates": [
         "base"
@@ -213,7 +207,9 @@
     "intimacy": {
       "templates": [
         "base"
-      ]
+      ],
+      "strength": "minor",
+      "intimacytype": "tie"
     }
   }
 }

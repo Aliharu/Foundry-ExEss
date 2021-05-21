@@ -5,11 +5,11 @@
     <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100" />
     <div class="header-fields">
       <div class="grid grid-3col flexrow">
-        <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
+        <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'ExEss.NameTitle'}}" /></h1>
         <h1 class="charname"><input name="data.details.exalt" type="text" value="{{data.details.exalt}}"
-            placeholder="Exalt" /></h1>
+          placeholder="{{localize 'ExEss.Exalt'}}" /></h1>
         <h1 class="charname"><input name="data.details.caste" type="text" value="{{data.details.caste}}"
-            placeholder="Caste/Aspect" /></h1>
+            placeholder="{{localize 'ExEss.CasteAspect'}}" /></h1>
       </div>
       {{!-- The grid classes are defined in scss/global/_grid.scss. To use,
       use both the "grid" and "grid-Ncol" class where "N" can be any number
@@ -93,7 +93,7 @@
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item" data-tab="stats">{{localize "ExEss.Stats"}}</a>
     <a class="item" data-tab="charms">{{localize "ExEss.Charms"}}/{{localize "ExEss.Spells"}}</a>
-    <a class="item" data-tab="items">{{localize "ExEss.Items"}}</a>
+    <a class="item" data-tab="intimacies">{{localize "ExEss.Intimacies"}}</a>
     <a class="item" data-tab="advantages">{{localize "ExEss.Advantages"}}</a>
     <a class="item" data-tab="description">{{localize "ExEss.Description"}}</a>
   </nav>
@@ -119,7 +119,6 @@
         </div>
         {{/each}}
       </div>
-
       <label class="resource-label">{{localize "ExEss.Abilities"}}</label>
       <div class="abilities grid grid-3col flex-group-center">
         {{#each data.abilities as |ability key|}}
@@ -234,21 +233,50 @@
       </ol>
     </div>
 
-    {{!-- Owned Items Tab --}}
-    <div class="tab items" data-group="primary" data-tab="items">
+    {{!-- Intimacy Tab --}}
+    <div class="tab intimacies" data-group="primary" data-tab="intimacies">
       <ol class="items-list">
+        <li>
+          <div class="resource-label flex-center">
+            {{localize "ExEss.Virtues"}}
+          </div>
+        </li>
+        <li>
+          <div class="grid grid-2col flex-group-center">
+            <div class="resource-content flexrow flex-center flex-between">
+              <div>
+                <label class="resource-label">{{localize "ExEss.MajorVirtue"}}</label>
+                <input name="data.details.majorvirtue" value="{{data.details.majorvirtue}}" type="text" />
+              </div>
+            </div>
+            <div class="resource-content flexrow flex-center flex-between">
+              <div>
+                <label class="resource-label">{{localize "ExEss.MinorVirtue"}}</label>
+                <input name="data.details.minorvirtue" value="{{data.details.minorvirtue}}" type="text" />
+              </div>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="resource-label flex-center list-section-header">
+            {{localize "ExEss.Intimacies"}}
+          </div>
+        </li>
         <li class="item flexrow item-header">
           <div class="item-image"></div>
           <div class="item-name">Name</div>
+          <div class="item-name">Strength</div>
           <div class="item-controls">
-            <a class="item-control item-create" title="Create item" data-type="item"><i class="fas fa-plus"></i> Add
-              item</a>
+            <a class="item-control item-create" title="Create intimacy" data-type="intimacy"><i class="fas fa-plus"></i> Add</a>
           </div>
         </li>
-        {{#each actor.gear as |item id|}}
+        {{#each actor.intimacies as |item id|}}
         <li class="item flexrow" data-item-id="{{item._id}}">
           <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
-          <h4 class="item-name">{{item.name}}</h4>
+          <h4 class="item-name">{{item.name}} ({{item.data.intimacytype}})</h4>
+          <div class="resource-value-static">
+            {{item.data.strength}}
+          </div>
           <div class="item-controls">
             <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
             <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
@@ -258,7 +286,7 @@
       </ol>
     </div>
 
-    {{!-- Owned advantages Tab --}}
+    {{!-- Advantages Tab --}}
     <div class="tab advantages" data-group="primary" data-tab="advantages">
       <ol class="items-list">
         <li class="item flexrow item-header">
