@@ -13,7 +13,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       classes: ["exaltedessence", "sheet", "actor"],
       template: "systems/exaltedessence/templates/actor/actor-sheet.html",
       width: 800,
-      height: 800,
+      height: 900,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "stats" }]
     });
   }
@@ -24,7 +24,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   getData() {
     const data = super.getData();
     data.dtypes = ["String", "Number", "Boolean"];
-    for (let attr of Object.values(data.data.attributes)) {
+    for (let attr of Object.values(data.data.data.attributes)) {
       attr.isCheckbox = attr.dtype === "Boolean";
     }
 
@@ -78,9 +78,9 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }
 
     // Iterate through items, allocating to containers
-    // let totalWeight = 0;
     for (let i of sheetData.items) {
       let item = i.data;
+
       i.img = i.img || DEFAULT_TOKEN;
       // Append to gear.
       if (i.type === 'item') {
@@ -143,7 +143,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     // Update Inventory Item
     html.find('.item-edit').click(ev => {
       const li = $(ev.currentTarget).parents(".item");
-      const item = this.actor.getOwnedItem(li.data("itemId"));
+      const item = this.actor.items.get(li.data("itemId"));
       item.sheet.render(true);
     });
 
@@ -166,7 +166,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     html.find('.rollable').click(this._onRoll.bind(this));
 
     // Drag events for macros.
-    if (this.actor.owner) {
+    if (this.actor.isOwner) {
       let handler = ev => this._onDragStart(ev);
       html.find('li.item').each((i, li) => {
         if (li.classList.contains("inventory-header")) return;

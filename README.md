@@ -8,5 +8,8 @@ Current a work in progress
 
 This sheet was initially based on the boilerplate system by @asacolips#1867
 
-Code for dot/bos counters taken from Foundry-V5 (credit to erizocosmico)
+Code for dot/box counters taken from Foundry-V5 (credit to erizocosmico)
 
+## Notes
+
+Currently the initative tracker rolls Finesse+Athletics with no double 10s

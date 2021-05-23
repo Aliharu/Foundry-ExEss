@@ -17,7 +17,7 @@ Hooks.once('init', async function() {
    * @type {String}
    */
   CONFIG.Combat.initiative = {
-    formula: "1d20",
+    formula: "(@attributes.finesse.value + @abilities.athletics.value)d10cs>=7",
   };
 
   // Define custom Entity classes

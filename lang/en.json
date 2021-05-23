@@ -15,6 +15,17 @@
     "ExEss.MajorVirtue": "Major Virtue",
     "ExEss.MinorVirtue": "Minor Virtue",
 
+    "ExEss.Abyssal": "Abyssal",
+    "ExEss.Alchemical": "Alchemical",
+    "ExEss.Dragonblooded": "Dragonblooded",
+    "ExEss.Exigent": "Exigent",
+    "ExEss.Getimian": "Getimian",
+    "ExEss.Infernal": "Infernal",
+    "ExEss.Liminal": "Liminal",
+    "ExEss.Lunar": "Lunar",
+    "ExEss.Sidereal": "Sidereal",
+    "ExEss.Solar": "Solar",
+
     "ExEss.Attribute": "Attribute",
     "ExEss.Attributes": "Attributes",
 
