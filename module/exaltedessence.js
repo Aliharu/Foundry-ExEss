@@ -21,8 +21,8 @@ Hooks.once('init', async function() {
   };
 
   // Define custom Entity classes
-  CONFIG.Actor.entityClass = ExaltedessenceActor;
-  CONFIG.Item.entityClass = ExaltedessenceItem;
+  CONFIG.Actor.documentClass = ExaltedessenceActor;
+  CONFIG.Item.documentClass = ExaltedessenceItem;
 
   // Register sheet application classes
   Actors.unregisterSheet("core", ActorSheet);

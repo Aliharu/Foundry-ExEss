@@ -198,7 +198,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           let dice = parseInt(html.find('#num').val());
           let bonusSuccesses = parseInt(html.find('#bonus-success').val());
 
-          let roll = new Roll(`${dice}d${dieNum}cs>=${singleSuccess}`).roll();
+          let roll = new Roll(`${dice}d${dieNum}cs>=${singleSuccess}`).evaluate({ async : false });
           let dice_roll = roll.dice[0].results;
           let bonus = "";
           let get_dice = "";
@@ -214,7 +214,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           if (bonus) total += bonus;
           if (bonusSuccesses) total += bonusSuccesses;
           let the_content = `<div class="chat-card item-card"><div class="card-content">Dice Roll</div><div class="card-buttons"><div class="flexrow 1"><div>Dice Roller - Number of Successes<div class="dice-roll"><div class="dice-result"><div class="dice-formula">${roll.formula}</div><div class="dice-tooltip"><div class="dice"><ol class="dice-rolls">${get_dice}</ol></div></div><h4 class="dice-total">${total} Succeses</h4></div></div></div></div></div></div>`;
-          ChatMessage.create({ user: game.user._id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.OOC });
+          ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.OOC });
         }
       }
     }).render(true);
@@ -279,7 +279,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           }
 
           let dice = attributeDice + abilityDice;
-          let roll = new Roll(`${dice}d10cs>=${singleSuccess}`).roll();
+          let roll = new Roll(`${dice}d10cs>=${singleSuccess}`).evaluate({ async : false });
           let dice_roll = roll.dice[0].results;
           let bonus = "";
           let get_dice = "";
@@ -296,7 +296,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           if (bonus) total += bonus;
           if (bonusSuccesses) total += bonusSuccesses;
           let the_content = `<div class="chat-card item-card"><div class="card-content">Dice Roll</div><div class="card-buttons"><div class="flexrow 1"><div>Dice Roller - Number of Successes<div class="dice-roll"><div class="dice-result"><div class="dice-formula">${roll.formula}</div><div class="dice-tooltip"><div class="dice"><ol class="dice-rolls">${get_dice}</ol></div></div><h4 class="dice-total">${total} Succeses</h4></div></div></div></div></div></div>`;
-          ChatMessage.create({ user: game.user._id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.OOC });
+          ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.OOC });
         }
       }
     }).render(true);
