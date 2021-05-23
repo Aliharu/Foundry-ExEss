@@ -150,8 +150,12 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     // Delete Inventory Item
     html.find('.item-delete').click(ev => {
       const li = $(ev.currentTarget).parents(".item");
-      this.actor.deleteOwnedItem(li.data("itemId"));
+      this.actor.deleteEmbeddedDocuments("Item", [li.data("itemId")]);
       li.slideUp(200, () => this.render(false));
+    });
+
+    html.find('#color-picker').mousedown(ev => {
+      this.pickColor();
     });
 
     html.find('#rollDice').mousedown(ev => {
@@ -176,6 +180,28 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }
   }
 
+  async pickColor() {
+    let confirmed = false;
+    const actorData = duplicate(this.actor)
+    const data = actorData.data;
+    const template = "systems/exaltedessence/templates/dialogues/color-picker.html"
+    const html = await renderTemplate(template, {'color': data.details.color});
+    new Dialog({
+      title: `Pick Color`,
+      content: html,
+      buttons: {
+        roll: { label: "Save", callback: () => confirmed = true },
+        cancel: { label: "Cancel", callback: () => confirmed = false }
+      },
+      close: html => {
+        let color = html.find('#color').val();
+        console.log(color)
+        data.details.color = color
+        this.actor.update(actorData)
+      }
+    }).render(true);
+  }
+
   async _openRollDialogue() {
     let confirmed = false;
     // Enter the Die type 
@@ -198,7 +224,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           let dice = parseInt(html.find('#num').val());
           let bonusSuccesses = parseInt(html.find('#bonus-success').val());
 
-          let roll = new Roll(`${dice}d${dieNum}cs>=${singleSuccess}`).evaluate({ async : false });
+          let roll = new Roll(`${dice}d${dieNum}cs>=${singleSuccess}`).evaluate({ async: false });
           let dice_roll = roll.dice[0].results;
           let bonus = "";
           let get_dice = "";
@@ -279,7 +305,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           }
 
           let dice = attributeDice + abilityDice;
-          let roll = new Roll(`${dice}d10cs>=${singleSuccess}`).evaluate({ async : false });
+          let roll = new Roll(`${dice}d10cs>=${singleSuccess}`).evaluate({ async: false });
           let dice_roll = roll.dice[0].results;
           let bonus = "";
           let get_dice = "";
@@ -374,6 +400,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
   _onDotCounterChange(event) {
     event.preventDefault()
+    const actorData = duplicate(this.actor)
     const element = event.currentTarget
     const dataset = element.dataset
     const index = Number(dataset.index)
@@ -388,7 +415,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     steps.removeClass('active')
     steps.each(function (i) {
       if (i <= index) {
-        $(this).addClass('active')
+        // $(this).addClass('active')
+        $(this).css("background-color", actorData.data.details.color);
       }
     })
     this._assignToActorField(fields, index + 1)
@@ -413,6 +441,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
   _onDotCounterEmpty(event) {
     event.preventDefault()
+    const actorData = duplicate(this.actor)
     const element = event.currentTarget
     const parent = $(element.parentNode)
     const fieldStrings = parent[0].dataset.name
@@ -424,11 +453,13 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   }
 
   _setupDotCounters(html) {
+    const actorData = duplicate(this.actor)
     html.find('.resource-value').each(function () {
       const value = Number(this.dataset.value)
       $(this).find('.resource-value-step').each(function (i) {
         if (i + 1 <= value) {
           $(this).addClass('active')
+          $(this).css("background-color", actorData.data.details.color);
         }
       })
     })
@@ -437,6 +468,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       $(this).find('.resource-value-static-step').each(function (i) {
         if (i + 1 <= value) {
           $(this).addClass('active')
+          $(this).css("background-color", actorData.data.details.color);
         }
       })
     })
@@ -487,7 +519,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     delete itemData.data["type"];
 
     // Finally, create the item!
-    return this.actor.createOwnedItem(itemData);
+    return this.actor.createEmbeddedDocuments("Item", [itemData])
   }
 
   /**
