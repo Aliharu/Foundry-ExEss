@@ -41,6 +41,8 @@
     "ExEss.Soak": "Soak",
     "ExEss.Hardness": "Hardness",
 
+    "ExEss.DecisiveAttack": "Decisive Attack",
+
     "ExEss.Athletics": "Athletics",
     "ExEss.Awareness": "Awareness",
     "ExEss.CloseCombat": "Close Combat",
@@ -60,6 +62,7 @@
     "ExEss.Evocations": "Evocations",
     "ExEss.CurrentPenalty": "Current Penalty",
     "ExEss.WoundPenalty": "Wound Penalty",
+    "ExEss.Flurry": "Flurry",
     "ExEss.CurrentWoundPenalty": "Current Wound Penalty",
 
     "ExEss.Excellency": "Excellency",
@@ -94,6 +97,11 @@
     "ExEss.Major": "Major",
     "ExEss.Type": "Type",
     "ExEss.Tie": "Tie",
-    "ExEss.Principle": "Principle"
+    "ExEss.Principle": "Principle",
+
+    "ExEss.BonusSuccesses": "Bonus Successes",
+    "ExEss.MiscPenalty": "Misc Penalty",
+    "ExEss.MiscBonus": "Misc Bonus"
+
 
 }

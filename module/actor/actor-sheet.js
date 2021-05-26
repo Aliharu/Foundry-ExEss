@@ -166,6 +166,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       this._openAbilityRollDialogue();
     });
 
+    html.find('#rollDecisive').mousedown(ev => {
+      this._openDecisiveDialogue();
+    });
+
     // Rollable abilities.
     html.find('.rollable').click(this._onRoll.bind(this));
 
@@ -185,7 +189,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const actorData = duplicate(this.actor)
     const data = actorData.data;
     const template = "systems/exaltedessence/templates/dialogues/color-picker.html"
-    const html = await renderTemplate(template, {'color': data.details.color});
+    const html = await renderTemplate(template, { 'color': data.details.color });
     new Dialog({
       title: `Pick Color`,
       content: html,
@@ -195,9 +199,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       },
       close: html => {
         let color = html.find('#color').val();
-        console.log(color)
-        data.details.color = color
-        this.actor.update(actorData)
+        if (isColor(color)) {
+          data.details.color = color
+          this.actor.update(actorData)
+        }
       }
     }).render(true);
   }
@@ -239,7 +244,25 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           let total = roll.total;
           if (bonus) total += bonus;
           if (bonusSuccesses) total += bonusSuccesses;
-          let the_content = `<div class="chat-card item-card"><div class="card-content">Dice Roll</div><div class="card-buttons"><div class="flexrow 1"><div>Dice Roller - Number of Successes<div class="dice-roll"><div class="dice-result"><div class="dice-formula">${roll.formula}</div><div class="dice-tooltip"><div class="dice"><ol class="dice-rolls">${get_dice}</ol></div></div><h4 class="dice-total">${total} Succeses</h4></div></div></div></div></div></div>`;
+
+          let the_content = `<div class="chat-card item-card">
+                                <div class="card-content">Dice Roll</div>
+                                <div class="card-buttons">
+                                    <div class="flexrow 1">
+                                        <div>Dice Roller - Number of Successes<div class="dice-roll">
+                                                <div class="dice-result">
+                                                    <div class="dice-tooltip">
+                                                        <div class="dice">
+                                                            <ol class="dice-rolls">${get_dice}</ol>
+                                                        </div>
+                                                    </div>
+                                                    <h4 class="dice-total">${total} Succeses</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
           ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.OOC });
         }
       }
@@ -272,6 +295,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
           let stunt = html.find('#stunt').is(':checked');
           let woundPenalty = html.find('#wound-penalty').is(':checked');
+          let flurry = html.find('#flurry').is(':checked');
+
 
           let miscBonus = parseInt(html.find('#misc-bonus').val());
           let miscPenalty = parseInt(html.find('#misc-penalty').val());
@@ -295,6 +320,9 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           }
           if (woundPenalty && data.health.penalty != 'inc') {
             abilityDice = abilityDice - data.health.penalty;
+          }
+          if(flurry) {
+            abilityDice = abilityDice - 3;
           }
 
           if (miscBonus) {
@@ -321,8 +349,199 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           let total = roll.total;
           if (bonus) total += bonus;
           if (bonusSuccesses) total += bonusSuccesses;
-          let the_content = `<div class="chat-card item-card"><div class="card-content">Dice Roll</div><div class="card-buttons"><div class="flexrow 1"><div>Dice Roller - Number of Successes<div class="dice-roll"><div class="dice-result"><div class="dice-formula">${roll.formula}</div><div class="dice-tooltip"><div class="dice"><ol class="dice-rolls">${get_dice}</ol></div></div><h4 class="dice-total">${total} Succeses</h4></div></div></div></div></div></div>`;
+          let the_content = `
+          <div class="chat-card item-card">
+              <div class="card-content">Dice Roll</div>
+              <div class="card-buttons">
+                  <div class="flexrow 1">
+                      <div>Dice Roller - Number of Successes<div class="dice-roll">
+                              <div class="dice-result">
+                                  <div class="dice-tooltip">
+                                      <div class="dice">
+                                          <ol class="dice-rolls">${get_dice}</ol>
+                                      </div>
+                                  </div>
+                                  <h4 class="dice-total">${total} Succeses</h4>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          `
           ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.OOC });
+        }
+      }
+    }).render(true);
+  }
+
+  async _openDecisiveDialogue() {
+    const actorData = duplicate(this.actor)
+    let confirmed = false;
+    // Enter the Die type 
+    let dieNum = 10;
+    // What number is starting number needed for a single success
+    let singleSuccess = 7;
+    // What number is starting number needed for a double success, set to 0 to disable
+    const template = "systems/exaltedessence/templates/dialogues/decisive-roll.html"
+    console.log(actorData)
+    const html = await renderTemplate(template, { "power": actorData.data.power.value });
+    new Dialog({
+      title: `Die Roller`,
+      content: html,
+      buttons: {
+        roll: { label: "Attack!", callback: () => confirmed = true },
+        cancel: { label: "Cancel", callback: () => confirmed = false }
+      },
+      close: html => {
+        if (confirmed) {
+          let defence = parseInt(html.find('#defence').val());
+          let soak = parseInt(html.find('#soak').val());
+          let hardness = parseInt(html.find('#hardness').val()) || 0;
+
+          if (defence && soak) {
+            // Accuracy
+            const data = this.actor.data.data;
+            let attribute = html.find('#attribute').val();
+            let ability = html.find('#ability').val();
+            let attributeExcellency = html.find('#attribute-excellency').is(':checked');
+            let abilityExcellency = html.find('#ability-excellency').is(':checked');
+
+            let stunt = html.find('#stunt').is(':checked');
+            let woundPenalty = html.find('#wound-penalty').is(':checked');
+            let flurry = html.find('#flurry').is(':checked');
+
+
+            let miscBonus = parseInt(html.find('#misc-bonus').val());
+            let miscPenalty = parseInt(html.find('#misc-penalty').val());
+
+            let bonusSuccesses = parseInt(html.find('#bonus-success').val());
+            let power = parseInt(html.find('#power').val());
+
+            let attributeDice = data.attributes[attribute].value;
+            let abilityDice = data.abilities[ability].value;
+
+            if (attributeExcellency) {
+              attributeDice = attributeDice * 2;
+            }
+            if (abilityExcellency) {
+              abilityDice = abilityDice * 2;
+            }
+
+            let doubleSuccess = this._calculateDoubleDice(html);
+
+            if (stunt) {
+              abilityDice = abilityDice + 2;
+            }
+            if (woundPenalty && data.health.penalty != 'inc') {
+              abilityDice = abilityDice - data.health.penalty;
+            }
+            if(flurry) {
+              abilityDice = abilityDice - 3;
+            }
+
+            if (miscBonus) {
+              abilityDice = abilityDice + miscBonus;
+            }
+            if (miscPenalty) {
+              abilityDice = abilityDice - miscPenalty;
+            }
+
+            let dice = attributeDice + abilityDice;
+            let roll = new Roll(`${dice}d10cs>=${singleSuccess}`).evaluate({ async: false });
+            let dice_roll = roll.dice[0].results;
+            let bonus = "";
+            let get_dice = "";
+            for (let dice of dice_roll) {
+              // comment out if no double successes
+              if (dice.result >= doubleSuccess) { bonus++; }
+              if (dice.result >= singleSuccess) { get_dice += `<li class="roll die d${dieNum} success">${dice.result}</li>`; }
+              else { get_dice += `<li class="roll die d${dieNum}">${dice.result}</li>`; }
+            }
+            // if no double success uncomment below and remove the entry below that.
+            //let total = roll.total;
+
+            let total = roll.total;
+            if (bonus) total += bonus;
+            if (bonusSuccesses) total += bonusSuccesses;
+
+            total -= defence;
+
+            let message_content = '';
+            const threshholdPower = power - hardness;
+            if (total < 0 || threshholdPower < 0) {
+              message_content = `
+                <div class="chat-card item-card">
+                    <div class="card-content">Decisive Attack</div>
+                    <div class="card-buttons">
+                        <div class="flexrow 1">
+                            <div>
+                                <div class="dice-roll">
+                                    <div class="dice-result">
+                                        <div class="dice-tooltip">
+                                            <div class="dice">
+                                                <ol class="dice-rolls">${get_dice}</ol>
+                                            </div>
+                                        </div>
+                                        <h4 class="dice-formula">${total} Succeses</h4>
+                                        <h4 class="dice-total">Attack Missed!</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              `
+            }
+            else {
+              // Deal Damage
+              let damage = total + threshholdPower;
+              let damageRoll = new Roll(`${damage}d10cs>=${singleSuccess}`).evaluate({ async: false });
+              let damageDiceRoll = damageRoll.dice[0].results;
+              let damageBonus = "";
+              let getDamageDice = "";
+              for (let dice of damageDiceRoll) {
+                // comment out if no double successes
+                if (dice.result >= doubleSuccess) { damageBonus++; }
+                if (dice.result >= singleSuccess) { getDamageDice += `<li class="roll die d10 success">${dice.result}</li>`; }
+                else { getDamageDice += `<li class="roll die d10">${dice.result}</li>`; }
+              }
+
+              let damageTotal = damageRoll.total;
+              if (bonus) damageTotal += damageBonus;
+              if (bonusSuccesses) damageTotal += bonusSuccesses;
+
+              message_content = `
+                <div class="chat-card item-card">
+                    <div class="card-content">Decisive Attack</div>
+                    <div class="card-buttons">
+                        <div class="flexrow 1">
+                            <div>
+                                <div class="dice-roll">
+                                    <div class="dice-result">
+                                        <div class="dice-tooltip">
+                                            <div class="dice">
+                                                <ol class="dice-rolls">${get_dice}</ol>
+                                            </div>
+                                        </div>
+                                        <h4 class="dice-formula">${total} Threshhold Succeses + ${power} power - ${defence} defence</h4>
+                                        <div class="dice-tooltip">
+                                          <div class="dice">
+                                              <ol class="dice-rolls">${getDamageDice}</ol>
+                                          </div>
+                                        </div>
+                                        <h4 class="dice-total">${damageTotal} Damage</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              `
+            }
+
+            ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: message_content, type: CONST.CHAT_MESSAGE_TYPES.OOC });
+          }
         }
       }
     }).render(true);
@@ -549,4 +768,10 @@ function parseCounterStates(states) {
     obj[k] = v
     return obj
   }, {})
+}
+
+function isColor(strColor) {
+  const s = new Option().style;
+  s.color = strColor;
+  return s.color !== '';
 }

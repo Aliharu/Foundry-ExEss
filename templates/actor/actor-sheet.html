@@ -175,7 +175,7 @@
         {{/each}}
       </div>
       <label class="resource-label">{{localize "ExEss.Combat"}}</label>
-      <div class="grid grid-2col flex-group-center">
+      <div class="grid grid-3col flex-group-center">
         <div class="resource-content flexrow flex-center flex-between">
           <div>
             <label class="resource-label">{{localize "ExEss.Power"}}</label>
@@ -186,6 +186,12 @@
           <div>
             <label class="resource-label">{{localize "ExEss.Will"}}</label>
             <input type="number" name="data.will.value" value="{{data.data.will.value}}" data-dtype="Number" />
+          </div>
+        </div>
+        <div class="resource-content flexrow flex-center flex-between">
+          <div>
+            <label class="resource-label">{{localize "ExEss.DecisiveAttack"}}</label>
+            <button id="rollDecisive" class="rollButton">{{localize "ExEss.RollDice"}}</button>
           </div>
         </div>
       </div>

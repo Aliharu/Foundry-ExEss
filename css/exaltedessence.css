@@ -367,3 +367,7 @@
 .exaltedessence .cursor-pointer {
   cursor: pointer;
 }
+
+.dice-tooltip {
+  display: block !important;
+}

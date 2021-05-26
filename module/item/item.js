@@ -15,6 +15,19 @@ export class ExaltedessenceItem extends Item {
     const data = itemData.data;
   }
 
+  async _preCreate(createData, options, userId) {
+    if(createData.type == 'intimacy') {
+      this.data.update({img: "icons/skills/social/diplomacy-handshake-yellow.webp"});
+    }
+    if(createData.type == 'spell') {
+      this.data.update({img: "icons/svg/book.svg"});
+    }
+    if(createData.type == 'merit') {
+      this.data.update({img: "icons/commodities/gems/gem-faceted-radiant-red.webp"});
+    }
+  }
+  
+
   /**
    * Handle clickable rolls.
    * @param {Event} event   The originating click event
