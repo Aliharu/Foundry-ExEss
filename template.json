@@ -28,7 +28,8 @@
               "penalty": "inc"
             }
           },
-          "damage": 0
+          "lethal": 0,
+          "aggravated": 0
         },
         "power": {
           "value": 0,

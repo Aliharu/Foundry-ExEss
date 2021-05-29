@@ -62,8 +62,8 @@
             <label for="data.health" class="resource-label">{{localize "ExEss.Health"}}</label>
           </div>
           <div class="resource-content flexrow flex-center flex-between">
-            <div class="resource-counter" data-states="/:damage" data-max="{{data.data.health.total}}"
-              data-damage="{{data.data.health.damage}}" data-name="data.health">
+            <div class="resource-counter" data-states="/:lethal,x:aggravated" data-max="{{data.data.health.total}}"
+              data-lethal="{{data.data.health.lethal}}" data-aggravated="{{data.data.health.aggravated}}" data-name="data.health">
               {{#numLoop data.data.health.total}}
               <span class="resource-counter-step" data-index="{{this}}" data-state=""></span>
               {{/numLoop}}
@@ -115,6 +115,7 @@
     <a class="item" data-tab="charms">{{localize "ExEss.Charms"}}/{{localize "ExEss.Spells"}}</a>
     <a class="item" data-tab="intimacies">{{localize "ExEss.Intimacies"}}</a>
     <a class="item" data-tab="advantages">{{localize "ExEss.Advantages"}}</a>
+    <!-- <a class="item" data-tab="ventures">{{localize "ExEss.Ventures"}}</a> -->
     <a class="item" data-tab="description">{{localize "ExEss.Description"}}</a>
   </nav>
 

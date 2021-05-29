@@ -30,12 +30,19 @@ export class ExaltedessenceActor extends Actor {
     let totalHealth = 0;
     let currentPenalty = 0;
     for (let [key, health_level] of Object.entries(data.health.levels)) {
-      if(data.health.damage > totalHealth) {
+      if((data.health.lethal + data.health.aggravated) > totalHealth) {
         currentPenalty = health_level.penalty
       }
       totalHealth += health_level.value;
     }
     data.health.total = totalHealth;
+    if (data.health.aggravated + data.health.lethal > data.health.total) {
+      data.health.aggravated = data.health.total - data.health.lethal
+      if (data.health.aggravated <= 0) {
+        data.health.aggravated = 0
+        data.health.lethal = data.health.total
+      }
+    }
     data.health.penalty = currentPenalty;
     let animaLevel = "dim";
     if (data.anima.value > 2) {

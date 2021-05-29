@@ -92,11 +92,12 @@
     "ExEss.Intimacy": "Intimacy",
     "ExEss.Intimacies": "Intimacies",
     "ExEss.Stats": "Stats",
-    "ExEss.Description": "Description",
-    "ExEss.Items": "Items",
+    "ExEss.Charms": "Charms",
     "ExEss.Advantages": "Advantages",
     "ExEss.Merits": "Merits",
-    "ExEss.Charms": "Charms",
+    "ExEss.Ventures": "Ventures",
+    "ExEss.Description": "Description",
+    "ExEss.Items": "Items",
 
     "ExEss.Requirement": "Requirement",
 

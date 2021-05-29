@@ -713,10 +713,12 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
       const fulls = Number(data[states['-']]) || 0
       const halfs = Number(data[states['/']]) || 0
+      const crossed = Number(data[states.x]) || 0
 
-      const values = new Array(fulls + halfs)
+      const values = new Array(halfs + crossed)
 
       values.fill('/', 0, halfs)
+      values.fill('x', halfs, halfs + crossed)
 
       $(this).find('.resource-counter-step').each(function () {
         this.dataset.state = ''
