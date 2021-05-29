@@ -13,7 +13,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       classes: ["exaltedessence", "sheet", "actor"],
       template: "systems/exaltedessence/templates/actor/actor-sheet.html",
       width: 800,
-      height: 900,
+      height: 1000,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "stats" }]
     });
   }
@@ -48,6 +48,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     // Initialize containers.
     const gear = [];
+    const weapons = [];
+    const armor = [];
     const advantages = [];
     const merits = [];
     const intimacies = [];
@@ -86,6 +88,12 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       if (i.type === 'item') {
         gear.push(i);
       }
+      else if (i.type === 'weapon') {
+        weapons.push(i);
+      }
+      else if (i.type === 'armor') {
+        armor.push(i);
+      }
       // Append to advantages.
       else if (i.type === 'advantage') {
         advantages.push(i);
@@ -114,6 +122,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     // Assign and return
     actorData.gear = gear;
+    actorData.weapons = weapons;
+    actorData.armor = armor;
     actorData.merits = merits;
     actorData.intimacies = intimacies;
     actorData.advantages = advantages;
@@ -167,7 +177,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     });
 
     html.find('#rollDecisive').mousedown(ev => {
-      this._openDecisiveDialogue();
+      this._openDecisiveDialogue($(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"));
     });
 
     // Rollable abilities.
@@ -263,7 +273,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
                                     </div>
                                 </div>
                             </div>`;
-          ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.OOC });
+          ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: roll });
         }
       }
     }).render(true);
@@ -321,7 +331,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           if (woundPenalty && data.health.penalty != 'inc') {
             abilityDice = abilityDice - data.health.penalty;
           }
-          if(flurry) {
+          if (flurry) {
             abilityDice = abilityDice - 3;
           }
 
@@ -369,13 +379,13 @@ export class ExaltedessenceActorSheet extends ActorSheet {
               </div>
           </div>
           `
-          ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.OOC });
+          ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: roll });
         }
       }
     }).render(true);
   }
 
-  async _openDecisiveDialogue() {
+  async _openDecisiveDialogue(accuracy, damage, overwhelming) {
     const actorData = duplicate(this.actor)
     let confirmed = false;
     // Enter the Die type 
@@ -384,8 +394,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     let singleSuccess = 7;
     // What number is starting number needed for a double success, set to 0 to disable
     const template = "systems/exaltedessence/templates/dialogues/decisive-roll.html"
-    console.log(actorData)
-    const html = await renderTemplate(template, { "power": actorData.data.power.value });
+    const html = await renderTemplate(template, { "power": actorData.data.power.value, "weapon-accuracy": accuracy, "weapon-damage": damage, "overwhelming": overwhelming });
     new Dialog({
       title: `Die Roller`,
       content: html,
@@ -436,7 +445,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             if (woundPenalty && data.health.penalty != 'inc') {
               abilityDice = abilityDice - data.health.penalty;
             }
-            if(flurry) {
+            if (flurry) {
               abilityDice = abilityDice - 3;
             }
 
@@ -466,6 +475,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             if (bonusSuccesses) total += bonusSuccesses;
 
             total -= defence;
+
+            var rolls = [roll]
 
             let message_content = '';
             const threshholdPower = power - hardness;
@@ -538,9 +549,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
                     </div>
                 </div>
               `
+              rolls.push(damageRoll)
             }
 
-            ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: message_content, type: CONST.CHAT_MESSAGE_TYPES.OOC });
+            const pool = PoolTerm.fromRolls(rolls);
+            ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: message_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: Roll.fromTerms([pool])});
           }
         }
       }

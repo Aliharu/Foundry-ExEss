@@ -211,6 +211,10 @@
   align-items: center;
 }
 
+.exaltedessence .mb-2 {
+  margin-bottom: 20px;
+}
+
 .exaltedessence .resource-label {
   font-weight: bold;
 }
@@ -220,6 +224,10 @@
 }
 
 .exaltedessence .resource-label::first-letter {
+  text-transform: uppercase;
+}
+
+.exaltedessence .resource-table-value::first-letter {
   text-transform: uppercase;
 }
 
@@ -266,6 +274,21 @@
 
 .exaltedessence .items-list .item img {
   display: block;
+}
+
+.exaltedessence .items-list .item-large {
+  height: 40px;
+  text-align: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.exaltedessence .items-list .item-large .item-name {
+  white-space: nowrap;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .exaltedessence .items-list .item-name {

@@ -1,8 +1,8 @@
 {
   "name": "exaltedessence",
-  "title": "ExaltedEssence",
-  "description": "The unofficial Exalted Essence system module for FoundryVTT!",
-  "version": "0.4.0", 
+  "title": "Exalted Essence",
+  "description": "Exalted Essence system module for FoundryVTT!",
+  "version": "0.4.5", 
   "minimumCoreVersion": "0.8.5",
   "compatibleCoreVersion": "0.8.5",
   "templateVersion": 2,
@@ -22,8 +22,8 @@
   "gridUnits": "ft",
   "primaryTokenAttribute": "power",
   "secondaryTokenAttribute": "damage",
-  "url": "",
-  "manifest": "",
+  "url": "https://github.com/Aliharu/Foundry-ExEss",
+  "manifest": "https://raw.githubusercontent.com/Aliharu/Foundry-ExEss/master/system.json",
   "download": "",
   "license": "LICENSE.txt"
 }

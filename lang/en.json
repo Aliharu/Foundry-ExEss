@@ -6,7 +6,7 @@
     "ExEss.Aspect": "Aspect",
     "ExEss.CasteAspect": "Caste/Aspect",
     "ExEss.Level": "Level",
-    "ExEss.Anima": "Anima",
+    "ExEss.Essence": "Essence",
     "ExEss.Motes": "Motes",
     "ExEss.Power": "Power",
     "ExEss.Will": "Will",
@@ -14,6 +14,12 @@
     "ExEss.HealthLevels": "Health Levels",
     "ExEss.MajorVirtue": "Major Virtue",
     "ExEss.MinorVirtue": "Minor Virtue",
+
+    "ExEss.Anima": "Anima",
+    "ExEss.Passive": "Passive",
+    "ExEss.Active": "Active",
+    "ExEss.Iconic": "Iconic",
+
 
     "ExEss.Abyssal": "Abyssal",
     "ExEss.Alchemical": "Alchemical",
@@ -25,6 +31,7 @@
     "ExEss.Lunar": "Lunar",
     "ExEss.Sidereal": "Sidereal",
     "ExEss.Solar": "Solar",
+    "ExEss.Other": "Other",
 
     "ExEss.Attribute": "Attribute",
     "ExEss.Attributes": "Attributes",
@@ -38,9 +45,21 @@
 
     "ExEss.Combat": "Combat",
     "ExEss.Defence": "Defence",
+    "ExEss.Parry": "Parry",
+    "ExEss.Evasion": "Evasion",
     "ExEss.Soak": "Soak",
     "ExEss.Hardness": "Hardness",
+    "ExEss.Resolve": "Resolve",
 
+    "ExEss.Weapons": "Weapons",
+    "ExEss.Accuracy": "Accuracy",
+    "ExEss.Damage": "Damage",
+    "ExEss.Overwhelming": "Overwhelming",
+
+    "ExEss.Armor": "Armor",
+    "ExEss.Penalty": "Penalty",
+
+    "ExEss.Attack": "Attack",
     "ExEss.DecisiveAttack": "Decisive Attack",
 
     "ExEss.Athletics": "Athletics",
@@ -78,6 +97,8 @@
     "ExEss.Advantages": "Advantages",
     "ExEss.Merits": "Merits",
     "ExEss.Charms": "Charms",
+
+    "ExEss.Requirement": "Requirement",
 
     "ExEss.Spell": "Spell",
     "ExEss.Spells": "Spells",

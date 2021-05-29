@@ -24,6 +24,18 @@
     }
   }
 
+  .item-large {
+    height: 40px;
+    text-align: center;
+    align-items: center;
+
+    .item-name {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+
   .item-name {
     margin: 0;
   }
