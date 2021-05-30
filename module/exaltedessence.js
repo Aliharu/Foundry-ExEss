@@ -43,7 +43,7 @@ Hooks.once('init', async function() {
 
   Handlebars.registerHelper('toLowerCase', function(str) {
     return str.toLowerCase();
-  });
+  }); 
 
   Handlebars.registerHelper('numLoop', function (num, options) {
     let ret = ''
@@ -54,6 +54,10 @@ Hooks.once('init', async function() {
 
     return ret
   })
+});
+
+Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+  return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
 });
 
 Hooks.once("ready", async function() {
