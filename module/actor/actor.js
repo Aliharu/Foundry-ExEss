@@ -44,9 +44,18 @@ export class ExaltedessenceActor extends Actor {
       }
     }
     data.health.penalty = currentPenalty;
-    let animaLevel = "dim";
-    if (data.anima.value > 2) {
-      animaLevel = "active";
+    let animaLevel = "";
+    if (data.anima.value >= 2) {
+      animaLevel = "dim";
+    }
+    if (data.anima.value >= 4) {
+      animaLevel = "glowing";
+    }
+    if (data.anima.value >= 6) {
+      animaLevel = "burning";
+    }
+    if (data.anima.value >= 8) {
+      animaLevel = "bonfire";
     }
     if(data.anima.value == 10) {
       animaLevel = "iconic";

@@ -1,7 +1,7 @@
 {
   "Actor": {
     "types": [
-      "character"
+      "character", "qc"
     ],
     "templates": {
       "base": {
@@ -46,7 +46,10 @@
         },
         "motes": {
           "value": 0,
-          "min": 0
+          "total": 0,
+          "min": 0,
+          "flowing": 0,
+          "still": 0
         },
         "parry": {
           "value": 0,
@@ -168,6 +171,11 @@
         "caste": "",
         "color": "#FFFFFF"
       }
+    },
+    "qc": {
+      "templates": [
+        "base"
+      ]
     }
   },
   "Item": {

@@ -13,3 +13,5 @@ Code for dot/box counters taken from Foundry-V5 (credit to erizocosmico)
 ## Notes
 
 Currently the initative tracker rolls Finesse+Athletics with no double 10s.  Reccomended that you don't use foundries built in initiative roller.
+
+It is recommended you download the popcorn initiative module to use with this system.

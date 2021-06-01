@@ -15,11 +15,13 @@
     "ExEss.MajorVirtue": "Major Virtue",
     "ExEss.MinorVirtue": "Minor Virtue",
 
+    "ExEss.Flowing": "Flowing",
+    "ExEss.Still": "Still",
+
     "ExEss.Anima": "Anima",
     "ExEss.Passive": "Passive",
     "ExEss.Active": "Active",
     "ExEss.Iconic": "Iconic",
-
 
     "ExEss.Abyssal": "Abyssal",
     "ExEss.Alchemical": "Alchemical",
