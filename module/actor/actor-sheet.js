@@ -7,6 +7,15 @@
  */
 export class ExaltedessenceActorSheet extends ActorSheet {
 
+    /**
+   * Get the correct HTML template path to use for rendering this particular sheet
+   * @type {String}
+   */
+     get template() {
+      if (this.actor.data.type === "qc") return "systems/exaltedessence/templates/actor/qc-sheet.html";
+      return "systems/exaltedessence/templates/actor/actor-sheet.html";
+    }
+
   /** @override */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
@@ -24,12 +33,12 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   getData() {
     const data = super.getData();
     data.dtypes = ["String", "Number", "Boolean"];
-    for (let attr of Object.values(data.data.data.attributes)) {
-      attr.isCheckbox = attr.dtype === "Boolean";
-    }
 
     // Prepare items.
     if (this.actor.data.type == 'character') {
+      for (let attr of Object.values(data.data.data.attributes)) {
+        attr.isCheckbox = attr.dtype === "Boolean";
+      }
       this._prepareCharacterItems(data);
     }
 
@@ -306,6 +315,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           let stunt = html.find('#stunt').is(':checked');
           let woundPenalty = html.find('#wound-penalty').is(':checked');
           let flurry = html.find('#flurry').is(':checked');
+          let armorPenalty = html.find('#armor-penalty').is(':checked');
 
 
           let miscBonus = parseInt(html.find('#misc-bonus').val());
@@ -333,6 +343,13 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           }
           if (flurry) {
             abilityDice = abilityDice - 3;
+          }
+          if (armorPenalty) {
+            for (let armor of this.actor.armor) {
+              if(armor.equiped) {
+                abilityDice = abilityDice - armor.penalty;
+              }
+            }
           }
 
           if (miscBonus) {
@@ -385,7 +402,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }).render(true);
   }
 
-  async _openDecisiveDialogue(accuracy, damage, overwhelming) {
+  async _openDecisiveDialogue(weaponAccuracy, weaponDamage, overwhelming) {
     const actorData = duplicate(this.actor)
     let confirmed = false;
     // Enter the Die type 
@@ -394,7 +411,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     let singleSuccess = 7;
     // What number is starting number needed for a double success, set to 0 to disable
     const template = "systems/exaltedessence/templates/dialogues/decisive-roll.html"
-    const html = await renderTemplate(template, { "power": actorData.data.power.value, "weapon-accuracy": accuracy, "weapon-damage": damage, "overwhelming": overwhelming });
+    const html = await renderTemplate(template, { "power": actorData.data.power.value, "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming });
     new Dialog({
       title: `Die Roller`,
       content: html,
@@ -419,12 +436,13 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             let stunt = html.find('#stunt').is(':checked');
             let woundPenalty = html.find('#wound-penalty').is(':checked');
             let flurry = html.find('#flurry').is(':checked');
-
+            let armorPenalty = html.find('#armor-penalty').is(':checked');
 
             let miscBonus = parseInt(html.find('#misc-bonus').val());
             let miscPenalty = parseInt(html.find('#misc-penalty').val());
 
             let bonusSuccesses = parseInt(html.find('#bonus-success').val());
+            // let bonusDamageSuccesses = parseInt(html.find('#bonus-damage-success').val());
             let power = parseInt(html.find('#power').val());
 
             let attributeDice = data.attributes[attribute].value;
@@ -447,6 +465,13 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             }
             if (flurry) {
               abilityDice = abilityDice - 3;
+            }
+            if (armorPenalty) {
+              for (let armor of this.actor.armor) {
+                if(armor.equiped) {
+                  abilityDice = abilityDice - armor.penalty;
+                }
+              }
             }
 
             if (miscBonus) {
@@ -474,13 +499,13 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             if (bonus) total += bonus;
             if (bonusSuccesses) total += bonusSuccesses;
 
-            total -= defence;
+            var postDefenceTotal = total - defence;
 
             var rolls = [roll]
 
             let message_content = '';
             const threshholdPower = power - hardness;
-            if (total < 0 || threshholdPower < 0) {
+            if (postDefenceTotal < 0 || threshholdPower < 0) {
               message_content = `
                 <div class="chat-card item-card">
                     <div class="card-content">Decisive Attack</div>
@@ -495,6 +520,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
                                             </div>
                                         </div>
                                         <h4 class="dice-formula">${total} Succeses</h4>
+                                        <h4 class="dice-formula">${defence} defence</h4>
                                         <h4 class="dice-total">Attack Missed!</h4>
                                     </div>
                                 </div>
@@ -506,7 +532,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             }
             else {
               // Deal Damage
-              let damage = total + threshholdPower;
+              let damage = postDefenceTotal + threshholdPower;
               let damageRoll = new Roll(`${damage}d10cs>=${singleSuccess}`).evaluate({ async: false });
               let damageDiceRoll = damageRoll.dice[0].results;
               let damageBonus = "";
@@ -518,9 +544,15 @@ export class ExaltedessenceActorSheet extends ActorSheet {
                 else { getDamageDice += `<li class="roll die d10">${dice.result}</li>`; }
               }
 
-              let damageTotal = damageRoll.total;
-              if (bonus) damageTotal += damageBonus;
-              if (bonusSuccesses) damageTotal += bonusSuccesses;
+              let damageSuccess = damageRoll.total;
+              if (bonus) damageSuccess += damageBonus;
+              // if (bonusDamageSuccesses) damageSuccess += bonusDamageSuccesses;
+
+              let damageTotal = damageSuccess - soak;
+
+              if(damageTotal < overwhelming) {
+                damageTotal = overwhelming
+              }
 
               message_content = `
                 <div class="chat-card item-card">
@@ -535,13 +567,15 @@ export class ExaltedessenceActorSheet extends ActorSheet {
                                                 <ol class="dice-rolls">${get_dice}</ol>
                                             </div>
                                         </div>
-                                        <h4 class="dice-formula">${total} Threshhold Succeses + ${power} power - ${defence} defence</h4>
+                                        <h4 class="dice-formula">${total} Succeses - ${defence} defence</h4>
+                                        <h4 class="dice-formula">${postDefenceTotal} Extra Succeses + ${power} power - ${soak} soak</h4>
                                         <div class="dice-tooltip">
                                           <div class="dice">
                                               <ol class="dice-rolls">${getDamageDice}</ol>
                                           </div>
                                         </div>
-                                        <h4 class="dice-total">${damageTotal} Damage</h4>
+                                        <h4 class="dice-formula">${damageSuccess} Damage - ${soak} soak (${overwhelming} ovw)</h4>
+                                        <h4 class="dice-total">${damageTotal} Total Damage</h4>
                                     </div>
                                 </div>
                             </div>

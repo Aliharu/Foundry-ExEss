@@ -4,9 +4,12 @@
   <header class="sheet-header">
     <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100" />
     <div class="header-fields">
-      <div class="grid grid-3col flexrow">
+      <div>
         <h1 class="charname"><input name="name" type="text" value="{{actor.name}}"
             placeholder="{{localize 'ExEss.NameTitle'}}" /></h1>
+      </div>
+      <div class="grid grid-2col flexrow">
+
         <!-- <h1 class="charname"><input name="data.details.exalt" type="text" value="{{data.data.details.exalt}}"
           placeholder="{{localize 'ExEss.Exalt'}}" /></h1> -->
         <h1 class="charname"> <select name="data.details.exalt" data-type="String">
@@ -38,8 +41,9 @@
           </div>
           <div>
             <label class="resource-label">{{localize "ExEss.Motes"}}</label>
-            <div class="d-flex">
+            <div class="resource-content flexrow flex-center flex-between">
               <input type="number" name="data.motes.value" value="{{data.data.motes.value}}" data-dtype="Number" />
+              /
               <input type="number" name="data.motes.total" value="{{data.data.motes.total}}" data-dtype="Number" />
             </div>
           </div>
@@ -55,15 +59,22 @@
         </div>
         <div class="resource-content flexrow flex-center flex-between">
           {{#ifEquals data.data.details.exalt 'getimian'}}
-            <div>
-              <label class="resource-label">{{localize "ExEss.Flowing"}}</label>
-              <input type="number" name="data.motes.flowing" value="{{data.data.motes.flowing}}" data-dtype="Number" />
-            </div>
-            <div>
-              <label class="resource-label">{{localize "ExEss.Still"}}</label>
-              <input type="number" name="data.motes.still" value="{{data.data.motes.still}}" data-dtype="Number" />
-            </div>
+          <div>
+            <label class="resource-label">{{localize "ExEss.Flowing"}}</label>
+            <input type="number" name="data.motes.flowing" value="{{data.data.motes.flowing}}" data-dtype="Number" />
+          </div>
+          <div>
+            <label class="resource-label">{{localize "ExEss.Still"}}</label>
+            <input type="number" name="data.motes.still" value="{{data.data.motes.still}}" data-dtype="Number" />
+          </div>
           {{/ifEquals}}
+          {{#ifEquals data.data.details.exalt 'lunar'}}
+          <div>
+            <label class="resource-label">{{localize "ExEss.SacredHunt"}}</label>
+            <input type="text" name="data.details.hunt" value="{{data.data.details.hunt}}" />
+          </div>
+          {{/ifEquals}}
+
         </div>
       </div>
       <div class="resources grid grid-3col">
@@ -76,7 +87,8 @@
           </div>
           <div class="resource-content flexrow flex-center flex-between">
             <div class="resource-counter" data-states="/:lethal,x:aggravated" data-max="{{data.data.health.total}}"
-              data-lethal="{{data.data.health.lethal}}" data-aggravated="{{data.data.health.aggravated}}" data-name="data.health">
+              data-lethal="{{data.data.health.lethal}}" data-aggravated="{{data.data.health.aggravated}}"
+              data-name="data.health">
               {{#numLoop data.data.health.total}}
               <span class="resource-counter-step" data-index="{{this}}" data-state=""></span>
               {{/numLoop}}
@@ -128,7 +140,7 @@
     <a class="item" data-tab="charms">{{localize "ExEss.Charms"}}/{{localize "ExEss.Spells"}}</a>
     <a class="item" data-tab="intimacies">{{localize "ExEss.Intimacies"}}</a>
     <a class="item" data-tab="advantages">{{localize "ExEss.Advantages"}}</a>
-    <!-- <a class="item" data-tab="ventures">{{localize "ExEss.Ventures"}}</a> -->
+    <a class="item" data-tab="advancement">{{localize "ExEss.Advancement"}}</a>
     <a class="item" data-tab="description">{{localize "ExEss.Description"}}</a>
   </nav>
 
@@ -268,7 +280,9 @@
               {{item.data.overwhelming}}
             </div>
             <div>
-              <button id="rollDecisive" class="rollButton" data-accuracy="{{item.data.accuracy}}" data-damage="{{item.data.damage}}" data-overwhelming="{{item.data.overwhelming}}">{{localize "ExEss.Attack"}}</button>
+              <button id="rollDecisive" class="rollButton" data-accuracy="{{item.data.accuracy}}"
+                data-damage="{{item.data.damage}}" data-overwhelming="{{item.data.overwhelming}}">{{localize
+                "ExEss.Attack"}}</button>
             </div>
             <div class="item-controls">
               <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
@@ -335,15 +349,15 @@
         </li>
         <li>
           <label class="resource-label">{{localize "ExEss.Passive"}}</label>
-          <input type="text" name="data.anima.passive" value="{{data.data.anima.passive}}"/>
+          <input type="text" name="data.anima.passive" value="{{data.data.anima.passive}}" />
         </li>
         <li>
           <label class="resource-label">{{localize "ExEss.Active"}}</label>
-          <input type="text" name="data.anima.active" value="{{data.data.anima.active}}"/>
+          <input type="text" name="data.anima.active" value="{{data.data.anima.active}}" />
         </li>
         <li>
           <label class="resource-label">{{localize "ExEss.Iconic"}}</label>
-          <input type="text" name="data.anima.iconic" value="{{data.data.anima.iconic}}"/>
+          <input type="text" name="data.anima.iconic" value="{{data.data.anima.iconic}}" />
         </li>
         <li>
           <div class="resource-label list-section-header">
@@ -494,6 +508,53 @@
         </li>
         {{/each}}
       </ol>
+    </div>
+
+    {{!-- Advancement Tab --}}
+    <div class="tab advancement" data-group="primary" data-tab="advancement">
+      <div class="resource-label flex-center list-section-header">
+        {{localize "ExEss.Milestones"}}
+      </div>
+      <div class="grid grid-4col flex-group-center">
+        <div class="resource-content flexrow flex-center flex-between">
+          <div>
+            <label class="resource-label">{{localize "ExEss.Personal"}}</label>
+            <input name="data.milestones.personal" value="{{data.data.milestones.personal}}" type="text" />
+          </div>
+        </div>
+        <div class="resource-content flexrow flex-center flex-between">
+          <div>
+            <label class="resource-label">{{localize "ExEss.Minor"}}</label>
+            <input name="data.milestones.minor" value="{{data.data.milestones.minor}}" type="text" />
+          </div>
+        </div>
+        <div class="resource-content flexrow flex-center flex-between">
+          <div>
+            <label class="resource-label">{{localize "ExEss.Exalt"}}</label>
+            <input name="data.milestones.exalt" value="{{data.data.milestones.exalt}}" type="text" />
+          </div>
+        </div>
+        <div class="resource-content flexrow flex-center flex-between">
+          <div>
+            <label class="resource-label">{{localize "ExEss.Major"}}</label>
+            <input name="data.milestones.major" value="{{data.data.milestones.major}}" type="text" />
+          </div>
+        </div>
+      </div>
+      <div>
+        <p>With milestones you may purchase the following advancements</p>
+        <p><b>Personal:</b> Repurchase charm, Charm Mode, Gain/change/intensify intimacy (If applicable to the story)
+        </p>
+        <p><b>Minor:</b> Charm, Increase Ability by +1.</p>
+        <p><b>Major:</b> Increase Attribute by +1, Add or raise merit, Change Virtue (If applicable to the story).</p>
+        <p><b>Exalt:</b> Minor or Major Advancement. Must be spent on exalt specific powers</p>
+        <p><b>Essence Increase:</b> Recive 1 excellency or Ox-Body for free</p>
+      </div>
+      <div class="resource-label flex-center list-section-header">
+        {{localize "ExEss.VenturesAndEquipment"}}
+      </div>
+        {{editor content=data.data.milestones.triggers target="data.milestones.triggers" button=true owner=owner
+        editable=true}}
     </div>
 
     {{!-- Biography Tab --}}

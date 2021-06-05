@@ -18,6 +18,8 @@
     "ExEss.Flowing": "Flowing",
     "ExEss.Still": "Still",
 
+    "ExEss.SacredHunt": "Sacred Hunt",
+
     "ExEss.Anima": "Anima",
     "ExEss.Passive": "Passive",
     "ExEss.Active": "Active",
@@ -53,6 +55,8 @@
     "ExEss.Hardness": "Hardness",
     "ExEss.Resolve": "Resolve",
 
+    "ExEss.Equiped": "Equiped",
+
     "ExEss.Weapons": "Weapons",
     "ExEss.Accuracy": "Accuracy",
     "ExEss.Damage": "Damage",
@@ -84,6 +88,7 @@
     "ExEss.CurrentPenalty": "Current Penalty",
     "ExEss.WoundPenalty": "Wound Penalty",
     "ExEss.Flurry": "Flurry",
+    "ExEss.ArmorPenalty": "Armor Penalty",
     "ExEss.CurrentWoundPenalty": "Current Wound Penalty",
 
     "ExEss.Excellency": "Excellency",
@@ -98,6 +103,7 @@
     "ExEss.Advantages": "Advantages",
     "ExEss.Merits": "Merits",
     "ExEss.Ventures": "Ventures",
+    "ExEss.Advancement": "Advancement",
     "ExEss.Description": "Description",
     "ExEss.Items": "Items",
 
@@ -117,6 +123,10 @@
     "ExEss.RollAbility": "Roll Ability",
 
     "ExEss.Strength": "Strength",
+    "ExEss.Milestones": "Milestones",
+    "ExEss.VenturesAndEquipment": "Ventures & Equipment",
+
+    "ExEss.Personal": "Personal",
     "ExEss.Minor": "Minor",
     "ExEss.Major": "Major",
     "ExEss.Type": "Type",

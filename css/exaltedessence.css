@@ -127,8 +127,8 @@
 
 .exaltedessence .sheet-header {
   -webkit-box-flex: 0;
-  -ms-flex: 0 0 250px;
-  flex: 0 0 250px;
+  -ms-flex: 0 0 300px;
+  flex: 0 0 300px;
   overflow: hidden;
   display: -webkit-box;
   display: -ms-flexbox;
