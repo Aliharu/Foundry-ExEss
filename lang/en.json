@@ -101,6 +101,7 @@
     "ExEss.Stats": "Stats",
     "ExEss.Charms": "Charms",
     "ExEss.Advantages": "Advantages",
+    "ExEss.Resonance": "Resonance",
     "ExEss.Merits": "Merits",
     "ExEss.Ventures": "Ventures",
     "ExEss.Advancement": "Advancement",
@@ -135,7 +136,10 @@
 
     "ExEss.BonusSuccesses": "Bonus Successes",
     "ExEss.MiscPenalty": "Misc Penalty",
-    "ExEss.MiscBonus": "Misc Bonus"
-
+    "ExEss.DicePenalty": "Dice Penalty",
+    "ExEss.MiscBonus": "Misc Bonus",
+    "ExEss.BonusDice": "Bonus Dice",
+    "ExEss.DamageDice": "Damage Dice",
+    "ExEss.DamageSuccesses": "Damage Successes"
 
 }

@@ -178,6 +178,11 @@
   font-size: 29px;
 }
 
+.exaltedessence textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
 .exaltedessence .margin-right {
   margin-right: 10px;
 }
@@ -306,13 +311,6 @@
   -webkit-box-flex: 0;
   -ms-flex: 0 0 172px;
   flex: 0 0 172px;
-  text-align: right;
-}
-
-.exaltedessence .items-list .advantages-controls {
-  -webkit-box-flex: 0;
-  -ms-flex: 0 0 210px;
-  flex: 0 0 210px;
   text-align: right;
 }
 

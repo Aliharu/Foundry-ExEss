@@ -1,7 +1,7 @@
 <form>
     <div class="sheet-body exaltedessence">
         <div class="flex-center resource-label" style="font-weight: bold;">
-            Attacker
+            Accuracy
         </div>
         <div>
             <div class="resource grid grid-4col flex-center">
@@ -38,7 +38,7 @@
                 <input type="checkbox" id="ability-excellency" name="data.rollable">
 
                 <label class="check-button" style="align-items:center;display:flex;">
-                    <input id="double-none" name="double-sevens" type="checkbox">
+                    <input id="double-sevens" name="double-sevens" type="checkbox">
                     <span>Db 7+s</span>
                 </label>
                 <label class="check-button" style="align-items:center;display:flex;">
@@ -82,11 +82,11 @@
             </div>
             <div class="resource grid grid-2col flex-center">
                 <div>
-                    <label class="resource-label">{{localize "ExEss.MiscBonus"}} </label>
+                    <label class="resource-label">{{localize "ExEss.BonusDice"}} </label>
                     <input id="misc-bonus" type="number">
                 </div>
                 <div>
-                    <label class="resource-label">{{localize "ExEss.MiscPenalty"}} </label>
+                    <label class="resource-label">{{localize "ExEss.DicePenalty"}} </label>
                     <input id="misc-penalty" type="number">
                 </div>
             </div>
@@ -99,6 +99,39 @@
                     <label class="resource-label">{{localize "ExEss.Power"}} </label>
                     <input id="power" type="number" value="{{power}}">
                 </div>
+            </div>
+        </div>
+        <div class="flex-center resource-label" style="font-weight: bold;">
+            Damage
+        </div>
+        <div>
+            <div class="resource grid grid-2col flex-center">
+                <div>
+                    <label class="resource-label">{{localize "ExEss.DamageDice"}} </label>
+                    <input id="damage-dice" type="number">
+                </div>
+                <div>
+                    <label class="resource-label">{{localize "ExEss.DamageSuccesses"}} </label>
+                    <input id="damage-successes" type="number">
+                </div>
+            </div>
+            <div class="resource grid grid-4col flex-center">
+                <label class="check-button" style="align-items:center;display:flex;">
+                    <input id="double-damage-sevens" name="double-damage-sevens" type="checkbox">
+                    <span>Db 7+s</span>
+                </label>
+                <label class="check-button" style="align-items:center;display:flex;">
+                    <input id="double-damage-eights" name="double-damage-eights" type="checkbox">
+                    <span>Db 8+s</span>
+                </label>
+                <label class="check-button" style="align-items:center;display:flex;">
+                    <input id="double-damage-nines" name="double-damage-nines" type="checkbox">
+                    <span>Db 9+s</span>
+                </label>
+                <label class="check-button" style="align-items:center;display:flex;">
+                    <input id="double-damage-tens" name="double-damage-tens" type="checkbox" checked>
+                    <span>Db 10s</span>
+                </label>
             </div>
         </div>
         <div class="flex-center resource-label" style="font-weight: bold;">

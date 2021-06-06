@@ -1,7 +1,7 @@
 {
   "Actor": {
     "types": [
-      "character", "qc"
+      "character", "npc"
     ],
     "templates": {
       "base": {
@@ -172,6 +172,11 @@
         "color": "#FFFFFF",
         "hunt": ""
       },
+      "advantages": {
+        "one": "",
+        "two": "",
+        "resonance": ""
+      },
       "milestones": {
         "personal": 0,
         "minor": 0,
@@ -180,7 +185,7 @@
         "triggers": ""
       }
     },
-    "qc": {
+    "npc": {
       "templates": [
         "base"
       ]
