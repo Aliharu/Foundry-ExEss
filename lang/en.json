@@ -104,6 +104,7 @@
     "ExEss.Resonance": "Resonance",
     "ExEss.Merits": "Merits",
     "ExEss.Ventures": "Ventures",
+    "ExEss.Equipment": "Equipment",
     "ExEss.Advancement": "Advancement",
     "ExEss.Description": "Description",
     "ExEss.Items": "Items",
@@ -125,7 +126,6 @@
 
     "ExEss.Strength": "Strength",
     "ExEss.Milestones": "Milestones",
-    "ExEss.VenturesAndEquipment": "Ventures & Equipment",
 
     "ExEss.Personal": "Personal",
     "ExEss.Minor": "Minor",

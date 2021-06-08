@@ -47,9 +47,17 @@
         "motes": {
           "value": 0,
           "total": 0,
-          "min": 0,
-          "flowing": 0,
-          "still": 0
+          "min": 0
+        },
+        "flowing": {
+          "value": 0,
+          "total": 0,
+          "min": 0
+        },
+        "still": {
+          "value": 0,
+          "total": 0,
+          "min": 0
         },
         "parry": {
           "value": 0,

@@ -57,7 +57,7 @@ export class ExaltedessenceActor extends Actor {
     if (data.anima.value >= 8) {
       animaLevel = "bonfire";
     }
-    if(data.anima.value == 10) {
+    if(data.anima.value === 10) {
       animaLevel = "iconic";
     }
     data.anima.level = animaLevel;

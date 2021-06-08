@@ -35,7 +35,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     data.dtypes = ["String", "Number", "Boolean"];
 
     // Prepare items.
-    if (this.actor.data.type == 'character') {
+    if (this.actor.data.type === 'character') {
       for (let attr of Object.values(data.data.data.attributes)) {
         attr.isCheckbox = attr.dtype === "Boolean";
       }
@@ -222,15 +222,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
   async _openRollDialogue() {
     let confirmed = false;
-    // Enter the Die type 
-    let dieNum = 10;
-    // What number is starting number needed for a single success
-    let singleSuccess = 7;
-    // What number is starting number needed for a double success, set to 0 to disable
     const template = "systems/exaltedessence/templates/dialogues/dice-roll.html"
     const html = await renderTemplate(template, {});
     new Dialog({
-      title: `Die ${dieNum} Roller`,
+      title: `Die 10 Roller`,
       content: html,
       buttons: {
         roll: { label: "Roll it!", callback: () => confirmed = true },
@@ -240,20 +235,17 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         if (confirmed) {
           let doubleSuccess = this._calculateDoubleDice(html);
           let dice = parseInt(html.find('#num').val());
-          let bonusSuccesses = parseInt(html.find('#bonus-success').val());
+          let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
 
-          let roll = new Roll(`${dice}d${dieNum}cs>=${singleSuccess}`).evaluate({ async: false });
+          let roll = new Roll(`${dice}d10cs>=7`).evaluate({ async: false });
           let dice_roll = roll.dice[0].results;
           let bonus = "";
           let get_dice = "";
           for (let dice of dice_roll) {
-            // comment out if no double successes
             if (dice.result >= doubleSuccess) { bonus++; }
-            if (dice.result >= singleSuccess) { get_dice += `<li class="roll die d${dieNum} success">${dice.result}</li>`; }
-            else { get_dice += `<li class="roll die d${dieNum}">${dice.result}</li>`; }
+            if (dice.result >= 7) { get_dice += `<li class="roll die d10 success">${dice.result}</li>`; }
+            else { get_dice += `<li class="roll die d10">${dice.result}</li>`; }
           }
-          // if no double success uncomment below and remove the entry below that.
-          //let total = roll.total;
           let total = roll.total;
           if (bonus) total += bonus;
           if (bonusSuccesses) total += bonusSuccesses;
@@ -264,6 +256,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
                                     <div class="flexrow 1">
                                         <div>Dice Roller - Number of Successes<div class="dice-roll">
                                                 <div class="dice-result">
+                                                    <h4 class="dice-formula">${dice} Dice + ${bonusSuccesses} successes</h4>
                                                     <div class="dice-tooltip">
                                                         <div class="dice">
                                                             <ol class="dice-rolls">${get_dice}</ol>
@@ -293,10 +286,9 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     let flurry = html.find('#flurry').is(':checked');
     let armorPenalty = html.find('#armor-penalty').is(':checked');
 
-    let miscBonus = parseInt(html.find('#misc-bonus').val());
-    let miscPenalty = parseInt(html.find('#misc-penalty').val());
-
-    let bonusSuccesses = parseInt(html.find('#bonus-success').val());
+    let miscBonus = parseInt(html.find('#misc-bonus').val()) || 0;
+    let miscPenalty = parseInt(html.find('#misc-penalty').val()) || 0;
+    let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
 
     let attributeDice = data.attributes[attribute].value;
     let abilityDice = data.abilities[ability].value;
@@ -310,46 +302,58 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     let doubleSuccess = this._calculateDoubleDice(html);
 
-    if (stunt) {
-      abilityDice = abilityDice + 2;
-    }
-    if (woundPenalty && data.health.penalty != 'inc') {
-      abilityDice = abilityDice - data.health.penalty;
-    }
-    if (flurry) {
-      abilityDice = abilityDice - 3;
-    }
+    let dice = attributeDice + abilityDice;
+
     if (armorPenalty) {
       for (let armor of this.actor.armor) {
         if (armor.equiped) {
-          abilityDice = abilityDice - armor.penalty;
+          dice = dice - armor.penalty;
         }
       }
     }
-
+    if (stunt) {
+      dice += 2;
+    }
+    if (woundPenalty && data.health.penalty !== 'inc') {
+      dice -= data.health.penalty;
+    }
+    if (flurry) {
+      dice -= 3;
+    }
     if (miscBonus) {
-      abilityDice = abilityDice + miscBonus;
+      dice += miscBonus;
     }
     if (miscPenalty) {
-      abilityDice = abilityDice - miscPenalty;
+      dice -= miscPenalty;
+    }
+    
+    if (data.details.exalt === "getimian") {
+      if (attribute === "force" && (data.still.total < data.flowing.total)) {
+        bonusSuccesses += 1;
+      }
+      if (attribute === "finesse" && (data.still.total > data.flowing.total)) {
+        bonusSuccesses += 1;
+      }
+      if (attribute === "fortitude" && (data.still.total >= (data.flowing.total - 1) && data.still.total <= (data.flowing.total + 1))) {
+        bonusSuccesses += 1;
+      }
     }
 
-    let dice = attributeDice + abilityDice;
     let roll = new Roll(`${dice}d10cs>=7`).evaluate({ async: false });
     let diceRoll = roll.dice[0].results;
     let getDice = "";
 
     let bonus = "";
 
-    let total = roll.total;
-    if (bonus) total += bonus;
-    if (bonusSuccesses) total += bonusSuccesses;
-
     for (let dice of diceRoll) {
       if (dice.result >= doubleSuccess) { bonus++; }
       if (dice.result >= 7) { getDice += `<li class="roll die d10 success">${dice.result}</li>`; }
       else { getDice += `<li class="roll die d10">${dice.result}</li>`; }
     }
+
+    let total = roll.total;
+    if (bonus) total += bonus;
+    if (bonusSuccesses) total += bonusSuccesses;
 
     return { dice: dice, roll: roll, getDice: getDice, total: total };
   }
@@ -369,6 +373,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         if (confirmed) {
           const data = this.actor.data.data;
           var rollResults = this._baseAbilityDieRoll(html, data);
+          let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
           let the_content = `
           <div class="chat-card item-card">
               <div class="card-content">Dice Roll</div>
@@ -376,6 +381,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
                   <div class="flexrow 1">
                       <div>Dice Roller - Number of Successes<div class="dice-roll">
                               <div class="dice-result">
+                                  <h4 class="dice-formula">${rollResults.dice} Dice + ${bonusSuccesses} successes</h4>
                                   <div class="dice-tooltip">
                                       <div class="dice">
                                           <ol class="dice-rolls">${rollResults.getDice}</ol>
@@ -425,6 +431,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             var rollResults = this._baseAbilityDieRoll(html, data);
             let total = rollResults.total + weaponAccuracy;
             var postDefenceTotal = total - defence;
+            let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
 
             var rolls = [rollResults.roll]
             let messageContent = '';
@@ -438,6 +445,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
                             <div>
                                 <div class="dice-roll">
                                     <div class="dice-result">
+                                        <h4 class="dice-formula">${rollResults.dice} Dice + ${bonusSuccesses + weaponAccuracy} successes</h4>
                                         <div class="dice-tooltip">
                                             <div class="dice">
                                                 <ol class="dice-rolls">${rollResults.getDice}</ol>
@@ -455,7 +463,6 @@ export class ExaltedessenceActorSheet extends ActorSheet {
               `
             }
             else {
-              let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
               let bonusDamageDice = parseInt(html.find('#damage-dice').val()) || 0;
               let damageSuccesses = parseInt(html.find('#damage-success').val()) || 0;
               //Fix to damage later
@@ -463,9 +470,9 @@ export class ExaltedessenceActorSheet extends ActorSheet {
               let doubleEights = html.find('#double-damage-eights').is(':checked');
               let doubleNines = html.find('#double-damage-nines').is(':checked');
               let doubleTens = html.find('#double-damage-tens').is(':checked');
-          
+
               let doubleDamageSuccess = 11;
-          
+
               if (doubleSevens) {
                 doubleDamageSuccess = 7;
               }

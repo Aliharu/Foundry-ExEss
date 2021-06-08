@@ -16,25 +16,25 @@ export class ExaltedessenceItem extends Item {
   }
 
   async _preCreate(createData, options, userId) {
-    if(createData.type == 'advantage') {
+    if(createData.type === 'advantage') {
       this.data.update({img: "icons/svg/aura.svg"});
     }
-    if(createData.type == 'intimacy') {
+    if(createData.type === 'intimacy') {
       this.data.update({img: "icons/magic/life/heart-glowing-red.webp"});
     }
-    if(createData.type == 'spell') {
+    if(createData.type === 'spell') {
       this.data.update({img: "icons/svg/book.svg"});
     }
-    if(createData.type == 'merit') {
+    if(createData.type === 'merit') {
       this.data.update({img: "icons/svg/coins.svg"});
     }
-    if(createData.type == 'weapon') {
+    if(createData.type === 'weapon') {
       this.data.update({img: "icons/svg/sword.svg"});
     }
-    if(createData.type == 'armor') {
+    if(createData.type === 'armor') {
       this.data.update({img: "icons/svg/shield.svg"});
     }
-    if(createData.type == 'charm') {
+    if(createData.type === 'charm') {
       this.data.update({img: "icons/svg/explosion.svg"});
     }
   }

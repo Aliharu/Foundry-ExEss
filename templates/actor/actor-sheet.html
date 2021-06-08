@@ -61,11 +61,19 @@
           {{#ifEquals data.data.details.exalt 'getimian'}}
           <div>
             <label class="resource-label">{{localize "ExEss.Flowing"}}</label>
-            <input type="number" name="data.motes.flowing" value="{{data.data.motes.flowing}}" data-dtype="Number" />
+            <div class="resource-content flexrow flex-center flex-between">
+              <input type="number" name="data.flowing.value" value="{{data.data.flowing.value}}" data-dtype="Number" />
+              /
+              <input type="number" name="data.flowing.total" value="{{data.data.flowing.total}}" data-dtype="Number" />
+            </div>
           </div>
           <div>
             <label class="resource-label">{{localize "ExEss.Still"}}</label>
-            <input type="number" name="data.motes.still" value="{{data.data.motes.still}}" data-dtype="Number" />
+            <div class="resource-content flexrow flex-center flex-between">
+              <input type="number" name="data.still.value" value="{{data.data.still.value}}" data-dtype="Number" />
+              /
+              <input type="number" name="data.still.total" value="{{data.data.still.total}}" data-dtype="Number" />
+            </div>
           </div>
           {{/ifEquals}}
           {{#ifEquals data.data.details.exalt 'lunar'}}
@@ -349,15 +357,15 @@
         </li>
         <li>
           <label class="resource-label">{{localize "ExEss.Passive"}}</label>
-          <textarea type="text" name="data.anima.passive" rows="4" >{{data.data.anima.passive}}</textarea>
+          <textarea type="text" name="data.anima.passive" rows="4">{{data.data.anima.passive}}</textarea>
         </li>
         <li>
           <label class="resource-label">{{localize "ExEss.Active"}}</label>
-          <textarea type="text" name="data.anima.active" rows="4" >{{data.data.anima.active}}</textarea>
+          <textarea type="text" name="data.anima.active" rows="4">{{data.data.anima.active}}</textarea>
         </li>
         <li>
           <label class="resource-label">{{localize "ExEss.Iconic"}}</label>
-          <textarea type="text" name="data.anima.iconic" rows="4" >{{data.data.anima.iconic}}</textarea>
+          <textarea type="text" name="data.anima.iconic" rows="4">{{data.data.anima.iconic}}</textarea>
         </li>
         <li>
           <div class="resource-label list-section-header">
@@ -475,10 +483,10 @@
           </div>
         </li>
         <li>
-          <textarea type="text" name="data.advantages.one" rows="4" >{{data.data.advantages.one}}</textarea>
+          <textarea type="text" name="data.advantages.one" rows="4">{{data.data.advantages.one}}</textarea>
         </li>
         <li>
-          <textarea type="text" name="data.advantages.two" rows="4" >{{data.data.advantages.two}}</textarea>
+          <textarea type="text" name="data.advantages.two" rows="4">{{data.data.advantages.two}}</textarea>
         </li>
         <li>
           <label class="resource-label">{{localize "ExEss.Resonance"}}</label>
@@ -548,10 +556,10 @@
         <p><b>Essence Increase:</b> Recive 1 excellency or Ox-Body for free</p>
       </div>
       <div class="resource-label flex-center list-section-header">
-        {{localize "ExEss.VenturesAndEquipment"}}
+        {{localize "ExEss.Milestones"}}, {{localize "ExEss.Ventures"}}, {{localize "ExEss.Equipment"}}
       </div>
-        {{editor content=data.data.milestones.triggers target="data.milestones.triggers" button=true owner=owner
-        editable=true}}
+      {{editor content=data.data.milestones.triggers target="data.milestones.triggers" button=true owner=owner
+      editable=true}}
     </div>
 
     {{!-- Biography Tab --}}
