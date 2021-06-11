@@ -8,6 +8,8 @@
     "ExEss.Level": "Level",
     "ExEss.Essence": "Essence",
     "ExEss.Motes": "Motes",
+    "ExEss.Commited": "Commited",
+    "ExEss.BuildPower": "Build Power",
     "ExEss.Power": "Power",
     "ExEss.Will": "Will",
     "ExEss.Health": "Health",
@@ -66,7 +68,8 @@
     "ExEss.Penalty": "Penalty",
 
     "ExEss.Attack": "Attack",
-    "ExEss.DecisiveAttack": "Decisive Attack",
+    "ExEss.Decisive": "Decisive",
+    "ExEss.Withering": "Withering",
 
     "ExEss.Athletics": "Athletics",
     "ExEss.Awareness": "Awareness",
@@ -93,6 +96,7 @@
 
     "ExEss.Excellency": "Excellency",
     "ExEss.Stunt": "Stunt",
+    "ExEss.Dice": "Dice",
 
     "ExEss.Virtue": "Virtue",
     "ExEss.Virtues": "Virtues",
@@ -121,6 +125,7 @@
 
     "ExEss.Points": "Points",
 
+    "ExEss.Roll": "Roll",
     "ExEss.RollDice": "Roll Dice",
     "ExEss.RollAbility": "Roll Ability",
 

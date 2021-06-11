@@ -19,10 +19,6 @@
               "value": 0,
               "penalty": 2
             },
-            "four": {
-              "value": 0,
-              "penalty": 4
-            },
             "inc": {
               "value": 1,
               "penalty": "inc"
@@ -39,6 +35,10 @@
           "value": 0,
           "min": 0
         },
+        "stunt": {
+          "value": 0,
+          "min": 0
+        },
         "essence": {
           "value": 1,
           "min": 1,
@@ -47,7 +47,8 @@
         "motes": {
           "value": 0,
           "total": 0,
-          "min": 0
+          "min": 0,
+          "commited": 0
         },
         "flowing": {
           "value": 0,
@@ -59,14 +60,6 @@
           "total": 0,
           "min": 0
         },
-        "parry": {
-          "value": 0,
-          "min": 0
-        },
-        "evasion": {
-          "value": 0,
-          "min": 0
-        },
         "defence": {
           "value": 0,
           "min": 0
@@ -76,7 +69,7 @@
           "min": 0
         },
         "hardness": {
-          "value": 0,
+          "value": 3,
           "min": 0
         },
         "resolve": {
@@ -280,7 +273,8 @@
         "base"
       ],
       "strength": "minor",
-      "intimacytype": "tie"
+      "intimacytype": "tie",
+      "virtue": ""
     }
   }
 }

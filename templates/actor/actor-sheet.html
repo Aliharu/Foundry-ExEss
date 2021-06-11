@@ -2,7 +2,13 @@
 
   {{!-- Sheet Header --}}
   <header class="sheet-header">
-    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100" />
+    <div class="profile-img-wrapper">
+      <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100" />
+      <div class="flex-center">
+        <label class="resource-label">{{localize "ExEss.Essence"}}</label>
+        <input type="number" name="data.essence.value" value="{{data.data.essence.value}}" data-dtype="Number" />
+      </div>
+    </div>
     <div class="header-fields">
       <div>
         <h1 class="charname"><input name="name" type="text" value="{{actor.name}}"
@@ -36,16 +42,16 @@
       <div class="resources grid grid-3col">
         <div class="resource-content flexrow flex-center flex-between">
           <div>
-            <label class="resource-label">{{localize "ExEss.Essence"}}</label>
-            <input type="number" name="data.essence.value" value="{{data.data.essence.value}}" data-dtype="Number" />
-          </div>
-          <div>
             <label class="resource-label">{{localize "ExEss.Motes"}}</label>
             <div class="resource-content flexrow flex-center flex-between">
               <input type="number" name="data.motes.value" value="{{data.data.motes.value}}" data-dtype="Number" />
               /
               <input type="number" name="data.motes.total" value="{{data.data.motes.total}}" data-dtype="Number" />
             </div>
+          </div>
+          <div>
+            <label class="resource-label">{{localize "ExEss.Commited"}}</label>
+            <input type="number" name="data.commited.value" value="{{data.data.commited.value}}" data-dtype="Number" />
           </div>
         </div>
         <div class="resource-content flexrow flex-center flex-between">
@@ -121,11 +127,6 @@
               <input type="number" name="data.health.levels.two.value" value="{{data.data.health.levels.two.value}}"
                 data-dtype="Number" />
             </div>
-            <div>
-              <div>-4</div>
-              <input type="number" name="data.health.levels.four.value" value="{{data.data.health.levels.four.value}}"
-                data-dtype="Number" />
-            </div>
           </div>
         </div>
         <div>
@@ -136,8 +137,8 @@
         </div>
       </div>
       <div class="resources grid">
-        <button id="rollDice" class="rollButton">{{localize "ExEss.RollDice"}}</button>
-        <button id="rollAbility" class="rollButton">{{localize "ExEss.RollAbility"}}</button>
+        <button id="rollDice" class="roll-button">{{localize "ExEss.RollDice"}}</button>
+        <button id="rollAbility" class="roll-button">{{localize "ExEss.RollAbility"}}</button>
       </div>
     </div>
   </header>
@@ -219,23 +220,27 @@
             <label class="resource-label">{{localize "ExEss.Power"}}</label>
             <input type="number" name="data.power.value" value="{{data.data.power.value}}" data-dtype="Number" />
           </div>
-        </div>
-        <div class="resource-content flexrow flex-center flex-between">
           <div>
             <label class="resource-label">{{localize "ExEss.Will"}}</label>
             <input type="number" name="data.will.value" value="{{data.data.will.value}}" data-dtype="Number" />
+          </div>
+          <div>
+            <label class="resource-label">{{localize "ExEss.Stunt"}} {{localize "ExEss.Dice"}}</label>
+            <input type="number" name="data.stunt.value" value="{{data.data.stunt.value}}" data-dtype="Number" />
+          </div>
+        </div>
+        <div class="resource-content flexrow flex-center flex-between">
+          <div>
+            <label class="resource-label">{{localize "ExEss.BuildPower"}}</label>
+            <button id="buildPower" class="roll-button">{{localize "ExEss.Roll"}}</button>
           </div>
         </div>
       </div>
       <div class="grid grid-3col flex-group-center">
         <div class="resource-content flexrow flex-center flex-between">
           <div>
-            <label class="resource-label">{{localize "ExEss.Parry"}}</label>
-            <input type="number" name="data.parry.value" value="{{data.data.parry.value}}" data-dtype="Number" />
-          </div>
-          <div>
-            <label class="resource-label">{{localize "ExEss.Evasion"}}</label>
-            <input type="number" name="data.evasion.value" value="{{data.data.evasion.value}}" data-dtype="Number" />
+            <label class="resource-label">{{localize "ExEss.Defence"}}</label>
+            <input type="number" name="data.defence.value" value="{{data.data.defence.value}}" data-dtype="Number" />
           </div>
         </div>
         <div class="resource-content flexrow flex-center flex-between">
@@ -266,6 +271,7 @@
             <div class="item-name">{{localize "ExEss.Defence"}}</div>
             <div class="item-name">Ov</div>
             <div></div>
+            <div></div>
             <div class="item-controls">
               <a class="item-control item-create" title="Create weapon" data-type="weapon"><i class="fas fa-plus"></i>
                 Add</a>
@@ -288,9 +294,14 @@
               {{item.data.overwhelming}}
             </div>
             <div>
-              <button id="rollDecisive" class="rollButton" data-accuracy="{{item.data.accuracy}}"
+              <button id="rollWithering" class="roll-button" data-accuracy="{{item.data.accuracy}}"
                 data-damage="{{item.data.damage}}" data-overwhelming="{{item.data.overwhelming}}">{{localize
-                "ExEss.Attack"}}</button>
+                "ExEss.Withering"}}</button>
+            </div>
+            <div>
+              <button id="rollDecisive" class="roll-button" data-accuracy="{{item.data.accuracy}}"
+                data-damage="{{item.data.damage}}" data-overwhelming="{{item.data.overwhelming}}">{{localize
+                "ExEss.Decisive"}}</button>
             </div>
             <div class="item-controls">
               <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
@@ -444,6 +455,7 @@
           <div class="item-image"></div>
           <div class="item-name">Name</div>
           <div class="item-name">Strength</div>
+          <div class="item-name">Virtue</div>
           <div class="item-controls">
             <a class="item-control item-create" title="Create intimacy" data-type="intimacy"><i class="fas fa-plus"></i>
               Add</a>
@@ -455,6 +467,9 @@
           <h4 class="item-name">{{item.name}} ({{item.data.intimacytype}})</h4>
           <div class="resource-table-value resource-value-static">
             {{item.data.strength}}
+          </div>
+          <div class="resource-table-value resource-value-static">
+            {{item.data.virtue}}
           </div>
           <div class="item-controls">
             <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>

@@ -3,7 +3,7 @@
 }
 
 .sheet-header {
-  flex: 0 0 300px;
+  flex: 0 0 285px;
   overflow: hidden;
   display: flex;
   flex-direction: row;
@@ -11,10 +11,18 @@
   justify-content: flex-start;
   margin-bottom: 10px;
 
+  .profile-img-wrapper {
+    max-width: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-right: 10px;
+  }
+
   .profile-img {
     flex: 0 0 100px;
     height: 100px;
-    margin-right: 10px;
   }
 
   .header-fields {
@@ -37,6 +45,11 @@
       font-size: 29px;
     }
   }
+}
+
+.roll-button {
+  height: 26px;
+  line-height: 22px;
 }
 
 textarea {

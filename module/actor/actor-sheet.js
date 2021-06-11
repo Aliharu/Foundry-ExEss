@@ -179,8 +179,16 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       this._openAbilityRollDialogue();
     });
 
+    html.find('#buildPower').mousedown(ev => {
+      this._buildPower();
+    });
+
+    html.find('#rollWithering').mousedown(ev => {
+      this._openAttackDialogue($(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), false);
+    });
+
     html.find('#rollDecisive').mousedown(ev => {
-      this._openDecisiveDialogue($(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"));
+      this._openAttackDialogue($(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), true);
     });
 
     // Rollable abilities.
@@ -326,7 +334,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     if (miscPenalty) {
       dice -= miscPenalty;
     }
-    
+
     if (data.details.exalt === "getimian") {
       if (attribute === "force" && (data.still.total < data.flowing.total)) {
         bonusSuccesses += 1;
@@ -356,6 +364,57 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     if (bonusSuccesses) total += bonusSuccesses;
 
     return { dice: dice, roll: roll, getDice: getDice, total: total };
+  }
+
+  async _buildPower() {
+    let confirmed = false;
+    const template = "systems/exaltedessence/templates/dialogues/ability-roll.html"
+    const html = await renderTemplate(template, {});
+    new Dialog({
+      title: `Die Roller`,
+      content: html,
+      buttons: {
+        roll: { label: "Roll it!", callback: () => confirmed = true },
+        cancel: { label: "Cancel", callback: () => confirmed = false }
+      },
+      close: html => {
+        if (confirmed) {
+          const data = this.actor.data.data;
+          var rollResults = this._baseAbilityDieRoll(html, data);
+          let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
+          var total = rollResults.total - 3;
+          var message = '';
+          if(total < 0) {
+            message = `<h4 class="dice-total">Build Power Failed</h4>`;
+          }
+          else {
+            message = `<h4 class="dice-formula">1 base success + ${total} Succeses</h4> <h4 class="dice-total">${total + 1} Power Built!</h4>`;
+          }
+          let the_content = `
+          <div class="chat-card item-card">
+              <div class="card-content">Dice Roll</div>
+              <div class="card-buttons">
+                  <div class="flexrow 1">
+                      <div>Dice Roller - Number of Successes<div class="dice-roll">
+                              <div class="dice-result">
+                                  <h4 class="dice-formula">${rollResults.dice} Dice + ${bonusSuccesses} successes</h4>
+                                  <div class="dice-tooltip">
+                                      <div class="dice">
+                                          <ol class="dice-rolls">${rollResults.getDice}</ol>
+                                      </div>
+                                  </div>
+                                  ${message}
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          `
+          ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: rollResults.roll });
+        }
+      }
+    }).render(true);
   }
 
   async _openAbilityRollDialogue() {
@@ -401,11 +460,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }).render(true);
   }
 
-  async _openDecisiveDialogue(weaponAccuracy, weaponDamage, overwhelming) {
+  async _openAttackDialogue(weaponAccuracy, weaponDamage, overwhelming, decisive = true) {
     const actorData = duplicate(this.actor)
     let confirmed = false;
-    const template = "systems/exaltedessence/templates/dialogues/decisive-roll.html"
-    const html = await renderTemplate(template, { "power": actorData.data.power.value, "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming });
+    const template = "systems/exaltedessence/templates/dialogues/attack-roll.html"
+    const html = await renderTemplate(template, { "power": actorData.data.power.value, "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming, "decisive": decisive });
     new Dialog({
       title: `Die Roller`,
       content: html,
@@ -415,11 +474,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       },
       close: html => {
         if (confirmed) {
-          let defence = parseInt(html.find('#defence').val());
-          let soak = parseInt(html.find('#soak').val());
+          let defence = parseInt(html.find('#defence').val()) || 0;
+          let soak = parseInt(html.find('#soak').val()) || 0;
           let hardness = parseInt(html.find('#hardness').val()) || 0;
 
-          if (defence && soak) {
+          if (defence) {
             // Accuracy
             const data = this.actor.data.data;
             let power = parseInt(html.find('#power').val());
@@ -436,7 +495,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             var rolls = [rollResults.roll]
             let messageContent = '';
             const threshholdPower = power - hardness;
-            if (postDefenceTotal < 0 || threshholdPower < 0) {
+            if (postDefenceTotal < 0 || (!decisive && threshholdPower < 0)) {
+              var overwhlemingMessage = '';
+              if (!decisive) {
+                overwhlemingMessage = `<h4 class="dice-total">${overwhelming} Power Built</h4>`;
+              }
               messageContent = `
                 <div class="chat-card item-card">
                     <div class="card-content">Decisive Attack</div>
@@ -454,6 +517,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
                                         <h4 class="dice-formula">${total} Succeses</h4>
                                         <h4 class="dice-formula">${defence} defence</h4>
                                         <h4 class="dice-total">Attack Missed!</h4>
+                                        ${overwhlemingMessage}
                                     </div>
                                 </div>
                             </div>
@@ -463,83 +527,118 @@ export class ExaltedessenceActorSheet extends ActorSheet {
               `
             }
             else {
-              let bonusDamageDice = parseInt(html.find('#damage-dice').val()) || 0;
-              let damageSuccesses = parseInt(html.find('#damage-success').val()) || 0;
-              //Fix to damage later
-              let doubleSevens = html.find('#double-damage-sevens').is(':checked');
-              let doubleEights = html.find('#double-damage-eights').is(':checked');
-              let doubleNines = html.find('#double-damage-nines').is(':checked');
-              let doubleTens = html.find('#double-damage-tens').is(':checked');
+              if (decisive) {
+                let bonusDamageDice = parseInt(html.find('#damage-dice').val()) || 0;
+                let damageSuccesses = parseInt(html.find('#damage-success').val()) || 0;
+                //Fix to damage later
+                let doubleSevens = html.find('#double-damage-sevens').is(':checked');
+                let doubleEights = html.find('#double-damage-eights').is(':checked');
+                let doubleNines = html.find('#double-damage-nines').is(':checked');
+                let doubleTens = html.find('#double-damage-tens').is(':checked');
 
-              let doubleDamageSuccess = 11;
+                let doubleDamageSuccess = 11;
 
-              if (doubleSevens) {
-                doubleDamageSuccess = 7;
-              }
-              else if (doubleEights) {
-                doubleDamageSuccess = 8;
-              }
-              else if (doubleNines) {
-                doubleDamageSuccess = 9;
-              }
-              else if (doubleTens) {
-                doubleDamageSuccess = 10;
-              }
-              // Deal Damage
-              let damage = postDefenceTotal + threshholdPower + bonusDamageDice;
-              let damageRoll = new Roll(`${damage}d10cs>=7`).evaluate({ async: false });
-              let damageDiceRoll = damageRoll.dice[0].results;
-              let damageBonus = "";
-              let getDamageDice = "";
-              for (let dice of damageDiceRoll) {
-                // comment out if no double successes
-                if (dice.result >= doubleDamageSuccess) { damageBonus++; }
-                if (dice.result >= 7) { getDamageDice += `<li class="roll die d10 success">${dice.result}</li>`; }
-                else { getDamageDice += `<li class="roll die d10">${dice.result}</li>`; }
-              }
+                if (doubleSevens) {
+                  doubleDamageSuccess = 7;
+                }
+                else if (doubleEights) {
+                  doubleDamageSuccess = 8;
+                }
+                else if (doubleNines) {
+                  doubleDamageSuccess = 9;
+                }
+                else if (doubleTens) {
+                  doubleDamageSuccess = 10;
+                }
+                // Deal Damage
+                let damage = postDefenceTotal + threshholdPower + bonusDamageDice;
+                let damageRoll = new Roll(`${damage}d10cs>=7`).evaluate({ async: false });
+                let damageDiceRoll = damageRoll.dice[0].results;
+                let damageBonus = "";
+                let getDamageDice = "";
+                for (let dice of damageDiceRoll) {
+                  // comment out if no double successes
+                  if (dice.result >= doubleDamageSuccess) { damageBonus++; }
+                  if (dice.result >= 7) { getDamageDice += `<li class="roll die d10 success">${dice.result}</li>`; }
+                  else { getDamageDice += `<li class="roll die d10">${dice.result}</li>`; }
+                }
 
-              let damageSuccess = damageRoll.total + weaponDamage;
-              if (damageBonus) damageSuccess += damageBonus;
-              if (damageSuccesses) damageSuccess += damageSuccesses;
+                let damageSuccess = damageRoll.total + weaponDamage;
+                if (damageBonus) damageSuccess += damageBonus;
+                if (damageSuccesses) damageSuccess += damageSuccesses;
 
-              let damageTotal = damageSuccess - soak;
+                let damageTotal = damageSuccess - soak;
 
-              if (damageTotal < overwhelming) {
-                damageTotal = overwhelming
-              }
+                if (damageTotal < overwhelming) {
+                  damageTotal = overwhelming
+                }
 
-              messageContent = `
-                <div class="chat-card item-card">
-                    <div class="card-content">Decisive Attack</div>
-                    <div class="card-buttons">
-                        <div class="flexrow 1">
-                            <div>
-                                <div class="dice-roll">
-                                    <div class="dice-result">
-                                        <h4 class="dice-formula">${rollResults.dice} Dice + ${bonusSuccesses + weaponAccuracy} successes</h4>
-                                        <div class="dice-tooltip">
-                                            <div class="dice">
-                                                <ol class="dice-rolls">${rollResults.getDice}</ol>
-                                            </div>
-                                        </div>
-                                        <h4 class="dice-formula">${total} Succeses vs ${defence} defence</h4>
-                                        <h4 class="dice-formula">${postDefenceTotal} Extra Succeses + ${power} power</h4>
-                                        <h4 class="dice-formula">${damage} Damage dice + ${damageSuccesses + weaponDamage} successes </h4>
-                                        <div class="dice-tooltip">
-                                          <div class="dice">
-                                              <ol class="dice-rolls">${getDamageDice}</ol>
+                messageContent = `
+                  <div class="chat-card item-card">
+                      <div class="card-content">Decisive Attack</div>
+                      <div class="card-buttons">
+                          <div class="flexrow 1">
+                              <div>
+                                  <div class="dice-roll">
+                                      <div class="dice-result">
+                                          <h4 class="dice-formula">${rollResults.dice} Dice + ${bonusSuccesses + weaponAccuracy} successes</h4>
+                                          <div class="dice-tooltip">
+                                              <div class="dice">
+                                                  <ol class="dice-rolls">${rollResults.getDice}</ol>
+                                              </div>
                                           </div>
+                                          <h4 class="dice-formula">${total} Succeses vs ${defence} defence</h4>
+                                          <h4 class="dice-formula">${postDefenceTotal} Extra Succeses + ${power} power</h4>
+                                          <h4 class="dice-formula">${damage} Damage dice + ${damageSuccesses + weaponDamage} successes </h4>
+                                          <div class="dice-tooltip">
+                                            <div class="dice">
+                                                <ol class="dice-rolls">${getDamageDice}</ol>
+                                            </div>
+                                          </div>
+                                          <h4 class="dice-formula">${damageSuccess} Damage - ${soak} soak (${overwhelming} ovw)</h4>
+                                          <h4 class="dice-total">${damageTotal} Total Damage</h4>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                `
+                rolls.push(damageRoll)
+              }
+              else {
+                var powerGained = postDefenceTotal + 1;
+                if (postDefenceTotal < overwhelming) {
+                  powerGained = overwhelming;
+                }
+                messageContent = `
+                    <div class="chat-card item-card">
+                        <div class="card-content">Decisive Attack</div>
+                        <div class="card-buttons">
+                            <div class="flexrow 1">
+                                <div>
+                                    <div class="dice-roll">
+                                        <div class="dice-result">
+                                            <h4 class="dice-formula">${rollResults.dice} Dice + ${bonusSuccesses + weaponAccuracy} successes</h4>
+                                            <div class="dice-tooltip">
+                                                <div class="dice">
+                                                    <ol class="dice-rolls">${rollResults.getDice}</ol>
+                                                </div>
+                                            </div>
+                                            <h4 class="dice-formula">${total} Succeses vs ${defence} defence</h4>
+                                            <h4 class="dice-formula">1 Base + ${postDefenceTotal} Extra Succeses</h4>
+                                            <h4 class="dice-formula">${overwhelming} Overwhelming</h4>
+                                            <h4 class="dice-total">${powerGained} Power Built!</h4>
                                         </div>
-                                        <h4 class="dice-formula">${damageSuccess} Damage - ${soak} soak (${overwhelming} ovw)</h4>
-                                        <h4 class="dice-total">${damageTotal} Total Damage</h4>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-              `
-              rolls.push(damageRoll)
+                  `
+
+              }
+
             }
 
             const pool = PoolTerm.fromRolls(rolls);

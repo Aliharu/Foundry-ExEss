@@ -14,6 +14,8 @@ Code for dot/box counters taken from Foundry-V5 (credit to erizocosmico)
 
 ## Notes
 
-Initiative currently has to be set manually
+It is recommended you download the popcorn initiative module or the Lancer Initiative Module to use with this system.  These modules are currently broken on 0.8 however.
 
-It is recommended you download the popcorn initiative module to use with this system.
+## Die Roller
+
+Getimian flow attribute bonuses are auto calculated by the ability and attack rollers.

@@ -71,10 +71,12 @@
                     <label class="resource-label">{{localize "ExEss.Accuracy"}} </label>
                     <input type="number" id="accuracy" name="data.rollable" value="{{weapon-accuracy}}">
                 </div>
+                {{#if decisive}}
                 <div>
                     <label class="resource-label">{{localize "ExEss.Damage"}} </label>
                     <input type="number" id="damage" name="data.rollable" value="{{weapon-damage}}">
                 </div>
+                {{/if}}
                 <div>
                     <label class="resource-label">{{localize "ExEss.Overwhelming"}} </label>
                     <input type="number" id="overwhelming" name="data.rollable" value="{{weapon-damage}}">
@@ -95,12 +97,15 @@
                     <label class="resource-label">{{localize "ExEss.BonusSuccesses"}} </label>
                     <input id="bonus-success" type="number">
                 </div>
+                {{#if decisive}}
                 <div>
                     <label class="resource-label">{{localize "ExEss.Power"}} </label>
                     <input id="power" type="number" value="{{power}}">
                 </div>
+                {{/if}}
             </div>
         </div>
+        {{#if decisive}}
         <div class="flex-center resource-label" style="font-weight: bold;">
             Damage
         </div>
@@ -134,13 +139,17 @@
                 </label>
             </div>
         </div>
+        {{/if}}
+
         <div class="flex-center resource-label" style="font-weight: bold;">
             Defender
         </div>
         <div class="resource grid grid-3col flex-center">
-            <input placeholder="Hardness" id="hardness" type="number">
             <input placeholder="Defence" id="defence" type="number">
+            {{#if decisive}}
+            <input placeholder="Hardness" id="hardness" type="number">
             <input placeholder="Soak" id="soak" type="number">
+            {{/if}}
         </div>
     </div>
 </form>
