@@ -1,10 +1,16 @@
-[![MIT License]][MIT URL]
-
-# Exalted Essence
+# Exalted Essence System
 
 Foundry system module for playing exalted essence.
 
 Current a work in progress
+
+## Current system features
+
+Player Character sheet
+
+NPC Sheet - WIP
+
+Ability and Attack roller that should have options for most common bonuses.
 
 ## Credits
 
