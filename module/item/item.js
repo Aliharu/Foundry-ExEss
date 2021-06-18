@@ -16,9 +16,6 @@ export class ExaltedessenceItem extends Item {
   }
 
   async _preCreate(createData, options, userId) {
-    if(createData.type === 'advantage') {
-      this.data.update({img: "icons/svg/aura.svg"});
-    }
     if(createData.type === 'intimacy') {
       this.data.update({img: "icons/magic/life/heart-glowing-red.webp"});
     }

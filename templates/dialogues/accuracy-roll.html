@@ -66,22 +66,6 @@
                 <label class="resource-label">{{localize "ExEss.ArmorPenalty"}}: </label>
                 <input type="checkbox" id="armor-penalty" name="data.rollable">
             </div>
-            <div class="resource grid grid-3col flex-center">
-                <div>
-                    <label class="resource-label">{{localize "ExEss.Accuracy"}} </label>
-                    <input type="number" id="accuracy" name="data.rollable" value="{{weapon-accuracy}}">
-                </div>
-                {{#if decisive}}
-                <div>
-                    <label class="resource-label">{{localize "ExEss.Damage"}} </label>
-                    <input type="number" id="damage" name="data.rollable" value="{{weapon-damage}}">
-                </div>
-                {{/if}}
-                <div>
-                    <label class="resource-label">{{localize "ExEss.Overwhelming"}} </label>
-                    <input type="number" id="overwhelming" name="data.rollable" value="{{weapon-damage}}">
-                </div>
-            </div>
             <div class="resource grid grid-2col flex-center">
                 <div>
                     <label class="resource-label">{{localize "ExEss.BonusDice"}} </label>
@@ -97,58 +81,11 @@
                     <label class="resource-label">{{localize "ExEss.BonusSuccesses"}} </label>
                     <input id="bonus-success" type="number">
                 </div>
-                {{#if decisive}}
                 <div>
-                    <label class="resource-label">{{localize "ExEss.Power"}} </label>
-                    <input id="power" type="number" value="{{power}}">
-                </div>
-                {{/if}}
-            </div>
-        </div>
-        {{#if decisive}}
-        <div class="flex-center resource-label" style="font-weight: bold;">
-            Damage
-        </div>
-        <div>
-            <div class="resource grid grid-2col flex-center">
-                <div>
-                    <label class="resource-label">{{localize "ExEss.DamageDice"}} </label>
-                    <input id="damage-dice" type="number">
-                </div>
-                <div>
-                    <label class="resource-label">{{localize "ExEss.DamageSuccesses"}} </label>
-                    <input id="damage-successes" type="number">
+                    <label class="resource-label">{{localize "ExEss.Accuracy"}} </label>
+                    <input type="number" id="accuracy" name="data.rollable" value="{{weapon-accuracy}}">
                 </div>
             </div>
-            <div class="resource grid grid-4col flex-center">
-                <label class="check-button" style="align-items:center;display:flex;">
-                    <input id="double-damage-sevens" name="double-damage-sevens" type="checkbox">
-                    <span>Db 7+s</span>
-                </label>
-                <label class="check-button" style="align-items:center;display:flex;">
-                    <input id="double-damage-eights" name="double-damage-eights" type="checkbox">
-                    <span>Db 8+s</span>
-                </label>
-                <label class="check-button" style="align-items:center;display:flex;">
-                    <input id="double-damage-nines" name="double-damage-nines" type="checkbox">
-                    <span>Db 9+s</span>
-                </label>
-                <label class="check-button" style="align-items:center;display:flex;">
-                    <input id="double-damage-tens" name="double-damage-tens" type="checkbox" checked>
-                    <span>Db 10s</span>
-                </label>
-            </div>
-        </div>
-        {{/if}}
-
-        <div class="flex-center resource-label" style="font-weight: bold;">
-            Defender
-        </div>
-        <div class="resource grid grid-2col flex-center">
-            <input placeholder="Defence" id="defence" type="number">
-            {{#if decisive}}
-            <input placeholder="Soak" id="soak" type="number">
-            {{/if}}
         </div>
     </div>
 </form>

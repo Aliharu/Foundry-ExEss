@@ -13,7 +13,7 @@ export class ExaltedessenceActor extends Actor {
     const actorData = this.data;
     const data = actorData.data;
     const flags = actorData.flags;
-    
+
     // Make separate methods for each Actor type (character, npc, etc.) to keep
     // things organized.
     if (actorData.type === 'character') this._prepareCharacterData(actorData);
@@ -29,8 +29,9 @@ export class ExaltedessenceActor extends Actor {
     // Calculate current wound penalty and total health for individual wound levels.
     let totalHealth = 0;
     let currentPenalty = 0;
+    data.motes.total = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
     for (let [key, health_level] of Object.entries(data.health.levels)) {
-      if((data.health.lethal + data.health.aggravated) > totalHealth) {
+      if ((data.health.lethal + data.health.aggravated) > totalHealth) {
         currentPenalty = health_level.penalty
       }
       totalHealth += health_level.value;
@@ -45,19 +46,19 @@ export class ExaltedessenceActor extends Actor {
     }
     data.health.penalty = currentPenalty;
     let animaLevel = "";
-    if (data.anima.value >= 2) {
+    if (data.anima.value >= 1) {
       animaLevel = "dim";
     }
-    if (data.anima.value >= 4) {
+    if (data.anima.value >= 3) {
       animaLevel = "glowing";
     }
-    if (data.anima.value >= 6) {
+    if (data.anima.value >= 5) {
       animaLevel = "burning";
     }
-    if (data.anima.value >= 8) {
+    if (data.anima.value >= 7) {
       animaLevel = "bonfire";
     }
-    if(data.anima.value === 10) {
+    if (data.anima.value === 10) {
       animaLevel = "iconic";
     }
     data.anima.level = animaLevel;

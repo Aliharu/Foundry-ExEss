@@ -197,7 +197,6 @@
       "item",
       "weapon",
       "armor",
-      "advantage",
       "merit",
       "charm",
       "anima",
@@ -213,7 +212,8 @@
           "motes": 0,
           "anima": 0,
           "health": 0,
-          "stunt": 0
+          "stunt": 0,
+          "power": 0
         }
       }
     },
@@ -248,7 +248,8 @@
         "charm"
       ],
       "ability": "athletics",
-      "requirement": 0
+      "requirement": 0,
+      "essence": 0
     },
     "merit": {
       "templates": [
@@ -256,11 +257,6 @@
       ],
       "merittype": "story",
       "points": 0
-    },
-    "advantage": {
-      "templates": [
-        "base"
-      ]
     },
     "spell": {
       "templates": [

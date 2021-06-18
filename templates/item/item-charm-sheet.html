@@ -37,6 +37,19 @@
                     {{/select}}
                 </select>
             </div>
+            <div>
+                <label class="resource-label">{{localize "ExEss.Essence"}}: </label>
+                <select name="data.essence" data-type="String">
+                    {{#select data.data.essence}}
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    {{/select}}
+                </select>
+            </div>
         </div>
     </header>
 
@@ -61,6 +74,10 @@
                 <div>
                     <div>Stunt</div>
                     <input type="number" name="data.cost.stunt" value="{{data.data.cost.stunt}}" data-dtype="Number" />
+                </div>
+                <div>
+                    <div>Power</div>
+                    <input type="number" name="data.cost.power" value="{{data.data.cost.power}}" data-dtype="Number" />
                 </div>
             </div>
             {{editor content=data.data.description target="data.description" button=true owner=owner editable=true}}
