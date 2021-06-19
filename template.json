@@ -96,15 +96,18 @@
       "attributes": {
         "force": {
           "value": 1,
-          "name": "ExEss.Force"
+          "name": "ExEss.Force",
+          "aug": false
         },
         "finesse": {
           "value": 1,
-          "name": "ExEss.Finesse"
+          "name": "ExEss.Finesse",
+          "aug": false
         },
         "fortitude": {
           "value": 1,
-          "name": "ExEss.Fortitude"
+          "name": "ExEss.Fortitude",
+          "aug": false
         }
       },
       "abilities": {

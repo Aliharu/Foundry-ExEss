@@ -184,13 +184,13 @@
     <div class="tab flex-center" data-group="primary" data-tab="stats">
       <div style="padding-top:10px;">
         <label class="resource-label">{{localize "ExEss.Attributes"}}</label>
-        <i id="color-picker" class="fas fa-palette cursor-pointer"></i>
+        <i title="Toggle Dot Colors" id="color-picker" class="fas fa-palette cursor-pointer"></i>
       </div>
       <div class="attributes grid grid-3col flex-group-center">
         {{#each data.data.attributes as |attribute key|}}
         <div class="attribute flexrow flex-center">
           <label for="data.attributes.{{key}}.value" class="resource-label resource-value"
-            data-roll="{{attribute.value}}" data-label="{{attribute.name}}">{{localize attribute.name}}</label>
+            data-roll="{{attribute.value}}" data-label="{{attribute.name}}">{{localize attribute.name}}{{#ifEquals ../data.data.details.exalt 'alchemical'}}<i title="Toggle Augmented Attribute" data-name="{{key}}" class="augment-attribute fas fa-cog {{#if attribute.aug}}augment-attribute-active{{/if}}"></i>{{/ifEquals}}</label>
           <div class="resource-value" data-value="{{attribute.value}}" data-name="data.attributes.{{key}}.value">
             {{#numLoop 5}}
             <span class="resource-value-step" data-index="{{this}}"></span>

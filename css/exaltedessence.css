@@ -238,8 +238,20 @@
   align-items: center;
 }
 
+.exaltedessence .mt-2 {
+  margin-top: 20px;
+}
+
 .exaltedessence .mb-2 {
   margin-bottom: 20px;
+}
+
+.exaltedessence .ml-2 {
+  margin-left: 20px;
+}
+
+.exaltedessence .mr-2 {
+  margin-right: 20px;
 }
 
 .exaltedessence .resource-label {
@@ -358,6 +370,15 @@
   border: 1px solid black;
   display: inline-block;
   border-radius: 50%;
+}
+
+.exaltedessence .augment-attribute {
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.exaltedessence .augment-attribute-active {
+  color: #147c14;
 }
 
 .exaltedessence .resource-value .resource-value-empty {

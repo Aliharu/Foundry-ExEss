@@ -153,6 +153,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     html.find('.resource-value > .resource-value-empty').click(this._onDotCounterEmpty.bind(this))
     html.find('.resource-counter > .resource-counter-step').click(this._onSquareCounterChange.bind(this))
 
+    html.find('.augment-attribute').click(this._toggleAugment.bind(this));
+
     // Update Inventory Item
     html.find('.item-edit').click(ev => {
       const li = $(ev.currentTarget).parents(".item");
@@ -303,6 +305,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     if (attributeExcellency) {
       attributeDice = attributeDice * 2;
+      if(data.details.exalt === "alchemical") {
+        if(data.attributes[attribute].aug && data.attributes[attribute].value < 5) {
+          attributeDice++;
+        }
+      }
     }
     if (abilityExcellency) {
       abilityDice = abilityDice * 2;
@@ -510,7 +517,6 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       }).render(true);
     });
 
-    console.log(rollResults);
     this._rollAttackDamage(rollResults, weaponDamage, overwhelming, decisive);
   }
 
@@ -838,6 +844,16 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         }
       })
     })
+  }
+
+  _toggleAugment(event) {
+    event.preventDefault()
+    const element = event.currentTarget
+    const attribute = element.dataset.name
+    const actorData = duplicate(this.actor)
+    var augStatus = actorData.data.attributes[attribute].aug;
+    actorData.data.attributes[attribute].aug = !augStatus;
+    this.actor.update(actorData);
   }
 
   /**

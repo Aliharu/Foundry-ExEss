@@ -37,11 +37,6 @@
   border-radius: 50%;
   cursor: pointer;
 }
-
-// .exaltedessence .resource-value .resource-value-step.active {
-//   background-color: #F9B516;
-// }
-
   
 .exaltedessence .resource-value-static .resource-value-static-step {
   height: 14px;
@@ -51,9 +46,14 @@
   border-radius: 50%;
 }
 
-// .exaltedessence .resource-value-static .resource-value-static-step.active {
-//   background-color: #F9B516;
-// }
+.exaltedessence .augment-attribute {
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.exaltedessence .augment-attribute-active {
+  color: #147c14;
+}
 
 .exaltedessence .resource-value .resource-value-empty {
   height: 14px;
