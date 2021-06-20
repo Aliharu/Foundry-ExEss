@@ -82,9 +82,9 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }
 
     const spells = {
-      emerald: { name: 'ExEss.Emerald', visible: false, list: [] },
-      sapphire: { name: 'ExEss.Sapphire', visible: false, list: [] },
-      adamant: { name: 'ExEss.Adamant', visible: false, list: [] },
+      first: { name: 'ExEss.First', visible: false, list: [] },
+      second: { name: 'ExEss.Second', visible: false, list: [] },
+      third: { name: 'ExEss.Third', visible: false, list: [] },
     }
 
     // Iterate through items, allocating to containers
@@ -221,10 +221,12 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         cancel: { label: "Cancel", callback: () => confirmed = false }
       },
       close: html => {
-        let color = html.find('#color').val();
-        if (isColor(color)) {
-          data.details.color = color
-          this.actor.update(actorData)
+        if(confirmed) {
+          let color = html.find('#color').val();
+          if (isColor(color)) {
+            data.details.color = color
+            this.actor.update(actorData)
+          }
         }
       }
     }).render(true);
@@ -302,12 +304,18 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     let attributeDice = data.attributes[attribute].value;
     let abilityDice = data.abilities[ability].value;
+    let augmentAttribute = false;
 
     if (attributeExcellency) {
       attributeDice = attributeDice * 2;
       if(data.details.exalt === "alchemical") {
-        if(data.attributes[attribute].aug && data.attributes[attribute].value < 5) {
-          attributeDice++;
+        if(data.attributes[attribute].aug) {
+          if(data.attributes[attribute].value < 5) {
+            attributeDice++;
+          }
+          if(data.essence.value > 1) {
+            augmentAttribute = true;
+          }
         }
       }
     }
@@ -315,7 +323,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       abilityDice = abilityDice * 2;
     }
 
-    let doubleSuccess = this._calculateDoubleDice(html);
+    let doubleSuccess = this._calculateDoubleDice(html, augmentAttribute);
 
     let dice = attributeDice + abilityDice;
 
@@ -677,7 +685,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }).render(true);
   }
 
-  _calculateDoubleDice(html) {
+  _calculateDoubleDice(html, augmentAttribute = false) {
     let doubleSevens = html.find('#double-sevens').is(':checked');
     let doubleEights = html.find('#double-eights').is(':checked');
     let doubleNines = html.find('#double-nines').is(':checked');
@@ -691,7 +699,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     else if (doubleEights) {
       doubleSuccess = 8;
     }
-    else if (doubleNines) {
+    else if (doubleNines || augmentAttribute) {
       doubleSuccess = 9;
     }
     else if (doubleTens) {

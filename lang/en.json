@@ -119,6 +119,14 @@
     "ExEss.Spells": "Spells",
     "ExEss.Circle": "Circle",
 
+    "ExEss.First": "First",
+    "ExEss.Second": "Second",
+    "ExEss.Third": "Third",
+
+    "ExEss.Universal": "Universal",
+    "ExEss.Necromancy": "Necromancy",
+    "ExEss.Sorcery": "Sorcery",
+
     "ExEss.Emerald": "Emerald",
     "ExEss.Sapphire": "Sapphire",
     "ExEss.Adamant": "Adamant",

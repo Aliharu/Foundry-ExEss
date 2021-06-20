@@ -265,7 +265,8 @@
       "templates": [
         "base"
       ],
-      "circle": "emerald"
+      "circle": "first",
+      "spelltype": "universal"
     },
     "intimacy": {
       "templates": [
