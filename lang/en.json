@@ -10,6 +10,7 @@
     "ExEss.Motes": "Motes",
     "ExEss.Commited": "Commited",
     "ExEss.BuildPower": "Build Power",
+    "ExEss.FocusWill": "Focus Will",
     "ExEss.Power": "Power",
     "ExEss.Will": "Will",
     "ExEss.Health": "Health",
@@ -26,6 +27,15 @@
     "ExEss.Passive": "Passive",
     "ExEss.Active": "Active",
     "ExEss.Iconic": "Iconic",
+
+    "ExEss.Animal": "Animal",
+    "ExEss.Mortal": "Mortal",
+    "ExEss.Fae": "Fae",
+    "ExEss.Undead": "Undead",
+    "ExEss.Demon": "Demon",
+
+    "ExEss.Creature": "Creature",
+    "ExEss.Raksha": "Raksha",
 
     "ExEss.Abyssal": "Abyssal",
     "ExEss.Alchemical": "Alchemical",
@@ -56,6 +66,11 @@
     "ExEss.Soak": "Soak",
     "ExEss.Hardness": "Hardness",
     "ExEss.Resolve": "Resolve",
+
+    "ExEss.Battlegroup": "Battlegroup",
+    "ExEss.Size": "Size",
+    "ExEss.Drill": "Drill",
+
 
     "ExEss.Equiped": "Equiped",
 
@@ -103,15 +118,18 @@
     "ExEss.Intimacy": "Intimacy",
     "ExEss.Intimacies": "Intimacies",
     "ExEss.Stats": "Stats",
+    "ExEss.Qualities": "Qualities",
     "ExEss.Charms": "Charms",
     "ExEss.Advantages": "Advantages",
     "ExEss.Resonance": "Resonance",
     "ExEss.Merits": "Merits",
+    "ExEss.Rituals": "Rituals",
     "ExEss.Ventures": "Ventures",
     "ExEss.Equipment": "Equipment",
     "ExEss.Advancement": "Advancement",
     "ExEss.Description": "Description",
     "ExEss.Items": "Items",
+    "ExEss.Templates": "Templates",
 
     "ExEss.Requirement": "Requirement",
 
@@ -126,6 +144,7 @@
     "ExEss.Universal": "Universal",
     "ExEss.Necromancy": "Necromancy",
     "ExEss.Sorcery": "Sorcery",
+    "ExEss.Cost": "Cost",
 
     "ExEss.Emerald": "Emerald",
     "ExEss.Sapphire": "Sapphire",
@@ -154,6 +173,11 @@
     "ExEss.BonusDice": "Bonus Dice",
     "ExEss.Successes": "Successes",
     "ExEss.DamageDice": "Damage Dice",
-    "ExEss.DamageSuccesses": "Damage Successes"
+    "ExEss.DamageSuccesses": "Damage Successes",
 
+    "ExEss.Primary": "Primary",
+    "ExEss.Secondary": "Secondary",
+    "ExEss.Tertiary": "Tertiary",
+    "ExEss.Pool": "Pool",
+    "ExEss.Pools": "Pools"
 }

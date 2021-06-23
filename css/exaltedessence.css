@@ -195,6 +195,15 @@
   font-size: 29px;
 }
 
+.exaltedessence .pool {
+  border: none;
+}
+
+.exaltedessence .pool-value-input {
+  width: 15%;
+  margin-right: 5px;
+}
+
 .exaltedessence .roll-button {
   height: 26px;
   line-height: 22px;
@@ -260,6 +269,10 @@
 
 .exaltedessence .resource-calculated-value {
   font-size: 35px;
+}
+
+.exaltedessence .resource-calculated-value-small {
+  font-size: 19px;
 }
 
 .exaltedessence .resource-label::first-letter {
@@ -345,6 +358,20 @@
   -webkit-box-flex: 0;
   -ms-flex: 0 0 172px;
   flex: 0 0 172px;
+  text-align: right;
+}
+
+.exaltedessence .items-list .merits-controls {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 200px;
+  flex: 0 0 200px;
+  text-align: right;
+}
+
+.exaltedessence .items-list .qualities-controls {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 97px;
+  flex: 0 0 97px;
   text-align: right;
 }
 

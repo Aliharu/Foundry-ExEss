@@ -1,6 +1,9 @@
 <form>
     <div class="sheet-body">
         <div class="resource grid grid-4col flex-center">
+            
+            {{#ifEquals character-type 'character'}}
+            
             <label class="resource-label">{{localize "ExEss.Attribute"}}: </label>
             <select id="attribute" name="attribute" data-type="String">
                 <option value="force">{{localize "ExEss.Force"}}</option>
@@ -32,6 +35,24 @@
 
             <label class="resource-label">{{localize "ExEss.Excellency"}}: </label>
             <input type="checkbox" id="ability-excellency" name="data.rollable">
+
+            {{/ifEquals}}
+
+            {{#ifEquals character-type 'npc'}}
+
+            <label class="resource-label">{{localize "ExEss.Pool"}}: </label>
+            <select id="pool" name="pool" data-type="String">
+                <option value="primary">{{localize "ExEss.Primary"}}</option>
+                <option value="secondary">{{localize "ExEss.Secondary"}}</option>
+                <option value="tertiary">{{localize "ExEss.Tertiary"}}</option>
+            </select>
+
+            <label class="resource-label">{{localize "ExEss.Excellency"}}: </label>
+            <input type="checkbox" id="pool-excellency" name="data.rollable">
+
+            {{/ifEquals}}
+
+
 
             <label class="check-button" style="align-items:center;display:flex;">
                 <input id="double-sevens" name="double-sevens" type="checkbox">

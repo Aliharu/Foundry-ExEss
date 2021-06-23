@@ -17,22 +17,22 @@ export class ExaltedessenceActor extends Actor {
     // Make separate methods for each Actor type (character, npc, etc.) to keep
     // things organized.
     if (actorData.type === 'character') this._prepareCharacterData(actorData);
+    if (actorData.type === 'npc') this._prepareNpcData(actorData);
   }
 
   /**
    * Prepare Character type specific data
    */
   _prepareCharacterData(actorData) {
-    const data = actorData.data;
-
     // Make modifications to data here. For example:
-    // Calculate current wound penalty and total health for individual wound levels.
+    const data = actorData.data;
+    this._prepareBaseActorData(data);
     let totalHealth = 0;
     let currentPenalty = 0;
     data.motes.total = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
     for (let [key, health_level] of Object.entries(data.health.levels)) {
       if ((data.health.lethal + data.health.aggravated) > totalHealth) {
-        currentPenalty = health_level.penalty
+        currentPenalty = health_level.penalty;
       }
       totalHealth += health_level.value;
     }
@@ -45,6 +45,20 @@ export class ExaltedessenceActor extends Actor {
       }
     }
     data.health.penalty = currentPenalty;
+  }
+
+  _prepareNpcData(actorData) {
+    const data = actorData.data;
+    this._prepareBaseActorData(data);
+    let currentPenalty = 0;
+    if ((data.health.lethal + data.health.aggravated) >= Math.floor(data.health.levels / 2)) {
+      currentPenalty = 2;
+    }
+    data.health.penalty = currentPenalty;
+  }
+
+  _prepareBaseActorData(data) {
+    data.motes.total = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
     let animaLevel = "";
     if (data.anima.value >= 1) {
       animaLevel = "dim";
@@ -63,5 +77,4 @@ export class ExaltedessenceActor extends Actor {
     }
     data.anima.level = animaLevel;
   }
-
 }

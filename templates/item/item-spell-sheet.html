@@ -4,6 +4,8 @@
         <div class="header-fields">
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
             <div>
+                <label class="resource-label">{{localize "ExEss.Cost"}}: </label>
+                <input type="text" name="data.cost" value="{{data.data.cost}}" style="width:55px;" />
                 <label class="resource-label">{{localize "ExEss.Circle"}}: </label>
                 <select name="data.circle" data-type="String">
                     {{#select data.data.circle}}

@@ -2,7 +2,7 @@
   "name": "exaltedessence",
   "title": "Exalted Essence",
   "description": "Exalted Essence system module for FoundryVTT!",
-  "version": "0.5.1", 
+  "version": "0.5.5", 
   "minimumCoreVersion": "0.8.5",
   "compatibleCoreVersion": "0.8.7",
   "templateVersion": 2,
