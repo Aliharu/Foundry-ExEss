@@ -151,3 +151,8 @@
 .dice-tooltip { 
   display: block !important;
 }
+
+.dice-tooltip .dice-rolls .double-success {
+  color: #aa0200 !important;
+  filter: sepia(0.5) hue-rotate(-160deg) !important;
+}

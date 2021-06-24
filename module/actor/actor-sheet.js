@@ -41,7 +41,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       }
       this._prepareCharacterItems(data);
     }
-    if(this.actor.data.type === 'npc') {
+    if (this.actor.data.type === 'npc') {
       this._prepareCharacterItems(data);
     }
 
@@ -238,7 +238,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         cancel: { label: "Cancel", callback: () => confirmed = false }
       },
       close: html => {
-        if(confirmed) {
+        if (confirmed) {
           let color = html.find('#color').val();
           if (isColor(color)) {
             data.details.color = color
@@ -271,8 +271,12 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           let bonus = "";
           let get_dice = "";
           for (let dice of dice_roll) {
-            if (dice.result >= doubleSuccess) { bonus++; }
-            if (dice.result >= 7) { get_dice += `<li class="roll die d10 success">${dice.result}</li>`; }
+            if (dice.result >= doubleSuccess) {
+              bonus++;
+              get_dice += `<li class="roll die d10 success double-success">${dice.result}</li>`;
+            }
+            else if (dice.result >= 7) { get_dice += `<li class="roll die d10 success">${dice.result}</li>`; }
+            else if (dice.result == 1) { get_dice += `<li class="roll die d10 failure">${dice.result}</li>`; }
             else { get_dice += `<li class="roll die d10">${dice.result}</li>`; }
           }
           let total = roll.total;
@@ -304,11 +308,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }).render(true);
   }
 
-  _baseAbilityDieRoll(html, data, characterType='character', rollType='ability') {
+  _baseAbilityDieRoll(html, data, characterType = 'character', rollType = 'ability') {
     let dice = 0;
     let augmentAttribute = false;
 
-    if(characterType === 'character') {
+    if (characterType === 'character') {
       let attribute = html.find('#attribute').val();
       let ability = html.find('#ability').val();
       let attributeExcellency = html.find('#attribute-excellency').is(':checked');
@@ -316,15 +320,15 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
       let attributeDice = data.attributes[attribute].value;
       let abilityDice = data.abilities[ability].value;
-  
+
       if (attributeExcellency) {
         attributeDice = attributeDice * 2;
-        if(data.details.exalt === "alchemical") {
-          if(data.attributes[attribute].aug) {
-            if(data.attributes[attribute].value < 5) {
+        if (data.details.exalt === "alchemical") {
+          if (data.attributes[attribute].aug) {
+            if (data.attributes[attribute].value < 5) {
               attributeDice++;
             }
-            if(data.essence.value > 1) {
+            if (data.essence.value > 1) {
               augmentAttribute = true;
             }
           }
@@ -336,22 +340,22 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
       dice = attributeDice + abilityDice;
     }
-    else if(characterType === 'npc') {
+    else if (characterType === 'npc') {
       let poolExcellency = html.find('#pool-excellency').is(':checked');
       let pool = html.find('#pool').val();
       let poolDice = data.pools[pool].value;
       dice = poolDice;
 
-      if(poolExcellency) {
-        if(pool === 'primary') {
+      if (poolExcellency) {
+        if (pool === 'primary') {
           dice += 4;
         }
-        else if(pool === 'secondary') {
+        else if (pool === 'secondary') {
           dice += 3;
         }
       }
 
-      if(data.battlegroup && rollType == 'attack') {
+      if (data.battlegroup && rollType == 'attack') {
         dice += data.drill.value;
       }
     }
@@ -369,8 +373,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     if (armorPenalty) {
       for (let armor of this.actor.armor) {
-        if (armor.equiped) {
-          dice = dice - armor.penalty;
+        if (armor.data.equiped) {
+          dice = dice - armor.data.penalty;
         }
       }
     }
@@ -409,8 +413,12 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     let bonus = "";
 
     for (let dice of diceRoll) {
-      if (dice.result >= doubleSuccess) { bonus++; }
-      if (dice.result >= 7) { getDice += `<li class="roll die d10 success">${dice.result}</li>`; }
+      if (dice.result >= doubleSuccess) {
+        bonus++;
+        getDice += `<li class="roll die d10 success double-success">${dice.result}</li>`;
+      }
+      else if (dice.result >= 7) { getDice += `<li class="roll die d10 success">${dice.result}</li>`; }
+      else if (dice.result == 1) { getDice += `<li class="roll die d10 failure">${dice.result}</li>`; }
       else { getDice += `<li class="roll die d10">${dice.result}</li>`; }
     }
 
@@ -421,11 +429,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     return { dice: dice, roll: roll, getDice: getDice, total: total };
   }
 
-  async _buildResource(type='power') {
+  async _buildResource(type = 'power') {
     const characterType = this.actor.data.type;
     let confirmed = false;
     const template = "systems/exaltedessence/templates/dialogues/ability-roll.html";
-    const html = await renderTemplate(template, {'character-type' : characterType});
+    const html = await renderTemplate(template, { 'character-type': characterType });
     new Dialog({
       title: `Die Roller`,
       content: html,
@@ -439,28 +447,28 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           var rollResults = this._baseAbilityDieRoll(html, data, characterType, type);
           let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
           var total = rollResults.total - 3;
-          if(type === 'will') {
+          if (type === 'will') {
             total -= 1;
           }
-          else if(this.actor.data.type === 'npc' && type === 'power') {
-            if(data.battlegroup) {
+          else if (this.actor.data.type === 'npc' && type === 'power') {
+            if (data.battlegroup) {
               bonusSuccesses += data.drill.value;
             }
           }
           var message = '';
           if (total < 0) {
-            if(type === 'power') {
+            if (type === 'power') {
               message = `<h4 class="dice-total">Build Power Failed</h4>`;
             }
-            else if(type === 'will') {
+            else if (type === 'will') {
               message = `<h4 class="dice-total">Focus Will Failed</h4>`;
             }
           }
           else {
-            if(type === 'power') {
+            if (type === 'power') {
               message = `<h4 class="dice-formula">${rollResults.total} Succeses</h4> <h4 class="dice-total">${total + 1} Power Built!</h4>`;
             }
-            else if(type === 'will') {
+            else if (type === 'will') {
               message = `<h4 class="dice-formula">${rollResults.total} Succeses</h4> <h4 class="dice-total">${total} Will Focused!</h4>`;
             }
           }
@@ -496,7 +504,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const characterType = this.actor.data.type;
     let confirmed = false;
     const template = "systems/exaltedessence/templates/dialogues/ability-roll.html"
-    const html = await renderTemplate(template, {'character-type' : characterType});
+    const html = await renderTemplate(template, { 'character-type': characterType });
     new Dialog({
       title: `Die Roller`,
       content: html,
@@ -539,7 +547,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const characterType = this.actor.data.type;
     let confirmed = false;
     const template = "systems/exaltedessence/templates/dialogues/accuracy-roll.html"
-    const html = await renderTemplate(template, { "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming, 'character-type' : characterType });
+    const html = await renderTemplate(template, { "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming, 'character-type': characterType });
     var rollResults = await new Promise((resolve, reject) => {
       return new Dialog({
         title: `Accuracy`,
@@ -614,8 +622,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           weaponDamage = parseInt(weaponDamage);
           overwhelming = parseInt(overwhelming);
 
-          if(this.actor.data.type === 'npc') {
-            if(actorData.data.battlegroup) {
+          if (this.actor.data.type === 'npc') {
+            if (actorData.data.battlegroup) {
               overwhelming = Math.min(actorData.data.size.value + 1, 5);
             }
           }
@@ -673,8 +681,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
               }
               // Deal Damage
               let damage = postDefenceTotal + power + bonusDamageDice;
-              if(this.actor.data.type === 'npc') {
-                if(actorData.data.battlegroup) {
+              if (this.actor.data.type === 'npc') {
+                if (actorData.data.battlegroup) {
                   damage += actorData.data.drill.value;
                 }
               }
@@ -684,8 +692,12 @@ export class ExaltedessenceActorSheet extends ActorSheet {
               let getDamageDice = "";
               for (let dice of damageDiceRoll) {
                 // comment out if no double successes
-                if (dice.result >= doubleDamageSuccess) { damageBonus++; }
-                if (dice.result >= 7) { getDamageDice += `<li class="roll die d10 success">${dice.result}</li>`; }
+                if (dice.result >= doubleDamageSuccess) {
+                  damageBonus++;
+                  getDamageDice += `<li class="roll die d10 success double-success">${dice.result}</li>`;
+                }
+                else if (dice.result >= 7) { getDamageDice += `<li class="roll die d10 success">${dice.result}</li>`; }
+                else if (dice.result == 1) { getDamageDice += `<li class="roll die d10 failure">${dice.result}</li>`; }
                 else { getDamageDice += `<li class="roll die d10">${dice.result}</li>`; }
               }
 
@@ -864,7 +876,12 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       }
     } else {
       const lastField = fields.pop()
-      fields.reduce((data, field) => data[field], actorData)[lastField] = value
+      if (fields.reduce((data, field) => data[field], actorData)[lastField] === 1 && value === 1) {
+        fields.reduce((data, field) => data[field], actorData)[lastField] = 0;
+      }
+      else {
+        fields.reduce((data, field) => data[field], actorData)[lastField] = value
+      }
     }
     this.actor.update(actorData)
   }
@@ -885,7 +902,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   _setupDotCounters(html) {
     const actorData = duplicate(this.actor)
     html.find('.resource-value').each(function () {
-      const value = Number(this.dataset.value)
+      const value = Number(this.dataset.value);
       $(this).find('.resource-value-step').each(function (i) {
         if (i + 1 <= value) {
           $(this).addClass('active')
