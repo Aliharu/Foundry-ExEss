@@ -2,13 +2,13 @@
 
 Foundry system module for playing exalted essence.
 
-Current a work in progress
+Currently a work in progress
 
 ## Current system features
 
 Player Character sheet
 
-NPC Sheet - WIP
+NPC Sheet
 
 Ability and Attack roller that should have options for most common bonuses.
 
@@ -18,10 +18,10 @@ This sheet was initially based on the boilerplate system by @asacolips#1867
 
 Code for dot/box counters taken from Foundry-V5 (credit to erizocosmico)
 
-## Notes
-
-It is recommended you download the popcorn initiative module or the Lancer Initiative Module to use with this system.  These modules are currently broken on 0.8 however.
-
 ## Die Roller
 
 Getimian flow attribute bonuses are auto calculated by the ability and attack rollers.
+
+Alchemical Augment Attribute is also auto calculated
+
+Size and Drill bonuses are auto calculated on build power and attack rolls only
