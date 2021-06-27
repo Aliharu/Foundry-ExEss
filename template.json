@@ -7,11 +7,13 @@
       "base": {
         "power": {
           "value": 0,
-          "min": 0
+          "min": 0,
+          "max": 10
         },
         "will": {
           "value": 0,
-          "min": 0
+          "min": 0,
+          "max": 10
         },
         "stunt": {
           "value": 0,
@@ -231,7 +233,6 @@
       "quality",
       "ritual",
       "charm",
-      "anima",
       "spell",
       "intimacy"
     ],

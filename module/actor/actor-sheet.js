@@ -374,7 +374,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     if (armorPenalty) {
       for (let armor of this.actor.armor) {
         if (armor.data.equiped) {
-          dice = dice - armor.data.penalty;
+          dice = dice - Math.abs(armor.data.penalty);
         }
       }
     }
@@ -447,10 +447,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           var rollResults = this._baseAbilityDieRoll(html, data, characterType, type);
           let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
           var total = rollResults.total - 3;
-          if (type === 'will') {
-            total -= 1;
-          }
-          else if (this.actor.data.type === 'npc' && type === 'power') {
+          if (this.actor.data.type === 'npc' && type === 'power') {
             if (data.battlegroup) {
               bonusSuccesses += data.drill.value;
             }
