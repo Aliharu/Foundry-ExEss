@@ -375,6 +375,10 @@
   text-align: right;
 }
 
+.exaltedessence .items-list .item-description {
+  display: none;
+}
+
 .exaltedessence .window-content .abilities,
 .exaltedessence.sheet.actor .window-content .abilities {
   border: none;

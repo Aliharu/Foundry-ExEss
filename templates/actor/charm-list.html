@@ -1,0 +1,56 @@
+<li>
+    <div class="resource-label list-section-header">
+        {{localize "ExEss.Charms"}}
+    </div>
+</li>
+{{#each actor.charms as |charm ability|}}
+{{#if charm.visible}}
+<li class="item flexrow item-header flex-center">
+    <div class="item-name">{{localize charm.name}}</div>
+</li>
+{{#each charm.list as |item id|}}
+<li class="item flexrow item-row" data-item-id="{{item._id}}">
+    <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+    <h4 class="item-name">{{item.name}}</h4>
+    <div class="item-controls">
+        <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
+        <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
+    </div>
+</li>
+<li class="item-description">
+    <div>
+        {{{item.data.description}}}
+    </div>
+</li>
+{{/each}}
+{{/if}}
+{{/each}}
+<li>
+    <div class="resource-label list-section-header">
+        {{localize "ExEss.Spells"}}
+    </div>
+</li>
+<li>
+    {{#each actor.spells as |spell circle|}}
+    {{#if spell.visible}}
+<li class="item flexrow item-header flex-center">
+    <div class="item-name">{{localize spell.name}}</div>
+</li>
+{{#each spell.list as |item id|}}
+<li class="item flexrow item-row" data-item-id="{{item._id}}">
+    <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+    <h4 class="item-name">{{item.name}} ({{item.data.spelltype}})</h4>
+    <div class="item-controls">
+        <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
+        <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
+    </div>
+</li>
+<li class="item-description">
+    <div>
+        {{{item.data.description}}}
+    </div>
+</li>
+{{/each}}
+{{/if}}
+{{/each}}
+</li>

@@ -168,6 +168,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     html.find('.augment-attribute').click(this._toggleAugment.bind(this));
 
+    html.find('.item-row').click(ev => {
+      const li = $(ev.currentTarget).next();
+      li.toggle("fast");
+    });
+
     // Update Inventory Item
     html.find('.item-edit').click(ev => {
       const li = $(ev.currentTarget).parents(".item");

@@ -30,6 +30,14 @@ Hooks.once('init', async function() {
   Items.unregisterSheet("core", ItemSheet);
   Items.registerSheet("exaltedessence", ExaltedessenceItemSheet, { makeDefault: true });
 
+  // Pre-load templates
+  loadTemplates([
+    "systems/exaltedessence/templates/dialogues/ability-base.html",
+    "systems/exaltedessence/templates/actor/equipment-list.html",
+    "systems/exaltedessence/templates/actor/charm-list.html",
+    "systems/exaltedessence/templates/actor/intimacies-list.html",
+  ]);
+
   // If you need to add Handlebars helpers, here are a few useful examples:
   Handlebars.registerHelper('concat', function() {
     var outStr = '';
