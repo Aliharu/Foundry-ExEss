@@ -109,6 +109,8 @@
     "ExEss.ArmorPenalty": "Armor Penalty",
     "ExEss.CurrentWoundPenalty": "Current Wound Penalty",
 
+    "ExEss.TargetNumber": "Target Number",
+    "ExEss.Reroll": "Reroll",
     "ExEss.Excellency": "Excellency",
     "ExEss.Stunt": "Stunt",
     "ExEss.Dice": "Dice",
@@ -179,5 +181,21 @@
     "ExEss.Secondary": "Secondary",
     "ExEss.Tertiary": "Tertiary",
     "ExEss.Pool": "Pool",
-    "ExEss.Pools": "Pools"
+    "ExEss.Pools": "Pools",
+
+    "ExEss.Languages": "Languages",
+    "ExEss.LowRealm": "Low Realm",
+    "ExEss.HighRealm": "High Realm",
+    "ExEss.OldRealm": "Old Realm",
+    "ExEss.Dragontongue": "Dragontongue",
+    "ExEss.Riverspeak": "Riverspeak",
+    "ExEss.Skytongue": "Skytongue",
+    "ExEss.Flametongue": "Flametongue",
+    "ExEss.Foresttongue": "Forest-tongue",
+    "ExEss.Seatongue": "Seatongue",
+    "ExEss.GuildCant": "Guild Cant",
+    "ExEss.LocalTongue": "Local Tongue",
+
+    "ExEss.TraitSave": "Update",
+    "ExEss.TraitSelectorSpecial": "Special (Split with Semi-Colon)"
 }

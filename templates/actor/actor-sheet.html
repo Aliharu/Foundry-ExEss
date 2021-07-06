@@ -387,6 +387,17 @@
           <label class="resource-label">{{localize "ExEss.Resonance"}}</label>
           <input type="text" name="data.advantages.resonance" value="{{data.data.advantages.resonance}}" />
         </li>
+        <div class="mt-1">
+          <label class="resource-label">{{localize "ExEss.Languages"}}</label>
+          <a class="trait-selector" data-options="languages" data-target="data.traits.languages">
+            <i class="fas fa-edit"></i>
+          </a>
+          <div class="mt-1">
+            {{#each data.data.traits.languages.selected as |v k|}}
+            <li class="tag {{k}}">{{v}}</li>
+            {{/each}}
+          </div>
+        </div>
         <li>
           <div class="resource-label list-section-header">
             {{localize "ExEss.Rituals"}}

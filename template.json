@@ -63,6 +63,12 @@
           "active": "",
           "iconic": ""
         },
+        "traits": {
+          "languages": {
+            "value": [],
+            "custom": ""
+          }
+        },
         "details": {
           "majorvirtue": "",
           "minorvirtue": "",

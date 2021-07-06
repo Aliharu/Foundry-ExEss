@@ -1,15 +1,25 @@
 // Import Modules
+import { EXALTEDESSENCE } from "./config.js";
+
 import { ExaltedessenceActor } from "./actor/actor.js";
 import { ExaltedessenceActorSheet } from "./actor/actor-sheet.js";
 import { ExaltedessenceItem } from "./item/item.js";
 import { ExaltedessenceItemSheet } from "./item/item-sheet.js";
 
+import TraitSelector from "./apps/trait-selector.js";
+
 Hooks.once('init', async function() {
 
   game.exaltedessence = {
-    ExaltedessenceActor,
-    ExaltedessenceItem,
-    rollItemMacro
+    applications: {
+      TraitSelector,
+    },
+    entities: {
+      ExaltedessenceActor,
+      ExaltedessenceItem,
+    },
+    config: EXALTEDESSENCE,
+    rollItemMacro: rollItemMacro
   };
 
   /**
@@ -21,6 +31,7 @@ Hooks.once('init', async function() {
   };
 
   // Define custom Entity classes
+  CONFIG.EXALTEDESSENCE = EXALTEDESSENCE;
   CONFIG.Actor.documentClass = ExaltedessenceActor;
   CONFIG.Item.documentClass = ExaltedessenceItem;
 

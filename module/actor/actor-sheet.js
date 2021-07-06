@@ -1,6 +1,7 @@
 // import {
 //   DiceRollerDialogue
 // } from "./dialogue-diceRoller.js";
+import TraitSelector from "../apps/trait-selector.js";
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -33,6 +34,9 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   getData() {
     const data = super.getData();
     data.dtypes = ["String", "Number", "Boolean"];
+
+    // Update traits
+    this._prepareTraits(data.data.data.traits);
 
     // Prepare items.
     if (this.actor.data.type === 'character') {
@@ -147,6 +151,35 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     actorData.spells = spells;
   }
 
+    /**
+   * Prepare the data structure for traits data like languages
+   * @param {object} traits   The raw traits data object from the actor data
+   * @private
+   */
+     _prepareTraits(traits) {
+      const map = {
+        "languages": CONFIG.EXALTEDESSENCE.languages,
+      };
+      for ( let [t, choices] of Object.entries(map) ) {
+        const trait = traits[t];
+        if ( !trait ) continue;
+        let values = [];
+        if ( trait.value ) {
+          values = trait.value instanceof Array ? trait.value : [trait.value];
+        }
+        trait.selected = values.reduce((obj, t) => {
+          obj[t] = choices[t];
+          return obj;
+        }, {});
+  
+        // Add custom entry
+        if ( trait.custom ) {
+          trait.custom.split(";").forEach((c, i) => trait.selected[`custom${i+1}`] = c.trim());
+        }
+        trait.cssClass = !isObjectEmpty(trait.selected) ? "" : "inactive";
+      }
+    }
+
   /* -------------------------------------------- */
 
   /** @override */
@@ -158,6 +191,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
+
+    html.find('.trait-selector').click(this._onTraitSelector.bind(this));
 
     // Add Inventory Item
     html.find('.item-create').click(this._onItemCreate.bind(this));
@@ -268,10 +303,20 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       close: html => {
         if (confirmed) {
           let doubleSuccess = this._calculateDoubleDice(html);
-          let dice = parseInt(html.find('#num').val());
+          let dice = parseInt(html.find('#num').val()) || 0;
           let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
+          let targetNumber = parseInt(html.find('#target-number').val()) || 7;
+          let rerollString = '';
+          let rerolls = [];
 
-          let roll = new Roll(`${dice}d10cs>=7`).evaluate({ async: false });
+          for (let i = 1; i <= 10; i++) {
+            if (html.find(`#reroll-${i}`).is(':checked')) {
+              rerollString += `x${i}`;
+              rerolls.push(i);
+            }
+          }
+
+          let roll = new Roll(`${dice}d10${rerollString}cs>=${targetNumber}`).evaluate({ async: false });
           let dice_roll = roll.dice[0].results;
           let bonus = "";
           let get_dice = "";
@@ -280,7 +325,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
               bonus++;
               get_dice += `<li class="roll die d10 success double-success">${dice.result}</li>`;
             }
-            else if (dice.result >= 7) { get_dice += `<li class="roll die d10 success">${dice.result}</li>`; }
+            else if (dice.result >= targetNumber) { get_dice += `<li class="roll die d10 success">${dice.result}</li>`; }
+            else if (rerolls.includes(dice.result)) { get_dice += `<li class="roll die d10 discarded">${dice.result}</li>`; }
             else if (dice.result == 1) { get_dice += `<li class="roll die d10 failure">${dice.result}</li>`; }
             else { get_dice += `<li class="roll die d10">${dice.result}</li>`; }
           }
@@ -984,6 +1030,20 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   }
 
   /**
+ * Handle spawning the TraitSelector application which allows a checkbox of multiple trait options
+ * @param {Event} event   The click event which originated the selection
+ * @private
+ */
+  _onTraitSelector(event) {
+    event.preventDefault();
+    const a = event.currentTarget;
+    const label = a.parentElement.querySelector("label");
+    const choices = CONFIG.EXALTEDESSENCE[a.dataset.options];
+    const options = { name: a.dataset.target, title: label.innerText, choices };
+    return new TraitSelector(this.actor, options).render(true)
+  }
+
+  /**
    * Handle clickable rolls.
    * @param {Event} event   The originating click event
    * @private
@@ -1003,6 +1063,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }
   }
 }
+
 
 function parseCounterStates(states) {
   return states.split(',').reduce((obj, state) => {

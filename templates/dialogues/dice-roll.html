@@ -1,6 +1,6 @@
 <form>
     <p>Enter a number of dice to roll.</p>
-    <div class="sheet-body">
+    <div class="sheet-body exaltedessence">
         <div class="form-group"><input id="num" type="number"></div>
         <div class="resource grid grid-4col flex-center">
             <label class="check-button" style="align-items:center;display:flex;">
@@ -20,8 +20,60 @@
                 <span>Db 10s</span>
             </label>
         </div>
-        <div class="form-group">
-            <input placeholder="Bonus Successes" id="bonus-success" type="number">
+        <div class="resource flex-center">
+            <label class="resource-label">{{localize "ExEss.Reroll"}}</label>
+        </div>
+        <div class="resource d-flex flex-center">
+            <div>
+                <div>1</div>
+                <input id="reroll-1" name="reroll-1" type="checkbox">
+            </div>
+            <div>
+                <div>2</div>
+                <input id="reroll-2" name="reroll-2" type="checkbox">
+            </div>
+            <div>
+                <div>3</div>
+                <input id="reroll-3" name="reroll-3" type="checkbox">
+            </div>
+            <div>
+                <div>4</div>
+                <input id="reroll-4" name="reroll-4" type="checkbox">
+            </div>
+            <div>
+                <div>5</div>
+                <input id="reroll-5" name="reroll-5" type="checkbox">
+            </div>
+            <div>
+                <div>6</div>
+                <input id="reroll-6" name="reroll-6" type="checkbox">
+            </div>
+            <div>
+                <div>7</div>
+                <input id="reroll-7" name="reroll-7" type="checkbox">
+            </div>
+            <div>
+                <div>8</div>
+                <input id="reroll-8" name="reroll-8" type="checkbox">
+            </div>
+            <div>
+                <div>9</div>
+                <input id="reroll-9" name="reroll-9" type="checkbox">
+            </div>
+            <div>
+                <div>10</div>
+                <input id="reroll-10" name="reroll-10" type="checkbox">
+            </div>
+        </div>
+        <div class="resource grid grid-2col flex-center">
+            <div>
+                <label class="resource-label">{{localize "ExEss.TargetNumber"}} </label>
+                <input id="target-number" type="number" value="7">
+            </div>
+            <div>
+                <label class="resource-label">{{localize "ExEss.BonusSuccesses"}} </label>
+                <input id="bonus-success" type="number">
+            </div>
         </div>
     </div>
 </form>
