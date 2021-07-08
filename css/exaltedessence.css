@@ -406,6 +406,10 @@
   display: none;
 }
 
+.exaltedessence .items-list .effects-list {
+  padding: 0;
+}
+
 .exaltedessence .window-content .abilities,
 .exaltedessence.sheet.actor .window-content .abilities {
   border: none;

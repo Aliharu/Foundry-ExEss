@@ -56,7 +56,8 @@
         </div>
         <div class="resource-content flexrow flex-center flex-between">
           <div>
-            <label class="resource-label">{{localize "ExEss.Anima"}}</label>
+            <i id="anima-down" class="fas fa-caret-down"></i><label class="resource-label">{{localize
+              "ExEss.Anima"}}</label><i id="anima-up" class="fas fa-caret-up"></i>
             <input type="number" name="data.anima.value" value="{{data.data.anima.value}}" data-dtype="Number" />
           </div>
           <div>
@@ -147,6 +148,7 @@
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item" data-tab="stats">{{localize "ExEss.Stats"}}</a>
     <a class="item" data-tab="charms">{{localize "ExEss.Charms"}}/{{localize "ExEss.Spells"}}</a>
+    <a class="item" data-tab="effects">{{localize "ExEss.Effects"}}</a>
     <a class="item" data-tab="intimacies">{{localize "ExEss.Intimacies"}}</a>
     <a class="item" data-tab="advantages">{{localize "ExEss.Advantages"}}</a>
     <a class="item" data-tab="advancement">{{localize "ExEss.Advancement"}}</a>
@@ -208,7 +210,6 @@
           <label for="data.abilities.{{key}}.value" class="resource-label vrollable" data-roll="{{ability.value}}"
             data-label="{{ability.name}}">{{localize ability.name}}</label>
           <div class="resource-value" data-value="{{ability.value}}" data-name="data.abilities.{{key}}.value">
-            <!-- <span class="resource-value-empty"></span> -->
             {{#numLoop 5}}
             <span class="resource-value-step" data-index="{{this}}"></span>
             {{/numLoop}}
@@ -216,58 +217,64 @@
         </div>
         {{/each}}
       </div>
-      <div class="grid grid-2col flex-group-center">
-        <div class="resource-content flexrow flex-center flex-between">
-          <div>
-            <label class="resource-label">{{localize "ExEss.Power"}}</label>
-            <input type="number" name="data.power.value" value="{{data.data.power.value}}" data-dtype="Number" />
+      <div>
+        <div id="character-combat-tab">
+          <div class="grid grid-2col flex-group-center">
+            <div class="resource-content flexrow flex-center flex-between">
+              <div>
+                <label class="resource-label">{{localize "ExEss.Power"}}</label>
+                <input type="number" name="data.power.value" value="{{data.data.power.value}}" data-dtype="Number" />
+              </div>
+              <div>
+                <label class="resource-label">{{localize "ExEss.Will"}}</label>
+                <input type="number" name="data.will.value" value="{{data.data.will.value}}" data-dtype="Number" />
+              </div>
+              <div>
+                <label class="resource-label">{{localize "ExEss.Stunt"}} {{localize "ExEss.Dice"}}</label>
+                <input type="number" name="data.stunt.value" value="{{data.data.stunt.value}}" data-dtype="Number" />
+              </div>
+            </div>
+            <div class="resource-content flexrow flex-center flex-between">
+              <div>
+                <label class="resource-label">{{localize "ExEss.BuildPower"}}</label>
+                <button id="buildPower" class="roll-button">{{localize "ExEss.Roll"}}</button>
+              </div>
+              <div>
+                <label class="resource-label">{{localize "ExEss.FocusWill"}}</label>
+                <button id="focusWill" class="roll-button">{{localize "ExEss.Roll"}}</button>
+              </div>
+            </div>
           </div>
-          <div>
-            <label class="resource-label">{{localize "ExEss.Will"}}</label>
-            <input type="number" name="data.will.value" value="{{data.data.will.value}}" data-dtype="Number" />
+          <div class="grid grid-3col flex-group-center">
+            <div class="resource-content flexrow flex-center flex-between">
+              <div>
+                <label class="resource-label">{{localize "ExEss.Defence"}}</label>
+                <input type="number" name="data.defence.value" value="{{data.data.defence.value}}"
+                  data-dtype="Number" />
+              </div>
+            </div>
+            <div class="resource-content flexrow flex-center flex-between">
+              <div>
+                <label class="resource-label">{{localize "ExEss.Soak"}}</label>
+                <input type="number" name="data.soak.value" value="{{data.data.soak.value}}" data-dtype="Number" />
+              </div>
+              <div>
+                <label class="resource-label">{{localize "ExEss.Hardness"}}</label>
+                <input type="number" name="data.hardness.value" value="{{data.data.hardness.value}}"
+                  data-dtype="Number" />
+              </div>
+            </div>
+            <div class="resource-content flexrow flex-center flex-between">
+              <div>
+                <label class="resource-label">{{localize "ExEss.Resolve"}}</label>
+                <input type="number" name="data.resolve.value" value="{{data.data.resolve.value}}"
+                  data-dtype="Number" />
+              </div>
+            </div>
           </div>
-          <div>
-            <label class="resource-label">{{localize "ExEss.Stunt"}} {{localize "ExEss.Dice"}}</label>
-            <input type="number" name="data.stunt.value" value="{{data.data.stunt.value}}" data-dtype="Number" />
-          </div>
-        </div>
-        <div class="resource-content flexrow flex-center flex-between">
-          <div>
-            <label class="resource-label">{{localize "ExEss.BuildPower"}}</label>
-            <button id="buildPower" class="roll-button">{{localize "ExEss.Roll"}}</button>
-          </div>
-          <div>
-            <label class="resource-label">{{localize "ExEss.FocusWill"}}</label>
-            <button id="focusWill" class="roll-button">{{localize "ExEss.Roll"}}</button>
-          </div>
+          {{> systems/exaltedessence/templates/actor/equipment-list.html}}
         </div>
       </div>
-      <div class="grid grid-3col flex-group-center">
-        <div class="resource-content flexrow flex-center flex-between">
-          <div>
-            <label class="resource-label">{{localize "ExEss.Defence"}}</label>
-            <input type="number" name="data.defence.value" value="{{data.data.defence.value}}" data-dtype="Number" />
-          </div>
-        </div>
-        <div class="resource-content flexrow flex-center flex-between">
-          <div>
-            <label class="resource-label">{{localize "ExEss.Soak"}}</label>
-            <input type="number" name="data.soak.value" value="{{data.data.soak.value}}" data-dtype="Number" />
-          </div>
-          <div>
-            <label class="resource-label">{{localize "ExEss.Hardness"}}</label>
-            <input type="number" name="data.hardness.value" value="{{data.data.hardness.value}}" data-dtype="Number" />
-          </div>
-        </div>
-        <div class="resource-content flexrow flex-center flex-between">
-          <div>
-            <label class="resource-label">{{localize "ExEss.Resolve"}}</label>
-            <input type="number" name="data.resolve.value" value="{{data.data.resolve.value}}" data-dtype="Number" />
-          </div>
-        </div>
-      </div>
-      {{> systems/exaltedessence/templates/actor/equipment-list.html}}
-
     </div>
 
     {{!-- Charms Tab --}}
@@ -302,6 +309,10 @@
         </li>
         {{> systems/exaltedessence/templates/actor/charm-list.html}}
       </ol>
+    </div>
+
+    <div class="tab effects" data-group="primary" data-tab="effects">
+      {{> systems/exaltedessence/templates/actor/active-effects.html}}
     </div>
 
     {{!-- Intimacy Tab --}}
@@ -487,7 +498,8 @@
         <p><b>Essence Increase:</b> Recive 1 excellency or Ox-Body for free</p>
       </div>
       <div class="resource-label flex-center list-section-header">
-        {{localize "ExEss.Milestones"}}, {{localize "ExEss.Ventures"}}, {{localize "ExEss.Equipment"}}
+        {{localize "ExEss.Milestones"}}, {{localize "ExEss.Ventures"}}, {{localize "ExEss.Equipment"}}, {{localize
+        "ExEss.GreatCurse"}}
       </div>
       {{editor content=data.data.milestones.triggers target="data.milestones.triggers" button=true owner=owner
       editable=true}}

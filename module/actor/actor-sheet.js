@@ -2,11 +2,22 @@
 //   DiceRollerDialogue
 // } from "./dialogue-diceRoller.js";
 import TraitSelector from "../apps/trait-selector.js";
+import { openRollDialogue } from "../apps/dice-roller.js";
+import { onManageActiveEffect, prepareActiveEffectCategories } from "../effects.js";
+
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
  */
 export class ExaltedessenceActorSheet extends ActorSheet {
+
+  constructor(...args) {
+    super(...args);
+
+    this._filters = {
+      effects: new Set()
+    }
+  }
 
   /**
  * Get the correct HTML template path to use for rendering this particular sheet
@@ -48,6 +59,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     if (this.actor.data.type === 'npc') {
       this._prepareCharacterItems(data);
     }
+
+    data.effects = prepareActiveEffectCategories(this.document.effects);
 
     return data;
   }
@@ -151,34 +164,34 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     actorData.spells = spells;
   }
 
-    /**
-   * Prepare the data structure for traits data like languages
-   * @param {object} traits   The raw traits data object from the actor data
-   * @private
-   */
-     _prepareTraits(traits) {
-      const map = {
-        "languages": CONFIG.EXALTEDESSENCE.languages,
-      };
-      for ( let [t, choices] of Object.entries(map) ) {
-        const trait = traits[t];
-        if ( !trait ) continue;
-        let values = [];
-        if ( trait.value ) {
-          values = trait.value instanceof Array ? trait.value : [trait.value];
-        }
-        trait.selected = values.reduce((obj, t) => {
-          obj[t] = choices[t];
-          return obj;
-        }, {});
-  
-        // Add custom entry
-        if ( trait.custom ) {
-          trait.custom.split(";").forEach((c, i) => trait.selected[`custom${i+1}`] = c.trim());
-        }
-        trait.cssClass = !isObjectEmpty(trait.selected) ? "" : "inactive";
+  /**
+ * Prepare the data structure for traits data like languages
+ * @param {object} traits   The raw traits data object from the actor data
+ * @private
+ */
+  _prepareTraits(traits) {
+    const map = {
+      "languages": CONFIG.EXALTEDESSENCE.languages,
+    };
+    for (let [t, choices] of Object.entries(map)) {
+      const trait = traits[t];
+      if (!trait) continue;
+      let values = [];
+      if (trait.value) {
+        values = trait.value instanceof Array ? trait.value : [trait.value];
       }
+      trait.selected = values.reduce((obj, t) => {
+        obj[t] = choices[t];
+        return obj;
+      }, {});
+
+      // Add custom entry
+      if (trait.custom) {
+        trait.custom.split(";").forEach((c, i) => trait.selected[`custom${i + 1}`] = c.trim());
+      }
+      trait.cssClass = !isObjectEmpty(trait.selected) ? "" : "inactive";
     }
+  }
 
   /* -------------------------------------------- */
 
@@ -227,7 +240,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     });
 
     html.find('#rollDice').mousedown(ev => {
-      this._openRollDialogue();
+      openRollDialogue(this.actor);
     });
 
     html.find('#rollAbility').mousedown(ev => {
@@ -250,8 +263,28 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       this._openAttackDialogue($(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), true);
     });
 
+    html.find('#anima-up').mousedown(ev => {
+      this._updateAnima("up");
+    });
+
+    html.find('#anima-down').mousedown(ev => {
+      this._updateAnima("down");
+    });
+
+    html.find('#combat-tab-nav').mousedown(ev => {
+      $("#character-effects-tab").hide();
+      $("#character-combat-tab").show();
+    });
+
+    html.find('#effects-tab-nav').mousedown(ev => {
+      $("#character-effects-tab").show();
+      $("#character-combat-tab").hide();
+    });
+
     // Rollable abilities.
     html.find('.rollable').click(this._onRoll.bind(this));
+
+    html.find(".effect-control").click(ev => onManageActiveEffect(ev, this.actor));
 
     // Drag events for macros.
     if (this.actor.isOwner) {
@@ -264,9 +297,51 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }
   }
 
+  _updateAnima(direction) {
+    const actorData = duplicate(this.actor);
+    const data = actorData.data;
+    let newLevel = 0;
+    if(direction === "up") {
+      if (data.anima.value == 0) {
+        newLevel = 1;
+      }
+      else if (data.anima.value < 3) {
+        newLevel = 3;
+      }
+      else if (data.anima.value < 5) {
+        newLevel = 5;
+      }
+      else if (data.anima.value < 7) {
+        newLevel = 7;
+      }
+      else {
+        newLevel = 10;
+      }
+    }
+    else {
+      if (data.anima.value >= 1) {
+        newLevel = 0;
+      }
+      if (data.anima.value >= 3) {
+        newLevel = 2;
+      }
+      if (data.anima.value >= 5) {
+        newLevel = 4;
+      }
+      if (data.anima.value >= 7) {
+        newLevel = 6;
+      }
+      if (data.anima.value === 10) {
+        newLevel = 9;
+      }
+    }
+    data.anima.value = newLevel;
+    this.actor.update(actorData);
+  }
+
   async pickColor() {
     let confirmed = false;
-    const actorData = duplicate(this.actor)
+    const actorData = duplicate(this.actor);
     const data = actorData.data;
     const template = "systems/exaltedessence/templates/dialogues/color-picker.html"
     const html = await renderTemplate(template, { 'color': data.details.color });
@@ -284,76 +359,6 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             data.details.color = color
             this.actor.update(actorData)
           }
-        }
-      }
-    }).render(true);
-  }
-
-  async _openRollDialogue() {
-    let confirmed = false;
-    const template = "systems/exaltedessence/templates/dialogues/dice-roll.html";
-    const html = await renderTemplate(template, {});
-    new Dialog({
-      title: `Die 10 Roller`,
-      content: html,
-      buttons: {
-        roll: { label: "Roll it!", callback: () => confirmed = true },
-        cancel: { label: "Cancel", callback: () => confirmed = false }
-      },
-      close: html => {
-        if (confirmed) {
-          let doubleSuccess = this._calculateDoubleDice(html);
-          let dice = parseInt(html.find('#num').val()) || 0;
-          let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
-          let targetNumber = parseInt(html.find('#target-number').val()) || 7;
-          let rerollString = '';
-          let rerolls = [];
-
-          for (let i = 1; i <= 10; i++) {
-            if (html.find(`#reroll-${i}`).is(':checked')) {
-              rerollString += `x${i}`;
-              rerolls.push(i);
-            }
-          }
-
-          let roll = new Roll(`${dice}d10${rerollString}cs>=${targetNumber}`).evaluate({ async: false });
-          let dice_roll = roll.dice[0].results;
-          let bonus = "";
-          let get_dice = "";
-          for (let dice of dice_roll) {
-            if (dice.result >= doubleSuccess) {
-              bonus++;
-              get_dice += `<li class="roll die d10 success double-success">${dice.result}</li>`;
-            }
-            else if (dice.result >= targetNumber) { get_dice += `<li class="roll die d10 success">${dice.result}</li>`; }
-            else if (rerolls.includes(dice.result)) { get_dice += `<li class="roll die d10 discarded">${dice.result}</li>`; }
-            else if (dice.result == 1) { get_dice += `<li class="roll die d10 failure">${dice.result}</li>`; }
-            else { get_dice += `<li class="roll die d10">${dice.result}</li>`; }
-          }
-          let total = roll.total;
-          if (bonus) total += bonus;
-          if (bonusSuccesses) total += bonusSuccesses;
-
-          let the_content = `<div class="chat-card item-card">
-                                <div class="card-content">Dice Roll</div>
-                                <div class="card-buttons">
-                                    <div class="flexrow 1">
-                                        <div>Dice Roller - Number of Successes<div class="dice-roll">
-                                                <div class="dice-result">
-                                                    <h4 class="dice-formula">${dice} Dice + ${bonusSuccesses} successes</h4>
-                                                    <div class="dice-tooltip">
-                                                        <div class="dice">
-                                                            <ol class="dice-rolls">${get_dice}</ol>
-                                                        </div>
-                                                    </div>
-                                                    <h4 class="dice-total">${total} Succeses</h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-          ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: roll });
         }
       }
     }).render(true);
@@ -422,6 +427,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     let doubleSuccess = this._calculateDoubleDice(html, augmentAttribute);
 
+    let rerollFailed = html.find('#reroll-failed').is(':checked');
+
     if (armorPenalty) {
       for (let armor of this.actor.armor) {
         if (armor.data.equiped) {
@@ -457,7 +464,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       }
     }
 
-    let roll = new Roll(`${dice}d10cs>=7`).evaluate({ async: false });
+    let roll = new Roll(`${dice}d10${rerollFailed ? "r<7" : ""}cs>=7`).evaluate({ async: false });
     let diceRoll = roll.dice[0].results;
     let getDice = "";
 
@@ -683,7 +690,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             }
             messageContent = `
               <div class="chat-card item-card">
-                  <div class="card-content">Decisive Attack</div>
+                  <div class="card-content">Withering Attack</div>
                   <div class="card-buttons">
                       <div class="flexrow 1">
                           <div>
@@ -701,7 +708,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
                   </div>
               </div>
             `;
-            ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OOC });
+            ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
           }
           else {
             if (decisive) {
@@ -712,6 +719,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
               let doubleEights = html.find('#double-damage-eights').is(':checked');
               let doubleNines = html.find('#double-damage-nines').is(':checked');
               let doubleTens = html.find('#double-damage-tens').is(':checked');
+              let rerollFailed = html.find('#reroll-damage-failed').is(':checked');
 
               let doubleDamageSuccess = 11;
 
@@ -734,7 +742,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
                   damage += actorData.data.drill.value;
                 }
               }
-              let damageRoll = new Roll(`${damage}d10cs>=7`).evaluate({ async: false });
+              let damageRoll = new Roll(`${damage}d10${rerollFailed ? "r<7" : ""}cs>=7`).evaluate({ async: false });
               let damageDiceRoll = damageRoll.dice[0].results;
               let damageBonus = "";
               let getDamageDice = "";
@@ -793,7 +801,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
               }
               messageContent = `
                   <div class="chat-card item-card">
-                      <div class="card-content">Decisive Attack</div>
+                      <div class="card-content">Withering Attack</div>
                       <div class="card-buttons">
                           <div class="flexrow 1">
                               <div>
@@ -810,7 +818,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
                       </div>
                   </div>
                 `
-              ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OOC });
+              ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
             }
           }
         }

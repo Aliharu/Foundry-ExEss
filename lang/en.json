@@ -111,6 +111,9 @@
 
     "ExEss.TargetNumber": "Target Number",
     "ExEss.Reroll": "Reroll",
+    "ExEss.RerollFailed": "Reroll Failed",
+    "ExEss.DoubleSuccess": "Double Success",
+    "ExEss.RerollNumDice": "Reroll Num Dice",
     "ExEss.Excellency": "Excellency",
     "ExEss.Stunt": "Stunt",
     "ExEss.Dice": "Dice",
@@ -128,6 +131,7 @@
     "ExEss.Rituals": "Rituals",
     "ExEss.Ventures": "Ventures",
     "ExEss.Equipment": "Equipment",
+    "ExEss.GreatCurse": "Great Curse",
     "ExEss.Advancement": "Advancement",
     "ExEss.Description": "Description",
     "ExEss.Items": "Items",
@@ -197,5 +201,19 @@
     "ExEss.LocalTongue": "Local Tongue",
 
     "ExEss.TraitSave": "Update",
-    "ExEss.TraitSelectorSpecial": "Special (Split with Semi-Colon)"
+    "ExEss.TraitSelectorSpecial": "Special (Split with Semi-Colon)",
+
+    "ExEss.Effects": "Effects",
+    "ExEss.EffectNew": "EffectNew",
+    "ExEss.EffectTemporary": "Effect Temporary",
+    "ExEss.EffectPassive": "Effect Passive",
+    "ExEss.EffectInactive": "Effect Inactive",
+
+    "ExEss.Add": "Add",
+    "ExEss.EffectCreate": "Effect Create",
+    "ExEss.EffectToggle": "Effect Toggle",
+    "ExEss.EffectEdit": "Effect Edit",
+    "ExEss.EffectDelete": "Effect Delete",
+    "ExEss.Duration": "Duration",
+    "ExEss.Source": "Source"
 }

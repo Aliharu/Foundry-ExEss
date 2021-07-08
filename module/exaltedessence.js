@@ -6,6 +6,7 @@ import { ExaltedessenceActorSheet } from "./actor/actor-sheet.js";
 import { ExaltedessenceItem } from "./item/item.js";
 import { ExaltedessenceItemSheet } from "./item/item-sheet.js";
 
+import { openRollDialogue } from "./apps/dice-roller.js";
 import TraitSelector from "./apps/trait-selector.js";
 
 Hooks.once('init', async function() {
@@ -44,6 +45,7 @@ Hooks.once('init', async function() {
   // Pre-load templates
   loadTemplates([
     "systems/exaltedessence/templates/dialogues/ability-base.html",
+    "systems/exaltedessence/templates/actor/active-effects.html",
     "systems/exaltedessence/templates/actor/equipment-list.html",
     "systems/exaltedessence/templates/actor/charm-list.html",
     "systems/exaltedessence/templates/actor/intimacies-list.html",
@@ -77,6 +79,15 @@ Hooks.once('init', async function() {
 
 Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
   return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});
+
+$(document).ready(() => {
+  const diceIconSelector = '#chat-controls .chat-control-icon .fa-dice-d20';
+
+  $(document).on('click', diceIconSelector, ev => {
+    ev.preventDefault();
+    openRollDialogue();
+  });
 });
 
 Hooks.once("ready", async function() {
