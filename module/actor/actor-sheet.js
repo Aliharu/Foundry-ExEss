@@ -763,10 +763,6 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
               let damageTotal = damageSuccess - soak;
 
-              if (damageTotal < overwhelming) {
-                damageTotal = overwhelming
-              }
-
               messageContent = `
                 <div class="chat-card item-card">
                     <div class="card-content">Decisive Attack</div>
