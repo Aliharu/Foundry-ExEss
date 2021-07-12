@@ -503,3 +503,83 @@
   -webkit-filter: sepia(0.5) hue-rotate(-160deg) !important;
   filter: sepia(0.5) hue-rotate(-160deg) !important;
 }
+
+.chat-card {
+  font-style: normal;
+  font-size: 12px;
+}
+
+.chat-card .card-header {
+  padding: 3px 0;
+  border-top: 2px groove #FFF;
+  border-bottom: 2px groove #FFF;
+}
+
+.chat-card .card-header img {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 36px;
+  flex: 0 0 36px;
+  margin-right: 5px;
+}
+
+.chat-card .card-content {
+  margin: 5px 0;
+}
+
+.chat-card .card-content h3 {
+  font-size: 12px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.chat-card .card-content > * {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+.chat-card .item-name {
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  margin: 0;
+  line-height: 36px;
+  font-family: "Modesto Condensed", "Palatino Linotype", serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #4b4a44;
+}
+
+.chat-card .card-buttons {
+  margin: 5px 0;
+}
+
+.chat-card .card-buttons span {
+  display: block;
+  line-height: 28px;
+  text-align: center;
+}
+
+.chat-card .card-buttons button {
+  font-size: 12px;
+  height: 24px;
+  line-height: 20px;
+  margin: 2px 0;
+}
+
+.chat-card .card-footer {
+  padding: 3px 0 0;
+  border-top: 2px groove #FFF;
+}
+
+.chat-card .card-footer span {
+  border-right: 2px groove #FFF;
+  padding: 0 3px 0 0;
+  font-size: 10px;
+}
+
+.chat-card .card-footer span:last-child {
+  border-right: none;
+  padding-right: 0;
+}

@@ -216,13 +216,9 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     html.find('.augment-attribute').click(this._toggleAugment.bind(this));
 
-    html.find('.item-row').click(ev => {
-      const li = $(ev.currentTarget).next();
-      li.toggle("fast");
-    });
-
     // Update Inventory Item
     html.find('.item-edit').click(ev => {
+      ev.stopPropagation();
       const li = $(ev.currentTarget).parents(".item");
       const item = this.actor.items.get(li.data("itemId"));
       item.sheet.render(true);
@@ -263,29 +259,27 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       this._openAttackDialogue($(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), true);
     });
 
-    html.find('#anima-up').mousedown(ev => {
+    html.find('#anima-up').click(ev => {
       this._updateAnima("up");
     });
 
-    html.find('#anima-down').mousedown(ev => {
+    html.find('#anima-down').click(ev => {
       this._updateAnima("down");
     });
 
-    html.find('#combat-tab-nav').mousedown(ev => {
-      $("#character-effects-tab").hide();
-      $("#character-combat-tab").show();
+    html.find('.item-chat').click(ev => {
+      this._displayCard(ev);
     });
 
-    html.find('#effects-tab-nav').mousedown(ev => {
-      $("#character-effects-tab").show();
-      $("#character-combat-tab").hide();
+    html.find('.item-row').click(ev => {
+      const li = $(ev.currentTarget).next();
+      li.toggle("fast");
     });
-
-    // Rollable abilities.
-    html.find('.rollable').click(this._onRoll.bind(this));
 
     html.find(".effect-control").click(ev => onManageActiveEffect(ev, this.actor));
 
+    html.find('.rollable').click(this._onRoll.bind(this));
+    
     // Drag events for macros.
     if (this.actor.isOwner) {
       let handler = ev => this._onDragStart(ev);
@@ -301,7 +295,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const actorData = duplicate(this.actor);
     const data = actorData.data;
     let newLevel = 0;
-    if(direction === "up") {
+    if (direction === "up") {
       if (data.anima.value == 0) {
         newLevel = 1;
       }
@@ -1013,6 +1007,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
    */
   _onItemCreate(event) {
     event.preventDefault();
+    event.stopPropagation();
     const header = event.currentTarget;
     // Get the type of item to create.
     const type = header.dataset.type;
@@ -1065,6 +1060,41 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         flavor: label
       });
     }
+  }
+
+  /**
+* Display the chat card for an Item as a Chat Message
+* @param {object} options          Options which configure the display of the item chat card
+* @param {string} rollMode         The message visibility mode to apply to the created card
+* @param {boolean} createMessage   Whether to automatically create a ChatMessage entity (if true), or only return
+*                                  the prepared message data (if false)
+*/
+  async _displayCard(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    // Render the chat card template
+    let li = $(event.currentTarget).parents(".item");
+    let item = this.actor.items.get(li.data("item-id"));
+    const token = this.actor.token;
+    const templateData = {
+      actor: this.actor,
+      tokenId: token?.uuid || null,
+      item: item.data,
+      labels: this.labels,
+    };
+    const html = await renderTemplate("systems/exaltedessence/templates/chat/item-card.html", templateData);
+
+    // Create the ChatMessage data object
+    const chatData = {
+      user: game.user._id,
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      content: html,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor, token }),
+    };
+
+
+    // Create the Chat Message or return its data
+    return ChatMessage.create(chatData);
   }
 }
 
