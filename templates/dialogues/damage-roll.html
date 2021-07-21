@@ -1,10 +1,16 @@
 <form>
     <div class="sheet-body exaltedessence">
-        <div class="resource flex-center mb-2">
+        <div class="resource flex-center {{#if decisive}} grid-2col {{/if}} mb-2">
             <div>
                 <label class="resource-label">{{localize "ExEss.Successes"}} </label>
                 <input id="successes" type="number" value="{{successes}}">
             </div>
+            {{#if decisive}}
+            <div>
+                <label class="resource-label">{{localize "ExEss.Power"}} </label>
+                <input id="power" type="number" value="{{power}}">
+            </div>
+            {{/if}}
         </div>
         {{#if decisive}}
             <div class="flex-center resource-label" style="font-weight: bold;">
@@ -47,7 +53,7 @@
         <div class="flex-center resource-label" style="font-weight: bold;">
             Defender
         </div>
-        <div class="resource grid grid-2col flex-center">
+        <div class="resource {{#if decisive}} grid-2col {{/if}} flex-center mb-2">
             <input placeholder="Defence" id="defence" type="number">
             {{#if decisive}}
             <input placeholder="Soak" id="soak" type="number">
