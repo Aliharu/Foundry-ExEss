@@ -518,7 +518,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
               message = `<h4 class="dice-formula">${rollResults.total} Succeses</h4> <h4 class="dice-total">${total + 1} Power Built!</h4>`;
             }
             else if (type === 'will') {
-              message = `<h4 class="dice-formula">${rollResults.total} Succeses</h4> <h4 class="dice-total">${total} Will Focused!</h4>`;
+              message = `<h4 class="dice-formula">${rollResults.total} Succeses</h4> <h4 class="dice-total">${total + 1} Will Focused!</h4>`;
             }
           }
           let the_content = `
@@ -787,7 +787,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             else {
               var powerGained = postDefenceTotal + 1;
               if (postDefenceTotal < overwhelming) {
-                powerGained = overwhelming;
+                powerGained = overwhelming + 1;
               }
               messageContent = `
                   <div class="chat-card item-card">
