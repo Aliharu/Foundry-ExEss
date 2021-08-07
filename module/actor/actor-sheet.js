@@ -488,7 +488,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const data = this.actor.data.data;
     const template = "systems/exaltedessence/templates/dialogues/ability-roll.html";
     const highestAttribute = this._getHighestAttribute(data);
-    const html = await renderTemplate(template, { 'character-type': characterType, 'attribute': highestAttribute });
+    const html = await renderTemplate(template, { 'character-type': characterType, 'attribute': highestAttribute, "ability": type === "will" ? "sagacity" : null });
     new Dialog({
       title: `Die Roller`,
       content: html,
