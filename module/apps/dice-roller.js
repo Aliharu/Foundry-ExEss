@@ -13,7 +13,7 @@ export async function openRollDialogue(actor) {
             if (confirmed) {
                 let doubleSuccess = parseInt(html.find('#double-success').val()) || 10;
                 let dice = parseInt(html.find('#num').val()) || 0;
-                let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
+                let successModifier = parseInt(html.find('#success-modifier').val()) || 0;
                 let targetNumber = parseInt(html.find('#target-number').val()) || 7;
                 let rerollFailed = html.find('#reroll-failed').is(':checked');
                 let rerollNumber = parseInt(html.find('#reroll-number').val()) || 0;
@@ -51,7 +51,7 @@ export async function openRollDialogue(actor) {
                 
 
                 if (bonus) total += bonus;
-                if (bonusSuccesses) total += bonusSuccesses;
+                if (successModifier) total += successModifier;
 
                 let the_content = `<div class="chat-card item-card">
                                 <div class="card-content">Dice Roll</div>
@@ -59,7 +59,7 @@ export async function openRollDialogue(actor) {
                                     <div class="flexrow 1">
                                         <div>Dice Roller - Number of Successes<div class="dice-roll">
                                                 <div class="dice-result">
-                                                    <h4 class="dice-formula">${dice} Dice + ${bonusSuccesses} successes</h4>
+                                                    <h4 class="dice-formula">${dice} Dice + ${successModifier} successes</h4>
                                                     <div class="dice-tooltip">
                                                         <div class="dice">
                                                             <ol class="dice-rolls">${get_dice}</ol>

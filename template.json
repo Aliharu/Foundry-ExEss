@@ -75,7 +75,9 @@
           "exalt": "abyssal",
           "caste": "",
           "color": "#FFFFFF",
-          "hunt": ""
+          "hunt": "",
+          "aura": "",
+          "nature": ""
         }
       }
     },
@@ -282,7 +284,8 @@
       "penalty": 0,
       "hardness": 0,
       "tags": "",
-      "equiped": true
+      "equiped": true,
+      "weapontype": "melee"
     },
     "charm": {
       "templates": [

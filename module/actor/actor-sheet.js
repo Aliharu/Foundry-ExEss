@@ -34,7 +34,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       classes: ["exaltedessence", "sheet", "actor"],
       template: "systems/exaltedessence/templates/actor/actor-sheet.html",
       width: 800,
-      height: 1000,
+      height: 1026,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "stats" }]
     });
   }
@@ -243,6 +243,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       this._openAbilityRollDialogue();
     });
 
+    html.find('.roll-ability').mousedown(ev => {
+      var ability = $(ev.target).attr("data-ability");
+      this._openAbilityRollDialogue(ability);
+    });
+
     html.find('#buildPower').mousedown(ev => {
       this._buildResource('power');
     });
@@ -252,11 +257,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     });
 
     html.find('#rollWithering').mousedown(ev => {
-      this._openAttackDialogue($(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), false);
+      this._openAttackDialogue($(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), false);
     });
 
     html.find('#rollDecisive').mousedown(ev => {
-      this._openAttackDialogue($(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), true);
+      this._openAttackDialogue($(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), true);
     });
 
     html.find('#anima-up').click(ev => {
@@ -415,9 +420,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     let flurry = html.find('#flurry').is(':checked');
     let armorPenalty = html.find('#armor-penalty').is(':checked');
 
-    let miscBonus = parseInt(html.find('#misc-bonus').val()) || 0;
-    let miscPenalty = parseInt(html.find('#misc-penalty').val()) || 0;
-    let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
+    let diceModifier = parseInt(html.find('#dice-modifier').val()) || 0;
+    let successModifier = parseInt(html.find('#success-modifier').val()) || 0;
 
     let doubleSuccess = this._calculateDoubleDice(html, augmentAttribute);
 
@@ -439,22 +443,19 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     if (flurry) {
       dice -= 3;
     }
-    if (miscBonus) {
-      dice += miscBonus;
-    }
-    if (miscPenalty) {
-      dice -= miscPenalty;
+    if (diceModifier) {
+      dice += diceModifier;
     }
 
     if (data.details.exalt === "getimian") {
       if (attribute === "force" && (data.still.total < data.flowing.total)) {
-        bonusSuccesses += 1;
+        successModifier += 1;
       }
       if (attribute === "finesse" && (data.still.total > data.flowing.total)) {
-        bonusSuccesses += 1;
+        successModifier += 1;
       }
       if (attribute === "fortitude" && (data.still.total >= (data.flowing.total - 1) && data.still.total <= (data.flowing.total + 1))) {
-        bonusSuccesses += 1;
+        successModifier += 1;
       }
     }
 
@@ -476,7 +477,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     let total = roll.total;
     if (bonus) total += bonus;
-    if (bonusSuccesses) total += bonusSuccesses;
+    if (successModifier) total += successModifier;
 
     return { dice: dice, roll: roll, getDice: getDice, total: total };
   }
@@ -484,8 +485,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   async _buildResource(type = 'power') {
     const characterType = this.actor.data.type;
     let confirmed = false;
+    const data = this.actor.data.data;
     const template = "systems/exaltedessence/templates/dialogues/ability-roll.html";
-    const html = await renderTemplate(template, { 'character-type': characterType });
+    const highestAttribute = this._getHighestAttribute(data);
+    const html = await renderTemplate(template, { 'character-type': characterType, 'attribute': highestAttribute });
     new Dialog({
       title: `Die Roller`,
       content: html,
@@ -495,13 +498,12 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       },
       close: html => {
         if (confirmed) {
-          const data = this.actor.data.data;
           var rollResults = this._baseAbilityDieRoll(html, data, characterType, type);
-          let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
+          let successModifier = parseInt(html.find('#success-modifier').val()) || 0;
           var total = rollResults.total - 3;
           if (this.actor.data.type === 'npc' && type === 'power') {
             if (data.battlegroup) {
-              bonusSuccesses += data.drill.value;
+              successModifier += data.drill.value;
             }
           }
           var message = '';
@@ -528,7 +530,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
                   <div class="flexrow 1">
                       <div>Dice Roller - Number of Successes<div class="dice-roll">
                               <div class="dice-result">
-                                  <h4 class="dice-formula">${rollResults.dice} Dice + ${bonusSuccesses} successes</h4>
+                                  <h4 class="dice-formula">${rollResults.dice} Dice + ${successModifier} successes</h4>
                                   <div class="dice-tooltip">
                                       <div class="dice">
                                           <ol class="dice-rolls">${rollResults.getDice}</ol>
@@ -548,12 +550,13 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }).render(true);
   }
 
-  async _openAbilityRollDialogue() {
+  async _openAbilityRollDialogue(ability="athletics") {
     const data = this.actor.data.data;
     const characterType = this.actor.data.type;
     let confirmed = false;
     const template = "systems/exaltedessence/templates/dialogues/ability-roll.html"
-    const html = await renderTemplate(template, { 'character-type': characterType });
+    const highestAttribute = this._getHighestAttribute(data);
+    const html = await renderTemplate(template, { 'character-type': characterType, 'attribute': highestAttribute, ability: ability });
     new Dialog({
       title: `Die Roller`,
       content: html,
@@ -564,7 +567,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       close: html => {
         if (confirmed) {
           var rollResults = this._baseAbilityDieRoll(html, data, characterType, 'ability');
-          let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
+          let bonusSuccesses = parseInt(html.find('#success-modifier').val()) || 0;
           let the_content = `
           <div class="chat-card item-card">
               <div class="card-content">Dice Roll</div>
@@ -592,11 +595,25 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }).render(true);
   }
 
-  async _openAttackDialogue(weaponAccuracy, weaponDamage, overwhelming, decisive = true) {
+  _getHighestAttribute(data) {
+    var highestAttributeNumber = 0;
+    var highestAttribute = "force";
+    for (let [name, attribute] of Object.entries(data.attributes)) {
+      if(attribute.value > highestAttributeNumber) {
+        highestAttributeNumber = attribute.value;
+        highestAttribute = name;
+      }
+    }
+    return highestAttribute;
+  }
+
+  async _openAttackDialogue(weaponAccuracy, weaponDamage, overwhelming, weaponType, decisive = true) {
     const characterType = this.actor.data.type;
     let confirmed = false;
+    const data = this.actor.data.data;
     const template = "systems/exaltedessence/templates/dialogues/accuracy-roll.html"
-    const html = await renderTemplate(template, { "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming, 'character-type': characterType });
+    const highestAttribute = this._getHighestAttribute(data);
+    const html = await renderTemplate(template, { "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming, 'character-type': characterType, "attribute": highestAttribute, "ability": weaponType === "melee" ? "close" : "ranged" });
     var rollResults = await new Promise((resolve, reject) => {
       return new Dialog({
         title: `Accuracy`,
@@ -608,8 +625,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         close: html => {
           if (confirmed) {
             // Accuracy
-            const data = this.actor.data.data;
-            let bonusSuccesses = parseInt(html.find('#bonus-success').val()) || 0;
+            let bonusSuccesses = parseInt(html.find('#success-modifier').val()) || 0;
             weaponAccuracy = parseInt(weaponAccuracy);
             var rollResults = this._baseAbilityDieRoll(html, data, characterType, 'attack');
             let total = rollResults.total + weaponAccuracy + bonusSuccesses;

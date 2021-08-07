@@ -157,6 +157,14 @@
   filter: sepia(0.5) hue-rotate(-160deg) !important;
 }
 
+.roll-ability {
+  cursor:pointer;
+}
+
+.roll-ability:hover {
+  text-shadow: 0 0 black;
+}
+
 .chat-card {
   font-style: normal;
   font-size: 12px;

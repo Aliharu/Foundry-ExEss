@@ -127,8 +127,8 @@
 
 .exaltedessence .sheet-header {
   -webkit-box-flex: 0;
-  -ms-flex: 0 0 285px;
-  flex: 0 0 285px;
+  -ms-flex: 0 0 312px;
+  flex: 0 0 312px;
   overflow: hidden;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -502,6 +502,14 @@
   color: #aa0200 !important;
   -webkit-filter: sepia(0.5) hue-rotate(-160deg) !important;
   filter: sepia(0.5) hue-rotate(-160deg) !important;
+}
+
+.roll-ability {
+  cursor: pointer;
+}
+
+.roll-ability:hover {
+  text-shadow: 0 0 black;
 }
 
 .chat-card {
