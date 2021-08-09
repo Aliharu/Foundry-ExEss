@@ -487,7 +487,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     let confirmed = false;
     const data = this.actor.data.data;
     const template = "systems/exaltedessence/templates/dialogues/ability-roll.html";
-    const highestAttribute = this._getHighestAttribute(data);
+    const highestAttribute = characterType === "npc" ? null : this._getHighestAttribute(data);
     const html = await renderTemplate(template, { 'character-type': characterType, 'attribute': highestAttribute, "ability": type === "will" ? "sagacity" : null });
     new Dialog({
       title: `Die Roller`,
@@ -555,7 +555,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const characterType = this.actor.data.type;
     let confirmed = false;
     const template = "systems/exaltedessence/templates/dialogues/ability-roll.html"
-    const highestAttribute = this._getHighestAttribute(data);
+    const highestAttribute = characterType === "npc" ? null : this._getHighestAttribute(data);
     const html = await renderTemplate(template, { 'character-type': characterType, 'attribute': highestAttribute, ability: ability });
     new Dialog({
       title: `Die Roller`,
@@ -612,7 +612,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     let confirmed = false;
     const data = this.actor.data.data;
     const template = "systems/exaltedessence/templates/dialogues/accuracy-roll.html"
-    const highestAttribute = this._getHighestAttribute(data);
+    const highestAttribute = characterType === "npc" ? null : this._getHighestAttribute(data);
     const html = await renderTemplate(template, { "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming, 'character-type': characterType, "attribute": highestAttribute, "ability": weaponType === "melee" ? "close" : "ranged" });
     var rollResults = await new Promise((resolve, reject) => {
       return new Dialog({
