@@ -547,6 +547,10 @@
   user-select: text;
 }
 
+.chat-card .item-description {
+  display: none;
+}
+
 .chat-card .item-name {
   -webkit-box-flex: 1;
   -ms-flex: 1;

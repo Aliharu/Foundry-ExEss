@@ -85,6 +85,9 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const rituals = [];
 
     const charms = {
+      force: { name: 'ExEss.Force', visible: false, list: [] },
+      finesse: { name: 'ExEss.Finesse', visible: false, list: [] },
+      fortitude: { name: 'ExEss.Fortitude', visible: false, list: [] },
       athletics: { name: 'ExEss.Athletics', visible: false, list: [] },
       awareness: { name: 'ExEss.Awareness', visible: false, list: [] },
       close: { name: 'ExEss.CloseCombat', visible: false, list: [] },
@@ -101,6 +104,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       war: { name: 'ExEss.War', visible: false, list: [] },
       martial: { name: 'ExEss.MartialArts', visible: false, list: [] },
       evocation: { name: 'ExEss.Evocations', visible: false, list: [] },
+      other: { name: 'ExEss.Other', visible: false, list: [] },
     }
 
     const spells = {
@@ -256,11 +260,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       this._buildResource('will');
     });
 
-    html.find('#rollWithering').mousedown(ev => {
+    html.find('.roll-withering').mousedown(ev => {
       this._openAttackDialogue($(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), false);
     });
 
-    html.find('#rollDecisive').mousedown(ev => {
+    html.find('.roll-decisive').mousedown(ev => {
       this._openAttackDialogue($(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), true);
     });
 
@@ -276,7 +280,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       this._displayCard(ev);
     });
 
-    html.find('.item-row').click(ev => {
+    $(document.getElementById('chat-log')).on('click', '.chat-card', (ev) => {
       const li = $(ev.currentTarget).next();
       li.toggle("fast");
     });
@@ -284,7 +288,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     html.find(".effect-control").click(ev => onManageActiveEffect(ev, this.actor));
 
     html.find('.rollable').click(this._onRoll.bind(this));
-    
+
     // Drag events for macros.
     if (this.actor.isOwner) {
       let handler = ev => this._onDragStart(ev);
@@ -524,7 +528,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             }
           }
           let the_content = `
-          <div class="chat-card item-card">
+          <div class="chat-card">
               <div class="card-content">Dice Roll</div>
               <div class="card-buttons">
                   <div class="flexrow 1">
@@ -550,7 +554,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }).render(true);
   }
 
-  async _openAbilityRollDialogue(ability="athletics") {
+  async _openAbilityRollDialogue(ability = "athletics") {
     const data = this.actor.data.data;
     const characterType = this.actor.data.type;
     let confirmed = false;
@@ -569,7 +573,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           var rollResults = this._baseAbilityDieRoll(html, data, characterType, 'ability');
           let bonusSuccesses = parseInt(html.find('#success-modifier').val()) || 0;
           let the_content = `
-          <div class="chat-card item-card">
+          <div class="chat-card">
               <div class="card-content">Dice Roll</div>
               <div class="card-buttons">
                   <div class="flexrow 1">
@@ -599,7 +603,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     var highestAttributeNumber = 0;
     var highestAttribute = "force";
     for (let [name, attribute] of Object.entries(data.attributes)) {
-      if(attribute.value > highestAttributeNumber) {
+      if (attribute.value > highestAttributeNumber) {
         highestAttributeNumber = attribute.value;
         highestAttribute = name;
       }
@@ -611,6 +615,9 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const characterType = this.actor.data.type;
     let confirmed = false;
     const data = this.actor.data.data;
+    weaponAccuracy = weaponAccuracy || 0;
+    weaponDamage = weaponDamage || 0;
+    overwhelming = overwhelming || 0;
     const template = "systems/exaltedessence/templates/dialogues/accuracy-roll.html"
     const highestAttribute = characterType === "npc" ? null : this._getHighestAttribute(data);
     const html = await renderTemplate(template, { "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming, 'character-type': characterType, "attribute": highestAttribute, "ability": weaponType === "melee" ? "close" : "ranged" });
@@ -631,8 +638,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             let total = rollResults.total + weaponAccuracy + bonusSuccesses;
 
             var messageContent = `
-              <div class="chat-card item-card">
-                  <div class="card-content">Decisive Attack</div>
+              <div class="chat-card">
+                  <div class="card-content">${decisive ? 'Decisive Attack' : 'Withering Attack'}</div>
                   <div class="card-buttons">
                       <div class="flexrow 1">
                           <div>
@@ -699,7 +706,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
               overwhlemingMessage = `<h4 class="dice-total">${overwhelming} Power Built!</h4>`;
             }
             messageContent = `
-              <div class="chat-card item-card">
+              <div class="chat-card">
                   <div class="card-content">Withering Attack</div>
                   <div class="card-buttons">
                       <div class="flexrow 1">
@@ -774,7 +781,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
               let damageTotal = damageSuccess - soak;
 
               messageContent = `
-                <div class="chat-card item-card">
+                <div class="chat-card">
                     <div class="card-content">Decisive Attack</div>
                     <div class="card-buttons">
                         <div class="flexrow 1">
@@ -806,7 +813,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
                 powerGained = overwhelming + 1;
               }
               messageContent = `
-                  <div class="chat-card item-card">
+                  <div class="chat-card">
                       <div class="card-content">Withering Attack</div>
                       <div class="card-buttons">
                           <div class="flexrow 1">

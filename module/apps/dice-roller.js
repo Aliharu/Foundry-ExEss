@@ -53,7 +53,7 @@ export async function openRollDialogue(actor) {
                 if (bonus) total += bonus;
                 if (successModifier) total += successModifier;
 
-                let the_content = `<div class="chat-card item-card">
+                let the_content = `<div class="chat-card">
                                 <div class="card-content">Dice Roll</div>
                                 <div class="card-buttons">
                                     <div class="flexrow 1">

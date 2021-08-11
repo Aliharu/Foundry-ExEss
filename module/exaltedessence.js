@@ -93,6 +93,12 @@ $(document).ready(() => {
 Hooks.once("ready", async function() {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
   Hooks.on("hotbarDrop", (bar, data, slot) => createExaltedessenceMacro(data, slot));
+
+  $("#chat-log").on("click", " .item-row", ev => {
+    const li = $(ev.currentTarget).next();
+    li.toggle("fast");
+  });
+  
 });
 
 /* -------------------------------------------- */
