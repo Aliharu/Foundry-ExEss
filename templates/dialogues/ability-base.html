@@ -72,8 +72,16 @@
         <span>Db 10s</span>
     </label>
 
+    {{#ifEquals character-type 'character'}}
     <label class="resource-label">{{localize "ExEss.Stunt"}}: </label>
     <input checked type="checkbox" id="stunt" name="data.rollable">
+    {{/ifEquals}}
+
+    {{#ifEquals character-type 'npc'}}
+    <label class="resource-label">{{localize "ExEss.Stunt"}}: </label>
+    <input type="checkbox" id="stunt" name="data.rollable">
+    {{/ifEquals}}
+
 
     <label class="resource-label">{{localize "ExEss.WoundPenalty"}}: </label>
     <input checked type="checkbox" id="wound-penalty" name="data.rollable">

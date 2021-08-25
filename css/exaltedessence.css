@@ -372,6 +372,10 @@
 
 .exaltedessence .items-list .item-name {
   margin: 0;
+  white-space: nowrap;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .exaltedessence .items-list .item-controls {
@@ -594,4 +598,8 @@
 .chat-card .card-footer span:last-child {
   border-right: none;
   padding-right: 0;
+}
+
+.chat-control-icon .fas.fa-dice-d20:hover:before {
+  cursor: pointer;
 }
