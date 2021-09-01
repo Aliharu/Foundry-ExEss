@@ -45,7 +45,7 @@
           "min": 0
         },
         "soak": {
-          "value": 0,
+          "value": 1,
           "min": 0
         },
         "hardness": {
@@ -53,7 +53,7 @@
           "min": 0
         },
         "resolve": {
-          "value": 0
+          "value": 2
         },
         "anima": {
           "value": 0,
@@ -89,15 +89,15 @@
       "health": {
         "levels": {
           "zero": {
-            "value": 0,
+            "value": 2,
             "penalty": 0
           },
           "one": {
-            "value": 0,
+            "value": 2,
             "penalty": 1
           },
           "two": {
-            "value": 0,
+            "value": 1,
             "penalty": 2
           },
           "inc": {

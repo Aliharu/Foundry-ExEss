@@ -257,7 +257,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     });
 
     html.find('#focusWill').mousedown(ev => {
-      buildResource('will');
+      buildResource(this.actor, 'will');
     });
 
     html.find('.roll-withering').mousedown(ev => {
@@ -619,7 +619,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     // Create the ChatMessage data object
     const chatData = {
-      user: game.user._id,
+      user: game.user.id,
       type: CONST.CHAT_MESSAGE_TYPES.OTHER,
       content: html,
       speaker: ChatMessage.getSpeaker({ actor: this.actor, token }),

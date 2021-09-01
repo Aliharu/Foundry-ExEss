@@ -24,7 +24,6 @@
     <div class="item-image"></div>
     <div class="item-name">Name</div>
     <div class="item-name">Strength</div>
-    <div class="item-name">Virtue</div>
     <div class="item-controls">
       <a class="item-control item-create" title="Create intimacy" data-type="intimacy"><i class="fas fa-plus"></i>
         Add</a>
@@ -33,12 +32,9 @@
   {{#each actor.intimacies as |item id|}}
   <li class="item flexrow item-row" data-item-id="{{item._id}}">
     <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
-    <h4 class="item-name">{{item.name}} ({{item.data.intimacytype}})</h4>
+    <h4 class="item-name">{{item.name}}</h4>
     <div class="resource-table-value resource-value-static">
       {{item.data.strength}}
-    </div>
-    <div class="resource-table-value resource-value-static">
-      {{item.data.virtue}}
     </div>
     <div class="item-controls">
       <a class="item-control item-chat" title="Chat Item"><i class="fas fa-comment"></i></a>
@@ -47,6 +43,26 @@
     </div>
   </li>
   <li class="item-description">
+    <div class="d-flex flex-between">
+      <div></div>
+      <div>
+        <div class="resource-label">
+          Type
+        </div>
+        <div class="resource-table-value">
+          {{item.data.intimacytype}}
+        </div>
+      </div>
+      <div>
+        <div class="resource-label">
+          Virtue
+        </div>
+        <div class="resource-table-value">
+          {{item.data.virtue}}
+        </div>
+      </div>
+      <div></div>
+    </div>
     <div>
       {{{item.data.description}}}
     </div>
