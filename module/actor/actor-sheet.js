@@ -239,6 +239,14 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       this.pickColor();
     });
 
+    html.find('#recoveryScene').mousedown(ev => {
+      this.recoverHealth();
+    });
+
+    html.find('#fullRest').mousedown(ev => {
+      this.fullRest();
+    });
+
     html.find('#rollDice').mousedown(ev => {
       openRollDialogue(this.actor);
     });
@@ -344,6 +352,32 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       }
     }
     data.anima.value = newLevel;
+    this.actor.update(actorData);
+  }
+
+  async catchBreath() {
+    const actorData = duplicate(this.actor);
+    const data = actorData.data;
+    data.anima.value = 0;
+    data.motes.total = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
+    data.motes.value = Math.min(data.motes.value + Math.ceil(data.motes.total / 2), data.motes.total);
+    this.actor.update(actorData);
+    this._updateAnima("down");
+  }
+
+  async recoverHealth() {
+    const actorData = duplicate(this.actor);
+    const data = actorData.data;
+    data.health.lethal = 0;
+    this.actor.update(actorData);
+  }
+
+  async fullRest() {
+    const actorData = duplicate(this.actor);
+    const data = actorData.data;
+    data.anima.value = 0;
+    data.motes.total = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
+    data.motes.value = data.motes.total;
     this.actor.update(actorData);
   }
 

@@ -110,7 +110,7 @@
         center all of its child elements content and text. --}}
         <div class="resource flex-group-center">
           <div class="flexrow">
-            <label for="data.health" class="resource-label">{{localize "ExEss.Health"}}</label>
+            <label for="data.health" class="resource-label">{{localize "ExEss.Health"}}<i id="recoveryScene" title="Recovery Scene" class="fas fa-plus-square cursor-pointer" style="margin-left:3px;"></i></label>
           </div>
           <div class="resource-content flexrow flex-center flex-between">
             <div class="resource-counter" data-states="/:lethal,x:aggravated" data-max="{{data.data.health.total}}"
@@ -149,9 +149,11 @@
           </div>
         </div>
       </div>
-      <div class="resources grid">
-        <button id="rollDice" class="roll-button">{{localize "ExEss.RollDice"}}</button>
-        <button id="rollAbility" class="roll-button">{{localize "ExEss.RollAbility"}}</button>
+      <div class="resources grid  grid-4col">
+        <button id="catchBreath" class="roll-button"><i class="fas fa-heartbeat" title="Spend a scene resting"></i>{{localize "ExEss.CatchBreath"}}</button>
+        <button id="fullRest" class="roll-button"><i class="fas fa-moon" title="Full nights rest"></i>{{localize "ExEss.FullRest"}}</button>
+        <button id="rollDice" class="roll-button"><i class="fas fa-dice"></i>{{localize "ExEss.RollDice"}}</button>
+        <button id="rollAbility" class="roll-button"><i class="fas fa-dice"></i>{{localize "ExEss.RollAbility"}}</button>
       </div>
     </div>
   </header>
