@@ -243,6 +243,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       this.recoverHealth();
     });
 
+    html.find('#catchBreath').mousedown(ev => {
+      this.catchBreath();
+    });
+
     html.find('#fullRest').mousedown(ev => {
       this.fullRest();
     });
