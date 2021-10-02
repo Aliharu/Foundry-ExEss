@@ -104,56 +104,37 @@
 
         </div>
       </div>
-      <div class="resources grid grid-3col">
-        {{!-- "flex-group-center" is also defined in the _grid.scss file
-        and it will add a small amount of padding, a border, and will
-        center all of its child elements content and text. --}}
-        <div class="resource flex-group-center">
-          <div class="flexrow">
-            <label for="data.health" class="resource-label">{{localize "ExEss.Health"}}<i id="recoveryScene" title="Recovery Scene" class="fas fa-plus-square cursor-pointer" style="margin-left:3px;"></i></label>
+      <div class="resources grid grid-2col">
+        <div class="resource flex-group-center d-flex">
+          <div style="width:180px;margin-right:20px;">
+            <div class="flexrow">
+              <label for="data.health" class="resource-label"><i
+                class="fas fa-calculator cursor-pointer" id="calculate-health" style="margin-right:3px;"
+                title="Calculate Health"></i>{{localize "ExEss.Health"}}<i id="recoveryScene" title="Recovery Scene" class="fas fa-plus-square cursor-pointer" style="margin-left:3px;"></i></label>
+            </div>
+            <div class="resource-content flexrow flex-center flex-between">
+              <div class="resource-counter" data-states="/:lethal,x:aggravated" data-max="{{data.data.health.total}}"
+                data-lethal="{{data.data.health.lethal}}" data-aggravated="{{data.data.health.aggravated}}"
+                data-name="data.health">
+                {{#numLoop data.data.health.total}}
+                <span class="resource-counter-step" data-index="{{this}}" data-state=""></span>
+                {{/numLoop}}
+              </div>
+            </div>
           </div>
-          <div class="resource-content flexrow flex-center flex-between">
-            <div class="resource-counter" data-states="/:lethal,x:aggravated" data-max="{{data.data.health.total}}"
-              data-lethal="{{data.data.health.lethal}}" data-aggravated="{{data.data.health.aggravated}}"
-              data-name="data.health">
-              {{#numLoop data.data.health.total}}
-              <span class="resource-counter-step" data-index="{{this}}" data-state=""></span>
-              {{/numLoop}}
+          <div>
+            <div class="flex-center">
+              <div class="resource-label">{{localize "ExEss.WoundPenalty"}}</div>
+              <div>-{{data.data.health.penalty}}</div>
             </div>
           </div>
         </div>
         <div class="flex-center">
-          <label class="resource-label">{{localize "ExEss.HealthLevels"}}</label>
-          <div class="d-flex flex-center resources">
-            <div>
-              <div>-0</div>
-              <input type="number" name="data.health.levels.zero.value" value="{{data.data.health.levels.zero.value}}"
-                data-dtype="Number" />
-            </div>
-            <div>
-              <div>-1</div>
-              <input type="number" name="data.health.levels.one.value" value="{{data.data.health.levels.one.value}}"
-                data-dtype="Number" />
-            </div>
-            <div>
-              <div>-2</div>
-              <input type="number" name="data.health.levels.two.value" value="{{data.data.health.levels.two.value}}"
-                data-dtype="Number" />
-            </div>
-          </div>
-        </div>
-        <div>
-          <div class="flex-center">
-            <div class="resource-label">{{localize "ExEss.CurrentWoundPenalty"}}</div>
-            <div class="resource-calculated-value">-{{data.data.health.penalty}}</div>
-          </div>
+          <button id="catchBreath"><i class="fas fa-heartbeat" title="Spend a scene resting"></i>{{localize "ExEss.CatchBreath"}}</button>
+          <button id="fullRest"><i class="fas fa-moon" title="Full nights rest"></i>{{localize "ExEss.FullRest"}}</button>
         </div>
       </div>
-      <div class="resources grid  grid-4col">
-        <button id="catchBreath" class="roll-button"><i class="fas fa-heartbeat" title="Spend a scene resting"></i>{{localize "ExEss.CatchBreath"}}</button>
-        <button id="fullRest" class="roll-button"><i class="fas fa-moon" title="Full nights rest"></i>{{localize "ExEss.FullRest"}}</button>
-        <button id="rollDice" class="roll-button"><i class="fas fa-dice"></i>{{localize "ExEss.RollDice"}}</button>
-        <button id="rollAbility" class="roll-button"><i class="fas fa-dice"></i>{{localize "ExEss.RollAbility"}}</button>
+      <div class="resources grid  grid-3col">
       </div>
     </div>
   </header>
@@ -200,7 +181,6 @@
     <div class="tab flex-center" data-group="primary" data-tab="stats">
       <div style="padding-top:10px;">
         <label class="resource-label">{{localize "ExEss.Attributes"}}</label>
-        <i title="Toggle Dot Colors" id="color-picker" class="fas fa-palette cursor-pointer"></i>
       </div>
       <div class="attributes grid grid-3col flex-group-center">
         {{#each data.data.attributes as |attribute key|}}
@@ -250,12 +230,16 @@
             </div>
             <div class="resource-content flexrow flex-center flex-between">
               <div>
+                <label class="resource-label">{{localize "ExEss.RollAbility"}}</label>
+                <button id="rollAbility" class="roll-button"><i class="fas fa-dice"></i>{{localize "ExEss.Roll"}}</button>
+              </div>
+              <div>
                 <label class="resource-label">{{localize "ExEss.BuildPower"}}</label>
-                <button id="buildPower" class="roll-button">{{localize "ExEss.Roll"}}</button>
+                <button id="buildPower" class="roll-button"><i class="fas fa-bolt"></i>{{localize "ExEss.Roll"}}</button>
               </div>
               <div>
                 <label class="resource-label">{{localize "ExEss.FocusWill"}}</label>
-                <button id="focusWill" class="roll-button">{{localize "ExEss.Roll"}}</button>
+                <button id="focusWill" class="roll-button"><i class="fas fa-hat-wizard"></i>{{localize "ExEss.Roll"}}</button>
               </div>
             </div>
           </div>

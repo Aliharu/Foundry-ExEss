@@ -127,8 +127,8 @@
 
 .exaltedessence .sheet-header {
   -webkit-box-flex: 0;
-  -ms-flex: 0 0 312px;
-  flex: 0 0 312px;
+  -ms-flex: 0 0 280px;
+  flex: 0 0 280px;
   overflow: hidden;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -513,6 +513,14 @@
 }
 
 .roll-ability:hover {
+  text-shadow: 0 0 black;
+}
+
+.roll-pool {
+  cursor: pointer;
+}
+
+.roll-pool:hover {
   text-shadow: 0 0 black;
 }
 

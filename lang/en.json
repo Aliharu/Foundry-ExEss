@@ -18,6 +18,8 @@
     "ExEss.MajorVirtue": "Major Virtue",
     "ExEss.MinorVirtue": "Minor Virtue",
 
+    "ExEss.DotColors": "Dot Colors",
+
     "ExEss.Flowing": "Flowing",
     "ExEss.Still": "Still",
 
@@ -168,6 +170,7 @@
     "ExEss.Roll": "Roll",
     "ExEss.RollDice": "Roll Dice",
     "ExEss.RollAbility": "Roll Ability",
+    "ExEss.RollPool": "Roll Pool",
 
     "ExEss.CatchBreath": "Catch Breath",
     "ExEss.FullRest": "Full Rest",

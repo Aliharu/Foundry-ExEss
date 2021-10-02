@@ -197,6 +197,31 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }
   }
 
+  _getHeaderButtons() {
+    let buttons = super._getHeaderButtons();
+    // Token Configuration
+    const canConfigure = game.user.isGM || this.actor.owner;
+    if (this.options.editable && canConfigure) {
+      if (this.actor.type != 'npc') {
+        const colorButton = {
+          label: game.i18n.localize('ExEss.DotColors'),
+          class: 'set-color',
+          icon: 'fas fa-palette',
+          onclick: (ev) => this.pickColor(ev),
+        };
+        buttons = [colorButton, ...buttons];
+      }
+      const rollButton = {
+        label: game.i18n.localize('ExEss.Roll'),
+        class: 'roll-dice',
+        icon: 'fas fa-dice',
+        onclick: () => openRollDialogue(),
+      };
+      buttons = [rollButton, ...buttons];
+    }
+    return buttons;
+  }
+
   /* -------------------------------------------- */
 
   /** @override */
@@ -235,6 +260,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       li.slideUp(200, () => this.render(false));
     });
 
+    html.find('#calculate-health').mousedown(ev => {
+      this.calculateHealth();
+    });
+
     html.find('#color-picker').mousedown(ev => {
       this.pickColor();
     });
@@ -262,6 +291,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     html.find('.roll-ability').mousedown(ev => {
       var ability = $(ev.target).attr("data-ability");
       openAbilityRollDialogue(this.actor, ability);
+    });
+
+    html.find('.roll-pool').mousedown(ev => {
+      var pool = $(ev.target).attr("data-pool");
+      openAbilityRollDialogue(this.actor, pool);
     });
 
     html.find('#buildPower').mousedown(ev => {
@@ -357,6 +391,50 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }
     data.anima.value = newLevel;
     this.actor.update(actorData);
+  }
+
+  async calculateHealth() {
+    let confirmed = false;
+    const actorData = duplicate(this.actor);
+    const data = actorData.data;
+    let template;
+    let html;
+
+    if (actorData.type === 'npc') {
+      template = "systems/exaltedessence/templates/dialogues/calculate-npc-health.html";
+      html = await renderTemplate(template, { 'health': data.health.levels });
+    }
+    else {
+      template = "systems/exaltedessence/templates/dialogues/calculate-health.html";
+      html = await renderTemplate(template, { 'zero': data.health.levels.zero.value, 'one': data.health.levels.one.value, 'two': data.health.levels.two.value });
+    }
+    new Dialog({
+      title: `Calculate Health`,
+      content: html,
+      buttons: {
+        roll: { label: "Save", callback: () => confirmed = true },
+        cancel: { label: "Cancel", callback: () => confirmed = false }
+      },
+      close: html => {
+        if (confirmed) {
+          data.health.lethal = 0;
+          data.health.aggravated = 0;
+          if (actorData.type === 'npc') {
+            let health = parseInt(html.find('#health').val()) || 0;
+            data.health.levels = health;
+          }
+          else {
+            let zero = parseInt(html.find('#zero').val()) || 0;
+            let one = parseInt(html.find('#one').val()) || 0;
+            let two = parseInt(html.find('#two').val()) || 0;
+            data.health.levels.zero.value = zero;
+            data.health.levels.one.value = one;
+            data.health.levels.two.value = two;
+          }
+          this.actor.update(actorData);
+        }
+      }
+    }).render(true);
   }
 
   async catchBreath() {

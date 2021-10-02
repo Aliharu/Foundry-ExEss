@@ -78,7 +78,8 @@ export async function openRollDialogue(actor) {
     }).render(true);
 }
 
-function _baseAbilityDieRoll(html, data, characterType = 'character', rollType = 'ability') {
+function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType = 'ability') {
+    const data = actor.data.data;
     let dice = 0;
     let augmentAttribute = false;
 
@@ -162,15 +163,17 @@ function _baseAbilityDieRoll(html, data, characterType = 'character', rollType =
         dice += diceModifier;
     }
 
-    if (data.details.exalt === "getimian") {
-        if (attribute === "force" && (data.still.total < data.flowing.total)) {
-            successModifier += 1;
-        }
-        if (attribute === "finesse" && (data.still.total > data.flowing.total)) {
-            successModifier += 1;
-        }
-        if (attribute === "fortitude" && (data.still.total >= (data.flowing.total - 1) && data.still.total <= (data.flowing.total + 1))) {
-            successModifier += 1;
+    if(characterType === "actor" || data.creaturetype === 'exalt' ) {
+        if (data.details.exalt === "getimian") {
+            if (attribute === "force" && (data.still.total < data.flowing.total)) {
+                successModifier += 1;
+            }
+            if (attribute === "finesse" && (data.still.total > data.flowing.total)) {
+                successModifier += 1;
+            }
+            if (attribute === "fortitude" && (data.still.total >= (data.flowing.total - 1) && data.still.total <= (data.flowing.total + 1))) {
+                successModifier += 1;
+            }
         }
     }
 
@@ -213,7 +216,7 @@ export async function buildResource(actor, type = 'power') {
         },
         close: html => {
             if (confirmed) {
-                var rollResults = _baseAbilityDieRoll(html, data, characterType, type);
+                var rollResults = _baseAbilityDieRoll(html, actor, characterType, type);
                 let successModifier = parseInt(html.find('#success-modifier').val()) || 0;
                 var total = rollResults.total - 3;
                 if (actor.data.type === 'npc' && type === 'power') {
@@ -269,6 +272,9 @@ export async function openAbilityRollDialogue(actor, ability = "athletics") {
     const data = actor.data.data;
     const characterType = actor.data.type;
     let confirmed = false;
+    if (characterType === "npc" && ability === "athletics") {
+        ability = "primary";
+    }
     const template = "systems/exaltedessence/templates/dialogues/ability-roll.html"
     const highestAttribute = characterType === "npc" ? null : _getHighestAttribute(data);
     const html = await renderTemplate(template, { 'character-type': characterType, 'attribute': highestAttribute, ability: ability });
@@ -281,7 +287,7 @@ export async function openAbilityRollDialogue(actor, ability = "athletics") {
         },
         close: html => {
             if (confirmed) {
-                var rollResults = _baseAbilityDieRoll(html, data, characterType, 'ability');
+                var rollResults = _baseAbilityDieRoll(html, actor, characterType, 'ability');
                 let bonusSuccesses = parseInt(html.find('#success-modifier').val()) || 0;
                 let the_content = `
           <div class="chat-card">
@@ -345,7 +351,7 @@ export async function openAttackDialogue(actor, weaponAccuracy, weaponDamage, ov
                     // Accuracy
                     let bonusSuccesses = parseInt(html.find('#success-modifier').val()) || 0;
                     weaponAccuracy = parseInt(weaponAccuracy);
-                    var rollResults = _baseAbilityDieRoll(html, data, characterType, 'attack');
+                    var rollResults = _baseAbilityDieRoll(html, actor, characterType, 'attack');
                     let total = rollResults.total + weaponAccuracy + bonusSuccesses;
 
                     var messageContent = `
