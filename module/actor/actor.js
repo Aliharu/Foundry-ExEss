@@ -51,7 +51,7 @@ export class ExaltedessenceActor extends Actor {
     const data = actorData.data;
     this._prepareBaseActorData(data);
     let currentPenalty = 0;
-    if ((data.health.lethal + data.health.aggravated) >= Math.floor(data.health.levels / 2)) {
+    if (data.health.levels > 1 && ((data.health.lethal + data.health.aggravated) >= Math.floor(data.health.levels / 2))) {
       currentPenalty = 2;
     }
     data.health.penalty = currentPenalty;

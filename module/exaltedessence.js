@@ -9,7 +9,7 @@ import { ExaltedessenceItemSheet } from "./item/item-sheet.js";
 import { openRollDialogue } from "./apps/dice-roller.js";
 import TraitSelector from "./apps/trait-selector.js";
 
-Hooks.once('init', async function() {
+Hooks.once('init', async function () {
 
   game.exaltedessence = {
     applications: {
@@ -27,9 +27,25 @@ Hooks.once('init', async function() {
    * Set an initiative formula for the system
    * @type {String}
    */
-  CONFIG.Combat.initiative = {
-    formula: "1d10cs>=7",
-  };
+  Combatant.prototype._getInitiativeFormula = function () {
+    const actor = this.actor;
+    var initDice = 0;
+    if (this.actor.type != 'npc') {
+      initDice = actor.data.data.attributes.finesse.value + Math.max(actor.data.data.abilities.ranged.value, actor.data.data.abilities.close.value) + 2;
+    }
+    else {
+      initDice = actor.data.data.pools.primary.value;
+    }
+    let roll = new Roll(`${initDice}d10cs>=7`).evaluate({ async: false });
+    let diceRoll = roll.total;
+    let bonus = 0;
+    for (let dice of roll.dice[0].results) {
+      if (dice.result >= 10) {
+        bonus++;
+      }
+    }
+    return `${diceRoll + bonus}`;
+  }
 
   // Define custom Entity classes
   CONFIG.EXALTEDESSENCE = EXALTEDESSENCE;
@@ -52,7 +68,7 @@ Hooks.once('init', async function() {
   ]);
 
   // If you need to add Handlebars helpers, here are a few useful examples:
-  Handlebars.registerHelper('concat', function() {
+  Handlebars.registerHelper('concat', function () {
     var outStr = '';
     for (var arg in arguments) {
       if (typeof arguments[arg] != 'object') {
@@ -62,9 +78,9 @@ Hooks.once('init', async function() {
     return outStr;
   });
 
-  Handlebars.registerHelper('toLowerCase', function(str) {
+  Handlebars.registerHelper('toLowerCase', function (str) {
     return str.toLowerCase();
-  }); 
+  });
 
   Handlebars.registerHelper('numLoop', function (num, options) {
     let ret = ''
@@ -77,7 +93,7 @@ Hooks.once('init', async function() {
   })
 });
 
-Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+Handlebars.registerHelper('ifEquals', function (arg1, arg2, options) {
   return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
 });
 
@@ -90,7 +106,7 @@ $(document).ready(() => {
   });
 });
 
-Hooks.once("ready", async function() {
+Hooks.once("ready", async function () {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
   Hooks.on("hotbarDrop", (bar, data, slot) => createExaltedessenceMacro(data, slot));
 
@@ -98,7 +114,7 @@ Hooks.once("ready", async function() {
     const li = $(ev.currentTarget).next();
     li.toggle("fast");
   });
-  
+
 });
 
 /* -------------------------------------------- */
