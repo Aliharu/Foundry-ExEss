@@ -1,8 +1,9 @@
-<li>
-    <div class="resource-label list-section-header">
+<div class="resource-label list-section-header d-flex flex-between">
+    <div>
         {{localize "ExEss.Charms"}}
     </div>
-</li>
+    <a class="item-control item-create" title="Create charm" data-type="charm"><i class="fas fa-plus"></i>Add Charm</a>
+</div>
 {{#each actor.charms as |charm ability|}}
 {{#if charm.visible}}
 <li class="item flexrow item-header flex-center">
@@ -26,11 +27,12 @@
 {{/each}}
 {{/if}}
 {{/each}}
-<li>
-    <div class="resource-label list-section-header">
+<div class="resource-label list-section-header d-flex flex-between">
+    <div>
         {{localize "ExEss.Spells"}}
     </div>
-</li>
+    <a class="item-control item-create" title="Create spell" data-type="spell"><i class="fas fa-plus"></i>Add Spell</a>
+</div>
 <li>
     {{#each actor.spells as |spell circle|}}
     {{#if spell.visible}}

@@ -108,9 +108,10 @@
         <div class="resource flex-group-center d-flex">
           <div style="width:180px;margin-right:20px;">
             <div class="flexrow">
-              <label for="data.health" class="resource-label"><i
-                class="fas fa-calculator cursor-pointer" id="calculate-health" style="margin-right:3px;"
-                title="Calculate Health"></i>{{localize "ExEss.Health"}}<i id="recoveryScene" title="Recovery Scene" class="fas fa-plus-square cursor-pointer" style="margin-left:3px;"></i></label>
+              <label for="data.health" class="resource-label"><i class="fas fa-calculator cursor-pointer"
+                  id="calculate-health" style="margin-right:3px;" title="Calculate Health"></i>{{localize
+                "ExEss.Health"}}<i id="recoveryScene" title="Recovery Scene" class="fas fa-plus-square cursor-pointer"
+                  style="margin-left:3px;"></i></label>
             </div>
             <div class="resource-content flexrow flex-center flex-between">
               <div class="resource-counter" data-states="/:lethal,x:aggravated" data-max="{{data.data.health.total}}"
@@ -130,8 +131,10 @@
           </div>
         </div>
         <div class="flex-center">
-          <button id="catchBreath"><i class="fas fa-heartbeat" title="Spend a scene resting"></i>{{localize "ExEss.CatchBreath"}}</button>
-          <button id="fullRest"><i class="fas fa-moon" title="Full nights rest"></i>{{localize "ExEss.FullRest"}}</button>
+          <button id="catchBreath"><i class="fas fa-heartbeat" title="Spend a scene resting"></i>{{localize
+            "ExEss.CatchBreath"}}</button>
+          <button id="fullRest"><i class="fas fa-moon" title="Full nights rest"></i>{{localize
+            "ExEss.FullRest"}}</button>
         </div>
       </div>
       <div class="resources grid  grid-3col">
@@ -201,8 +204,9 @@
       <div class="attributes grid grid-3col flex-group-center">
         {{#each data.data.abilities as |ability key|}}
         <div class="ability flexrow flex-center">
-          <label for="data.abilities.{{key}}.value" class="resource-label vrollable roll-ability" data-roll="{{ability.value}}" data-ability="{{key}}"
-            data-label="{{ability.name}}">{{localize ability.name}}</label>
+          <label for="data.abilities.{{key}}.value" class="resource-label vrollable roll-ability"
+            data-roll="{{ability.value}}" data-ability="{{key}}" data-label="{{ability.name}}">{{localize
+            ability.name}}</label>
           <div class="resource-value" data-value="{{ability.value}}" data-name="data.abilities.{{key}}.value">
             {{#numLoop 5}}
             <span class="resource-value-step" data-index="{{this}}"></span>
@@ -231,15 +235,18 @@
             <div class="resource-content flexrow flex-center flex-between">
               <div>
                 <label class="resource-label">{{localize "ExEss.RollAbility"}}</label>
-                <button id="rollAbility" class="roll-button"><i class="fas fa-dice"></i>{{localize "ExEss.Roll"}}</button>
+                <button id="rollAbility" class="roll-button"><i class="fas fa-dice"></i>{{localize
+                  "ExEss.Roll"}}</button>
               </div>
               <div>
                 <label class="resource-label">{{localize "ExEss.BuildPower"}}</label>
-                <button id="buildPower" class="roll-button"><i class="fas fa-bolt"></i>{{localize "ExEss.Roll"}}</button>
+                <button id="buildPower" class="roll-button"><i class="fas fa-bolt"></i>{{localize
+                  "ExEss.Roll"}}</button>
               </div>
               <div>
                 <label class="resource-label">{{localize "ExEss.FocusWill"}}</label>
-                <button id="focusWill" class="roll-button"><i class="fas fa-hat-wizard"></i>{{localize "ExEss.Roll"}}</button>
+                <button id="focusWill" class="roll-button"><i class="fas fa-hat-wizard"></i>{{localize
+                  "ExEss.Roll"}}</button>
               </div>
             </div>
           </div>
@@ -278,16 +285,6 @@
     {{!-- Charms Tab --}}
     <div class="tab items" data-group="primary" data-tab="charms">
       <ol class="items-list">
-        <li class="item flexrow item-header">
-          <div class="item-image"></div>
-          <div class="item-name"></div>
-          <div class="items-controls d-flex">
-            <a class="item-control margin-right item-create" title="Create charm" data-type="charm"><i
-                class="fas fa-plus"></i> Add charm</a>
-            <a class="item-control item-create" title="Create spell" data-type="spell"><i class="fas fa-plus"></i> Add
-              spell</a>
-          </div>
-        </li>
         <li>
           <div class="resource-label list-section-header mb-2">
             {{localize "ExEss.Anima"}}
@@ -315,7 +312,7 @@
 
     {{!-- Intimacy Tab --}}
     <div class="tab intimacies" data-group="primary" data-tab="intimacies">
-        {{> systems/exaltedessence/templates/actor/intimacies-list.html}}
+      {{> systems/exaltedessence/templates/actor/intimacies-list.html}}
     </div>
 
     <!-- {{!-- Intimacy Tab --}}
@@ -375,18 +372,6 @@
     {{!-- Advantages Tab --}}
     <div class="tab advantages" data-group="primary" data-tab="advantages">
       <ol class="items-list">
-        <li class="item flexrow item-header">
-          <div class="item-image"></div>
-          <div class="item-name"></div>
-          <div class="merits-controls">
-            <a class="item-control margin-right item-create" title="Create ritual" data-type="ritual"><i
-                class="fas fa-plus"></i>
-              Add ritual</a>
-            <a class="item-control margin-right item-create" title="Create merit" data-type="merit"><i
-                class="fas fa-plus"></i>
-              Add merit</a>
-          </div>
-        </li>
         <li>
           <div class="resource-label list-section-header mb-2">
             {{localize "ExEss.Advantages"}}
@@ -413,11 +398,13 @@
             {{/each}}
           </div>
         </div>
-        <li>
-          <div class="resource-label list-section-header">
+        <div class="resource-label list-section-header d-flex flex-between">
+          <div>
             {{localize "ExEss.Rituals"}}
           </div>
-        </li>
+          <a class="item-control item-create" title="Create ritual" data-type="ritual"><i class="fas fa-plus"></i>Add
+            Ritual</a>
+        </div>
         {{#each actor.rituals as |item id|}}
         <li class="item flexrow item-row" data-item-id="{{item._id}}">
           <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
@@ -434,11 +421,13 @@
           </div>
         </li>
         {{/each}}
-        <li>
-          <div class="resource-label list-section-header">
+        <div class="resource-label list-section-header d-flex flex-between">
+          <div>
             {{localize "ExEss.Merits"}}
           </div>
-        </li>
+          <a class="item-control item-create" title="Create merit" data-type="merit"><i class="fas fa-plus"></i>Add
+            Merit</a>
+        </div>
         {{#each actor.merits as |item id|}}
         <li class="item flexrow item-row" data-item-id="{{item._id}}">
           <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
