@@ -200,7 +200,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons();
     // Token Configuration
-    const canConfigure = game.user.isGM || this.actor.owner;
+    const canConfigure = game.user.isGM || this.actor.isOwner;
     if (this.options.editable && canConfigure) {
       if (this.actor.type != 'npc') {
         const colorButton = {

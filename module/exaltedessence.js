@@ -106,6 +106,24 @@ $(document).ready(() => {
   });
 });
 
+Hooks.on('updateCombat', (async (combat, update) => {
+  // Handle non-gm users.
+
+  if (combat.current === undefined) {
+    combat = game.combat;
+  }
+
+  if (update && update.round) {
+    for(var combatant of combat.data.combatants) {
+      const actorData = duplicate(combatant.actor)
+      if(actorData.data.motes.value < (actorData.data.motes.total - actorData.data.motes.commited)) {
+        actorData.data.motes.value++;
+      }
+      combatant.actor.update(actorData);
+    }
+  }
+}));
+
 Hooks.once("ready", async function () {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
   Hooks.on("hotbarDrop", (bar, data, slot) => createExaltedessenceMacro(data, slot));

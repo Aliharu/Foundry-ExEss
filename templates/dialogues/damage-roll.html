@@ -54,9 +54,19 @@
             Defender
         </div>
         <div class="resource {{#if decisive}} grid-2col {{/if}} flex-center mb-2">
-            <input placeholder="Defence" id="defence" type="number">
+            <div>
+                <div class="flex-center resource-label">
+                    {{localize "ExEss.Defense"}}
+                </div>
+                <input placeholder="Defence" id="defence" type="number" value="{{defense}}">
+            </div>
             {{#if decisive}}
-            <input placeholder="Soak" id="soak" type="number">
+            <div>
+                <div class="flex-center resource-label">
+                    {{localize "ExEss.Soak"}}
+                </div>
+                <input placeholder="Soak" id="soak" type="number" value="{{soak}}">
+            </div>
             {{/if}}
         </div>
     </div>

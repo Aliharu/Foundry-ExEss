@@ -18,7 +18,6 @@ export async function openRollDialogue(actor) {
                 let rerollFailed = html.find('#reroll-failed').is(':checked');
                 let rerollNumber = parseInt(html.find('#reroll-number').val()) || 0;
 
-
                 let rerollString = '';
                 let rerolls = [];
 
@@ -337,7 +336,7 @@ export async function openAttackDialogue(actor, weaponAccuracy, weaponDamage, ov
     overwhelming = overwhelming || 0;
     const template = "systems/exaltedessence/templates/dialogues/accuracy-roll.html"
     const highestAttribute = characterType === "npc" ? null : _getHighestAttribute(data);
-    const html = await renderTemplate(template, { "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming, 'character-type': characterType, "attribute": highestAttribute, "ability": weaponType === "melee" ? "close" : "ranged" });
+    const html = await renderTemplate(template, { "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming, 'character-type': characterType, "attribute": highestAttribute, "ability": weaponType === "melee" ? "close" : "ranged"});
     var rollResults = await new Promise((resolve, reject) => {
         return new Dialog({
             title: `Accuracy`,
@@ -390,8 +389,14 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
     let confirmed = false;
     const actorData = duplicate(actor);
     const template = "systems/exaltedessence/templates/dialogues/damage-roll.html"
-    const html = await renderTemplate(template, { "successes": accuracyResult.successess, "power": actorData.data.power.value, "weapon-damage": weaponDamage, "overwhelming": overwhelming, "decisive": decisive });
-
+    let soak = 0;
+    let defense = 0;
+    let target = Array.from(game.user.targets)[0] || null;
+    if (target) {
+        defense = target.actor.data.data.defence.value;
+        soak = target.actor.data.data.soak.value;
+    }
+    const html = await renderTemplate(template, { "successes": accuracyResult.successess, "power": actorData.data.power.value, "weapon-damage": weaponDamage, "overwhelming": overwhelming, "decisive": decisive, "defense": defense, "soak": soak });
     new Dialog({
         title: `Damage`,
         content: html,
