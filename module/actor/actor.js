@@ -57,6 +57,17 @@ export class ExaltedessenceActor extends Actor {
     data.health.penalty = currentPenalty;
   }
 
+  async _preUpdate(updateData, options, user) {
+    await super._preUpdate(updateData, options, user)
+    if(updateData?.data?.motes) {
+      if(updateData?.data?.motes.value !== undefined) {
+        const animaChange = Math.max(0, this.data.data.motes.value - updateData.data.motes.value);
+        const newAnima = Math.min(10, this.data.data.anima.value + animaChange);
+        updateData.data.anima = { 'value': newAnima };
+      }
+    }
+  }
+
   _prepareBaseActorData(data) {
     data.motes.total = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
     let animaLevel = "";

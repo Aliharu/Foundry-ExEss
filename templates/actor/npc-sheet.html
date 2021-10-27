@@ -93,7 +93,9 @@
                 </div>
                 <div class="resource-content flexrow flex-center flex-between">
                     <div>
-                        <label class="resource-label">{{localize "ExEss.Anima"}}</label>
+                        <i id="anima-down" class="fas fa-caret-down cursor-pointer"></i><label
+                            class="resource-label">{{localize
+                            "ExEss.Anima"}}</label><i id="anima-up" class="fas fa-caret-up cursor-pointer"></i>
                         <input type="number" name="data.anima.value" value="{{data.data.anima.value}}"
                             data-dtype="Number" />
                     </div>
@@ -139,9 +141,10 @@
                 center all of its child elements content and text. --}}
                 <div class="resource flex-group-center">
                     <div class="flexrow">
-                        <label for="data.health" class="resource-label"><i
-                            class="fas fa-calculator cursor-pointer" id="calculate-health" style="margin-right:3px;"
-                            title="Calculate Health"></i>{{localize "ExEss.Health"}}<i id="recoveryScene" title="Recovery Scene" class="fas fa-plus-square cursor-pointer" style="margin-left:3px;"></i></label>
+                        <label for="data.health" class="resource-label"><i class="fas fa-calculator cursor-pointer"
+                                id="calculate-health" style="margin-right:3px;" title="Calculate Health"></i>{{localize
+                            "ExEss.Health"}}<i id="recoveryScene" title="Recovery Scene"
+                                class="fas fa-plus-square cursor-pointer" style="margin-left:3px;"></i></label>
                     </div>
                     <div class="resource-content flexrow flex-center flex-between">
                         <div class="resource-counter" data-states="/:lethal,x:aggravated"
@@ -234,15 +237,18 @@
                 <div class="resource-content flexrow flex-center flex-between">
                     <div>
                         <label class="resource-label">{{localize "ExEss.RollPool"}}</label>
-                        <button id="rollAbility" class="roll-button"><i class="fas fa-dice"></i>{{localize "ExEss.Roll"}}</button>
+                        <button id="rollAbility" class="roll-button"><i class="fas fa-dice"></i>{{localize
+                            "ExEss.Roll"}}</button>
                     </div>
                     <div>
                         <label class="resource-label">{{localize "ExEss.BuildPower"}}</label>
-                        <button id="buildPower" class="roll-button"><i class="fas fa-bolt"></i>{{localize "ExEss.Roll"}}</button>
+                        <button id="buildPower" class="roll-button"><i class="fas fa-bolt"></i>{{localize
+                            "ExEss.Roll"}}</button>
                     </div>
                     <div>
                         <label class="resource-label">{{localize "ExEss.FocusWill"}}</label>
-                        <button id="focusWill" class="roll-button"><i class="fas fa-hat-wizard"></i>{{localize "ExEss.Roll"}}</button>
+                        <button id="focusWill" class="roll-button"><i class="fas fa-hat-wizard"></i>{{localize
+                            "ExEss.Roll"}}</button>
                     </div>
                 </div>
             </div>
