@@ -58,8 +58,13 @@ export class ExaltedessenceActor extends Actor {
   }
 
   async _preUpdate(updateData, options, user) {
-    await super._preUpdate(updateData, options, user)
+    await super._preUpdate(updateData, options, user);
     if(updateData?.data?.motes) {
+      if(updateData?.data?.motes.commited !== undefined) {
+        const commitChange = Math.max(0, updateData.data.motes.commited - this.data.data.motes.commited);
+        const newMotes = Math.max(0, this.data.data.motes.value - commitChange);
+        updateData.data.motes.value = newMotes;
+      }
       if(updateData?.data?.motes.value !== undefined) {
         const animaChange = Math.max(0, this.data.data.motes.value - updateData.data.motes.value);
         const newAnima = Math.min(10, this.data.data.anima.value + animaChange);
