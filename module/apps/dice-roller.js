@@ -162,7 +162,7 @@ function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType 
         dice += diceModifier;
     }
 
-    if(characterType === "actor" || data.creaturetype === 'exalt' ) {
+    if (characterType === "actor" || data.creaturetype === 'exalt') {
         if (data.details.exalt === "getimian") {
             if (attribute === "force" && (data.still.total < data.flowing.total)) {
                 successModifier += 1;
@@ -205,7 +205,7 @@ export async function buildResource(actor, type = 'power') {
     const data = actor.data.data;
     const template = "systems/exaltedessence/templates/dialogues/ability-roll.html";
     const highestAttribute = characterType === "npc" ? null : _getHighestAttribute(data);
-    const html = await renderTemplate(template, { 'character-type': characterType, 'attribute': highestAttribute, "ability": type === "will" ? "sagacity" : null });
+    const html = await renderTemplate(template, { 'character-type': characterType, 'attribute': highestAttribute, "ability": type === "will" ? "sagacity" : null, "buildPower": type === 'power' });
     new Dialog({
         title: `Die Roller`,
         content: html,
@@ -218,6 +218,7 @@ export async function buildResource(actor, type = 'power') {
                 var rollResults = _baseAbilityDieRoll(html, actor, characterType, type);
                 let successModifier = parseInt(html.find('#success-modifier').val()) || 0;
                 var total = rollResults.total - 3;
+                let self = (html.find('#buildPowerTarget').val() || 'self') === 'self';
                 if (actor.data.type === 'npc' && type === 'power') {
                     if (data.battlegroup) {
                         successModifier += data.drill.value;
@@ -233,8 +234,23 @@ export async function buildResource(actor, type = 'power') {
                     }
                 }
                 else {
+                    let extraPower = ``;
+                    if (self) {
+                        const actorData = duplicate(actor);
+                        if (type === 'power') {
+                            if (total + actorData.data.power.value > 10) {
+                                const extraPowerValue = Math.floor((total + 1 + actorData.data.power.value - 10));
+                                extraPower = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
+                            }
+                            actorData.data.power.value = Math.min(10, total + actorData.data.power.value + 1);
+                        }
+                        else {
+                            actorData.data.will.value = Math.min(10, total + actorData.data.will.value + 1);
+                        }
+                        actor.update(actorData);
+                    }
                     if (type === 'power') {
-                        message = `<h4 class="dice-formula">${rollResults.total} Succeses</h4> <h4 class="dice-total">${total + 1} Power Built!</h4>`;
+                        message = `<h4 class="dice-formula">${rollResults.total} Succeses</h4> <h4 class="dice-total">${total + 1} Power Built!</h4> ${extraPower}`;
                     }
                     else if (type === 'will') {
                         message = `<h4 class="dice-formula">${rollResults.total} Succeses</h4> <h4 class="dice-total">${total + 1} Will Focused!</h4>`;
@@ -336,7 +352,7 @@ export async function openAttackDialogue(actor, weaponAccuracy, weaponDamage, ov
     overwhelming = overwhelming || 0;
     const template = "systems/exaltedessence/templates/dialogues/accuracy-roll.html"
     const highestAttribute = characterType === "npc" ? null : _getHighestAttribute(data);
-    const html = await renderTemplate(template, { "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming, 'character-type': characterType, "attribute": highestAttribute, "ability": weaponType === "melee" ? "close" : "ranged"});
+    const html = await renderTemplate(template, { "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming, 'character-type': characterType, "attribute": highestAttribute, "ability": weaponType === "melee" ? "close" : "ranged" });
     var rollResults = await new Promise((resolve, reject) => {
         return new Dialog({
             title: `Accuracy`,

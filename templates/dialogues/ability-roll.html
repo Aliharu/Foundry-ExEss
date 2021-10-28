@@ -1,5 +1,19 @@
 <form>
     <div class="sheet-body exaltedessence">
+        {{#if buildPower}}
+        <div class="flex-center resource-label" style="font-weight: bold;">
+            {{localize "ExEss.BuildPower"}}
+        </div>
+        <div class="resource grid grid-2col flex-center">
+            <label class="resource-label">{{localize "ExEss.Target"}}: </label>
+            <select id="buildPowerTarget" name="buildPowerTarget" data-type="String">
+                {{#select ability}}
+                <option value="self">{{localize "ExEss.Self"}}</option>
+                <option value="allies">{{localize "ExEss.Allies"}}</option>
+                {{/select}}
+            </select>
+        </div>
+        {{/if}}
         {{> systems/exaltedessence/templates/dialogues/ability-base.html}}
     </div>
 </form>
