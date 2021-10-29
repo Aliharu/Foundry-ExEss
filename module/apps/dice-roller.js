@@ -440,12 +440,22 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
 
                 if (postDefenceTotal < 0) {
                     var overwhlemingMessage = '';
+                    let extraPowerMessage = ``;
                     if (!decisive) {
                         overwhlemingMessage = `<h4 class="dice-total">${overwhelming} Power Built!</h4>`;
+                        actorData.data.power.value = Math.min(10, overwhelming + actorData.data.power.value);
+                        if (overwhelming + actorData.data.power.value > 10) {
+                            const extraPowerValue = Math.floor((overwhelming + actorData.data.power.value - 10));
+                            extraPowerMessage = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
+                        }
                     }
+                    else {
+                        actorData.data.power.value = Math.max(0,  actorData.data.power.value - 1);
+                    }
+                    actor.update(actorData);
                     messageContent = `
               <div class="chat-card">
-                  <div class="card-content">Withering Attack</div>
+                  <div class="card-content">${decisive ? 'Decisive' : 'Withering'} Attack</div>
                   <div class="card-buttons">
                       <div class="flexrow 1">
                           <div>
@@ -453,9 +463,10 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                                   <div class="dice-result">
                                       <h4 class="dice-formula">${accuracySuccesses} Succeses</h4>
                                       <h4 class="dice-formula">${defence} defence</h4>
-                                      <h4 class="dice-formula">${overwhelming} Overwhelming</h4>
+                                      ${decisive ? '' : `<h4 class="dice-formula">${overwhelming} Overwhelming</h4>`}
                                       <h4 class="dice-total">Attack Missed!</h4>
                                       ${overwhlemingMessage}
+                                      ${extraPowerMessage}
                                   </div>
                               </div>
                           </div>
@@ -515,8 +526,10 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                         let damageSuccess = damageRoll.total + weaponDamage;
                         if (damageBonus) damageSuccess += damageBonus;
                         if (damageSuccesses) damageSuccess += damageSuccesses;
-
                         let damageTotal = damageSuccess - soak;
+
+                        actorData.data.power.value = Math.max(0, actorData.data.power.value - power);
+                        actor.update(actorData);
 
                         messageContent = `
                 <div class="chat-card">
@@ -550,6 +563,13 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                         if (postDefenceTotal < overwhelming) {
                             powerGained = overwhelming + 1;
                         }
+                        let extraPowerMessage = ``;
+                        if (powerGained + actorData.data.power.value > 10) {
+                            const extraPowerValue = Math.floor((powerGained + actorData.data.power.value - 10));
+                            extraPowerMessage = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
+                        }
+                        actorData.data.power.value = Math.min(10, powerGained + actorData.data.power.value);
+                        actor.update(actorData);
                         messageContent = `
                   <div class="chat-card">
                       <div class="card-content">Withering Power</div>
@@ -562,6 +582,7 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                                           <h4 class="dice-formula">1 Base + ${postDefenceTotal} Extra Succeses</h4>
                                           <h4 class="dice-formula">${overwhelming} Overwhelming</h4>
                                           <h4 class="dice-total">${powerGained} Power Built!</h4>
+                                          ${extraPowerMessage}
                                       </div>
                                   </div>
                               </div>

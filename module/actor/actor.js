@@ -60,7 +60,7 @@ export class ExaltedessenceActor extends Actor {
   async _preUpdate(updateData, options, user) {
     await super._preUpdate(updateData, options, user);
     if(updateData?.data?.motes) {
-      if(updateData?.data?.motes.commited !== undefined) {
+      if(updateData?.data?.motes.commited !== undefined && this.data.data.details.exalt !== 'getimian') {
         const commitChange = Math.max(0, updateData.data.motes.commited - this.data.data.motes.commited);
         const newMotes = Math.max(0, this.data.data.motes.value - commitChange);
         updateData.data.motes.value = newMotes;
@@ -70,6 +70,16 @@ export class ExaltedessenceActor extends Actor {
         const newAnima = Math.min(10, this.data.data.anima.value + animaChange);
         updateData.data.anima = { 'value': newAnima };
       }
+    }
+    if(updateData?.data?.flowing?.value  !== undefined) {
+      const animaChange = Math.max(0, this.data.data.flowing.value - updateData.data.flowing.value);
+      const newAnima = Math.min(10, this.data.data.anima.value + animaChange);
+      updateData.data.anima = { 'value': newAnima };
+    }
+    if(updateData?.data?.still?.value  !== undefined) {
+      const animaChange = Math.max(0, this.data.data.still.value - updateData.data.still.value);
+      const newAnima = Math.min(10, this.data.data.anima.value + animaChange);
+      updateData.data.anima = { 'value': newAnima };
     }
   }
 
