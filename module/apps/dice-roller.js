@@ -283,6 +283,72 @@ export async function buildResource(actor, type = 'power') {
     }).render(true);
 }
 
+export async function socialInfluence(actor) {
+    const characterType = actor.data.type;
+    let confirmed = false;
+    const data = actor.data.data;
+    let resolve = 0;
+    let target = Array.from(game.user.targets)[0] || null;
+    if (target) {
+        resolve = target.actor.data.data.resolve.value;
+    }
+    const template = "systems/exaltedessence/templates/dialogues/ability-roll.html";
+    const highestAttribute = characterType === "npc" ? null : _getHighestAttribute(data);
+    const html = await renderTemplate(template, { 'character-type': characterType, 'attribute': highestAttribute, "ability": 'embassy', "social": true, "resolve": resolve });
+    new Dialog({
+        title: `Die Roller`,
+        content: html,
+        buttons: {
+            roll: { label: "Roll it!", callback: () => confirmed = true },
+            cancel: { label: "Cancel", callback: () => confirmed = false }
+        },
+        close: html => {
+            if (confirmed) {
+                var rollResults = _baseAbilityDieRoll(html, actor, characterType, 'socialInfluence');
+                let successModifier = parseInt(html.find('#success-modifier').val()) || 0;
+                resolve = parseInt(html.find('#resolve').val()) || 0;
+                let self = (html.find('#buildPowerTarget').val() || 'self') === 'self';
+                if (actor.data.type === 'npc' && type === 'power') {
+                    if (data.battlegroup) {
+                        successModifier += data.drill.value;
+                    }
+                }
+                var message = '';
+                if (rollResults.total < resolve) {
+                    message = `<h4 class="dice-total">Influence Failed</h4>`;
+                }
+                else {
+                    var total = rollResults.total - resolve;
+                    message = `<h4 class="dice-formula">${rollResults.total} Succeses</h4> <h4 class="dice-total">${total} Extra Successes!</h4>`;
+                }
+                let the_content = `
+          <div class="chat-card">
+              <div class="card-content">Dice Roll</div>
+              <div class="card-buttons">
+                  <div class="flexrow 1">
+                      <div>Dice Roller - Number of Successes<div class="dice-roll">
+                              <div class="dice-result">
+                                  <h4 class="dice-formula">${rollResults.dice} Dice + ${successModifier} successes</h4>
+                                  <h4 class="dice-formula">${resolve} Resolve</h4>
+                                  <div class="dice-tooltip">
+                                      <div class="dice">
+                                          <ol class="dice-rolls">${rollResults.getDice}</ol>
+                                      </div>
+                                  </div>
+                                  ${message}
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          `
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: rollResults.roll });
+            }
+        }
+    }).render(true);
+}
+
 export async function openAbilityRollDialogue(actor, ability = "athletics") {
     const data = actor.data.data;
     const characterType = actor.data.type;

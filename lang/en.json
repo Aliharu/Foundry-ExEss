@@ -235,5 +235,9 @@
     "ExEss.EffectEdit": "Effect Edit",
     "ExEss.EffectDelete": "Effect Delete",
     "ExEss.Duration": "Duration",
-    "ExEss.Source": "Source"
+    "ExEss.Source": "Source",
+
+    "ExEss.Social": "Social",
+    "ExEss.Influence": "Influence",
+    "ExEss.SocialInfluence": "Social Influence"
 }

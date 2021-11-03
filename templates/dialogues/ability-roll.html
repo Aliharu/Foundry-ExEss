@@ -1,5 +1,10 @@
 <form>
     <div class="sheet-body exaltedessence">
+        {{#if social}}
+        <div class="flex-center resource-label" style="font-weight: bold;">
+            {{localize "ExEss.SocialInfluence"}}
+        </div>
+        {{/if}}
         {{#if buildPower}}
         <div class="flex-center resource-label" style="font-weight: bold;">
             {{localize "ExEss.BuildPower"}}
@@ -15,5 +20,13 @@
         </div>
         {{/if}}
         {{> systems/exaltedessence/templates/dialogues/ability-base.html}}
+        {{#if social}}
+            <div class="resource flex-center">
+                <label class="resource-label">{{localize "ExEss.Resolve"}}</label>
+            </div>
+            <div class="resource d-flex flex-center mb-1">
+                <input id="resolve" type="number" value="{{resolve}}">
+            </div>
+        {{/if}}
     </div>
 </form>

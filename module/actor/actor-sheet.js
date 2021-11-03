@@ -2,7 +2,7 @@
 //   DiceRollerDialogue
 // } from "./dialogue-diceRoller.js";
 import TraitSelector from "../apps/trait-selector.js";
-import { buildResource, openAbilityRollDialogue, openAttackDialogue, openRollDialogue,  } from "../apps/dice-roller.js";
+import { buildResource, openAbilityRollDialogue, openAttackDialogue, openRollDialogue, socialInfluence  } from "../apps/dice-roller.js";
 import { onManageActiveEffect, prepareActiveEffectCategories } from "../effects.js";
 
 /**
@@ -305,6 +305,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     html.find('#focusWill').mousedown(ev => {
       buildResource(this.actor, 'will');
     });
+
+    html.find('#socialInfluence').mousedown(ev => {
+      socialInfluence(this.actor);
+    });    
 
     html.find('.roll-withering').mousedown(ev => {
       openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), false);
