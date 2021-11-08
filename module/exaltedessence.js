@@ -8,8 +8,11 @@ import { ExaltedessenceItemSheet } from "./item/item-sheet.js";
 
 import { openRollDialogue } from "./apps/dice-roller.js";
 import TraitSelector from "./apps/trait-selector.js";
+import { registerSettings } from "./settings.js";
 
 Hooks.once('init', async function () {
+
+  registerSettings();
 
   game.exaltedessence = {
     applications: {

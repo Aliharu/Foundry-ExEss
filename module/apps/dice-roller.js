@@ -516,7 +516,7 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                         }
                     }
                     else {
-                        actorData.data.power.value = Math.max(0,  actorData.data.power.value - 1);
+                        actorData.data.power.value = Math.max(0, actorData.data.power.value - 1);
                     }
                     actor.update(actorData);
                     messageContent = `
@@ -657,6 +657,38 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                   </div>
                 `
                         ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+                    }
+                }
+                if (target && game.settings.get("exaltedessence", "calculateOnslaught")) {
+                    const onslaught = target.actor.effects.find(i => i.data.label == "Onslaught");
+                    if(decisive) {
+                        if(onslaught) {
+                            onslaught.delete();
+                        }
+                    }
+                    else {
+                        if (onslaught) {
+                            let changes = duplicate(onslaught.data.changes);
+                            if (target.actor.data.data.hardness.value > 0) {
+                                changes[0].value = changes[0].value - 1;
+                                onslaught.update({ changes });
+                            }
+                        }
+                        else {
+                            target.actor.createEmbeddedDocuments('ActiveEffect', [{
+                                label: 'Onslaught',
+                                icon: 'icons/svg/aura.svg',
+                                origin: target.actor.uuid,
+                                disabled: false,
+                                "changes": [
+                                    {
+                                        "key": "data.hardness.value",
+                                        "value": -1,
+                                        "mode": 2
+                                    }
+                                ]
+                            }]);
+                        }
                     }
                 }
             }

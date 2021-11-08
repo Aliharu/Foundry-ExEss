@@ -239,5 +239,8 @@
 
     "ExEss.Social": "Social",
     "ExEss.Influence": "Influence",
-    "ExEss.SocialInfluence": "Social Influence"
+    "ExEss.SocialInfluence": "Social Influence",
+
+    "ExEss.ConcentratedAttacks": "Concentrated Attacks",
+    "ExEss.ShowOnslaughtDescription": "Targets of withering attacks will suffer a -1 hardness per attack until hit with a decisive"
 }
