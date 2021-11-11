@@ -253,6 +253,7 @@
       "charm": {
         "cost": {
           "motes": 0,
+          "committed": 0,
           "anima": 0,
           "health": 0,
           "stunt": 0,

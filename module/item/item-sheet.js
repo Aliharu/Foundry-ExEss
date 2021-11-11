@@ -4,6 +4,14 @@
  */
 export class ExaltedessenceItemSheet extends ItemSheet {
 
+  constructor(...args) {
+    super(...args);
+
+    if (this.object.data.type === "charm") {
+      this.options.width = this.position.width = 616;
+    };
+  }
+
   /** @override */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
