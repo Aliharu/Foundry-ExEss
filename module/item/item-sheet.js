@@ -1,3 +1,5 @@
+import { onManageActiveEffect, prepareActiveEffectCategories } from "../effects.js";
+
 /**
  * Extend the basic ItemSheet with some very simple modifications
  * @extends {ItemSheet}
@@ -6,17 +8,13 @@ export class ExaltedessenceItemSheet extends ItemSheet {
 
   constructor(...args) {
     super(...args);
-
-    if (this.object.data.type === "charm") {
-      this.options.width = this.position.width = 616;
-    };
   }
 
   /** @override */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ["exaltedessence", "sheet", "item"],
-      width: 520,
+      width: 756,
       height: 480,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }]
     });
@@ -38,6 +36,9 @@ export class ExaltedessenceItemSheet extends ItemSheet {
   /** @override */
   getData() {
     const data = super.getData();
+
+    data.effects = prepareActiveEffectCategories(this.item.effects);
+
     return data;
   }
 
@@ -60,6 +61,11 @@ export class ExaltedessenceItemSheet extends ItemSheet {
 
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
+
+    html.find(".effect-control").click(ev => {
+      if ( this.item.isOwned ) return ui.notifications.warn("Managing Active Effects within an Owned Item is not currently supported and will be added in a subsequent update.");
+      onManageActiveEffect(ev, this.item);
+    });
 
     // Roll handlers, click handlers, etc. would go here.
   }

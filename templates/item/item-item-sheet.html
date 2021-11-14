@@ -12,12 +12,21 @@
         </div>
     </header>
 
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item" data-tab="description">{{localize "ExEss.Description"}}</a>
+        <a class="item" data-tab="effects">{{localize "ExEss.Effects"}}</a>
+    </nav>
+
     {{!-- Sheet Body --}}
     <section class="sheet-body">
 
         {{!-- Description Tab --}}
-        <div class="tab">
+        <div class="tab" data-group="primary" data-tab="description">
             {{editor content=data.data.description target="data.description" button=true owner=owner editable=true}}
+        </div>
+
+        <div class="tab" data-group="primary" data-tab="effects">
+            {{> systems/exaltedessence/templates/actor/active-effects.html}}
         </div>
 
     </section>
