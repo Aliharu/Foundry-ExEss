@@ -91,8 +91,17 @@
           {{/ifEquals}}
           {{#ifEquals data.data.details.exalt 'dragonblooded'}}
           <div>
-            <label class="resource-label">{{localize "ExEss.Aura"}}</label>
-            <input type="text" name="data.details.aura" value="{{data.data.details.aura}}" />
+            <div class="resource-label">{{localize "ExEss.Aura"}}</div>
+            <select name="data.details.aura" data-type="String">
+                {{#select data.data.details.aura}}
+                <option value="none">{{localize "ExEss.None"}}</option>
+                <option value="air">{{localize "ExEss.Air"}}</option>
+                <option value="earth">{{localize "ExEss.Earth"}}</option>
+                <option value="fire">{{localize "ExEss.Fire"}}</option>
+                <option value="water">{{localize "ExEss.Water"}}</option>
+                <option value="wood">{{localize "ExEss.Wood"}}</option>
+                {{/select}}
+            </select>
           </div>
           {{/ifEquals}}
           {{#ifEquals data.data.details.exalt 'liminal'}}

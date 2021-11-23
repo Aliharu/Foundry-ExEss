@@ -242,5 +242,14 @@
     "ExEss.SocialInfluence": "Social Influence",
 
     "ExEss.ConcentratedAttacks": "Concentrated Attacks",
-    "ExEss.ShowOnslaughtDescription": "Targets of withering attacks will suffer a -1 hardness per attack until hit with a decisive"
+    "ExEss.ShowOnslaughtDescription": "Targets of withering attacks will suffer a -1 hardness per attack until hit with a decisive",
+
+    "ExEss.Help": "Help",
+
+    "ExEss.None": "None",
+    "ExEss.Air": "Air",
+    "ExEss.Earth": "Earth",
+    "ExEss.Fire": "Fire",
+    "ExEss.Water": "Water",
+    "ExEss.Wood": "Wood"
 }

@@ -202,6 +202,13 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     // Token Configuration
     const canConfigure = game.user.isGM || this.actor.isOwner;
     if (this.options.editable && canConfigure) {
+      const helpButton = {
+        label: game.i18n.localize('ExEss.Help'),
+        class: 'help-dialogue',
+        icon: 'fas fa-question',
+        onclick: () => this.helpDialogue(this.actor.type),
+      };
+      buttons = [helpButton, ...buttons];
       if (this.actor.type != 'npc') {
         const colorButton = {
           label: game.i18n.localize('ExEss.DotColors'),
@@ -465,6 +472,21 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     data.motes.total = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
     data.motes.value = data.motes.total;
     this.actor.update(actorData);
+  }
+
+  async helpDialogue(type) {
+    let confirmed = false;
+    const actorData = duplicate(this.actor);
+    const data = actorData.data;
+    const template = "systems/exaltedessence/templates/dialogues/help-dialogue.html"
+    const html = await renderTemplate(template, { 'type': type });
+    new Dialog({
+      title: `ReadMe`,
+      content: html,
+      buttons: {
+        cancel: { label: "Close", callback: () => confirmed = false }
+      }
+    }).render(true);
   }
 
   async pickColor() {

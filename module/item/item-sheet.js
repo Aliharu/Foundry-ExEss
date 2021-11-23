@@ -15,7 +15,7 @@ export class ExaltedessenceItemSheet extends ItemSheet {
     return mergeObject(super.defaultOptions, {
       classes: ["exaltedessence", "sheet", "item"],
       width: 756,
-      height: 480,
+      height: 645,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }]
     });
   }
