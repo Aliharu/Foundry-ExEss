@@ -71,7 +71,7 @@ export async function openRollDialogue(actor) {
                                     </div>
                                 </div>
                             </div>`;
-                ChatMessage.create({ user: game.user.id, speaker: actor != null ? ChatMessage.getSpeaker({ token: actor }) : null, content: the_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: roll });
+                ChatMessage.create({ user: game.user.id, speaker: actor != null ? ChatMessage.getSpeaker({ actor: actor }) : null, content: the_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: roll });
             }
         }
     }).render(true);
@@ -277,7 +277,7 @@ export async function buildResource(actor, type = 'power') {
               </div>
           </div>
           `
-                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: rollResults.roll });
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: rollResults.roll });
             }
         }
     }).render(true);
@@ -343,7 +343,7 @@ export async function socialInfluence(actor) {
               </div>
           </div>
           `
-                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: rollResults.roll });
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: rollResults.roll });
             }
         }
     }).render(true);
@@ -391,7 +391,7 @@ export async function openAbilityRollDialogue(actor, ability = "athletics") {
               </div>
           </div>
           `
-                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: rollResults.roll });
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: the_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: rollResults.roll });
             }
         }
     }).render(true);
@@ -457,7 +457,7 @@ export async function openAttackDialogue(actor, weaponAccuracy, weaponDamage, ov
                   </div>
               </div>
             `;
-                    ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: rollResults.roll });
+                    ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: rollResults.roll });
                     return resolve({ 'successess': total });
                 }
             }
@@ -540,7 +540,7 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                   </div>
               </div>
             `;
-                    ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+                    ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
                 }
                 else {
                     if (decisive) {
@@ -622,7 +622,7 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                     </div>
                 </div>
               `
-                        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: damageRoll });
+                        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: damageRoll });
                     }
                     else {
                         var powerGained = postDefenceTotal + 1;
@@ -656,7 +656,7 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                       </div>
                   </div>
                 `
-                        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ token: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+                        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
                     }
                 }
                 if (target && game.settings.get("exaltedessence", "calculateOnslaught")) {

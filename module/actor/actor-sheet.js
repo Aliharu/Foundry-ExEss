@@ -337,6 +337,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       this._displayCard(ev);
     });
 
+    html.find('.item-spend').click(ev => {
+      this._spendItem(ev);
+    });
+
     html.find('.item-row').click(ev => {
       const li = $(ev.currentTarget).next();
       li.toggle("fast");
@@ -770,6 +774,33 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     // Create the Chat Message or return its data
     return ChatMessage.create(chatData);
+  }
+
+  _spendItem(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const actorData = duplicate(this.actor);
+
+    let li = $(event.currentTarget).parents(".item");
+    let item = this.actor.items.get(li.data("item-id"));
+
+    if(item.type === 'charm') {
+      actorData.data.motes.value = Math.max(0, actorData.data.motes.value - item.data.data.cost.motes);
+      actorData.data.motes.commited += item.data.data.cost.committed;
+      actorData.data.stunt.value = Math.max(0, actorData.data.stunt.value - item.data.data.cost.stunt);
+      actorData.data.power.value = Math.max(0, actorData.data.power.value - item.data.data.cost.power);
+      actorData.data.anima.value = Math.max(0, actorData.data.anima.value - item.data.data.cost.anima);
+      let totalHealth = 0;
+      for (let [key, health_level] of Object.entries(actorData.data.health.levels)) {
+        totalHealth += health_level.value;
+      }
+      actorData.data.health.lethal = Math.min(totalHealth - actorData.data.health.aggravated, actorData.data.health.lethal + item.data.data.cost.health);
+    }
+    if(item.type === 'spell') {
+      actorData.data.will.value = Math.max(0, actorData.data.will.value - item.data.data.cost);
+    }
+    this.actor.update(actorData);
   }
 }
 
