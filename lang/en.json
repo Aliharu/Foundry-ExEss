@@ -126,7 +126,7 @@
     "ExEss.Reroll": "Reroll",
     "ExEss.RerollFailed": "Reroll Failed",
     "ExEss.DoubleSuccess": "Double Success",
-    "ExEss.RerollNumDice": "Reroll Num Dice",
+    "ExEss.RerollNumDice": "Reroll # Failed",
     "ExEss.Excellency": "Excellency",
     "ExEss.Stunt": "Stunt",
     "ExEss.Dice": "Dice",
@@ -251,5 +251,11 @@
     "ExEss.Earth": "Earth",
     "ExEss.Fire": "Fire",
     "ExEss.Water": "Water",
-    "ExEss.Wood": "Wood"
+    "ExEss.Wood": "Wood",
+
+    "ExEss.ExcellentStrike": "Excellent Strike",
+
+    "ExEss.Gambit": "Gambit",
+    "ExEss.PowerSpent": "Power Spent",
+    "ExEss.ActiveEffects": "Active Effects"
 }

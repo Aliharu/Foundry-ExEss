@@ -35,7 +35,15 @@ export async function openRollDialogue(actor) {
 
                 let roll = new Roll(`${dice}d10${rerollString}${rerollFailed ? "r<7" : ""}cs>=${targetNumber}`).evaluate({ async: false });
                 let dice_roll = roll.dice[0].results;
+                var failedDice = Math.min(dice - roll.total, rerollNumber);
 
+                while(failedDice != 0 && (rerolledDice < rerollNumber)) {
+                    rerolledDice += failedDice;
+                    var failedDiceRoll = new Roll(`${failedDice}d10cs>=${targetNumber}`).evaluate({ async: false });
+                    failedDice = Math.min(failedDice - failedDiceRoll.total, (rerollNumber - rerolledDice));
+                    dice_roll = dice_roll.concat(failedDiceRoll.dice[0].results);
+                    total += failedDiceRoll.total;
+                }
                 for (let dice of dice_roll) {
                     if (dice.result >= doubleSuccess) {
                         bonus++;
@@ -77,10 +85,21 @@ export async function openRollDialogue(actor) {
     }).render(true);
 }
 
+const diceDialog = class extends Dialog {
+    activateListeners (html) {
+      super.activateListeners(html);
+      html.find('.collapsable').click(ev => {
+        const li = $(ev.currentTarget).next();
+        li.toggle("fast");
+      });
+    }
+  }
+
 function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType = 'ability') {
     const data = actor.data.data;
     let dice = 0;
     let augmentAttribute = false;
+    let rerollNumber = parseInt(html.find('#reroll-number').val()) || 0;
 
     if (characterType === 'character') {
         let attribute = html.find('#attribute').val();
@@ -178,9 +197,20 @@ function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType 
 
     let roll = new Roll(`${dice}d10${rerollFailed ? "r<7" : ""}cs>=7`).evaluate({ async: false });
     let diceRoll = roll.dice[0].results;
-    let getDice = "";
+    var failedDice = Math.min(dice - roll.total, rerollNumber);
+    let rerolledDice = 0;
+    let total = 0;
 
-    let bonus = "";
+    while(failedDice != 0 && (rerolledDice < rerollNumber)) {
+        rerolledDice += failedDice;
+        var failedDiceRoll = new Roll(`${failedDice}d10cs>=7`).evaluate({ async: false });
+        failedDice = Math.min(failedDice - failedDiceRoll.total, (rerollNumber - rerolledDice));
+        diceRoll = diceRoll.concat(failedDiceRoll.dice[0].results);
+        total += failedDiceRoll.total;
+    }
+
+    let getDice = "";
+    let bonus = 0;
 
     for (let dice of diceRoll) {
         if (dice.result >= doubleSuccess) {
@@ -192,7 +222,7 @@ function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType 
         else { getDice += `<li class="roll die d10">${dice.result}</li>`; }
     }
 
-    let total = roll.total;
+    total += roll.total;
     if (bonus) total += bonus;
     if (successModifier) total += successModifier;
 
@@ -206,7 +236,8 @@ export async function buildResource(actor, type = 'power') {
     const template = "systems/exaltedessence/templates/dialogues/ability-roll.html";
     const highestAttribute = characterType === "npc" ? null : _getHighestAttribute(data);
     const html = await renderTemplate(template, { 'character-type': characterType, 'attribute': highestAttribute, "ability": type === "will" ? "sagacity" : null, "buildPower": type === 'power' });
-    new Dialog({
+    // @ts-ignore
+    new diceDialog({
         title: `Die Roller`,
         content: html,
         buttons: {
@@ -295,7 +326,8 @@ export async function socialInfluence(actor) {
     const template = "systems/exaltedessence/templates/dialogues/ability-roll.html";
     const highestAttribute = characterType === "npc" ? null : _getHighestAttribute(data);
     const html = await renderTemplate(template, { 'character-type': characterType, 'attribute': highestAttribute, "ability": 'embassy', "social": true, "resolve": resolve });
-    new Dialog({
+    // @ts-ignore
+    new diceDialog({
         title: `Die Roller`,
         content: html,
         buttons: {
@@ -359,7 +391,8 @@ export async function openAbilityRollDialogue(actor, ability = "athletics") {
     const template = "systems/exaltedessence/templates/dialogues/ability-roll.html"
     const highestAttribute = characterType === "npc" ? null : _getHighestAttribute(data);
     const html = await renderTemplate(template, { 'character-type': characterType, 'attribute': highestAttribute, ability: ability });
-    new Dialog({
+    // @ts-ignore
+    new diceDialog({
         title: `Die Roller`,
         content: html,
         buttons: {
@@ -409,7 +442,7 @@ function _getHighestAttribute(data) {
     return highestAttribute;
 }
 
-export async function openAttackDialogue(actor, weaponAccuracy, weaponDamage, overwhelming, weaponType, decisive = true) {
+export async function openAttackDialogue(actor, weaponAccuracy, weaponDamage, overwhelming, weaponType, attackType = 'decisive') {
     const characterType = actor.data.type;
     let confirmed = false;
     const data = actor.data.data;
@@ -418,9 +451,10 @@ export async function openAttackDialogue(actor, weaponAccuracy, weaponDamage, ov
     overwhelming = overwhelming || 0;
     const template = "systems/exaltedessence/templates/dialogues/accuracy-roll.html"
     const highestAttribute = characterType === "npc" ? null : _getHighestAttribute(data);
-    const html = await renderTemplate(template, { "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming, 'character-type': characterType, "attribute": highestAttribute, "ability": weaponType === "melee" ? "close" : "ranged" });
+    const html = await renderTemplate(template, { "weapon-accuracy": weaponAccuracy, "weapon-damage": weaponDamage, "overwhelming": overwhelming, 'character-type': characterType, "attribute": highestAttribute, "ability": weaponType === "melee" ? "close" : "ranged", "power": data.power.value, "attackType": attackType });
     var rollResults = await new Promise((resolve, reject) => {
-        return new Dialog({
+        // @ts-ignore
+        return new diceDialog({
             title: `Accuracy`,
             content: html,
             buttons: {
@@ -434,10 +468,16 @@ export async function openAttackDialogue(actor, weaponAccuracy, weaponDamage, ov
                     weaponAccuracy = parseInt(weaponAccuracy);
                     var rollResults = _baseAbilityDieRoll(html, actor, characterType, 'attack');
                     let total = rollResults.total + weaponAccuracy + bonusSuccesses;
-
+                    let title = "Decisive Attack";
+                    if(attackType === 'withering') {
+                        title = "Withering Attack";
+                    }
+                    if(attackType === 'gambit') {
+                        title = "Gambit";
+                    }
                     var messageContent = `
               <div class="chat-card">
-                  <div class="card-content">${decisive ? 'Decisive Attack' : 'Withering Attack'}</div>
+                  <div class="card-content">${title}</div>
                   <div class="card-buttons">
                       <div class="flexrow 1">
                           <div>
@@ -464,10 +504,10 @@ export async function openAttackDialogue(actor, weaponAccuracy, weaponDamage, ov
         }).render(true);
     });
 
-    _rollAttackDamage(actor, rollResults, weaponDamage, overwhelming, decisive);
+    _rollAttackDamage(actor, rollResults, weaponDamage, overwhelming, attackType);
 }
 
-async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelming, decisive) {
+async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelming, attackType) {
     let confirmed = false;
     const actorData = duplicate(actor);
     const template = "systems/exaltedessence/templates/dialogues/damage-roll.html"
@@ -478,8 +518,16 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
         defense = target.actor.data.data.defence.value;
         soak = target.actor.data.data.soak.value;
     }
-    const html = await renderTemplate(template, { "successes": accuracyResult.successess, "power": actorData.data.power.value, "weapon-damage": weaponDamage, "overwhelming": overwhelming, "decisive": decisive, "defense": defense, "soak": soak });
-    new Dialog({
+    let title = "Decisive Attack";
+    if(attackType === 'withering') {
+        title = "Withering Attack";
+    }
+    if(attackType === 'gambit') {
+        title = "Gambit";
+    }
+    const html = await renderTemplate(template, { "successes": accuracyResult.successess, "power": actorData.data.power.value, "weapon-damage": weaponDamage, "overwhelming": overwhelming, "attackType": attackType, "defense": defense, "soak": soak });
+    // @ts-ignore
+    new diceDialog({
         title: `Damage`,
         content: html,
         buttons: {
@@ -492,6 +540,7 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                 let soak = parseInt(html.find('#soak').val()) || 0;
                 let power = parseInt(html.find('#power').val()) || 0;
                 let accuracySuccesses = parseInt(html.find('#successes').val()) || 0;
+                let excellentStrike = html.find('#excellent-strike').is(':checked');
                 var postDefenceTotal = accuracySuccesses - defence;
                 var messageContent = '';
 
@@ -507,7 +556,7 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                 if (postDefenceTotal < 0) {
                     var overwhlemingMessage = '';
                     let extraPowerMessage = ``;
-                    if (!decisive) {
+                    if (attackType === 'withering') {
                         overwhlemingMessage = `<h4 class="dice-total">${overwhelming} Power Built!</h4>`;
                         actorData.data.power.value = Math.min(10, overwhelming + actorData.data.power.value);
                         if (overwhelming + actorData.data.power.value > 10) {
@@ -521,7 +570,7 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                     actor.update(actorData);
                     messageContent = `
               <div class="chat-card">
-                  <div class="card-content">${decisive ? 'Decisive' : 'Withering'} Attack</div>
+                  <div class="card-content">${title}</div>
                   <div class="card-buttons">
                       <div class="flexrow 1">
                           <div>
@@ -529,7 +578,7 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                                   <div class="dice-result">
                                       <h4 class="dice-formula">${accuracySuccesses} Succeses</h4>
                                       <h4 class="dice-formula">${defence} defence</h4>
-                                      ${decisive ? '' : `<h4 class="dice-formula">${overwhelming} Overwhelming</h4>`}
+                                      ${attackType === 'withering' ? '<h4 class="dice-formula">${overwhelming} Overwhelming</h4>' : ``}
                                       <h4 class="dice-total">Attack Missed!</h4>
                                       ${overwhlemingMessage}
                                       ${extraPowerMessage}
@@ -543,7 +592,10 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                     ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
                 }
                 else {
-                    if (decisive) {
+                    if(excellentStrike) {
+                        postDefenceTotal = postDefenceTotal * 2;
+                    }
+                    if (attackType === 'decisive') {
                         let bonusDamageDice = parseInt(html.find('#damage-dice').val()) || 0;
                         let damageSuccesses = parseInt(html.find('#damage-successes').val()) || 0;
                         //Fix to damage later
@@ -624,7 +676,7 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
               `
                         ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: damageRoll });
                     }
-                    else {
+                    else if(attackType === 'withering') {
                         var powerGained = postDefenceTotal + 1;
                         if (postDefenceTotal < overwhelming) {
                             powerGained = overwhelming + 1;
@@ -658,15 +710,39 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                 `
                         ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
                     }
+                    else if(attackType === 'gambit') {
+                        let powerSpent = parseInt(html.find('#power-spent').val()) || 0;
+                        actorData.data.power.value = Math.max(0, actorData.data.power.value - powerSpent);
+                        actor.update(actorData);
+                        messageContent = `
+                  <div class="chat-card">
+                      <div class="card-content">Withering Power</div>
+                      <div class="card-buttons">
+                          <div class="flexrow 1">
+                              <div>
+                                  <div class="dice-roll">
+                                      <div class="dice-result">
+                                        <h4 class="dice-formula">${accuracySuccesses} Succeses vs ${defence} defence</h4>
+                                          <h4 class="dice-formula">${powerSpent} Power Spent</h4>
+                                          <h4 class="dice-total">Gambit Successful!</h4>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                `
+                        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+                    }
                 }
                 if (target && game.settings.get("exaltedessence", "calculateOnslaught")) {
                     const onslaught = target.actor.effects.find(i => i.data.label == "Onslaught");
-                    if(decisive) {
+                    if(attackType === 'decisive') {
                         if(onslaught) {
                             onslaught.delete();
                         }
                     }
-                    else {
+                    else if(attackType === 'withering') {
                         if (onslaught) {
                             let changes = duplicate(onslaught.data.changes);
                             if (target.actor.data.data.hardness.value > 0) {

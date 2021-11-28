@@ -315,14 +315,19 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     html.find('#socialInfluence').mousedown(ev => {
       socialInfluence(this.actor);
-    });    
+    });
 
     html.find('.roll-withering').mousedown(ev => {
-      openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), false);
+      openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'withering');
     });
 
     html.find('.roll-decisive').mousedown(ev => {
-      openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), true);
+      openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'decisive');
+    });
+
+    
+    html.find('.roll-gambit').mousedown(ev => {
+      openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'gambit');
     });
 
     html.find('#anima-up').click(ev => {

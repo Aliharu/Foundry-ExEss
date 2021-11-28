@@ -5,15 +5,21 @@
                 <label class="resource-label">{{localize "ExEss.Successes"}} </label>
                 <input id="successes" type="number" value="{{successes}}">
             </div>
-            {{#if decisive}}
+            {{#ifEquals attackType 'gambit'}}
+            <div>
+                <label class="resource-label">{{localize "ExEss.PowerSpent"}} </label>
+                <input id="power-spent" type="number">
+            </div>
+            {{/ifEquals}}
+            {{#ifEquals attackType 'decisive'}}
             <div>
                 <label class="resource-label">{{localize "ExEss.Power"}} </label>
                 <input id="power" type="number" value="{{power}}">
             </div>
-            {{/if}}
+            {{/ifEquals}}
         </div>
-        {{#if decisive}}
-            <div class="flex-center resource-label" style="font-weight: bold;">
+        {{#ifEquals attackType 'decisive'}}
+        <div class="flex-center resource-label" style="font-weight: bold;">
                 Damage
             </div>
             <div>
@@ -48,7 +54,7 @@
                     <input type="checkbox" id="reroll-damage-failed" name="data.rollable">
                 </div>
             </div>
-        {{/if}}
+            {{/ifEquals}}
 
         <div class="flex-center resource-label" style="font-weight: bold;">
             Defender
@@ -60,14 +66,28 @@
                 </div>
                 <input placeholder="Defence" id="defence" type="number" value="{{defense}}">
             </div>
-            {{#if decisive}}
+            {{#ifEquals attackType 'decisive'}}
             <div>
                 <div class="flex-center resource-label">
                     {{localize "ExEss.Soak"}}
                 </div>
                 <input placeholder="Soak" id="soak" type="number" value="{{soak}}">
             </div>
-            {{/if}}
+            {{/ifEquals}}
+        </div>
+        <div class="d-flex flex-between mb-1 collapsable cursor-pointer">
+            <div class="resource-label">
+                Other Modifiers
+            </div>
+            <div>
+                <i class="fas fa-caret-down"></i>
+            </div>
+        </div>
+        <div style="display:none;">
+            <label class="check-button" style="align-items:center;display:flex;">
+                <input id="excellent-strike" name="excellent-strike" type="checkbox">
+                <span class="resource-label">Double Extra Successes</span>
+            </label>
         </div>
     </div>
 </form>
