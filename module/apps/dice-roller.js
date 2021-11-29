@@ -498,7 +498,7 @@ export async function openAttackDialogue(actor, weaponAccuracy, weaponDamage, ov
               </div>
             `;
                     ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: rollResults.roll });
-                    return resolve({ 'successess': total });
+                    return resolve({ 'successess': total, 'baseSuccesses': rollResults.total });
                 }
             }
         }).render(true);
@@ -540,8 +540,14 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                 let soak = parseInt(html.find('#soak').val()) || 0;
                 let power = parseInt(html.find('#power').val()) || 0;
                 let accuracySuccesses = parseInt(html.find('#successes').val()) || 0;
-                let excellentStrike = html.find('#excellent-strike').is(':checked');
+                let doubleExtraSuccess = html.find('#double-extra-success').is(':checked');
                 var postDefenceTotal = accuracySuccesses - defence;
+                if(doubleExtraSuccess) {
+                    var basePostDefenseTotal = accuracyResult.baseSuccesses - defense;
+                    if(basePostDefenseTotal > 0) {
+                        postDefenceTotal +=  basePostDefenseTotal * 2;
+                    }
+                }
                 var messageContent = '';
 
                 weaponDamage = parseInt(weaponDamage);
@@ -592,9 +598,6 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                     ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
                 }
                 else {
-                    if(excellentStrike) {
-                        postDefenceTotal = postDefenceTotal * 2;
-                    }
                     if (attackType === 'decisive') {
                         let bonusDamageDice = parseInt(html.find('#damage-dice').val()) || 0;
                         let damageSuccesses = parseInt(html.find('#damage-successes').val()) || 0;

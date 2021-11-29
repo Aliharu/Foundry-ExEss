@@ -325,7 +325,6 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'decisive');
     });
 
-    
     html.find('.roll-gambit').mousedown(ev => {
       openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'gambit');
     });
