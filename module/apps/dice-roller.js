@@ -1,90 +1,3 @@
-export async function openRollDialogue(actor) {
-    let confirmed = false;
-    const template = "systems/exaltedessence/templates/dialogues/dice-roll.html";
-    const html = await renderTemplate(template, {});
-    new Dialog({
-        title: `Die 10 Roller`,
-        content: html,
-        buttons: {
-            roll: { label: "Roll it!", callback: () => confirmed = true },
-            cancel: { label: "Cancel", callback: () => confirmed = false }
-        },
-        close: html => {
-            if (confirmed) {
-                let doubleSuccess = parseInt(html.find('#double-success').val()) || 10;
-                let dice = parseInt(html.find('#num').val()) || 0;
-                let successModifier = parseInt(html.find('#success-modifier').val()) || 0;
-                let targetNumber = parseInt(html.find('#target-number').val()) || 7;
-                let rerollFailed = html.find('#reroll-failed').is(':checked');
-                let rerollNumber = parseInt(html.find('#reroll-number').val()) || 0;
-
-                let rerollString = '';
-                let rerolls = [];
-
-                for (let i = 1; i <= 10; i++) {
-                    if (html.find(`#reroll-${i}`).is(':checked')) {
-                        rerollString += `x${i}`;
-                        rerolls.push(i);
-                    }
-                }
-
-                let rerolledDice = 0;
-                let bonus = 0;
-                let total = 0;
-                let get_dice = "";
-
-                let roll = new Roll(`${dice}d10${rerollString}${rerollFailed ? "r<7" : ""}cs>=${targetNumber}`).evaluate({ async: false });
-                let dice_roll = roll.dice[0].results;
-                var failedDice = Math.min(dice - roll.total, rerollNumber);
-
-                while(failedDice != 0 && (rerolledDice < rerollNumber)) {
-                    rerolledDice += failedDice;
-                    var failedDiceRoll = new Roll(`${failedDice}d10cs>=${targetNumber}`).evaluate({ async: false });
-                    failedDice = Math.min(failedDice - failedDiceRoll.total, (rerollNumber - rerolledDice));
-                    dice_roll = dice_roll.concat(failedDiceRoll.dice[0].results);
-                    total += failedDiceRoll.total;
-                }
-                for (let dice of dice_roll) {
-                    if (dice.result >= doubleSuccess) {
-                        bonus++;
-                        get_dice += `<li class="roll die d10 success double-success">${dice.result}</li>`;
-                    }
-                    else if (dice.result >= targetNumber) { get_dice += `<li class="roll die d10 success">${dice.result}</li>`; }
-                    else if (rerolls.includes(dice.result)) { get_dice += `<li class="roll die d10 discarded">${dice.result}</li>`; }
-                    else if (dice.result == 1) { get_dice += `<li class="roll die d10 failure">${dice.result}</li>`; }
-                    else { get_dice += `<li class="roll die d10">${dice.result}</li>`; }
-                }
-                total += roll.total;
-
-
-                if (bonus) total += bonus;
-                if (successModifier) total += successModifier;
-
-                let the_content = `<div class="chat-card">
-                                <div class="card-content">Dice Roll</div>
-                                <div class="card-buttons">
-                                    <div class="flexrow 1">
-                                        <div>Dice Roller - Number of Successes<div class="dice-roll">
-                                                <div class="dice-result">
-                                                    <h4 class="dice-formula">${dice} Dice + ${successModifier} successes</h4>
-                                                    <div class="dice-tooltip">
-                                                        <div class="dice">
-                                                            <ol class="dice-rolls">${get_dice}</ol>
-                                                        </div>
-                                                    </div>
-                                                    <h4 class="dice-total">${total} Succeses</h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-                ChatMessage.create({ user: game.user.id, speaker: actor != null ? ChatMessage.getSpeaker({ actor: actor }) : null, content: the_content, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: roll });
-            }
-        }
-    }).render(true);
-}
-
 const diceDialog = class extends Dialog {
     activateListeners (html) {
       super.activateListeners(html);
@@ -96,106 +9,121 @@ const diceDialog = class extends Dialog {
   }
 
 function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType = 'ability') {
-    const data = actor.data.data;
     let dice = 0;
     let augmentAttribute = false;
-    let rerollNumber = parseInt(html.find('#reroll-number').val()) || 0;
+    let successModifier = parseInt(html.find('#success-modifier').val()) || 0;
+    let woundPenalty = html.find('#wound-penalty').is(':checked');
 
-    if (characterType === 'character') {
-        let attribute = html.find('#attribute').val();
-        let ability = html.find('#ability').val();
-        let attributeExcellency = html.find('#attribute-excellency').is(':checked');
-        let abilityExcellency = html.find('#ability-excellency').is(':checked');
 
-        let attributeDice = data.attributes[attribute].value;
-        let abilityDice = data.abilities[ability].value;
-
-        if (attributeExcellency) {
-            attributeDice = attributeDice * 2;
-            if (data.details.exalt === "alchemical") {
-                if (data.attributes[attribute].aug) {
-                    if (data.attributes[attribute].value < 5) {
-                        attributeDice++;
-                    }
-                    if (data.essence.value > 1) {
-                        augmentAttribute = true;
+    if(rollType === 'baseRoll') {
+        dice = parseInt(html.find('#dice').val()) || 0;
+    }
+    else{
+        const data = actor.data.data;
+        let stunt = html.find('#stunt').is(':checked');
+        let flurry = html.find('#flurry').is(':checked');
+        let armorPenalty = html.find('#armor-penalty').is(':checked');
+        if (characterType === 'character') {
+            let attribute = html.find('#attribute').val();
+            let ability = html.find('#ability').val();
+            let attributeExcellency = html.find('#attribute-excellency').is(':checked');
+            let abilityExcellency = html.find('#ability-excellency').is(':checked');
+            let attributeDice = data.attributes[attribute].value;
+            let abilityDice = data.abilities[ability].value;
+    
+            if (attributeExcellency) {
+                attributeDice = attributeDice * 2;
+                if (data.details.exalt === "alchemical") {
+                    if (data.attributes[attribute].aug) {
+                        if (data.attributes[attribute].value < 5) {
+                            attributeDice++;
+                        }
+                        if (data.essence.value > 1) {
+                            augmentAttribute = true;
+                        }
                     }
                 }
             }
-        }
-        if (abilityExcellency) {
-            abilityDice = abilityDice * 2;
-        }
-
-        dice = attributeDice + abilityDice;
-    }
-    else if (characterType === 'npc') {
-        let poolExcellency = html.find('#pool-excellency').is(':checked');
-        let pool = html.find('#pool').val();
-        let poolDice = data.pools[pool].value;
-        dice = poolDice;
-
-        if (poolExcellency) {
-            if (pool === 'primary') {
-                dice += 4;
+            if (abilityExcellency) {
+                abilityDice = abilityDice * 2;
             }
-            else if (pool === 'secondary') {
-                dice += 3;
+
+            if (data.creaturetype === 'exalt') {
+                if (data.details.exalt === "getimian") {
+                    if (attribute === "force" && (data.still.total < data.flowing.total)) {
+                        successModifier += 1;
+                    }
+                    if (attribute === "finesse" && (data.still.total > data.flowing.total)) {
+                        successModifier += 1;
+                    }
+                    if (attribute === "fortitude" && (data.still.total >= (data.flowing.total - 1) && data.still.total <= (data.flowing.total + 1))) {
+                        successModifier += 1;
+                    }
+                }
+            }
+    
+            dice = attributeDice + abilityDice;
+        }
+        else if (characterType === 'npc') {
+            let poolExcellency = html.find('#pool-excellency').is(':checked');
+            let pool = html.find('#pool').val();
+            let poolDice = data.pools[pool].value;
+            dice = poolDice;
+    
+            if (poolExcellency) {
+                if (pool === 'primary') {
+                    dice += 4;
+                }
+                else if (pool === 'secondary') {
+                    dice += 3;
+                }
+            }
+    
+            if (data.battlegroup && rollType == 'attack') {
+                dice += data.drill.value;
             }
         }
-
-        if (data.battlegroup && rollType == 'attack') {
-            dice += data.drill.value;
+        if (woundPenalty && data.health.penalty !== 'inc') {
+            dice -= data.health.penalty;
+        }
+        if (armorPenalty) {
+            for (let armor of actor.armor) {
+                if (armor.data.equiped) {
+                    dice = dice - Math.abs(armor.data.penalty);
+                }
+            }
+        }
+        if (stunt) {
+            dice += 2;
+        }
+        if (flurry) {
+            dice -= 3;
         }
     }
 
-    let stunt = html.find('#stunt').is(':checked');
-    let woundPenalty = html.find('#wound-penalty').is(':checked');
-    let flurry = html.find('#flurry').is(':checked');
-    let armorPenalty = html.find('#armor-penalty').is(':checked');
+    let rerollNumber = parseInt(html.find('#reroll-number').val()) || 0;
+    let targetNumber = parseInt(html.find('#target-number').val()) || 7;
 
     let diceModifier = parseInt(html.find('#dice-modifier').val()) || 0;
-    let successModifier = parseInt(html.find('#success-modifier').val()) || 0;
 
     let doubleSuccess = _calculateDoubleDice(html, augmentAttribute);
 
     let rerollFailed = html.find('#reroll-failed').is(':checked');
 
-    if (armorPenalty) {
-        for (let armor of actor.armor) {
-            if (armor.data.equiped) {
-                dice = dice - Math.abs(armor.data.penalty);
-            }
+    let rerollString = '';
+    let rerolls = [];
+
+    for (let i = 1; i <= 10; i++) {
+        if (html.find(`#reroll-${i}`).is(':checked')) {
+            rerollString += `x${i}`;
+            rerolls.push(i);
         }
-    }
-    if (stunt) {
-        dice += 2;
-    }
-    if (woundPenalty && data.health.penalty !== 'inc') {
-        dice -= data.health.penalty;
-    }
-    if (flurry) {
-        dice -= 3;
     }
     if (diceModifier) {
         dice += diceModifier;
     }
 
-    if (characterType === "actor" || data.creaturetype === 'exalt') {
-        if (data.details.exalt === "getimian") {
-            if (attribute === "force" && (data.still.total < data.flowing.total)) {
-                successModifier += 1;
-            }
-            if (attribute === "finesse" && (data.still.total > data.flowing.total)) {
-                successModifier += 1;
-            }
-            if (attribute === "fortitude" && (data.still.total >= (data.flowing.total - 1) && data.still.total <= (data.flowing.total + 1))) {
-                successModifier += 1;
-            }
-        }
-    }
-
-    let roll = new Roll(`${dice}d10${rerollFailed ? "r<7" : ""}cs>=7`).evaluate({ async: false });
+    let roll = new Roll(`${dice}d10${rerollString}${rerollFailed ? "r<7" : ""}cs>=${targetNumber}`).evaluate({ async: false });
     let diceRoll = roll.dice[0].results;
     var failedDice = Math.min(dice - roll.total, rerollNumber);
     let rerolledDice = 0;
@@ -217,7 +145,8 @@ function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType 
             bonus++;
             getDice += `<li class="roll die d10 success double-success">${dice.result}</li>`;
         }
-        else if (dice.result >= 7) { getDice += `<li class="roll die d10 success">${dice.result}</li>`; }
+        else if (dice.result >= targetNumber) { getDice += `<li class="roll die d10 success">${dice.result}</li>`; }
+        else if (rerolls.includes(dice.result)) { getDice += `<li class="roll die d10 discarded">${dice.result}</li>`; }
         else if (dice.result == 1) { getDice += `<li class="roll die d10 failure">${dice.result}</li>`; }
         else { getDice += `<li class="roll die d10">${dice.result}</li>`; }
     }
@@ -227,6 +156,48 @@ function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType 
     if (successModifier) total += successModifier;
 
     return { dice: dice, roll: roll, getDice: getDice, total: total };
+}
+
+export async function openRollDialogue(actor) {
+    let confirmed = false;
+    const template = "systems/exaltedessence/templates/dialogues/dice-roll.html";
+    const html = await renderTemplate(template, {'baseRoll': true});
+    // @ts-ignore
+    new diceDialog({
+        title: `Die 10 Roller`,
+        content: html,
+        buttons: {
+            roll: { label: "Roll it!", callback: () => confirmed = true },
+            cancel: { label: "Cancel", callback: () => confirmed = false }
+        },
+        close: html => {
+            if (confirmed) {
+                var rollResults = _baseAbilityDieRoll(html, actor, 'character', 'baseRoll');
+                let successModifier = parseInt(html.find('#success-modifier').val()) || 0;
+
+                let messageContent = `<div class="chat-card">
+                                <div class="card-content">Dice Roll</div>
+                                <div class="card-buttons">
+                                    <div class="flexrow 1">
+                                        <div>Dice Roller - Number of Successes<div class="dice-roll">
+                                                <div class="dice-result">
+                                                    <h4 class="dice-formula">${rollResults.dice} Dice + ${successModifier} successes</h4>
+                                                    <div class="dice-tooltip">
+                                                        <div class="dice">
+                                                            <ol class="dice-rolls">${rollResults.getDice}</ol>
+                                                        </div>
+                                                    </div>
+                                                    <h4 class="dice-total">${rollResults.total} Succeses</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                ChatMessage.create({ user: game.user.id, speaker: actor != null ? ChatMessage.getSpeaker({ actor: actor }) : null, content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: rollResults.roll });
+            }
+        }
+    }).render(true);
 }
 
 export async function buildResource(actor, type = 'power') {

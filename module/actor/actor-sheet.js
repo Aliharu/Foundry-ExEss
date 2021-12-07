@@ -267,6 +267,14 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       li.slideUp(200, () => this.render(false));
     });
 
+    html.find('.show-weapon-tags').mousedown(ev => {
+      this.showTags('weapons');
+    });
+
+    html.find('.show-armor-tags').mousedown(ev => {
+      this.showTags('armor');
+    });
+
     html.find('#calculate-health').mousedown(ev => {
       this.calculateHealth();
     });
@@ -471,6 +479,18 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const data = actorData.data;
     data.health.lethal = 0;
     this.actor.update(actorData);
+  }
+
+  async showTags(type) {
+    const template = type === "weapons" ? "systems/exaltedessence/templates/dialogues/weapon-tags.html" : "systems/exaltedessence/templates/dialogues/armor-tags.html";
+    const html = await renderTemplate(template);
+    new Dialog({
+      title: `Tags`,
+      content: html,
+      buttons: {
+        cancel: { label: "Close"}
+      }
+    }).render(true);
   }
 
   async fullRest() {

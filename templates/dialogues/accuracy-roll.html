@@ -11,6 +11,27 @@
                     <input type="number" id="accuracy" name="data.rollable" value="{{weapon-accuracy}}">
                 </div>
             </div>
+            {{#ifEquals attackType 'gambit'}}
+            <div class="d-flex flex-between mb-1 collapsable cursor-pointer">
+                <div class="resource-label">
+                    Gambits
+                </div>
+                <div>
+                    <i class="fas fa-caret-down"></i>
+                </div>
+            </div>
+            <div style="display:none;">
+                <p><b>Disarm(Def):</b> Target loses weapon, ally gains 1 Power per success.</p>
+                <p><b>Distract(2):</b> May use Precense or Performance, decrease Defense by 1 per success.</p>
+                <p><b>Ensnare(3):</b> Target cannot do Movement actions, loses 1 Defense per success.  The target may break
+                    free with a successful Force + Close Combat vs extra Successes.</p>
+                <p><b>Knockback(4):</b> Move target 1 range back, -1 Defense per succes.s</p>
+                <p><b>Pilfer(3):</b> Roll Finesse + Stealth to steal and item, Give ally 1 power per success.</p>
+                <p><b>Pull(4):</b> Move target 1 range band closser, -1 Defense per success.</p>
+                <p><b>Reveal Weakness(3):</b> May be used with craft or war. Roll an attack vs defense and the target has -2 soak for round equal to the attacks extra successes.</p>
+                <p><b>Unhorse(5):</b> Knock horse from mount.  Target is either knocked prone or Decrease his soak by 1 for each extra successfor 1 round.</p>
+            </div>
+            {{/ifEquals}}
         </div>
     </div>
 </form>
