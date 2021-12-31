@@ -16,17 +16,11 @@
     </div>
   </li>
   <li>
-    <div class="resource-label flex-center list-section-header">
-      {{localize "ExEss.Intimacies"}}
-    </div>
-  </li>
-  <li class="item flexrow item-header">
-    <div class="item-image"></div>
-    <div class="item-name">Name</div>
-    <div class="item-name">Strength</div>
-    <div class="item-controls">
-      <a class="item-control item-create" title="Create intimacy" data-type="intimacy"><i class="fas fa-plus"></i>
-        Add</a>
+    <div class="resource-label list-section-header d-flex flex-between">
+        <div>
+            {{localize "ExEss.Intimacies"}}
+        </div>
+        <a class="item-control item-create" title="Create intimacy" data-type="intimacy"><i class="fas fa-plus"></i>Add Intimacy</a>
     </div>
   </li>
   {{#each actor.intimacies as |item id|}}
