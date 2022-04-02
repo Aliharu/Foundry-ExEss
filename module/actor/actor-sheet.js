@@ -2,7 +2,7 @@
 //   DiceRollerDialogue
 // } from "./dialogue-diceRoller.js";
 import TraitSelector from "../apps/trait-selector.js";
-import { buildResource, openAbilityRollDialogue, openAttackDialogue, openRollDialogue, socialInfluence  } from "../apps/dice-roller.js";
+import { RollForm, buildResource, openAbilityRollDialogue, openAttackDialogue, openRollDialogue, socialInfluence  } from "../apps/dice-roller.js";
 import { onManageActiveEffect, prepareActiveEffectCategories } from "../effects.js";
 
 /**
@@ -296,33 +296,36 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     });
 
     html.find('#rollDice').mousedown(ev => {
-      openRollDialogue(this.actor);
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'base'}).render(true);
     });
 
     html.find('#rollAbility').mousedown(ev => {
-      openAbilityRollDialogue(this.actor);
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'ability'}).render(true);
     });
 
     html.find('.roll-ability').mousedown(ev => {
       var ability = $(ev.target).attr("data-ability");
-      openAbilityRollDialogue(this.actor, ability);
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'ability', ability: ability}).render(true);
     });
 
     html.find('.roll-pool').mousedown(ev => {
       var pool = $(ev.target).attr("data-pool");
-      openAbilityRollDialogue(this.actor, pool);
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'ability', pool: pool}).render(true);
     });
 
     html.find('#buildPower').mousedown(ev => {
-      buildResource(this.actor, 'power');
+      // buildResource(this.actor, 'power');
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'buildPower'}).render(true);
     });
 
     html.find('#focusWill').mousedown(ev => {
-      buildResource(this.actor, 'will');
+      // buildResource(this.actor, 'will');
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'focusWill', 'ability': 'sagacity'}).render(true);
     });
 
     html.find('#socialInfluence').mousedown(ev => {
-      socialInfluence(this.actor);
+      // socialInfluence(this.actor);
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'social', 'ability': 'embassy'}).render(true);
     });
 
     html.find('.roll-withering').mousedown(ev => {

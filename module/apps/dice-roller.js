@@ -1,12 +1,383 @@
 const diceDialog = class extends Dialog {
-    activateListeners (html) {
-      super.activateListeners(html);
-      html.find('.collapsable').click(ev => {
-        const li = $(ev.currentTarget).next();
-        li.toggle("fast");
-      });
+    activateListeners(html) {
+        super.activateListeners(html);
+        html.find('.collapsable').click(ev => {
+            const li = $(ev.currentTarget).next();
+            li.toggle("fast");
+        });
     }
-  }
+}
+
+export class RollForm extends FormApplication {
+    constructor(actor, options, object, data) {
+        super(object, options);
+        this.actor = actor;
+        this.object.rollType = data.rollType;
+        this.object.resolve = 0;
+        if (data.rollType !== 'base') {
+            if (this.actor.data.type === 'npc') {
+                this.object.pool = data.pool || "primary";
+            }
+            else {
+                if (data.attribute) {
+                    this.object.attribute = data.attribute;
+                }
+                else {
+                    this.object.attribute = this._getHighestAttribute();
+                }
+                this.object.ability = data.ability || "athletics";
+            }
+            this.object.characterType = this.actor.data.type;
+            this.object.buildPowerTarget = 'self';
+
+            if(this.object.rollType === 'social') {
+                let resolve = 0;
+                let target = Array.from(game.user.targets)[0] || null;
+                if (target) {
+                    this.object.resolve = target.actor.data.data.resolve.value;
+                }
+            }
+        }
+        else {
+            this.object.dice = 0;
+        }
+        this.object.targetNumber = 7;
+        this.object.diceModifier = 0;
+        this.object.successModifier = 0;
+        this.object.difficulty = 0;
+        this.object.rerollNumber = 0;
+        this.object.dice = 0;
+
+
+        this.object.doubleSuccess = 10;
+        this.object.rerollFailed = false;
+
+        this.object.flurry = false;
+        this.object.woundPenalty = false;
+        this.object.stunt = false;
+        this.object.armorPenalty = false;
+        this.object.attributeExcellency = false;
+        this.object.abilityExcellency = false;
+        this.object.poolExcellency = false;
+
+        this.object.reroll = {
+            one: { status: false, number: 1 },
+            two: { status: false, number: 2 },
+            three: { status: false, number: 3 },
+            four: { status: false, number: 4 },
+            five: { status: false, number: 5 },
+            six: { status: false, number: 6 },
+            seven: { status: false, number: 7 },
+            eight: { status: false, number: 8 },
+            nine: { status: false, number: 9 },
+            ten: { status: false, number: 10 },
+        }
+    }
+
+    get template() {
+        var template = "systems/exaltedessence/templates/dialogues/ability-roll.html";
+        if (this.object.rollType === 'base') {
+            template = "systems/exaltedthird/templates/dialogues/dice-roll.html";
+        }
+        else if (this.object.rollType === 'attack') {
+            template = "systems/exaltedthird/templates/dialogues/accuracy-roll.html";
+        }
+        return template;
+    }
+
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            classes: ["dialog"],
+            popOut: true,
+            template: "systems/storypath-fvtt/templates/dialogues/skill-roll.html",
+            id: "roll-form",
+            title: `Roll`,
+            width: 350,
+            submitOnChange: true,
+            closeOnSubmit: false
+        });
+    }
+
+    getData() {
+        return {
+            actor: this.actor,
+            data: this.object,
+        };
+    }
+
+    async _updateObject(event, formData) {
+        mergeObject(this, formData);
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html);
+
+        html.find('#roll-button').click((event) => {
+            this._roll();
+            this.close();
+        });
+
+        html.find('#cancel').click((event) => {
+            this.close();
+        });
+
+        html.find('.collapsable').click(ev => {
+            const li = $(ev.currentTarget).next();
+            li.toggle("fast");
+        });
+    }
+
+    _baseAbilityDieRoll() {
+        let dice = 0;
+        let augmentAttribute = false;
+
+        if (this.object.rollType === 'baseRoll') {
+            dice = this.object.dice;
+        }
+        else {
+            if (this.actor.data.type === 'character') {
+                let attributeDice = this.actor.data.data.attributes[this.object.attribute].value;
+                let abilityDice = this.actor.data.data.abilities[this.object.ability].value;
+
+                if (this.object.attributeExcellency) {
+                    attributeDice = attributeDice * 2;
+                    if (this.actor.data.data.details.exalt === "alchemical") {
+                        if (this.actor.data.data.attributes[this.object.attribute].aug) {
+                            if (this.actor.data.data.attributes[this.object.attribute].value < 5) {
+                                attributeDice++;
+                            }
+                            if (this.actor.data.data.essence.value > 1) {
+                                augmentAttribute = true;
+                            }
+                        }
+                    }
+                }
+                if (this.object.abilityExcellency) {
+                    abilityDice = abilityDice * 2;
+                }
+
+                if (this.actor.data.data.creaturetype === 'exalt') {
+                    if (this.actor.data.data.details.exalt === "getimian") {
+                        if (this.object.attribute === "force" && (this.actor.data.data.still.total < this.actor.data.data.flowing.total)) {
+                            this.object.successModifier += 1;
+                        }
+                        if (this.object.attribute === "finesse" && (this.actor.data.data.still.total > this.actor.data.data.flowing.total)) {
+                            this.object.successModifier += 1;
+                        }
+                        if (this.object.attribute === "fortitude" && (this.actor.data.data.still.total >= (this.actor.data.data.flowing.total - 1) && this.actor.data.data.still.total <= (this.actor.data.data.flowing.total + 1))) {
+                            this.object.successModifier += 1;
+                        }
+                    }
+                }
+
+                dice = attributeDice + abilityDice;
+            }
+            else if (this.actor.data.type === 'npc') {
+                let poolDice = this.actor.data.data.pools[this.object.pool].value;
+                dice = poolDice;
+
+                if (this.object.poolExcellency) {
+                    if (this.object.pool === 'primary') {
+                        dice += 4;
+                    }
+                    else if (this.object.pool === 'secondary') {
+                        dice += 3;
+                    }
+                }
+
+                if (this.actor.data.data.battlegroup && this.object.rollType == 'attack') {
+                    dice += this.actor.data.data.drill.value;
+                }
+            }
+            if (this.object.woundPenalty && this.actor.data.data.health.penalty !== 'inc') {
+                dice -= this.actor.data.data.health.penalty;
+            }
+            if (this.object.armorPenalty) {
+                for (let armor of this.actor.armor) {
+                    if (armor.data.equiped) {
+                        dice = dice - Math.abs(armor.data.penalty);
+                    }
+                }
+            }
+            if (this.object.stunt) {
+                dice += 2;
+            }
+            if (this.object.flurry) {
+                dice -= 3;
+            }
+        }
+
+
+        let rerollString = '';
+        let rerolls = [];
+
+        for (var rerollValue in this.object.reroll) {
+            if (this.object.reroll[rerollValue].status) {
+                rerollString += `x${this.object.reroll[rerollValue].number}`;
+                rerolls.push(this.object.reroll[rerollValue].number);
+            }
+        }
+
+        if (this.object.diceModifier) {
+            dice += this.object.diceModifier;
+        }
+
+        let roll = new Roll(`${dice}d10${rerollString}${this.object.rerollFailed ? `r<${this.update.targetNumber}` : ""}cs>=${this.object.targetNumber}`).evaluate({ async: false });
+        let diceRoll = roll.dice[0].results;
+        var failedDice = Math.min(dice - roll.total, this.object.rerollNumber);
+        let rerolledDice = 0;
+        let total = 0;
+
+        while (failedDice != 0 && (rerolledDice < this.object.rerollNumber)) {
+            rerolledDice += failedDice;
+            var failedDiceRoll = new Roll(`${failedDice}d10cs>=${this.object.targetNumber}`).evaluate({ async: false });
+            failedDice = Math.min(failedDice - failedDiceRoll.total, (this.object.rerollNumber - rerolledDice));
+            diceRoll = diceRoll.concat(failedDiceRoll.dice[0].results);
+            total += failedDiceRoll.total;
+        }
+
+        let getDice = "";
+        let bonus = 0;
+
+        for (let dice of diceRoll) {
+            if (dice.result >= this.object.doubleSuccess) {
+                bonus++;
+                getDice += `<li class="roll die d10 success double-success">${dice.result}</li>`;
+            }
+            else if (dice.result >= this.object.targetNumber) { getDice += `<li class="roll die d10 success">${dice.result}</li>`; }
+            else if (rerolls.includes(dice.result)) { getDice += `<li class="roll die d10 discarded">${dice.result}</li>`; }
+            else if (dice.result == 1) { getDice += `<li class="roll die d10 failure">${dice.result}</li>`; }
+            else { getDice += `<li class="roll die d10">${dice.result}</li>`; }
+        }
+
+        total += roll.total;
+        if (bonus) total += bonus;
+        if (this.object.successModifier) total += this.object.successModifier;
+
+        this.object.dice = dice;
+        this.object.roll = roll;
+        this.object.getDice = getDice;
+        this.object.total = total;
+    }
+
+    _abilityRoll() {
+        this._baseAbilityDieRoll();
+
+        var resourceResult = ``;
+        if(this.object.rollType === 'buildPower' || this.object.rollType === 'focusWill' ) {
+            resourceResult = this._buildResource();
+        }
+        if(this.object.rollType === 'social') {
+            resourceResult = this._socialInfluence();
+        }
+        let theContent = `
+  <div class="chat-card">
+      <div class="card-content">Dice Roll</div>
+      <div class="card-buttons">
+          <div class="flexrow 1">
+              <div>Dice Roller - Number of Successes<div class="dice-roll">
+                      <div class="dice-result">
+                          <h4 class="dice-formula">${this.object.dice} Dice + ${this.object.successModifier} successes</h4>
+                          <div class="dice-tooltip">
+                              <div class="dice">
+                                  <ol class="dice-rolls">${this.object.getDice}</ol>
+                              </div>
+                          </div>
+                          <h4 class="dice-total">${this.object.total} Succeses</h4>
+                          ${resourceResult}
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  `
+        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: theContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: this.object.roll });
+    }
+
+    _buildResource() {
+        var total = this.object.total - 3;
+        let self = (this.object.buildPowerTarget || 'self') === 'self';
+        
+        if (this.actor.data.type === 'npc' && this.object.rollType === 'buildPower') {
+            if (this.actor.data.data.battlegroup) {
+                this.object.successModifier += data.drill.value;
+            }
+        }
+        var message = '';
+        if (total < 0) {
+            if (this.object.rollType === 'buildPower') {
+                message = `<h4 class="dice-total">Build Power Failed</h4>`;
+            }
+            else if (this.object.rollType === 'focusWill') {
+                message = `<h4 class="dice-total">Focus Will Failed</h4>`;
+            }
+        }
+        else {
+            let extraPower = ``;
+            if (self) {
+                const actorData = duplicate(this.actor);
+                if (this.object.rollType === 'buildPower') {
+                    if (total + actorData.data.power.value > 10) {
+                        const extraPowerValue = Math.floor((total + 1 + actorData.data.power.value - 10));
+                        extraPower = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
+                    }
+                    actorData.data.power.value = Math.min(10, total + actorData.data.power.value + 1);
+                }
+                else {
+                    actorData.data.will.value = Math.min(10, total + actorData.data.will.value + 1);
+                }
+                this.actor.update(actorData);
+            }
+            if (this.object.rollType === 'buildPower') {
+                message = `<h4 class="dice-total">${total + 1} Power Built!</h4> ${extraPower}`;
+            }
+            else if (this.object.rollType === 'focusWill') {
+                message = `<h4 class="dice-total">${total + 1} Will Focused!</h4>`;
+            }
+        }
+        return message;
+    }
+
+    _socialInfluence() {
+        var message = ``;
+        var message = '';
+        if (this.object.total < this.object.resolve) {
+            message = `<h4 class="dice-total">Influence Failed</h4>`;
+        }
+        else {
+            var total = this.object.total - this.object.resolve;
+            message = `<h4 class="dice-formula">${this.object.total} Succeses vs ${this.object.resolve} Resolve</h4> <h4 class="dice-total">${total} Extra Successes!</h4>`;
+        }
+        return message;
+    }
+
+    _attackRoll() {
+
+    }
+
+    _roll() {
+        if (this.object.rollType === 'social' || this.object.rollType === 'ability' || this.object.rollType === 'buildPower' || this.object.rollType === 'focusWill') {
+            this._abilityRoll();
+        }
+        if (this.object.rollType === 'attack') {
+            this._attackRoll();
+        }
+    }
+
+
+    _getHighestAttribute() {
+        var highestAttributeNumber = 0;
+        var highestAttribute = "force";
+        for (let [name, attribute] of Object.entries(this.actor.data.data.attributes)) {
+            if (attribute.value > highestAttributeNumber) {
+                highestAttributeNumber = attribute.value;
+                highestAttribute = name;
+            }
+        }
+        return highestAttribute;
+    }
+}
 
 function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType = 'ability') {
     let dice = 0;
@@ -15,10 +386,10 @@ function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType 
     let woundPenalty = html.find('#wound-penalty').is(':checked');
 
 
-    if(rollType === 'baseRoll') {
+    if (rollType === 'baseRoll') {
         dice = parseInt(html.find('#dice').val()) || 0;
     }
-    else{
+    else {
         const data = actor.data.data;
         let stunt = html.find('#stunt').is(':checked');
         let flurry = html.find('#flurry').is(':checked');
@@ -30,7 +401,7 @@ function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType 
             let abilityExcellency = html.find('#ability-excellency').is(':checked');
             let attributeDice = data.attributes[attribute].value;
             let abilityDice = data.abilities[ability].value;
-    
+
             if (attributeExcellency) {
                 attributeDice = attributeDice * 2;
                 if (data.details.exalt === "alchemical") {
@@ -61,7 +432,7 @@ function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType 
                     }
                 }
             }
-    
+
             dice = attributeDice + abilityDice;
         }
         else if (characterType === 'npc') {
@@ -69,7 +440,7 @@ function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType 
             let pool = html.find('#pool').val();
             let poolDice = data.pools[pool].value;
             dice = poolDice;
-    
+
             if (poolExcellency) {
                 if (pool === 'primary') {
                     dice += 4;
@@ -78,7 +449,7 @@ function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType 
                     dice += 3;
                 }
             }
-    
+
             if (data.battlegroup && rollType == 'attack') {
                 dice += data.drill.value;
             }
@@ -129,7 +500,7 @@ function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType 
     let rerolledDice = 0;
     let total = 0;
 
-    while(failedDice != 0 && (rerolledDice < rerollNumber)) {
+    while (failedDice != 0 && (rerolledDice < rerollNumber)) {
         rerolledDice += failedDice;
         var failedDiceRoll = new Roll(`${failedDice}d10cs>=7`).evaluate({ async: false });
         failedDice = Math.min(failedDice - failedDiceRoll.total, (rerollNumber - rerolledDice));
@@ -161,7 +532,7 @@ function _baseAbilityDieRoll(html, actor, characterType = 'character', rollType 
 export async function openRollDialogue(actor) {
     let confirmed = false;
     const template = "systems/exaltedessence/templates/dialogues/dice-roll.html";
-    const html = await renderTemplate(template, {'baseRoll': true});
+    const html = await renderTemplate(template, { 'baseRoll': true });
     // @ts-ignore
     new diceDialog({
         title: `Die 10 Roller`,
@@ -440,10 +811,10 @@ export async function openAttackDialogue(actor, weaponAccuracy, weaponDamage, ov
                     var rollResults = _baseAbilityDieRoll(html, actor, characterType, 'attack');
                     let total = rollResults.total + weaponAccuracy + bonusSuccesses;
                     let title = "Decisive Attack";
-                    if(attackType === 'withering') {
+                    if (attackType === 'withering') {
                         title = "Withering Attack";
                     }
-                    if(attackType === 'gambit') {
+                    if (attackType === 'gambit') {
                         title = "Gambit";
                     }
                     var messageContent = `
@@ -490,10 +861,10 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
         soak = target.actor.data.data.soak.value;
     }
     let title = "Decisive Attack";
-    if(attackType === 'withering') {
+    if (attackType === 'withering') {
         title = "Withering Attack";
     }
-    if(attackType === 'gambit') {
+    if (attackType === 'gambit') {
         title = "Gambit";
     }
     const html = await renderTemplate(template, { "successes": accuracyResult.successess, "power": actorData.data.power.value, "weapon-damage": weaponDamage, "overwhelming": overwhelming, "attackType": attackType, "defense": defense, "soak": soak });
@@ -513,10 +884,10 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                 let accuracySuccesses = parseInt(html.find('#successes').val()) || 0;
                 let doubleExtraSuccess = html.find('#double-extra-success').is(':checked');
                 var postDefenceTotal = accuracySuccesses - defence;
-                if(doubleExtraSuccess) {
+                if (doubleExtraSuccess) {
                     var basePostDefenseTotal = accuracyResult.baseSuccesses - defense;
-                    if(basePostDefenseTotal > 0) {
-                        postDefenceTotal +=  basePostDefenseTotal * 2;
+                    if (basePostDefenseTotal > 0) {
+                        postDefenceTotal += basePostDefenseTotal * 2;
                     }
                 }
                 var messageContent = '';
@@ -650,7 +1021,7 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
               `
                         ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: damageRoll });
                     }
-                    else if(attackType === 'withering') {
+                    else if (attackType === 'withering') {
                         var powerGained = postDefenceTotal + 1;
                         if (postDefenceTotal < overwhelming) {
                             powerGained = overwhelming + 1;
@@ -684,7 +1055,7 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                 `
                         ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
                     }
-                    else if(attackType === 'gambit') {
+                    else if (attackType === 'gambit') {
                         let powerSpent = parseInt(html.find('#power-spent').val()) || 0;
                         actorData.data.power.value = Math.max(0, actorData.data.power.value - powerSpent);
                         actor.update(actorData);
@@ -711,12 +1082,12 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                 }
                 if (target && game.settings.get("exaltedessence", "calculateOnslaught")) {
                     const onslaught = target.actor.effects.find(i => i.data.label == "Onslaught");
-                    if(attackType === 'decisive') {
-                        if(onslaught) {
+                    if (attackType === 'decisive') {
+                        if (onslaught) {
                             onslaught.delete();
                         }
                     }
-                    else if(attackType === 'withering') {
+                    else if (attackType === 'withering') {
                         if (onslaught) {
                             let changes = duplicate(onslaught.data.changes);
                             if (target.actor.data.data.hardness.value > 0) {

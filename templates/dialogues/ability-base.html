@@ -1,13 +1,13 @@
-{{#if baseRoll}}
+{{#ifEquals data.rollType 'base'}}
 <label class="resource-label">{{localize "ExEss.Dice"}}</label>
-<div class="form-group"><input id="dice" type="number"></div>
+<div class="form-group"><input name="object.dice" value="{{data.dice}}" type="number"></div>
 {{else}}
 <div class="resource grid grid-4col flex-center">
-    {{#ifEquals character-type 'character'}}
+    {{#ifEquals data.characterType 'character'}}
 
     <label class="resource-label">{{localize "ExEss.Attribute"}}: </label>
-    <select id="attribute" name="attribute" data-type="String">
-        {{#select attribute}}
+    <select name="object.attribute" value="{{data.attribute}}" data-type="String">
+        {{#select data.attribute}}
         <option value="force">{{localize "ExEss.Force"}}</option>
         <option value="finesse">{{localize "ExEss.Finesse"}}</option>
         <option value="fortitude">{{localize "ExEss.Fortitude"}}</option>
@@ -15,11 +15,11 @@
     </select>
 
     <label class="resource-label">{{localize "ExEss.Excellency"}}: </label>
-    <input type="checkbox" id="attribute-excellency" name="data.rollable">
+    <input type="checkbox" name="object.attributeExcellency" value="{{data.attributeExcellency}}">
 
     <label class="resource-label">{{localize "ExEss.Ability"}}: </label>
-    <select id="ability" name="ability" data-type="String">
-        {{#select ability}}
+    <select name="object.ability" value="{{data.ability}}" data-type="String">
+        {{#select data.ability}}
         <option value="athletics">{{localize "ExEss.Athletics"}}</option>
         <option value="awareness">{{localize "ExEss.Awareness"}}</option>
         <option value="close">{{localize "ExEss.CloseCombat"}}</option>
@@ -39,16 +39,16 @@
     </select>
 
     <label class="resource-label">{{localize "ExEss.Excellency"}}: </label>
-    <input type="checkbox" id="ability-excellency" name="data.rollable">
+    <input type="checkbox" name="object.abilityExcellency" value="{{data.abilityExcellency}}">
 
     {{/ifEquals}}
 
 
-    {{#ifEquals character-type 'npc'}}
+    {{#ifEquals data.characterType 'npc'}}
 
     <label class="resource-label">{{localize "ExEss.Pool"}}: </label>
-    <select id="pool" name="pool" data-type="String">
-        {{#select ability}}
+    <select name="object.pool" value="{{data.pool}}" data-type="String">
+        {{#select data.pool}}
         <option value="primary">{{localize "ExEss.Primary"}}</option>
         <option value="secondary">{{localize "ExEss.Secondary"}}</option>
         <option value="tertiary">{{localize "ExEss.Tertiary"}}</option>
@@ -56,46 +56,38 @@
     </select>
 
     <label class="resource-label">{{localize "ExEss.Excellency"}}: </label>
-    <input type="checkbox" id="pool-excellency" name="data.rollable">
+    <input type="checkbox" name="object.poolExcellency" value="{{data.poolExcellency}}">
 
     {{/ifEquals}}
 </div>
-{{/if}}
+{{/ifEquals}}
 
 
-{{#if baseRoll}}
+{{#ifEquals data.rollType 'base'}}
 <label class="resource-label">{{localize "ExEss.Successes"}}</label>
 <div class="form-group"><input id="success-modifier" type="number"></div>
 {{else}}
 <div class="resource grid grid-2col flex-center">
     <div>
         <label class="resource-label">{{localize "ExEss.DiceModifier"}} </label>
-        <input id="dice-modifier" type="number">
+        <input name="object.diceModifier" value="{{data.diceModifier}}" type="number">
     </div>
     <div>
         <label class="resource-label">{{localize "ExEss.SuccessModifier"}} </label>
-        <input id="success-modifier" type="number">
+        <input name="object.successModifier" value="{{data.successModifier}}" type="number">
     </div>
 </div>
-{{/if}}
+{{/ifEquals}}
 
-<div class="resource grid grid-4col flex-center">
-    <label class="check-button" style="align-items:center;display:flex;">
-        <input id="double-sevens" name="double-sevens" type="checkbox">
-        <span>Db 7+s</span>
-    </label>
-    <label class="check-button" style="align-items:center;display:flex;">
-        <input id="double-eights" name="double-eights" type="checkbox">
-        <span>Db 8+s</span>
-    </label>
-    <label class="check-button" style="align-items:center;display:flex;">
-        <input id="double-nines" name="double-nines" type="checkbox">
-        <span>Db 9+s</span>
-    </label>
-    <label class="check-button" style="align-items:center;display:flex;">
-        <input id="double-tens" name="double-tens" type="checkbox" checked>
-        <span>Db 10s</span>
-    </label>
+<div class="resource grid grid-2col flex-center">
+    <div>
+        <label class="resource-label">{{localize "ExEss.DoubleSuccess"}} </label>
+        <input name="object.doubleSuccess" value="{{data.doubleSuccess}}" type="number">
+    </div>
+    <div>
+        <label class="resource-label">{{localize "ExEss.TargetNumber"}} </label>
+        <input name="object.targetNumber" value="{{data.targetNumber}}" type="number">
+    </div>
 </div>
 
 <div class="d-flex flex-between mb-1 collapsable cursor-pointer">
@@ -109,11 +101,9 @@
 <div style="display:none;">
     <div class="resource grid grid-2col flex-center">
         <label class="resource-label">{{localize "ExEss.RerollNumDice"}} </label>
-        <input id="reroll-number" type="number">
+        <input type="number" name="object.rerollNumber" value="{{data.rerollNumber}}">
         <label class="resource-label">{{localize "ExEss.RerollFailed"}}: </label>
-        <input type="checkbox" id="reroll-failed" name="data.rollable">
-        <label class="resource-label">{{localize "ExEss.TargetNumber"}} </label>
-        <input id="target-number" type="number" value="7">
+        <input type="checkbox" name="object.rerollFailed" value="{{data.rerollFailed}}">
     </div>
     <div class="resource flex-center">
         <label class="resource-label">{{localize "ExEss.Reroll"}}</label>
@@ -121,72 +111,63 @@
     <div class="resource d-flex flex-center">
         <div>
             <div>1</div>
-            <input id="reroll-1" name="reroll-1" type="checkbox">
+            <input name="object.reroll.one.status" type="checkbox">
         </div>
         <div>
             <div>2</div>
-            <input id="reroll-2" name="reroll-2" type="checkbox">
+            <input name="object.reroll.two.status" type="checkbox">
         </div>
         <div>
             <div>3</div>
-            <input id="reroll-3" name="reroll-3" type="checkbox">
+            <input name="object.reroll.three.status" type="checkbox">
         </div>
         <div>
             <div>4</div>
-            <input id="reroll-4" name="reroll-4" type="checkbox">
+            <input name="object.reroll.four.status" type="checkbox">
         </div>
         <div>
             <div>5</div>
-            <input id="reroll-5" name="reroll-5" type="checkbox">
+            <input name="object.reroll.five.status" type="checkbox">
         </div>
         <div>
             <div>6</div>
-            <input id="reroll-6" name="reroll-6" type="checkbox">
+            <input name="object.reroll.six.status" type="checkbox">
         </div>
         <div>
             <div>7</div>
-            <input id="reroll-7" name="reroll-7" type="checkbox">
+            <input name="object.reroll.seven.status" type="checkbox">
         </div>
         <div>
             <div>8</div>
-            <input id="reroll-8" name="reroll-8" type="checkbox">
+            <input name="object.reroll.eight.status" type="checkbox">
         </div>
         <div>
             <div>9</div>
-            <input id="reroll-9" name="reroll-9" type="checkbox">
+            <input name="object.reroll.nine.status" type="checkbox">
         </div>
         <div>
             <div>10</div>
-            <input id="reroll-10" name="reroll-10" type="checkbox">
+            <input name="object.reroll.ten.status" type="checkbox">
         </div>
     </div>
 </div>
 
 
 
-{{#if baseRoll}}
+{{#ifEquals data.rollType 'base'}}
 
 {{else}}
 <div class="resource grid grid-4col flex-center">
-    {{#ifEquals character-type 'character'}}
     <label class="resource-label">{{localize "ExEss.Stunt"}}: </label>
-    <input checked type="checkbox" id="stunt" name="data.rollable">
-    {{/ifEquals}}
-
-    {{#ifEquals character-type 'npc'}}
-    <label class="resource-label">{{localize "ExEss.Stunt"}}: </label>
-    <input type="checkbox" id="stunt" name="data.rollable">
-    {{/ifEquals}}
-
+    <input type="checkbox" name="object.stunt" value="{{data.stunt}}">
 
     <label class="resource-label">{{localize "ExEss.WoundPenalty"}}: </label>
-    <input checked type="checkbox" id="wound-penalty" name="data.rollable">
+    <input type="checkbox" name="object.woundPenalty" value="{{data.woundPenalty}}">
 
     <label class="resource-label">{{localize "ExEss.Flurry"}}: </label>
-    <input type="checkbox" id="flurry" name="data.rollable">
+    <input type="checkbox"name="object.flurry" value="{{data.flurry}}"">
 
     <label class="resource-label">{{localize "ExEss.ArmorPenalty"}}: </label>
-    <input type="checkbox" id="armor-penalty" name="data.rollable">
+    <input type="checkbox" name="object.armorPenalty" value="{{data.armorPenalty}}">
 </div>
-{{/if}}
-
+{{/ifEquals}}
