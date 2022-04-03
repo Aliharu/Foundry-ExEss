@@ -329,16 +329,18 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     });
 
     html.find('.roll-withering').mousedown(ev => {
-      openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'withering');
+      let item = this.actor.items.get($(ev.target).attr("data-item-id"));
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'withering', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming , "ability": item.data.data.weaponType === "melee" ? "close" : "ranged"}).render(true);
+      // openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'withering');
     });
 
     html.find('.roll-decisive').mousedown(ev => {
-      openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'decisive');
-    });
+      let item = this.actor.items.get($(ev.target).attr("data-item-id"));
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'decisive', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming , "ability": item.data.data.weaponType === "melee" ? "close" : "ranged"}).render(true);    });
 
     html.find('.roll-gambit').mousedown(ev => {
-      openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'gambit');
-    });
+      let item = this.actor.items.get($(ev.target).attr("data-item-id"));
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'gambit', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming , "ability": item.data.data.weaponType === "melee" ? "close" : "ranged"}).render(true);    });
 
     html.find('#anima-up').click(ev => {
       this._updateAnima("up");

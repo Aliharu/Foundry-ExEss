@@ -31,11 +31,32 @@ export class RollForm extends FormApplication {
             this.object.buildPowerTarget = 'self';
 
             if(this.object.rollType === 'social') {
-                let resolve = 0;
                 let target = Array.from(game.user.targets)[0] || null;
                 if (target) {
                     this.object.resolve = target.actor.data.data.resolve.value;
                 }
+            }
+
+            this.object.defence = 0;
+            this.object.soak = 0;
+            this.object.doubleExtraSuccess = false;
+            this.object.resolve = 0;
+            this.object.accuracySuccesses = data.accuracy || 0;
+            this.object.power = this.actor.data.data.power.value || 0;
+            this.object.damageSuccesses = data.damage || 0;
+            this.object.overwhelming = data.overwhelming || 0;
+
+            let target = Array.from(game.user.targets)[0] || null;
+            if (target) {
+                defense = target.actor.data.data.defence.value;
+                soak = target.actor.data.data.soak.value;
+            }
+            this.object.title = "Decisive Attack";
+            if (data.rollType === 'withering') {
+                this.object.title = "Withering Attack";
+            }
+            if (data.rollType === 'gambit') {
+                this.object.title = "Gambit";
             }
         }
         else {
@@ -48,7 +69,6 @@ export class RollForm extends FormApplication {
         this.object.rerollNumber = 0;
         this.object.dice = 0;
 
-
         this.object.doubleSuccess = 10;
         this.object.rerollFailed = false;
 
@@ -59,6 +79,8 @@ export class RollForm extends FormApplication {
         this.object.attributeExcellency = false;
         this.object.abilityExcellency = false;
         this.object.poolExcellency = false;
+        this.object.showDamage = false;
+
 
         this.object.reroll = {
             one: { status: false, number: 1 },
@@ -72,15 +94,35 @@ export class RollForm extends FormApplication {
             nine: { status: false, number: 9 },
             ten: { status: false, number: 10 },
         }
+
+        this.object.damage = {
+            damageDice: data.damage || 0,
+            damageSuccessModifier: data.damageSuccessModifier || 0,
+            doubleSuccess: 10,
+            targetNumber: data.targetNumber || 7,
+            doubleExtraSuccess: false,
+            reroll: {
+                one: { status: false, number: 1 },
+                two: { status: false, number: 2 },
+                three: { status: false, number: 3 },
+                four: { status: false, number: 4 },
+                five: { status: false, number: 5 },
+                six: { status: false, number: 6 },
+                seven: { status: false, number: 7 },
+                eight: { status: false, number: 8 },
+                nine: { status: false, number: 9 },
+                ten: { status: false, number: 10 },
+            }
+        };
     }
 
     get template() {
         var template = "systems/exaltedessence/templates/dialogues/ability-roll.html";
         if (this.object.rollType === 'base') {
-            template = "systems/exaltedthird/templates/dialogues/dice-roll.html";
+            template = "systems/exaltedessence/templates/dialogues/dice-roll.html";
         }
-        else if (this.object.rollType === 'attack') {
-            template = "systems/exaltedthird/templates/dialogues/accuracy-roll.html";
+        if (this.object.rollType === 'withering' || this.object.rollType === 'decisive' || this.object.rollType === 'gambit') {
+            template = "systems/exaltedessence/templates/dialogues/attack-roll.html";
         }
         return template;
     }
@@ -129,8 +171,6 @@ export class RollForm extends FormApplication {
 
     _baseAbilityDieRoll() {
         let dice = 0;
-        let augmentAttribute = false;
-
         if (this.object.rollType === 'baseRoll') {
             dice = this.object.dice;
         }
@@ -147,7 +187,12 @@ export class RollForm extends FormApplication {
                                 attributeDice++;
                             }
                             if (this.actor.data.data.essence.value > 1) {
-                                augmentAttribute = true;
+                                if(this.object.doubleSuccess === 10) {
+                                    this.object.doubleSuccess = 9;
+                                }
+                                else if(this.object.doubleSuccess === 9) {
+                                    this.object.doubleSuccess = 8;
+                                }
                             }
                         }
                     }
@@ -253,6 +298,8 @@ export class RollForm extends FormApplication {
         total += roll.total;
         if (bonus) total += bonus;
         if (this.object.successModifier) total += this.object.successModifier;
+        if (this.object.accuracySuccesses) total += this.object.accuracySuccesses;
+
 
         this.object.dice = dice;
         this.object.roll = roll;
@@ -353,14 +400,41 @@ export class RollForm extends FormApplication {
     }
 
     _attackRoll() {
+        this._baseAbilityDieRoll();
+        var messageContent = `
+  <div class="chat-card">
+      <div class="card-content">${this.object.title}</div>
+      <div class="card-buttons">
+          <div class="flexrow 1">
+              <div>
+                  <div class="dice-roll">
+                      <div class="dice-result">
+                          <h4 class="dice-formula">${this.object.dice} Dice + ${this.object.successModifier + this.object.accuracySuccesses} successes</h4>
+                          <div class="dice-tooltip">
+                              <div class="dice">
+                                  <ol class="dice-rolls">${this.object.getDice}</ol>
+                              </div>
+                          </div>
+                          <h4 class="dice-total">${this.object.total} Succeses</h4>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+`;
+        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: this.object.roll });
+        this.object.showDamage = true;
+        this.object.totalAccuracySuccesses = this.object.total;
 
+        // return resolve({ 'successess': total, 'baseSuccesses': rollResults.total });
     }
 
     _roll() {
         if (this.object.rollType === 'social' || this.object.rollType === 'ability' || this.object.rollType === 'buildPower' || this.object.rollType === 'focusWill') {
             this._abilityRoll();
         }
-        if (this.object.rollType === 'attack') {
+        if (this.object.rollType === 'withering' || this.object.rollType === 'decisive' || this.object.rollType === 'gambit') {
             this._attackRoll();
         }
     }
@@ -840,6 +914,7 @@ export async function openAttackDialogue(actor, weaponAccuracy, weaponDamage, ov
               </div>
             `;
                     ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: rollResults.roll });
+
                     return resolve({ 'successess': total, 'baseSuccesses': rollResults.total });
                 }
             }

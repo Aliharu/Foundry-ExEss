@@ -5,20 +5,20 @@
                 <label class="resource-label">{{localize "ExEss.Successes"}} </label>
                 <input id="successes" type="number" value="{{successes}}">
             </div>
-            {{#ifEquals attackType 'gambit'}}
+            {{#ifEquals data.rollType 'gambit'}}
             <div>
                 <label class="resource-label">{{localize "ExEss.PowerSpent"}} </label>
                 <input id="power-spent" type="number">
             </div>
             {{/ifEquals}}
-            {{#ifEquals attackType 'decisive'}}
+            {{#ifEquals data.rollType 'decisive'}}
             <div>
                 <label class="resource-label">{{localize "ExEss.Power"}} </label>
                 <input id="power" type="number" value="{{power}}">
             </div>
             {{/ifEquals}}
         </div>
-        {{#ifEquals attackType 'decisive'}}
+        {{#ifEquals data.rollType 'decisive'}}
         <div class="flex-center resource-label" style="font-weight: bold;">
                 Damage
             </div>
@@ -33,25 +33,15 @@
                         <input id="damage-successes" type="number">
                     </div>
                 </div>
-                <div class="resource grid grid-4col flex-center">
-                    <label class="check-button" style="align-items:center;display:flex;">
-                        <input id="double-damage-sevens" name="double-damage-sevens" type="checkbox">
-                        <span>Db 7+s</span>
-                    </label>
-                    <label class="check-button" style="align-items:center;display:flex;">
-                        <input id="double-damage-eights" name="double-damage-eights" type="checkbox">
-                        <span>Db 8+s</span>
-                    </label>
-                    <label class="check-button" style="align-items:center;display:flex;">
-                        <input id="double-damage-nines" name="double-damage-nines" type="checkbox">
-                        <span>Db 9+s</span>
-                    </label>
-                    <label class="check-button" style="align-items:center;display:flex;">
-                        <input id="double-damage-tens" name="double-damage-tens" type="checkbox" checked>
-                        <span>Db 10s</span>
-                    </label>
-                    <label class="resource-label">{{localize "ExEss.RerollFailed"}}: </label>
-                    <input type="checkbox" id="reroll-damage-failed" name="data.rollable">
+                <div class="resource grid grid-2col flex-center">
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.DoubleSuccess"}} </label>
+                        <input name="object.doubleSuccess" value="{{data.doubleSuccess}}" type="number">
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.TargetNumber"}} </label>
+                        <input name="object.targetNumber" value="{{data.targetNumber}}" type="number">
+                    </div>
                 </div>
             </div>
             {{/ifEquals}}
@@ -59,14 +49,14 @@
         <div class="flex-center resource-label" style="font-weight: bold;">
             Defender
         </div>
-        <div class="resource {{#if decisive}} grid-2col {{/if}} flex-center mb-2">
+        <div class="resource {{#ifEquals data.rollType 'decisive'}} grid-2col {{/ifEquals}} flex-center mb-2">
             <div>
                 <div class="flex-center resource-label">
                     {{localize "ExEss.Defense"}}
                 </div>
                 <input placeholder="Defence" id="defence" type="number" value="{{defense}}">
             </div>
-            {{#ifEquals attackType 'decisive'}}
+            {{#ifEquals data.rollType 'decisive'}}
             <div>
                 <div class="flex-center resource-label">
                     {{localize "ExEss.Soak"}}
