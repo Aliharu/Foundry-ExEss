@@ -1,10 +1,17 @@
 <form>
     <div class="sheet-body exaltedessence">
-        {{> systems/exaltedessence/templates/dialogues/accuracy-roll.html}}
+        {{#if data.showDamage}}
         {{> systems/exaltedessence/templates/dialogues/damage-roll.html}}
         <div class="d-flex">
-            <button type="button" id="roll-button">Roll</button>
+            <button type="button" id="roll-damage">Damage</button>
             <button type="button" id="cancel">Cancel</button>
         </div>
+        {{else}}
+        {{> systems/exaltedessence/templates/dialogues/accuracy-roll.html}}
+        <div class="d-flex">
+            <button type="button" id="roll-accuracy">Accuracy</button>
+            <button type="button" id="cancel">Cancel</button>
+        </div>
+        {{/if}}
     </div>
 </form>

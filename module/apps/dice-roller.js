@@ -30,14 +30,15 @@ export class RollForm extends FormApplication {
             this.object.characterType = this.actor.data.type;
             this.object.buildPowerTarget = 'self';
 
+            this.object.target = Array.from(game.user.targets)[0] || null;
+
             if(this.object.rollType === 'social') {
-                let target = Array.from(game.user.targets)[0] || null;
-                if (target) {
-                    this.object.resolve = target.actor.data.data.resolve.value;
+                if (this.object.target) {
+                    this.object.resolve = this.object.target.actor.data.data.resolve.value;
                 }
             }
 
-            this.object.defence = 0;
+            this.object.defense = 0;
             this.object.soak = 0;
             this.object.doubleExtraSuccess = false;
             this.object.resolve = 0;
@@ -46,10 +47,9 @@ export class RollForm extends FormApplication {
             this.object.damageSuccesses = data.damage || 0;
             this.object.overwhelming = data.overwhelming || 0;
 
-            let target = Array.from(game.user.targets)[0] || null;
-            if (target) {
-                defense = target.actor.data.data.defence.value;
-                soak = target.actor.data.data.soak.value;
+            if (this.object.target) {
+                this.object.defense = target.actor.data.data.defence.value;
+                this.object.soak = target.actor.data.data.soak.value;
             }
             this.object.title = "Decisive Attack";
             if (data.rollType === 'withering') {
@@ -57,6 +57,9 @@ export class RollForm extends FormApplication {
             }
             if (data.rollType === 'gambit') {
                 this.object.title = "Gambit";
+            }
+            if(data.rollType === 'gambit' || data.rollType === 'decisive') {
+                this.object.isDecisive = true;
             }
         }
         else {
@@ -80,6 +83,7 @@ export class RollForm extends FormApplication {
         this.object.abilityExcellency = false;
         this.object.poolExcellency = false;
         this.object.showDamage = false;
+        this.object.powerSpent = 0;
 
 
         this.object.reroll = {
@@ -96,9 +100,10 @@ export class RollForm extends FormApplication {
         }
 
         this.object.damage = {
-            damageDice: data.damage || 0,
-            damageSuccessModifier: data.damageSuccessModifier || 0,
+            damageDice: data.damageDice || 0,
+            damageSuccessModifier: data.damage || 0,
             doubleSuccess: 10,
+            rerollFailed: false,
             targetNumber: data.targetNumber || 7,
             doubleExtraSuccess: false,
             reroll: {
@@ -158,6 +163,15 @@ export class RollForm extends FormApplication {
             this._roll();
             this.close();
         });
+
+        html.find('#roll-accuracy').click((event) => {
+            this._attackRoll();
+        });
+
+        html.find('#roll-damage').click((event) => {
+            this._damageRoll();
+        });
+
 
         html.find('#cancel').click((event) => {
             this.close();
@@ -297,6 +311,7 @@ export class RollForm extends FormApplication {
 
         total += roll.total;
         if (bonus) total += bonus;
+        this.object.preBonusSuccesses = total;
         if (this.object.successModifier) total += this.object.successModifier;
         if (this.object.accuracySuccesses) total += this.object.accuracySuccesses;
 
@@ -425,17 +440,234 @@ export class RollForm extends FormApplication {
 `;
         ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: this.object.roll });
         this.object.showDamage = true;
-        this.object.totalAccuracySuccesses = this.object.total;
+        this.object.accuracyResult = this.object.total;
+        this.render();
 
         // return resolve({ 'successess': total, 'baseSuccesses': rollResults.total });
     }
 
+    _damageRoll() {
+        const actorData = duplicate(this.actor);
+        // let defence = parseInt(html.find('#defence').val()) || 0;
+        // let soak = parseInt(html.find('#soak').val()) || 0;
+        // let power = parseInt(html.find('#power').val()) || 0;
+        // let accuracySuccesses = parseInt(html.find('#successes').val()) || 0;
+        // let doubleExtraSuccess = html.find('#double-extra-success').is(':checked');
+
+        var postDefenceTotal = this.object.accuracyResult - this.object.defence;
+        let title = "Decisive Attack";
+        if (this.object.rollType === 'withering') {
+            title = "Withering Attack";
+        }
+        if (this.object.rollType === 'gambit') {
+            title = "Gambit";
+        }
+        if (this.object.damage.doubleExtraSuccess) {
+            var basePostDefenseTotal = this.object.preBonusSuccesses - this.object.defense;
+            if (basePostDefenseTotal > 0) {
+                postDefenceTotal += basePostDefenseTotal * 2;
+            }
+        }
+        var messageContent = '';
+
+        if (this.actor.data.type === 'npc') {
+            if (actorData.data.battlegroup) {
+                this.object.overwhelming = Math.min(actorData.data.size.value + 1, 5);
+            }
+        }
+
+        if (postDefenceTotal < 0) {
+            var overwhlemingMessage = '';
+            let extraPowerMessage = ``;
+            if (this.object.rollType === 'withering') {
+                overwhlemingMessage = `<h4 class="dice-total">${this.object.overwhelming} Power Built!</h4>`;
+                actorData.data.power.value = Math.min(10, this.object.overwhelming + actorData.data.power.value);
+                if (this.object.overwhelming + actorData.data.power.value > 10) {
+                    const extraPowerValue = Math.floor((this.object.overwhelming + actorData.data.power.value - 10));
+                    extraPowerMessage = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
+                }
+            }
+            else {
+                actorData.data.power.value = Math.max(0, actorData.data.power.value - 1);
+            }
+            this.actor.update(actorData);
+            messageContent = `
+      <div class="chat-card">
+          <div class="card-content">${title}</div>
+          <div class="card-buttons">
+              <div class="flexrow 1">
+                  <div>
+                      <div class="dice-roll">
+                          <div class="dice-result">
+                              <h4 class="dice-formula">${this.object.accuracyResult} Succeses</h4>
+                              <h4 class="dice-formula">${this.object.defence} defence</h4>
+                              ${this.object.rollType === 'withering' ? '<h4 class="dice-formula">${overwhelming} Overwhelming</h4>' : ``}
+                              <h4 class="dice-total">Attack Missed!</h4>
+                              ${overwhlemingMessage}
+                              ${extraPowerMessage}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    `;
+            ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+        }
+        else {
+            if (this.actor.rollType === 'decisive') {
+                // Deal Damage
+                let damage = postDefenceTotal + this.object.power + this.object.damage.damageDice;
+                if (this.actor.data.type === 'npc') {
+                    if (actorData.data.battlegroup) {
+                        damage += actorData.data.drill.value;
+                    }
+                }
+                let damageRoll = new Roll(`${damage}d10${this.object.damage.rerollFailed ? `r<${this.object.damage.targetNumber}` : ""}cs>=${this.object.damage.targetNumber}`).evaluate({ async: false });
+                let damageDiceRoll = damageRoll.dice[0].results;
+                let damageBonus = 0;
+                let getDamageDice = "";
+                for (let dice of damageDiceRoll) {
+                    // comment out if no double successes
+                    if (dice.result >= this.object.damage.doubleSuccess) {
+                        damageBonus++;
+                        getDamageDice += `<li class="roll die d10 success double-success">${dice.result}</li>`;
+                    }
+                    else if (dice.result >= this.object.damage.targetNumber) { getDamageDice += `<li class="roll die d10 success">${dice.result}</li>`; }
+                    else if (dice.result == 1) { getDamageDice += `<li class="roll die d10 failure">${dice.result}</li>`; }
+                    else { getDamageDice += `<li class="roll die d10">${dice.result}</li>`; }
+                }
+
+                let damageSuccess = damageRoll.total + this.object.damage.damageSuccessModifier;
+                if (damageBonus) damageSuccess += damageBonus;
+                let damageTotal = damageSuccess - this.object.soak;
+
+                actorData.data.power.value = Math.max(0, actorData.data.power.value - this.object.power);
+                this.actor.update(actorData);
+
+                messageContent = `
+        <div class="chat-card">
+            <div class="card-content">Decisive Damage</div>
+            <div class="card-buttons">
+                <div class="flexrow 1">
+                    <div>
+                        <div class="dice-roll">
+                            <div class="dice-result">
+                                <h4 class="dice-formula">${this.object.accuracyResult} Succeses vs ${this.object.defence} defence</h4>
+                                <h4 class="dice-formula">${postDefenceTotal} Extra Succeses + ${this.object.power} power</h4>
+                                <h4 class="dice-formula">${this.object.damage.damageDice} Damage dice + ${this.object.damage.damageSuccessModifier} successes </h4>
+                                <div class="dice-tooltip">
+                                  <div class="dice">
+                                      <ol class="dice-rolls">${getDamageDice}</ol>
+                                  </div>
+                                </div>
+                                <h4 class="dice-formula">${this.object.damage.damageSuccessModifier} Damage - ${this.object.soak} soak</h4>
+                                <h4 class="dice-total">${damageTotal} Total Damage</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      `
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: damageRoll });
+            }
+            else if (this.object.rollType === 'withering') {
+                var powerGained = postDefenceTotal + 1;
+                if (postDefenceTotal < this.object.overwhelming) {
+                    powerGained = this.object.overwhelming + 1;
+                }
+                let extraPowerMessage = ``;
+                if (powerGained + actorData.data.power.value > 10) {
+                    const extraPowerValue = Math.floor((powerGained + actorData.data.power.value - 10));
+                    extraPowerMessage = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
+                }
+                actorData.data.power.value = Math.min(10, powerGained + actorData.data.power.value);
+                this.actor.update(actorData);
+                messageContent = `
+          <div class="chat-card">
+              <div class="card-content">Withering Power</div>
+              <div class="card-buttons">
+                  <div class="flexrow 1">
+                      <div>
+                          <div class="dice-roll">
+                              <div class="dice-result">
+                                  <h4 class="dice-formula">${this.object.accuracyResult} Succeses vs ${this.object.defence} defence</h4>
+                                  <h4 class="dice-formula">1 Base + ${postDefenceTotal} Extra Succeses</h4>
+                                  <h4 class="dice-formula">${this.object.overwhelming} Overwhelming</h4>
+                                  <h4 class="dice-total">${powerGained} Power Built!</h4>
+                                  ${extraPowerMessage}
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        `
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+            }
+            else if (this.object.rollType === 'gambit') {
+                actorData.data.power.value = Math.max(0, actorData.data.power.value - this.object.powerSpent);
+                this.actor.update(actorData);
+                messageContent = `
+          <div class="chat-card">
+              <div class="card-content">Withering Power</div>
+              <div class="card-buttons">
+                  <div class="flexrow 1">
+                      <div>
+                          <div class="dice-roll">
+                              <div class="dice-result">
+                                <h4 class="dice-formula">${this.object.accuracyResult} Succeses vs ${this.object.defence} defence</h4>
+                                  <h4 class="dice-formula">${this.object.powerSpent} Power Spent</h4>
+                                  <h4 class="dice-total">Gambit Successful!</h4>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        `
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+            }
+        }
+        if (this.object.target && game.settings.get("exaltedessence", "calculateOnslaught")) {
+            const onslaught = target.actor.effects.find(i => i.data.label == "Onslaught");
+            if (this.object.rollType === 'decisive') {
+                if (onslaught) {
+                    onslaught.delete();
+                }
+            }
+            else if (this.object.rollType === 'withering') {
+                if (onslaught) {
+                    let changes = duplicate(onslaught.data.changes);
+                    if (this.object.target.actor.data.data.hardness.value > 0) {
+                        changes[0].value = changes[0].value - 1;
+                        onslaught.update({ changes });
+                    }
+                }
+                else {
+                    this.object.target.actor.createEmbeddedDocuments('ActiveEffect', [{
+                        label: 'Onslaught',
+                        icon: 'icons/svg/aura.svg',
+                        origin: this.object.target.actor.uuid,
+                        disabled: false,
+                        "changes": [
+                            {
+                                "key": "data.hardness.value",
+                                "value": -1,
+                                "mode": 2
+                            }
+                        ]
+                    }]);
+                }
+            }
+        }
+    }
+    
+
     _roll() {
         if (this.object.rollType === 'social' || this.object.rollType === 'ability' || this.object.rollType === 'buildPower' || this.object.rollType === 'focusWill') {
             this._abilityRoll();
-        }
-        if (this.object.rollType === 'withering' || this.object.rollType === 'decisive' || this.object.rollType === 'gambit') {
-            this._attackRoll();
         }
     }
 
@@ -1040,7 +1272,7 @@ async function _rollAttackDamage(actor, accuracyResult, weaponDamage, overwhelmi
                             doubleDamageSuccess = 10;
                         }
                         // Deal Damage
-                        let damage = postDefenceTotal + power + bonusDamageDice;
+                        let damage = postDefenceTotal + this.object.power + bonusDamageDice;
                         if (actor.data.type === 'npc') {
                             if (actorData.data.battlegroup) {
                                 damage += actorData.data.drill.value;
