@@ -38,7 +38,7 @@
   border-radius: 50%;
   cursor: pointer;
 }
-  
+
 .exaltedessence .resource-value-static .resource-value-static-step {
   height: 14px;
   width: 14px;
@@ -64,24 +64,20 @@
   border-radius: 50%;
   cursor: pointer;
   background:
-    linear-gradient(
-      45deg,
+    linear-gradient(45deg,
       transparent 0%,
       transparent 43%,
       black 45%,
       black 55%,
       transparent 57%,
-      transparent 100%
-    ),
-    linear-gradient(
-      135deg,
+      transparent 100%),
+    linear-gradient(135deg,
       transparent 0%,
       transparent 43%,
       black 45%,
       black 55%,
       transparent 57%,
-      transparent 100%
-    );
+      transparent 100%);
 }
 
 .exaltedessence .resource-counter .resource-counter-step {
@@ -98,37 +94,31 @@
 
 .exaltedessence .resource-counter .resource-counter-step[data-state="/"] {
   background:
-    linear-gradient(
-      135deg,
+    linear-gradient(135deg,
       transparent 0%,
       transparent 43%,
       black 45%,
       black 55%,
       transparent 57%,
-      transparent 100%
-    );
+      transparent 100%);
 }
 
 .exaltedessence .resource-counter .resource-counter-step[data-state="x"] {
   background:
-    linear-gradient(
-      45deg,
+    linear-gradient(45deg,
       transparent 0%,
       transparent 43%,
       black 45%,
       black 55%,
       transparent 57%,
-      transparent 100%
-    ),
-    linear-gradient(
-      135deg,
+      transparent 100%),
+    linear-gradient(135deg,
       transparent 0%,
       transparent 43%,
       black 45%,
       black 55%,
       transparent 57%,
-      transparent 100%
-    );
+      transparent 100%);
 }
 
 .exaltedessence .flex-group-center:not(.flexrow) .resource-value,
@@ -149,7 +139,7 @@
   cursor: pointer;
 }
 
-.dice-tooltip { 
+.dice-tooltip {
   display: block !important;
 }
 
@@ -159,7 +149,7 @@
 }
 
 .roll-ability {
-  cursor:pointer;
+  cursor: pointer;
 }
 
 .roll-ability:hover {
@@ -167,7 +157,7 @@
 }
 
 .roll-pool {
-  cursor:pointer;
+  cursor: pointer;
 }
 
 .roll-pool:hover {
@@ -198,7 +188,7 @@
       font-weight: bold;
     }
 
-    > * {
+    >* {
       -webkit-user-select: text;
       -moz-user-select: text;
       -ms-user-select: text;
@@ -207,7 +197,7 @@
   }
 
   .item-description {
-    display:none;
+    display: none;
   }
 
   .item-name {
@@ -256,4 +246,29 @@
 
 .chat-control-icon .fas.fa-dice-d20:hover:before {
   cursor: pointer;
+}
+
+.charm-card-table {
+  table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+}
+
+.charm-card {
+  background-color: #ffffcc;
+  text-align: center;
+
+  .charm-content {
+    padding: 15px 25px 10px 25px;
+  }
+
+  .mode-content {
+    background-color: #ffffe6;
+    padding: 15px 25px 10px 25px;
+  }
+
+  .mode-title {
+    color: #d90000;
+  }
 }

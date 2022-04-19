@@ -611,3 +611,26 @@
 .chat-control-icon .fas.fa-dice-d20:hover:before {
   cursor: pointer;
 }
+
+.charm-card-table table, .charm-card-table th, .charm-card-table td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+.charm-card {
+  background-color: #ffffcc;
+  text-align: center;
+}
+
+.charm-card .charm-content {
+  padding: 15px 25px 10px 25px;
+}
+
+.charm-card .mode-content {
+  background-color: #ffffe6;
+  padding: 15px 25px 10px 25px;
+}
+
+.charm-card .mode-title {
+  color: #d90000;
+}
