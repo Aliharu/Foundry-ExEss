@@ -6,9 +6,9 @@ import { ExaltedessenceActorSheet } from "./actor/actor-sheet.js";
 import { ExaltedessenceItem } from "./item/item.js";
 import { ExaltedessenceItemSheet } from "./item/item-sheet.js";
 
-import { openRollDialogue } from "./apps/dice-roller.js";
 import TraitSelector from "./apps/trait-selector.js";
 import { registerSettings } from "./settings.js";
+import { RollForm } from "./apps/dice-roller.js";
 
 Hooks.once('init', async function () {
 
@@ -107,7 +107,7 @@ $(document).ready(() => {
 
   $(document).on('click', diceIconSelector, ev => {
     ev.preventDefault();
-    openRollDialogue();
+    new RollForm(null, {}, {}, {rollType: 'base'}).render(true);;
   });
 });
 

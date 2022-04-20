@@ -2,7 +2,7 @@
 //   DiceRollerDialogue
 // } from "./dialogue-diceRoller.js";
 import TraitSelector from "../apps/trait-selector.js";
-import { RollForm, buildResource, openAbilityRollDialogue, openAttackDialogue, openRollDialogue, socialInfluence  } from "../apps/dice-roller.js";
+import { RollForm } from "../apps/dice-roller.js";
 import { onManageActiveEffect, prepareActiveEffectCategories } from "../effects.js";
 
 /**
@@ -222,7 +222,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         label: game.i18n.localize('ExEss.Roll'),
         class: 'roll-dice',
         icon: 'fas fa-dice',
-        onclick: () => openRollDialogue(),
+        onclick: () => new RollForm(this.actor, {}, {}, {rollType: 'base'}).render(true),
       };
       buttons = [rollButton, ...buttons];
     }

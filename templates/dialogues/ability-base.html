@@ -65,7 +65,7 @@
 
 {{#ifEquals data.rollType 'base'}}
 <label class="resource-label">{{localize "ExEss.Successes"}}</label>
-<div class="form-group"><input id="success-modifier" type="number"></div>
+<div class="form-group"><input name="object.successModifier" value="{{data.successModifier}}" type="number"></div>
 {{else}}
 <div class="resource grid grid-2col flex-center">
     <div>
