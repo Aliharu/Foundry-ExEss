@@ -1,24 +1,30 @@
 <form>
     <div class="sheet-body exaltedessence">
-        <div class="resource flex-center {{#if decisive}} grid-2col {{/if}} mb-2">
+        <div class="resource flex-center grid-2col mb-2">
             <div>
                 <label class="resource-label">{{localize "ExEss.Successes"}} </label>
-                <input id="successes" type="number" value="{{successes}}">
+                <input name="object.accuracyResult" value="{{data.accuracyResult}}" type="number">
             </div>
-            {{#ifEquals attackType 'gambit'}}
+            {{#ifEquals data.rollType 'gambit'}}
             <div>
                 <label class="resource-label">{{localize "ExEss.PowerSpent"}} </label>
-                <input id="power-spent" type="number">
+                <input name="object.powerSpent" value="{{data.powerSpent}}" type="number">
             </div>
             {{/ifEquals}}
-            {{#ifEquals attackType 'decisive'}}
+            {{#ifEquals data.rollType 'decisive'}}
             <div>
                 <label class="resource-label">{{localize "ExEss.Power"}} </label>
-                <input id="power" type="number" value="{{power}}">
+                <input name="object.power" value="{{data.power}}" type="number">
+            </div>
+            {{/ifEquals}}
+            {{#ifEquals data.rollType 'withering'}}
+            <div>
+                <label class="resource-label">{{localize "ExEss.Overwhelming"}} </label>
+                <input name="object.overwhelming" value="{{data.overwhelming}}" type="number">
             </div>
             {{/ifEquals}}
         </div>
-        {{#ifEquals attackType 'decisive'}}
+        {{#ifEquals data.rollType 'decisive'}}
         <div class="flex-center resource-label" style="font-weight: bold;">
                 Damage
             </div>
@@ -26,32 +32,22 @@
                 <div class="resource grid grid-2col flex-center">
                     <div>
                         <label class="resource-label">{{localize "ExEss.DamageDice"}} </label>
-                        <input id="damage-dice" type="number">
+                        <input name="object.damage.damageDice" value="{{data.damage.damageDice}}" type="number">
                     </div>
                     <div>
                         <label class="resource-label">{{localize "ExEss.DamageSuccesses"}} </label>
-                        <input id="damage-successes" type="number">
+                        <input name="object.damage.damageSuccessModifier" value="{{data.damage.damageSuccessModifier}}" type="number">
                     </div>
                 </div>
-                <div class="resource grid grid-4col flex-center">
-                    <label class="check-button" style="align-items:center;display:flex;">
-                        <input id="double-damage-sevens" name="double-damage-sevens" type="checkbox">
-                        <span>Db 7+s</span>
-                    </label>
-                    <label class="check-button" style="align-items:center;display:flex;">
-                        <input id="double-damage-eights" name="double-damage-eights" type="checkbox">
-                        <span>Db 8+s</span>
-                    </label>
-                    <label class="check-button" style="align-items:center;display:flex;">
-                        <input id="double-damage-nines" name="double-damage-nines" type="checkbox">
-                        <span>Db 9+s</span>
-                    </label>
-                    <label class="check-button" style="align-items:center;display:flex;">
-                        <input id="double-damage-tens" name="double-damage-tens" type="checkbox" checked>
-                        <span>Db 10s</span>
-                    </label>
-                    <label class="resource-label">{{localize "ExEss.RerollFailed"}}: </label>
-                    <input type="checkbox" id="reroll-damage-failed" name="data.rollable">
+                <div class="resource grid grid-2col flex-center">
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.DoubleSuccess"}} </label>
+                        <input name="object.damage.doubleSuccess" value="{{data.damage.doubleSuccess}}" type="number">
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.TargetNumber"}} </label>
+                        <input name="object.damage.targetNumber" value="{{data.damage.targetNumber}}" type="number">
+                    </div>
                 </div>
             </div>
             {{/ifEquals}}
@@ -59,19 +55,19 @@
         <div class="flex-center resource-label" style="font-weight: bold;">
             Defender
         </div>
-        <div class="resource {{#if decisive}} grid-2col {{/if}} flex-center mb-2">
+        <div class="resource {{#ifEquals data.rollType 'decisive'}} grid-2col {{/ifEquals}} flex-center mb-2">
             <div>
                 <div class="flex-center resource-label">
                     {{localize "ExEss.Defense"}}
                 </div>
-                <input placeholder="Defence" id="defence" type="number" value="{{defense}}">
+                <input name="object.defense" value="{{data.defense}}"  type="number">
             </div>
-            {{#ifEquals attackType 'decisive'}}
+            {{#ifEquals data.rollType 'decisive'}}
             <div>
                 <div class="flex-center resource-label">
                     {{localize "ExEss.Soak"}}
                 </div>
-                <input placeholder="Soak" id="soak" type="number" value="{{soak}}">
+                <input name="object.soak" value="{{data.soak}}" type="number">
             </div>
             {{/ifEquals}}
         </div>
@@ -85,7 +81,7 @@
         </div>
         <div style="display:none;">
             <label class="check-button" style="align-items:center;display:flex;">
-                <input id="double-extra-success" name="double-extra-success" type="checkbox">
+                <input name="object.damage.doubleExtraSuccess" value="{{data.damage.doubleExtraSuccess}}" type="checkbox">
                 <span class="resource-label">Double Extra Successes</span>
             </label>
         </div>

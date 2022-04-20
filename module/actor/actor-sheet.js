@@ -2,7 +2,7 @@
 //   DiceRollerDialogue
 // } from "./dialogue-diceRoller.js";
 import TraitSelector from "../apps/trait-selector.js";
-import { buildResource, openAbilityRollDialogue, openAttackDialogue, openRollDialogue, socialInfluence  } from "../apps/dice-roller.js";
+import { RollForm } from "../apps/dice-roller.js";
 import { onManageActiveEffect, prepareActiveEffectCategories } from "../effects.js";
 
 /**
@@ -222,7 +222,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         label: game.i18n.localize('ExEss.Roll'),
         class: 'roll-dice',
         icon: 'fas fa-dice',
-        onclick: () => openRollDialogue(),
+        onclick: () => new RollForm(this.actor, {}, {}, {rollType: 'base'}).render(true),
       };
       buttons = [rollButton, ...buttons];
     }
@@ -296,46 +296,51 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     });
 
     html.find('#rollDice').mousedown(ev => {
-      openRollDialogue(this.actor);
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'base'}).render(true);
     });
 
     html.find('#rollAbility').mousedown(ev => {
-      openAbilityRollDialogue(this.actor);
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'ability'}).render(true);
     });
 
     html.find('.roll-ability').mousedown(ev => {
       var ability = $(ev.target).attr("data-ability");
-      openAbilityRollDialogue(this.actor, ability);
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'ability', ability: ability}).render(true);
     });
 
     html.find('.roll-pool').mousedown(ev => {
       var pool = $(ev.target).attr("data-pool");
-      openAbilityRollDialogue(this.actor, pool);
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'ability', pool: pool}).render(true);
     });
 
     html.find('#buildPower').mousedown(ev => {
-      buildResource(this.actor, 'power');
+      // buildResource(this.actor, 'power');
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'buildPower'}).render(true);
     });
 
     html.find('#focusWill').mousedown(ev => {
-      buildResource(this.actor, 'will');
+      // buildResource(this.actor, 'will');
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'focusWill', 'ability': 'sagacity'}).render(true);
     });
 
     html.find('#socialInfluence').mousedown(ev => {
-      socialInfluence(this.actor);
+      // socialInfluence(this.actor);
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'social', 'ability': 'embassy'}).render(true);
     });
 
     html.find('.roll-withering').mousedown(ev => {
-      openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'withering');
+      let item = this.actor.items.get($(ev.target).attr("data-item-id"));
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'withering', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming , "ability": item.data.data.weaponType === "melee" ? "close" : "ranged"}).render(true);
+      // openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'withering');
     });
 
     html.find('.roll-decisive').mousedown(ev => {
-      openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'decisive');
-    });
+      let item = this.actor.items.get($(ev.target).attr("data-item-id"));
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'decisive', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming , "ability": item.data.data.weaponType === "melee" ? "close" : "ranged"}).render(true);    });
 
     html.find('.roll-gambit').mousedown(ev => {
-      openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'gambit');
-    });
+      let item = this.actor.items.get($(ev.target).attr("data-item-id"));
+      new RollForm(this.actor, {event:ev}, {}, {rollType: 'gambit', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming , "ability": item.data.data.weaponType === "melee" ? "close" : "ranged"}).render(true);    });
 
     html.find('#anima-up').click(ev => {
       this._updateAnima("up");
