@@ -68,6 +68,9 @@ export class RollForm extends FormApplication {
         this.object.flurry = false;
         this.object.woundPenalty = false;
         this.object.stunt = false;
+        if (this.actor.data.type === 'character' && data.rollType !== 'base') {
+            this.object.stunt = true;
+        }
         this.object.armorPenalty = false;
         this.object.attributeExcellency = false;
         this.object.abilityExcellency = false;
@@ -539,7 +542,7 @@ export class RollForm extends FormApplication {
                             <div class="dice-result">
                                 <h4 class="dice-formula">${this.object.accuracyResult} Succeses vs ${this.object.defense} defence</h4>
                                 <h4 class="dice-formula">${postDefenceTotal} Extra Succeses + ${this.object.power} power</h4>
-                                <h4 class="dice-formula">${this.object.damage.damageDice} Damage dice + ${this.object.damage.damageSuccessModifier} successes </h4>
+                                <h4 class="dice-formula">${damage} Damage dice + ${this.object.damage.damageSuccessModifier} successes </h4>
                                 <div class="dice-tooltip">
                                   <div class="dice">
                                       <ol class="dice-rolls">${getDamageDice}</ol>

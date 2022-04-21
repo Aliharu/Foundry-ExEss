@@ -159,7 +159,7 @@
 {{else}}
 <div class="resource grid grid-4col flex-center">
     <label class="resource-label">{{localize "ExEss.Stunt"}}: </label>
-    <input type="checkbox" name="object.stunt" value="{{data.stunt}}">
+    <input type="checkbox" name="object.stunt" value="{{data.stunt}}" {{checked data.stunt}}>
 
     <label class="resource-label">{{localize "ExEss.WoundPenalty"}}: </label>
     <input type="checkbox" name="object.woundPenalty" value="{{data.woundPenalty}}">
