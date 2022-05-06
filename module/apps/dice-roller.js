@@ -68,7 +68,7 @@ export class RollForm extends FormApplication {
         this.object.flurry = false;
         this.object.woundPenalty = false;
         this.object.stunt = false;
-        if (this.actor.data.type === 'character' && data.rollType !== 'base') {
+        if (data.rollType !== 'base' && this.actor.data.type === 'character') {
             this.object.stunt = true;
         }
         this.object.armorPenalty = false;
