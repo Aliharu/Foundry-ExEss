@@ -222,7 +222,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         label: game.i18n.localize('ExEss.Roll'),
         class: 'roll-dice',
         icon: 'fas fa-dice',
-        onclick: () => new RollForm(this.actor, {}, {}, {rollType: 'base'}).render(true),
+        onclick: () => new RollForm(this.actor, {}, {}, { rollType: 'base' }).render(true),
       };
       buttons = [rollButton, ...buttons];
     }
@@ -262,9 +262,30 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     // Delete Inventory Item
     html.find('.item-delete').click(ev => {
-      const li = $(ev.currentTarget).parents(".item");
-      this.actor.deleteEmbeddedDocuments("Item", [li.data("itemId")]);
-      li.slideUp(200, () => this.render(false));
+      let applyChanges = false;
+      new Dialog({
+        title: 'Delete?',
+        content: 'Are you sure you want to delete this item?',
+        buttons: {
+          delete: {
+            icon: '<i class="fas fa-check"></i>',
+            label: 'Delete',
+            callback: () => applyChanges = true
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: 'Cancel'
+          },
+        },
+        default: "delete",
+        close: html => {
+          if (applyChanges) {
+            const li = $(ev.currentTarget).parents(".item");
+            this.actor.deleteEmbeddedDocuments("Item", [li.data("itemId")]);
+            li.slideUp(200, () => this.render(false));
+          }
+        }
+      }).render(true);
     });
 
     html.find('.show-weapon-tags').mousedown(ev => {
@@ -296,51 +317,53 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     });
 
     html.find('#rollDice').mousedown(ev => {
-      new RollForm(this.actor, {event:ev}, {}, {rollType: 'base'}).render(true);
+      new RollForm(this.actor, { event: ev }, {}, { rollType: 'base' }).render(true);
     });
 
     html.find('#rollAbility').mousedown(ev => {
-      new RollForm(this.actor, {event:ev}, {}, {rollType: 'ability'}).render(true);
+      new RollForm(this.actor, { event: ev }, {}, { rollType: 'ability' }).render(true);
     });
 
     html.find('.roll-ability').mousedown(ev => {
       var ability = $(ev.target).attr("data-ability");
-      new RollForm(this.actor, {event:ev}, {}, {rollType: 'ability', ability: ability}).render(true);
+      new RollForm(this.actor, { event: ev }, {}, { rollType: 'ability', ability: ability }).render(true);
     });
 
     html.find('.roll-pool').mousedown(ev => {
       var pool = $(ev.target).attr("data-pool");
-      new RollForm(this.actor, {event:ev}, {}, {rollType: 'ability', pool: pool}).render(true);
+      new RollForm(this.actor, { event: ev }, {}, { rollType: 'ability', pool: pool }).render(true);
     });
 
     html.find('#buildPower').mousedown(ev => {
       // buildResource(this.actor, 'power');
-      new RollForm(this.actor, {event:ev}, {}, {rollType: 'buildPower'}).render(true);
+      new RollForm(this.actor, { event: ev }, {}, { rollType: 'buildPower' }).render(true);
     });
 
     html.find('#focusWill').mousedown(ev => {
       // buildResource(this.actor, 'will');
-      new RollForm(this.actor, {event:ev}, {}, {rollType: 'focusWill', 'ability': 'sagacity'}).render(true);
+      new RollForm(this.actor, { event: ev }, {}, { rollType: 'focusWill', 'ability': 'sagacity' }).render(true);
     });
 
     html.find('#socialInfluence').mousedown(ev => {
       // socialInfluence(this.actor);
-      new RollForm(this.actor, {event:ev}, {}, {rollType: 'social', 'ability': 'embassy'}).render(true);
+      new RollForm(this.actor, { event: ev }, {}, { rollType: 'social', 'ability': 'embassy' }).render(true);
     });
 
     html.find('.roll-withering').mousedown(ev => {
       let item = this.actor.items.get($(ev.target).attr("data-item-id"));
-      new RollForm(this.actor, {event:ev}, {}, {rollType: 'withering', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming , "ability": item.data.data.weaponType === "melee" ? "close" : "ranged"}).render(true);
+      new RollForm(this.actor, { event: ev }, {}, { rollType: 'withering', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming, "ability": item.data.data.weapontype === "melee" ? "close" : "ranged", 'weaponType': item.data.data.weapontype  }).render(true);
       // openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'withering');
     });
 
     html.find('.roll-decisive').mousedown(ev => {
       let item = this.actor.items.get($(ev.target).attr("data-item-id"));
-      new RollForm(this.actor, {event:ev}, {}, {rollType: 'decisive', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming , "ability": item.data.data.weaponType === "melee" ? "close" : "ranged"}).render(true);    });
+      new RollForm(this.actor, { event: ev }, {}, { rollType: 'decisive', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming, "ability": item.data.data.weapontype === "melee" ? "close" : "ranged", 'weaponType': item.data.data.weapontype  }).render(true);
+    });
 
     html.find('.roll-gambit').mousedown(ev => {
       let item = this.actor.items.get($(ev.target).attr("data-item-id"));
-      new RollForm(this.actor, {event:ev}, {}, {rollType: 'gambit', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming , "ability": item.data.data.weaponType === "melee" ? "close" : "ranged"}).render(true);    });
+      new RollForm(this.actor, { event: ev }, {}, { rollType: 'gambit', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming, "ability": item.data.data.weapontype === "melee" ? "close" : "ranged", 'weaponType': item.data.data.weapontype }).render(true);
+    });
 
     html.find('#anima-up').click(ev => {
       this._updateAnima("up");
@@ -493,7 +516,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       title: `Tags`,
       content: html,
       buttons: {
-        cancel: { label: "Close"}
+        cancel: { label: "Close" }
       }
     }).render(true);
   }
@@ -814,7 +837,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     let li = $(event.currentTarget).parents(".item");
     let item = this.actor.items.get(li.data("item-id"));
 
-    if(item.type === 'charm') {
+    if (item.type === 'charm') {
       actorData.data.motes.value = Math.max(0, actorData.data.motes.value - item.data.data.cost.motes);
       actorData.data.motes.commited += item.data.data.cost.committed;
       actorData.data.stunt.value = Math.max(0, actorData.data.stunt.value - item.data.data.cost.stunt);
@@ -826,7 +849,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       }
       actorData.data.health.lethal = Math.min(totalHealth - actorData.data.health.aggravated, actorData.data.health.lethal + item.data.data.cost.health);
     }
-    if(item.type === 'spell') {
+    if (item.type === 'spell') {
       actorData.data.will.value = Math.max(0, actorData.data.will.value - item.data.data.cost);
     }
     this.actor.update(actorData);
