@@ -22,7 +22,7 @@ export class RollForm extends FormApplication {
 
             this.object.target = Array.from(game.user.targets)[0] || null;
 
-            if(this.object.rollType === 'social') {
+            if (this.object.rollType === 'social') {
                 if (this.object.target) {
                     this.object.resolve = this.object.target.actor.data.data.resolve.value;
                 }
@@ -36,10 +36,40 @@ export class RollForm extends FormApplication {
             this.object.power = this.actor.data.data.power.value || 0;
             this.object.damageSuccesses = data.damage || 0;
             this.object.overwhelming = data.overwhelming || 0;
+            this.object.conditions = this.actor.token ? this.actor.token.data.actorData.effects : [];
+            this.object.weaponType = data.weaponType || 'melee';
+            this.object.diceModifier = 0;
 
             if (this.object.target) {
                 this.object.defense = this.object.target.actor.data.data.defence.value;
                 this.object.soak = this.object.target.actor.data.data.soak.value;
+
+                if(this.object.target.data.actorData.effects) {
+                    if (this.object.target.data.actorData.effects.some(e => e.name === 'concealment')) {
+                        this.object.diceModifier -= 2;
+                    }
+                    if (this.object.target.data.actorData.effects.some(e => e.name === 'prone')) {
+                        this.object.defense -= 2;
+                    }
+                    if (this.object.target.data.actorData.effects.some(e => e.name === 'surprised')) {
+                        this.object.defense -= 1;
+                    }
+                    if (this.object.target.data.actorData.effects.some(e => e.name === 'lightcover')) {
+                        if (this.object.weaponType !== 'melee') {
+                            this.object.defense += 1;
+                        }
+                    }
+                    if (this.object.target.data.actorData.effects.some(e => e.name === 'heavycover')) {
+                        if (this.object.weaponType !== 'melee') {
+                            this.object.defense += 2;
+                        }
+                    }
+                }
+            }
+            if (data.rollType === 'withering' || data.rollType === 'gambit' || data.rollType === 'decisive') {
+                if (this.object.conditions.some(e => e.name === 'prone')) {
+                    this.object.diceModifier -= 3;
+                }
             }
             this.object.title = "Decisive Attack";
             if (data.rollType === 'withering') {
@@ -48,7 +78,7 @@ export class RollForm extends FormApplication {
             if (data.rollType === 'gambit') {
                 this.object.title = "Gambit";
             }
-            if(data.rollType === 'gambit' || data.rollType === 'decisive') {
+            if (data.rollType === 'gambit' || data.rollType === 'decisive') {
                 this.object.isDecisive = true;
             }
         }
@@ -56,7 +86,6 @@ export class RollForm extends FormApplication {
             this.object.dice = 0;
         }
         this.object.targetNumber = 7;
-        this.object.diceModifier = 0;
         this.object.successModifier = 0;
         this.object.difficulty = 0;
         this.object.rerollNumber = 0;
@@ -195,10 +224,10 @@ export class RollForm extends FormApplication {
                                 attributeDice++;
                             }
                             if (this.actor.data.data.essence.value > 1) {
-                                if(this.object.doubleSuccess === 10) {
+                                if (this.object.doubleSuccess === 10) {
                                     this.object.doubleSuccess = 9;
                                 }
-                                else if(this.object.doubleSuccess === 9) {
+                                else if (this.object.doubleSuccess === 9) {
                                     this.object.doubleSuccess = 8;
                                 }
                             }
@@ -320,10 +349,10 @@ export class RollForm extends FormApplication {
         this._baseAbilityDieRoll();
 
         var resourceResult = ``;
-        if(this.object.rollType === 'buildPower' || this.object.rollType === 'focusWill' ) {
+        if (this.object.rollType === 'buildPower' || this.object.rollType === 'focusWill') {
             resourceResult = this._buildResource();
         }
-        if(this.object.rollType === 'social') {
+        if (this.object.rollType === 'social') {
             resourceResult = this._socialInfluence();
         }
         let theContent = `
@@ -354,7 +383,7 @@ export class RollForm extends FormApplication {
     _buildResource() {
         var total = this.object.total - 3;
         let self = (this.object.buildPowerTarget || 'self') === 'self';
-        
+
         if (this.actor.data.type === 'npc' && this.object.rollType === 'buildPower') {
             if (this.actor.data.data.battlegroup) {
                 this.object.successModifier += data.drill.value;
@@ -650,7 +679,7 @@ export class RollForm extends FormApplication {
             }
         }
     }
-    
+
 
     _roll() {
         this._abilityRoll();

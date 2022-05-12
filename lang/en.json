@@ -257,5 +257,13 @@
 
     "ExEss.Gambit": "Gambit",
     "ExEss.PowerSpent": "Power Spent",
-    "ExEss.ActiveEffects": "Active Effects"
+    "ExEss.ActiveEffects": "Active Effects",
+
+    "ExEss.Conditions": "Conditions",
+    "ExEss.Prone": "Prone",
+    "ExEss.LightCover": "Light Cover",
+    "ExEss.HeavyCover": "Heavy Cover",
+    "ExEss.Surprised": "Surprised",
+    "ExEss.Incapacitated": "Incapacitated",
+    "ExEss.Concealment": "Concealment"
 }

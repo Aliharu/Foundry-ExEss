@@ -52,6 +52,7 @@ Hooks.once('init', async function () {
 
   // Define custom Entity classes
   CONFIG.EXALTEDESSENCE = EXALTEDESSENCE;
+  CONFIG.statusEffects = EXALTEDESSENCE.statusEffects;
   CONFIG.Actor.documentClass = ExaltedessenceActor;
   CONFIG.Item.documentClass = ExaltedessenceItem;
 

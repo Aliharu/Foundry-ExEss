@@ -29,3 +29,41 @@ EXALTEDESSENCE.languages = {
     "localtongue": "Local Tongue",
 };
 
+EXALTEDESSENCE.statusEffects = [
+    {
+        icon: 'icons/svg/falling.svg',
+        id: 'prone',
+        label: 'ExEss.Prone',
+        name: 'prone'
+    },
+    {
+        icon: 'icons/svg/ruins.svg',
+        id: 'lightcover',
+        label: 'ExEss.LightCover',
+        name: 'lightcover'
+    },
+    {
+        icon: 'icons/svg/castle.svg',
+        id: 'heavycover',
+        label: 'ExEss.HeavyCover',
+        name: 'heavycover'
+    },
+    {
+        icon: 'icons/svg/daze.svg',
+        id: 'surprised',
+        label: 'ExEss.Surprised',
+        name: 'surprised'
+    },
+    {
+        icon: 'icons/magic/perception/shadow-stealth-eyes-purple.webp',
+        id: 'concealment',
+        label: 'ExEss.Concealment',
+        name: 'concealment'
+    },
+    {
+        icon: 'icons/svg/skull.svg',
+        id: 'incapacitated',
+        label: 'ExEss.Incapacitated',
+    },
+   
+]
