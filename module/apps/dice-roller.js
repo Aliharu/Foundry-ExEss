@@ -2,47 +2,129 @@ export class RollForm extends FormApplication {
     constructor(actor, options, object, data) {
         super(object, options);
         this.actor = actor;
-        this.object.rollType = data.rollType;
-        this.object.resolve = 0;
-        if (data.rollType !== 'base') {
-            if (this.actor.data.type === 'npc') {
-                this.object.pool = data.pool || "primary";
-            }
-            else {
-                if (data.attribute) {
-                    this.object.attribute = data.attribute;
+
+        if (data.rollId) {
+            this.object = this.actor.data.data.savedRolls[data.rollId];
+        }
+        else {
+            this.object.rollType = data.rollType;
+            this.object.resolve = 0;
+            if (data.rollType !== 'base') {
+                if (this.actor.data.type === 'npc') {
+                    this.object.pool = data.pool || "primary";
                 }
                 else {
-                    this.object.attribute = this._getHighestAttribute();
+                    if (data.attribute) {
+                        this.object.attribute = data.attribute;
+                    }
+                    else {
+                        this.object.attribute = this._getHighestAttribute();
+                    }
+                    this.object.ability = data.ability || "athletics";
                 }
-                this.object.ability = data.ability || "athletics";
-            }
-            this.object.characterType = this.actor.data.type;
-            this.object.buildPowerTarget = 'self';
+                this.object.characterType = this.actor.data.type;
+                this.object.buildPowerTarget = 'self';
+    
+    
+                this.object.defense = 0;
+                this.object.soak = 0;
+                this.object.doubleExtraSuccess = false;
+                this.object.resolve = 0;
+                this.object.accuracySuccesses = data.accuracy || 0;
+                this.object.power = this.actor.data.data.power.value || 0;
+                this.object.damageSuccesses = data.damage || 0;
+                this.object.overwhelming = data.overwhelming || 0;
+                this.object.conditions = (this.actor.token && this.actor.token.data.actorData.effects) ? this.actor.token.data.actorData.effects : [];
+                this.object.weaponType = data.weaponType || 'melee';
+                this.object.diceModifier = 0;
 
+                if (data.rollType === 'withering' || data.rollType === 'gambit' || data.rollType === 'decisive') {
+                    if (this.object.conditions.some(e => e.name === 'prone')) {
+                        this.object.diceModifier -= 3;
+                    }
+                }
+                this.object.title = "Decisive Attack";
+                if (data.rollType === 'withering') {
+                    this.object.title = "Withering Attack";
+                }
+                if (data.rollType === 'gambit') {
+                    this.object.title = "Gambit";
+                }
+                if (data.rollType === 'gambit' || data.rollType === 'decisive') {
+                    this.object.isDecisive = true;
+                }
+            }
+            else {
+                this.object.dice = 0;
+            }
+            this.object.targetNumber = 7;
+            this.object.successModifier = 0;
+            this.object.difficulty = 0;
+            this.object.rerollNumber = 0;
+            this.object.dice = 0;
+    
+            this.object.doubleSuccess = 10;
+            this.object.rerollFailed = false;
+    
+            this.object.flurry = false;
+            this.object.woundPenalty = false;
+            this.object.stunt = false;
+            if (data.rollType !== 'base' && this.actor.data.type === 'character') {
+                this.object.stunt = true;
+            }
+            this.object.armorPenalty = false;
+            this.object.attributeExcellency = false;
+            this.object.abilityExcellency = false;
+            this.object.poolExcellency = false;
+            this.object.showDamage = false;
+            this.object.powerSpent = 0;
+    
+    
+            this.object.reroll = {
+                one: { status: false, number: 1 },
+                two: { status: false, number: 2 },
+                three: { status: false, number: 3 },
+                four: { status: false, number: 4 },
+                five: { status: false, number: 5 },
+                six: { status: false, number: 6 },
+                seven: { status: false, number: 7 },
+                eight: { status: false, number: 8 },
+                nine: { status: false, number: 9 },
+                ten: { status: false, number: 10 },
+            }
+    
+            this.object.damage = {
+                damageDice: data.damageDice || 0,
+                damageSuccessModifier: data.damage || 0,
+                doubleSuccess: 10,
+                rerollFailed: false,
+                targetNumber: data.targetNumber || 7,
+                doubleExtraSuccess: false,
+                reroll: {
+                    one: { status: false, number: 1 },
+                    two: { status: false, number: 2 },
+                    three: { status: false, number: 3 },
+                    four: { status: false, number: 4 },
+                    five: { status: false, number: 5 },
+                    six: { status: false, number: 6 },
+                    seven: { status: false, number: 7 },
+                    eight: { status: false, number: 8 },
+                    nine: { status: false, number: 9 },
+                    ten: { status: false, number: 10 },
+                }
+            };
+        }
+
+        if (this.object.rollType !== 'base') {
             this.object.target = Array.from(game.user.targets)[0] || null;
-
-            if (this.object.rollType === 'social') {
-                if (this.object.target) {
-                    this.object.resolve = this.object.target.actor.data.data.resolve.value;
-                }
-            }
-
-            this.object.defense = 0;
-            this.object.soak = 0;
-            this.object.doubleExtraSuccess = false;
-            this.object.resolve = 0;
-            this.object.accuracySuccesses = data.accuracy || 0;
-            this.object.power = this.actor.data.data.power.value || 0;
-            this.object.damageSuccesses = data.damage || 0;
-            this.object.overwhelming = data.overwhelming || 0;
-            this.object.conditions = (this.actor.token && this.actor.token.data.actorData.effects) ? this.actor.token.data.actorData.effects : [];
-            this.object.weaponType = data.weaponType || 'melee';
-            this.object.diceModifier = 0;
 
             if (this.object.target) {
                 this.object.defense = this.object.target.actor.data.data.defence.value;
                 this.object.soak = this.object.target.actor.data.data.soak.value;
+
+                if (this.object.rollType === 'social') {
+                    this.object.resolve = this.object.target.actor.data.data.resolve.value;
+                }
 
                 if(this.object.target.data.actorData.effects) {
                     if (this.object.target.data.actorData.effects.some(e => e.name === 'concealment')) {
@@ -66,81 +148,8 @@ export class RollForm extends FormApplication {
                     }
                 }
             }
-            if (data.rollType === 'withering' || data.rollType === 'gambit' || data.rollType === 'decisive') {
-                if (this.object.conditions.some(e => e.name === 'prone')) {
-                    this.object.diceModifier -= 3;
-                }
-            }
-            this.object.title = "Decisive Attack";
-            if (data.rollType === 'withering') {
-                this.object.title = "Withering Attack";
-            }
-            if (data.rollType === 'gambit') {
-                this.object.title = "Gambit";
-            }
-            if (data.rollType === 'gambit' || data.rollType === 'decisive') {
-                this.object.isDecisive = true;
-            }
-        }
-        else {
-            this.object.dice = 0;
-        }
-        this.object.targetNumber = 7;
-        this.object.successModifier = 0;
-        this.object.difficulty = 0;
-        this.object.rerollNumber = 0;
-        this.object.dice = 0;
-
-        this.object.doubleSuccess = 10;
-        this.object.rerollFailed = false;
-
-        this.object.flurry = false;
-        this.object.woundPenalty = false;
-        this.object.stunt = false;
-        if (data.rollType !== 'base' && this.actor.data.type === 'character') {
-            this.object.stunt = true;
-        }
-        this.object.armorPenalty = false;
-        this.object.attributeExcellency = false;
-        this.object.abilityExcellency = false;
-        this.object.poolExcellency = false;
-        this.object.showDamage = false;
-        this.object.powerSpent = 0;
-
-
-        this.object.reroll = {
-            one: { status: false, number: 1 },
-            two: { status: false, number: 2 },
-            three: { status: false, number: 3 },
-            four: { status: false, number: 4 },
-            five: { status: false, number: 5 },
-            six: { status: false, number: 6 },
-            seven: { status: false, number: 7 },
-            eight: { status: false, number: 8 },
-            nine: { status: false, number: 9 },
-            ten: { status: false, number: 10 },
         }
 
-        this.object.damage = {
-            damageDice: data.damageDice || 0,
-            damageSuccessModifier: data.damage || 0,
-            doubleSuccess: 10,
-            rerollFailed: false,
-            targetNumber: data.targetNumber || 7,
-            doubleExtraSuccess: false,
-            reroll: {
-                one: { status: false, number: 1 },
-                two: { status: false, number: 2 },
-                three: { status: false, number: 3 },
-                four: { status: false, number: 4 },
-                five: { status: false, number: 5 },
-                six: { status: false, number: 6 },
-                seven: { status: false, number: 7 },
-                eight: { status: false, number: 8 },
-                nine: { status: false, number: 9 },
-                ten: { status: false, number: 10 },
-            }
-        };
     }
 
     get template() {
@@ -154,6 +163,24 @@ export class RollForm extends FormApplication {
         return template;
     }
 
+    _getHeaderButtons() {
+        let buttons = super._getHeaderButtons();
+        // Token Configuration
+        if (this.object.rollType !== 'base') {
+            const rollButton = {
+                label: this.object.id ? game.i18n.localize('ExEss.Update') : game.i18n.localize('ExEss.Save'),
+                class: 'roll-dice',
+                icon: 'fas fa-dice-d6',
+                onclick: (ev) => { 
+                    this._saveRoll(this.object);
+                },
+            };
+            buttons = [rollButton, ...buttons];
+        }
+
+        return buttons;
+    }
+
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             classes: ["dialog"],
@@ -165,6 +192,39 @@ export class RollForm extends FormApplication {
             submitOnChange: true,
             closeOnSubmit: false
         });
+    }
+
+    async _saveRoll(rollData) {
+        let html = await renderTemplate("systems/exaltedessence/templates/dialogues/save-roll.html", {'name': this.object.name || 'New Roll'});
+        new Dialog({
+            title: "Save Roll",
+            content: html,
+            default: 'save',
+            buttons: {
+                save: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: 'Save',
+                    default: true,
+                    callback: html => {
+                        let results = document.getElementById('name').value;
+                        let uniqueId = this.object.id || randomID(16);
+                        rollData.name = results;
+                        rollData.id = uniqueId;
+                        rollData.target = null;
+
+                        let updates = {
+                            "data.savedRolls": {
+                                [uniqueId]: rollData
+                            }
+                        };
+                        this.actor.update(updates);
+                        this.saved = true;
+                        ui.notifications.notify(`Saved Roll`);
+                        return;
+                    },
+                }
+            }
+        }).render(true);
     }
 
     getData() {

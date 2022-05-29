@@ -265,5 +265,10 @@
     "ExEss.HeavyCover": "Heavy Cover",
     "ExEss.Surprised": "Surprised",
     "ExEss.Incapacitated": "Incapacitated",
-    "ExEss.Concealment": "Concealment"
+    "ExEss.Concealment": "Concealment",
+
+    "ExEss.Save": "Save",
+    "ExEss.Update": "Update",
+    "ExEss.EnterNewRollName": "Enter New Roll Name",
+    "ExEss.SavedRolls": "Saved Rolls"
 }
