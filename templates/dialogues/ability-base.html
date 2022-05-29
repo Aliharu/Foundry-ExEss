@@ -15,7 +15,7 @@
     </select>
 
     <label class="resource-label">{{localize "ExEss.Excellency"}}: </label>
-    <input type="checkbox" name="object.attributeExcellency" value="{{data.attributeExcellency}}">
+    <input type="checkbox" name="object.attributeExcellency" value="{{data.attributeExcellency}}" {{checked data.attributeExcellency}}>
 
     <label class="resource-label">{{localize "ExEss.Ability"}}: </label>
     <select name="object.ability" value="{{data.ability}}" data-type="String">
@@ -39,7 +39,7 @@
     </select>
 
     <label class="resource-label">{{localize "ExEss.Excellency"}}: </label>
-    <input type="checkbox" name="object.abilityExcellency" value="{{data.abilityExcellency}}">
+    <input type="checkbox" name="object.abilityExcellency" value="{{data.abilityExcellency}}" {{checked data.abilityExcellency}}>
 
     {{/ifEquals}}
 
@@ -56,7 +56,7 @@
     </select>
 
     <label class="resource-label">{{localize "ExEss.Excellency"}}: </label>
-    <input type="checkbox" name="object.poolExcellency" value="{{data.poolExcellency}}">
+    <input type="checkbox" name="object.poolExcellency" value="{{data.poolExcellency}}" {{checked data.poolExcellency}}>
 
     {{/ifEquals}}
 </div>
@@ -103,7 +103,7 @@
         <label class="resource-label">{{localize "ExEss.RerollNumDice"}} </label>
         <input type="number" name="object.rerollNumber" value="{{data.rerollNumber}}">
         <label class="resource-label">{{localize "ExEss.RerollFailed"}}: </label>
-        <input type="checkbox" name="object.rerollFailed" value="{{data.rerollFailed}}">
+        <input type="checkbox" name="object.rerollFailed" value="{{data.rerollFailed}}" {{checked data.rerollFailed}}>
     </div>
     <div class="resource flex-center">
         <label class="resource-label">{{localize "ExEss.Reroll"}}</label>
@@ -111,43 +111,43 @@
     <div class="resource d-flex flex-center">
         <div>
             <div>1</div>
-            <input name="object.reroll.one.status" type="checkbox">
+            <input name="object.reroll.one.status" type="checkbox" {{checked data.reroll.one.status}}>
         </div>
         <div>
             <div>2</div>
-            <input name="object.reroll.two.status" type="checkbox">
+            <input name="object.reroll.two.status" type="checkbox" {{checked data.reroll.two.status}}>
         </div>
         <div>
             <div>3</div>
-            <input name="object.reroll.three.status" type="checkbox">
+            <input name="object.reroll.three.status" type="checkbox" {{checked data.reroll.three.status}}>
         </div>
         <div>
             <div>4</div>
-            <input name="object.reroll.four.status" type="checkbox">
+            <input name="object.reroll.four.status" type="checkbox" {{checked data.reroll.four.status}}>
         </div>
         <div>
             <div>5</div>
-            <input name="object.reroll.five.status" type="checkbox">
+            <input name="object.reroll.five.status" type="checkbox" {{checked data.reroll.five.status}}>
         </div>
         <div>
             <div>6</div>
-            <input name="object.reroll.six.status" type="checkbox">
+            <input name="object.reroll.six.status" type="checkbox" {{checked data.reroll.six.status}}>
         </div>
         <div>
             <div>7</div>
-            <input name="object.reroll.seven.status" type="checkbox">
+            <input name="object.reroll.seven.status" type="checkbox" {{checked data.reroll.seven.status}}>
         </div>
         <div>
             <div>8</div>
-            <input name="object.reroll.eight.status" type="checkbox">
+            <input name="object.reroll.eight.status" type="checkbox" {{checked data.reroll.eight.status}}>
         </div>
         <div>
             <div>9</div>
-            <input name="object.reroll.nine.status" type="checkbox">
+            <input name="object.reroll.nine.status" type="checkbox" {{checked data.reroll.nine.status}}>
         </div>
         <div>
             <div>10</div>
-            <input name="object.reroll.ten.status" type="checkbox">
+            <input name="object.reroll.ten.status" type="checkbox" {{checked data.reroll.ten.status}}>
         </div>
     </div>
 </div>
@@ -177,12 +177,12 @@
     <input type="checkbox" name="object.stunt" value="{{data.stunt}}" {{checked data.stunt}}>
 
     <label class="resource-label">{{localize "ExEss.WoundPenalty"}}: </label>
-    <input type="checkbox" name="object.woundPenalty" value="{{data.woundPenalty}}">
+    <input type="checkbox" name="object.woundPenalty" value="{{data.woundPenalty}}" {{checked data.woundPenalty}}>
 
     <label class="resource-label">{{localize "ExEss.Flurry"}}: </label>
-    <input type="checkbox"name="object.flurry" value="{{data.flurry}}"">
+    <input type="checkbox"name="object.flurry" value="{{data.flurry}}" {{checked data.flurry}}>
 
     <label class="resource-label">{{localize "ExEss.ArmorPenalty"}}: </label>
-    <input type="checkbox" name="object.armorPenalty" value="{{data.armorPenalty}}">
+    <input type="checkbox" name="object.armorPenalty" value="{{data.armorPenalty}}" {{checked data.armorPenalty}}>
 </div>
 {{/ifEquals}}
