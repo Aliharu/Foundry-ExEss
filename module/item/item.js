@@ -17,7 +17,7 @@ export class ExaltedessenceItem extends Item {
 
   async _preCreate(createData, options, userId) {
     if (createData.type === 'intimacy') {
-      this.data.update({ img: "icons/magic/life/heart-glowing-red.webp" });
+      this.data.update({ img: "systems/exaltedessence/assets/icons/hearts.svg" });
     }
     if (createData.type === 'spell' || createData.type === 'ritual') {
       this.data.update({ img: "icons/svg/book.svg" });
@@ -32,7 +32,7 @@ export class ExaltedessenceItem extends Item {
       this.data.update({ img: "icons/svg/sword.svg" });
     }
     if (createData.type === 'armor') {
-      this.data.update({ img: "icons/svg/shield.svg" });
+      this.data.update({ img: "systems/exaltedessence/assets/icons/breastplate.svg" });
     }
     if (createData.type === 'charm') {
       this.data.update({ img: "icons/svg/explosion.svg" });

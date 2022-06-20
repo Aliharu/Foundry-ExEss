@@ -24,8 +24,9 @@
 // }
 
 // .exaltedessence .window-content {
+//   background: url('../assets/sun_background.png');
 //   // background: url('../assets/lunar-background.png');
-//   background: url('../assets/db-background-small.png');
+//   // background: url('../assets/db-background-small.png');
 //   background-size: cover;
 // }
 
@@ -61,6 +62,19 @@
 
 .exaltedessence .augment-attribute-active {
   color: #147c14;
+}
+
+.exaltedessence .query-results {
+  height: 66%;
+  overflow: scroll;
+
+  .search-item-row {
+    display: flex;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid black;
+    align-items:center;
+  }
 }
 
 .exaltedessence .resource-value .resource-value-empty {

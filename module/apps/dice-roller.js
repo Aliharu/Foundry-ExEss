@@ -24,8 +24,8 @@ export class RollForm extends FormApplication {
                 }
                 this.object.characterType = this.actor.data.type;
                 this.object.buildPowerTarget = 'self';
-    
-    
+
+
                 this.object.defense = 0;
                 this.object.soak = 0;
                 this.object.doubleExtraSuccess = false;
@@ -62,10 +62,10 @@ export class RollForm extends FormApplication {
             this.object.difficulty = 0;
             this.object.rerollNumber = 0;
             this.object.dice = 0;
-    
+
             this.object.doubleSuccess = 10;
             this.object.rerollFailed = false;
-    
+
             this.object.flurry = false;
             this.object.woundPenalty = false;
             this.object.stunt = false;
@@ -78,8 +78,8 @@ export class RollForm extends FormApplication {
             this.object.poolExcellency = false;
             this.object.showDamage = false;
             this.object.powerSpent = 0;
-    
-    
+
+
             this.object.reroll = {
                 one: { status: false, number: 1 },
                 two: { status: false, number: 2 },
@@ -92,7 +92,7 @@ export class RollForm extends FormApplication {
                 nine: { status: false, number: 9 },
                 ten: { status: false, number: 10 },
             }
-    
+
             this.object.damage = {
                 damageDice: data.damageDice || 0,
                 damageSuccessModifier: data.damage || 0,
@@ -126,7 +126,7 @@ export class RollForm extends FormApplication {
                     this.object.resolve = this.object.target.actor.data.data.resolve.value;
                 }
 
-                if(this.object.target.data.actorData.effects) {
+                if (this.object.target.data.actorData.effects) {
                     if (this.object.target.data.actorData.effects.some(e => e.name === 'concealment')) {
                         this.object.diceModifier -= 2;
                     }
@@ -171,7 +171,7 @@ export class RollForm extends FormApplication {
                 label: this.object.id ? game.i18n.localize('ExEss.Update') : game.i18n.localize('ExEss.Save'),
                 class: 'roll-dice',
                 icon: 'fas fa-dice-d6',
-                onclick: (ev) => { 
+                onclick: (ev) => {
                     this._saveRoll(this.object);
                 },
             };
@@ -195,7 +195,7 @@ export class RollForm extends FormApplication {
     }
 
     async _saveRoll(rollData) {
-        let html = await renderTemplate("systems/exaltedessence/templates/dialogues/save-roll.html", {'name': this.object.name || 'New Roll'});
+        let html = await renderTemplate("systems/exaltedessence/templates/dialogues/save-roll.html", { 'name': this.object.name || 'New Roll' });
         new Dialog({
             title: "Save Roll",
             content: html,
@@ -370,7 +370,7 @@ export class RollForm extends FormApplication {
         let rerolledDice = 0;
         let total = 0;
 
-        while (failedDice != 0 && (rerolledDice < this.object.rerollNumber)) {
+        while (failedDice !== 0 && (rerolledDice < this.object.rerollNumber)) {
             rerolledDice += failedDice;
             var failedDiceRoll = new Roll(`${failedDice}d10cs>=${this.object.targetNumber}`).evaluate({ async: false });
             failedDice = Math.min(failedDice - failedDiceRoll.total, (this.object.rerollNumber - rerolledDice));

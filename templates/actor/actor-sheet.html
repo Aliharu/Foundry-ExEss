@@ -93,14 +93,14 @@
           <div>
             <div class="resource-label">{{localize "ExEss.Aura"}}</div>
             <select name="data.details.aura" data-type="String">
-                {{#select data.data.details.aura}}
-                <option value="none">{{localize "ExEss.None"}}</option>
-                <option value="air">{{localize "ExEss.Air"}}</option>
-                <option value="earth">{{localize "ExEss.Earth"}}</option>
-                <option value="fire">{{localize "ExEss.Fire"}}</option>
-                <option value="water">{{localize "ExEss.Water"}}</option>
-                <option value="wood">{{localize "ExEss.Wood"}}</option>
-                {{/select}}
+              {{#select data.data.details.aura}}
+              <option value="none">{{localize "ExEss.None"}}</option>
+              <option value="air">{{localize "ExEss.Air"}}</option>
+              <option value="earth">{{localize "ExEss.Earth"}}</option>
+              <option value="fire">{{localize "ExEss.Fire"}}</option>
+              <option value="water">{{localize "ExEss.Water"}}</option>
+              <option value="wood">{{localize "ExEss.Wood"}}</option>
+              {{/select}}
             </select>
           </div>
           {{/ifEquals}}
@@ -322,7 +322,7 @@
 
     <div class="tab effects" data-group="primary" data-tab="effects">
       <div class="resource-label list-section-header">
-        {{localize "ExEss.ActiveEffects"}}
+        {{localize "ExEss.SavedRolls"}}
       </div>
       {{> systems/exaltedessence/templates/actor/active-effects.html}}
     </div>

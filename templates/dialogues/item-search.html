@@ -1,0 +1,118 @@
+<div class="exaltedessence" style="overflow:hidden">
+  <div class="item-filter">
+    <div class="check-button">
+      <label class="resource-label">{{localize "ExEss.IncludeWorldItems"}}: </label>
+      <input class="world-filter" type="checkbox" data-filter="worldItems" {{checked filters.attribute.worldItems}} />
+    </div>
+    <h2>{{localize "ExEss.Types"}}</h2>
+    <div class="check-button">
+      {{#each filters.type as |value filter|}}
+      <label class="resource-label">{{localize value.display}}:</label>
+      <input class="filter" type="checkbox" data-filter="{{filter}}" {{checked value.value}} />
+      {{/each}}
+    </div>
+
+    <h2>{{localize "ExEss.Filter"}}</h2>
+
+    <div class="name filter-top">
+      <label class="resource-label">{{localize "Name"}}</label>
+      <input class="name-filter" type="text" data-filter="name" value="{{filters.attribute.name}}" />
+    </div>
+    <div class="description filter-top">
+      <label class="resource-label">{{localize "Description"}}</label>
+      <input class="description-filter" type="text" data-filter="description"
+        value="{{filters.attribute.description}}" />
+    </div>
+    <h2>{{localize "ExEss.CharmFilters"}}</h2>
+    <div>
+      <label class="resource-label">{{localize "ExEss.Ability"}}: </label>
+      <select class="charm-filter" name="filters.attribute.charmFilters.ability" data-type="String"
+        data-filter="ability">
+        {{#select filters.attribute.charmFilters.ability}}
+        <option value=""></option>
+        <option value="force">{{localize "ExEss.Force"}}</option>
+        <option value="finesse">{{localize "ExEss.Finesse"}}</option>
+        <option value="fortitude">{{localize "ExEss.Fortitude"}}</option>
+        <option value="athletics">{{localize "ExEss.Athletics"}}</option>
+        <option value="awareness">{{localize "ExEss.Awareness"}}</option>
+        <option value="close">{{localize "ExEss.CloseCombat"}}</option>
+        <option value="craft">{{localize "ExEss.Craft"}}</option>
+        <option value="embassy">{{localize "ExEss.Embassy"}}</option>
+        <option value="integrity">{{localize "ExEss.Integrity"}}</option>
+        <option value="navigate">{{localize "ExEss.Navigate"}}</option>
+        <option value="performance">{{localize "ExEss.Performance"}}</option>
+        <option value="physique">{{localize "ExEss.Physique"}}</option>
+        <option value="presence">{{localize "ExEss.Presence"}}</option>
+        <option value="ranged">{{localize "ExEss.RangedCombat"}}</option>
+        <option value="sagacity">{{localize "ExEss.Sagacity"}}</option>
+        <option value="stealth">{{localize "ExEss.Stealth"}}</option>
+        <option value="war">{{localize "ExEss.War"}}</option>
+        <option value="martial">{{localize "ExEss.MartialArts"}}</option>
+        <option value="evocation">{{localize "ExEss.Evocation"}}</option>
+        <option value="other">{{localize "ExEss.Other"}}</option>
+        {{/select}}
+      </select>
+      <label class="resource-label">{{localize "ExEss.Requirement"}}: </label>
+      <select class="charm-filter" name="filters.attribute.charmFilters.requirement" data-type="String"
+        data-filter="requirement">
+        {{#select filters.attribute.charmFilters.requirement}}
+        <option value=""></option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        {{/select}}
+      </select>
+      <label class="resource-label">{{localize "ExEss.Essence"}}: </label>
+      <select class="charm-filter" name="filters.attribute.charmFilters.essence" data-type="String"
+        data-filter="essence">
+        {{#select filters.attribute.charmFilters.essence}}
+        <option value=""></option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        {{/select}}
+      </select>
+      <label class="resource-label">{{localize "ExEss.CharmType"}}:</label>
+      <select class="charm-filter" name="filters.attribute.charmFilters.charmtype" data-type="String"
+        data-filter="charmtype">
+        {{#select filters.attribute.charmFilters.charmtype}}
+        <option value=""></option>
+        <option value="abyssal">{{localize "ExEss.Abyssal"}}</option>
+        <option value="alchemical">{{localize "ExEss.Alchemical"}}</option>
+        <option value="architect">{{localize "ExEss.Architect"}}</option>
+        <option value="dragonblooded">{{localize "ExEss.Dragonblooded"}}</option>
+        <option value="dreamsouled">{{localize "ExEss.DreamSouled"}}</option>
+        <option value="evocation">{{localize "ExEss.Evocation"}}</option>
+        <option value="exigent">{{localize "ExEss.Exigent"}}</option>
+        <option value="getimian">{{localize "ExEss.Getimian"}}</option>
+        <option value="hearteater">{{localize "ExEss.Hearteater"}}</option>
+        <option value="infernal">{{localize "ExEss.Infernal"}}</option>
+        <option value="janest">{{localize "ExEss.Janest"}}</option>
+        <option value="liminal">{{localize "ExEss.Liminal"}}</option>
+        <option value="lunar">{{localize "ExEss.Lunar"}}</option>
+        <option value="martialarts">{{localize "ExEss.MartialArts"}}</option>
+        <option value="sidereal">{{localize "ExEss.Sidereal"}}</option>
+        <option value="solar">{{localize "ExEss.Solar"}}</option>
+        <option value="sovereign">{{localize "ExEss.Sovereign"}}</option>
+        <option value="umbral">{{localize "ExEss.Umbral"}}</option>
+        <option value="other">{{localize "ExEss.Other"}}</option>
+        {{/select}}
+      </select>
+    </div>
+  </div>
+  <h2 class="mb-1">{{localize "ExEss.ItemList"}}</h2>
+  <div class="query-results">
+    {{#each items as |item|}}
+    <div class="search-item-row item-row cursor-pointer" data-item-id={{item.id}} data-filter-id={{item.filterId}}>
+      <div class="item-image mr-1"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+      <div class="item-name">{{item.name}}</div>
+    </div>
+    {{/each}}
+  </div>
+</div>

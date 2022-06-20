@@ -9,6 +9,7 @@ import { ExaltedessenceItemSheet } from "./item/item-sheet.js";
 import TraitSelector from "./apps/trait-selector.js";
 import { registerSettings } from "./settings.js";
 import { RollForm } from "./apps/dice-roller.js";
+import ItemSearch from "./apps/item-search.js";
 
 Hooks.once('init', async function () {
 
@@ -17,6 +18,7 @@ Hooks.once('init', async function () {
   game.exaltedessence = {
     applications: {
       TraitSelector,
+      ItemSearch,
     },
     entities: {
       ExaltedessenceActor,

@@ -4,6 +4,30 @@
         <div class="header-fields">
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
             <div>
+                <label class="resource-label">{{localize "ExEss.CharmType"}}:</label>
+                <select name="data.charmtype" data-type="String">
+                    {{#select data.data.charmtype}}
+                    <option value="abyssal">{{localize "ExEss.Abyssal"}}</option>
+                    <option value="alchemical">{{localize "ExEss.Alchemical"}}</option>
+                    <option value="architect">{{localize "ExEss.Architect"}}</option>
+                    <option value="dragonblooded">{{localize "ExEss.Dragonblooded"}}</option>
+                    <option value="dreamsouled">{{localize "ExEss.DreamSouled"}}</option>
+                    <option value="evocation">{{localize "ExEss.Evocation"}}</option>
+                    <option value="exigent">{{localize "ExEss.Exigent"}}</option>
+                    <option value="getimian">{{localize "ExEss.Getimian"}}</option>
+                    <option value="hearteater">{{localize "ExEss.Hearteater"}}</option>
+                    <option value="infernal">{{localize "ExEss.Infernal"}}</option>
+                    <option value="janest">{{localize "ExEss.Janest"}}</option>
+                    <option value="liminal">{{localize "ExEss.Liminal"}}</option>
+                    <option value="lunar">{{localize "ExEss.Lunar"}}</option>
+                    <option value="martialarts">{{localize "ExEss.MartialArts"}}</option>
+                    <option value="sidereal">{{localize "ExEss.Sidereal"}}</option>
+                    <option value="solar">{{localize "ExEss.Solar"}}</option>
+                    <option value="sovereign">{{localize "ExEss.Sovereign"}}</option>
+                    <option value="umbral">{{localize "ExEss.Umbral"}}</option>
+                    <option value="other">{{localize "ExEss.Other"}}</option>
+                    {{/select}}
+                </select>
                 <label class="resource-label">{{localize "ExEss.Ability"}}: </label>
                 <select name="data.ability" data-type="String">
                     {{#select data.data.ability}}

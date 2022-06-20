@@ -59,6 +59,22 @@
     "ExEss.Solar": "Solar",
     "ExEss.Other": "Other",
 
+    "ExEss.Sovereign": "Sovereign",
+    "ExEss.Janest": "Janest",
+    "ExEss.Umbral": "Umbral",
+    "ExEss.Hearteater": "Hearteater",
+    "ExEss.DreamSouled": "DreamSouled",
+    "ExEss.Architect": "Architect",
+
+    "ExEss.CharmType": "Charm Type",
+
+    "ExEss.ItemSearch": "Item Search",
+    "ExEss.Types": "Types",
+    "ExEss.Filter": "Filter",
+    "ExEss.ItemList": "Item List",
+    "ExEss.IncludeWorldItems": "Include World Items",
+    "ExEss.CharmFilters": "Charm Filters",
+
     "ExEss.Attribute": "Attribute",
     "ExEss.Attributes": "Attributes",
 

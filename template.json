@@ -295,6 +295,7 @@
         "base",
         "charm"
       ],
+      "charmtype": "other",
       "ability": "athletics",
       "requirement": 0,
       "essence": 0

@@ -447,6 +447,23 @@
   color: #147c14;
 }
 
+.exaltedessence .query-results {
+  height: 66%;
+  overflow: scroll;
+}
+
+.exaltedessence .query-results .search-item-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid black;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
 .exaltedessence .resource-value .resource-value-empty {
   height: 14px;
   width: 14px;
