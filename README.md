@@ -20,6 +20,10 @@ Code for dot/box counters taken from Foundry-V5 (credit to erizocosmico)
 
 Languages dialog code and effects code taken from the Foundry dnd5e system.
 
+## Icons
+
+https://game-icons.net/
+
 ## Die Roller
 
 Getimian flow attribute bonuses are auto calculated by the ability and attack rollers.
