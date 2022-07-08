@@ -286,5 +286,10 @@
     "ExEss.Save": "Save",
     "ExEss.Update": "Update",
     "ExEss.EnterNewRollName": "Enter New Roll Name",
-    "ExEss.SavedRolls": "Saved Rolls"
+    "ExEss.SavedRolls": "Saved Rolls",
+    "ExEss.DamageType": "Damage Type",
+    "ExEss.AutoDecisiveDamage": "Auto Decisive Damage",
+    "ExEss.AutoDecisiveDamageDescription": "Health damage will be automatically added to characeters hit by decisive attack.",
+    "ExEss.Lethal": "Lethal",
+    "ExEss.Aggravated": "Aggravated"
 }

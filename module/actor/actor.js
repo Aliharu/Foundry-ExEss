@@ -36,14 +36,15 @@ export class ExaltedessenceActor extends Actor {
       }
       totalHealth += health_level.value;
     }
-    data.health.total = totalHealth;
-    if (data.health.aggravated + data.health.lethal > data.health.total) {
-      data.health.aggravated = data.health.total - data.health.lethal
+    data.health.max = totalHealth;
+    if (data.health.aggravated + data.health.lethal > data.health.max) {
+      data.health.aggravated = data.health.max - data.health.lethal
       if (data.health.aggravated <= 0) {
         data.health.aggravated = 0
-        data.health.lethal = data.health.total
+        data.health.lethal = data.health.max
       }
     }
+    data.health.value = data.health.max - data.health.aggravated - data.health.lethal;
     data.health.penalty = currentPenalty;
   }
 
@@ -54,6 +55,7 @@ export class ExaltedessenceActor extends Actor {
     if (data.health.levels > 1 && ((data.health.lethal + data.health.aggravated) >= Math.floor(data.health.levels / 2))) {
       currentPenalty = 2;
     }
+    data.health.value = data.health.max - data.health.aggravated - data.health.lethal;
     data.health.penalty = currentPenalty;
   }
 

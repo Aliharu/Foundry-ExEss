@@ -123,10 +123,10 @@
                   style="margin-left:3px;"></i></label>
             </div>
             <div class="resource-content flexrow flex-center flex-between">
-              <div class="resource-counter" data-states="/:lethal,x:aggravated" data-max="{{data.data.health.total}}"
+              <div class="resource-counter" data-states="/:lethal,x:aggravated" data-max="{{data.data.health.max}}"
                 data-lethal="{{data.data.health.lethal}}" data-aggravated="{{data.data.health.aggravated}}"
                 data-name="data.health">
-                {{#numLoop data.data.health.total}}
+                {{#numLoop data.data.health.max}}
                 <span class="resource-counter-step" data-index="{{this}}" data-state=""></span>
                 {{/numLoop}}
               </div>

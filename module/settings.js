@@ -7,4 +7,13 @@ export function registerSettings() {
         type: Boolean,
         config: true,
     });
+
+    game.settings.register('exaltedessence', 'autoDecisiveDamage', {
+        name: game.i18n.localize('ExEss.AutoDecisiveDamage'),
+        hint: game.i18n.localize('ExEss.AutoDecisiveDamageDescription'),
+        default: true,
+        scope: 'world',
+        type: Boolean,
+        config: true,
+    });
 }

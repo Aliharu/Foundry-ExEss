@@ -26,31 +26,32 @@
         </div>
         {{#ifEquals data.rollType 'decisive'}}
         <div class="flex-center resource-label" style="font-weight: bold;">
-                Damage
-            </div>
-            <div>
-                <div class="resource grid grid-2col flex-center">
-                    <div>
-                        <label class="resource-label">{{localize "ExEss.DamageDice"}} </label>
-                        <input name="object.damage.damageDice" value="{{data.damage.damageDice}}" type="number">
-                    </div>
-                    <div>
-                        <label class="resource-label">{{localize "ExEss.DamageSuccesses"}} </label>
-                        <input name="object.damage.damageSuccessModifier" value="{{data.damage.damageSuccessModifier}}" type="number">
-                    </div>
+            Damage
+        </div>
+        <div>
+            <div class="resource grid grid-2col flex-center">
+                <div>
+                    <label class="resource-label">{{localize "ExEss.DamageDice"}} </label>
+                    <input name="object.damage.damageDice" value="{{data.damage.damageDice}}" type="number">
                 </div>
-                <div class="resource grid grid-2col flex-center">
-                    <div>
-                        <label class="resource-label">{{localize "ExEss.DoubleSuccess"}} </label>
-                        <input name="object.damage.doubleSuccess" value="{{data.damage.doubleSuccess}}" type="number">
-                    </div>
-                    <div>
-                        <label class="resource-label">{{localize "ExEss.TargetNumber"}} </label>
-                        <input name="object.damage.targetNumber" value="{{data.damage.targetNumber}}" type="number">
-                    </div>
+                <div>
+                    <label class="resource-label">{{localize "ExEss.DamageSuccesses"}} </label>
+                    <input name="object.damage.damageSuccessModifier" value="{{data.damage.damageSuccessModifier}}"
+                        type="number">
                 </div>
             </div>
-            {{/ifEquals}}
+            <div class="resource grid grid-2col flex-center">
+                <div>
+                    <label class="resource-label">{{localize "ExEss.DoubleSuccess"}} </label>
+                    <input name="object.damage.doubleSuccess" value="{{data.damage.doubleSuccess}}" type="number">
+                </div>
+                <div>
+                    <label class="resource-label">{{localize "ExEss.TargetNumber"}} </label>
+                    <input name="object.damage.targetNumber" value="{{data.damage.targetNumber}}" type="number">
+                </div>
+            </div>
+        </div>
+        {{/ifEquals}}
 
         <div class="flex-center resource-label" style="font-weight: bold;">
             Defender
@@ -60,7 +61,7 @@
                 <div class="flex-center resource-label">
                     {{localize "ExEss.Defense"}}
                 </div>
-                <input name="object.defense" value="{{data.defense}}"  type="number">
+                <input name="object.defense" value="{{data.defense}}" type="number">
             </div>
             {{#ifEquals data.rollType 'decisive'}}
             <div>
@@ -81,9 +82,21 @@
         </div>
         <div style="display:none;">
             <label class="check-button" style="align-items:center;display:flex;">
-                <input name="object.damage.doubleExtraSuccess" value="{{data.damage.doubleExtraSuccess}}" type="checkbox" {{checked data.damage.doubleExtraSuccess}}>
-                <span class="resource-label">Double Extra Successes</span>
             </label>
+            <div class="resource flex-center grid grid-2col">
+                <span class="resource-label">Double Extra Successes</span>
+                <input name="object.damage.doubleExtraSuccess" value="{{data.damage.doubleExtraSuccess}}"
+                    type="checkbox" {{checked data.damage.doubleExtraSuccess}}>
+                {{#ifEquals data.rollType 'decisive'}}
+                <label class="resource-label">{{localize "ExEss.DamageType"}}</label>
+                <select name="object.damage.type" value="{{data.damage.type}}" data-type="String">
+                    {{#select data.damage.type}}
+                    <option value="lethal">{{localize "ExEss.Lethal"}}</option>
+                    <option value="aggravated">{{localize "ExEss.Aggravated"}}</option>
+                    {{/select}}
+                </select>
+                {{/ifEquals}}
+            </div>
         </div>
     </div>
 </form>

@@ -115,6 +115,10 @@ export class RollForm extends FormApplication {
             };
         }
 
+        if (this.object.damage.type === undefined) {
+            this.object.damage.type = 'lethal';
+        }
+
         if (this.object.rollType !== 'base') {
             this.object.target = Array.from(game.user.targets)[0] || null;
 
@@ -620,6 +624,9 @@ export class RollForm extends FormApplication {
 
                 actorData.data.power.value = Math.max(0, actorData.data.power.value - this.object.power);
                 this.actor.update(actorData);
+                if(damageTotal > 0) {
+                    this.dealHealthDamage(damageTotal);
+                }
 
                 messageContent = `
         <div class="chat-card">
@@ -737,6 +744,29 @@ export class RollForm extends FormApplication {
                     }]);
                 }
             }
+        }
+    }
+
+    async dealHealthDamage(characterDamage) {
+        if (this.object.target && game.combat && game.settings.get("exaltedessence", "autoDecisiveDamage") && characterDamage > 0) {
+            let totalHealth = 0;
+            const targetActorData = duplicate(this.object.target.actor);
+            if(this.object.target.actor.type === 'npc') {
+                totalHealth = targetActorData.data.health.max;
+            }
+            else {
+                for (let [key, health_level] of Object.entries(targetActorData.data.health.levels)) {
+                    totalHealth += health_level.value;
+                }
+            }
+
+            if (this.object.damage.type === 'lethal') {
+                targetActorData.data.health.lethal = Math.min(totalHealth - targetActorData.data.health.aggravated, targetActorData.data.health.lethal + characterDamage);
+            }
+            if (this.object.damage.type === 'aggravated') {
+                targetActorData.data.health.aggravated = Math.min(totalHealth - targetActorData.data.health.lethal, targetActorData.data.health.aggravated + characterDamage);
+            }
+            this.object.target.actor.update(targetActorData);
         }
     }
 

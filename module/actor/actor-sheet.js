@@ -509,6 +509,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           if (actorData.type === 'npc') {
             let health = parseInt(html.find('#health').val()) || 0;
             data.health.levels = health;
+            data.health.max = health;
           }
           else {
             let zero = parseInt(html.find('#zero').val()) || 0;

@@ -107,6 +107,7 @@
             "penalty": "inc"
           }
         },
+        "value": 0,
         "lethal": 0,
         "aggravated": 0
       },
@@ -204,6 +205,8 @@
       ],
       "creaturetype": "mortal",
       "health": {
+        "max": 0,
+        "value": 0,
         "levels": 0,
         "lethal": 0,
         "aggravated": 0
