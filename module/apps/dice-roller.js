@@ -67,7 +67,7 @@ export class RollForm extends FormApplication {
             this.object.rerollFailed = false;
 
             this.object.flurry = false;
-            this.object.woundPenalty = false;
+            this.object.woundPenalty = true;
             this.object.stunt = false;
             if (data.rollType !== 'base' && this.actor.data.type === 'character') {
                 this.object.stunt = true;
@@ -79,6 +79,10 @@ export class RollForm extends FormApplication {
             this.object.showDamage = false;
             this.object.powerSpent = 0;
 
+            this.object.supportedIntimacy = 0;
+            this.object.opposedIntimacy = 0;
+            this.object.supportedVirtue = 0;
+            this.object.opposedVirtue = 0;
 
             this.object.reroll = {
                 one: { status: false, number: 1 },
@@ -357,6 +361,11 @@ export class RollForm extends FormApplication {
         let rerollString = '';
         let rerolls = [];
 
+        if (this.object.rollType === 'social') {
+            this.object.resolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedIntimacy || 0) - parseInt(this.object.supportedIntimacy || 0));
+            this.object.resolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedVirtue || 0) - parseInt(this.object.supportedVirtue || 0));
+        }
+
         for (var rerollValue in this.object.reroll) {
             if (this.object.reroll[rerollValue].status) {
                 rerollString += `x${this.object.reroll[rerollValue].number}`;
@@ -489,10 +498,9 @@ export class RollForm extends FormApplication {
     }
 
     _socialInfluence() {
-        var message = ``;
         var message = '';
         if (this.object.total < this.object.resolve) {
-            message = `<h4 class="dice-total">Influence Failed</h4>`;
+            message = `<h4 class="dice-formula">${this.object.total} Succeses vs ${this.object.resolve} Resolve</h4><h4 class="dice-total">Influence Failed</h4>`;
         }
         else {
             var total = this.object.total - this.object.resolve;

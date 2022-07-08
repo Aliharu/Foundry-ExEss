@@ -283,6 +283,11 @@
     "ExEss.Incapacitated": "Incapacitated",
     "ExEss.Concealment": "Concealment",
 
+    "ExEss.SupportingVirtue": "Supporting Virtue",
+    "ExEss.OpposedVirtue": "Opposed Virtue",
+    "ExEss.SupportingIntimacy": "Supporting Intimacy",
+    "ExEss.OpposedIntimacy": "Opposed Intimacy",
+    
     "ExEss.Save": "Save",
     "ExEss.Update": "Update",
     "ExEss.EnterNewRollName": "Enter New Roll Name",
