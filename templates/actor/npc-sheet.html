@@ -5,12 +5,12 @@
                 width="100" />
             <div class="flex-center">
                 <label class="resource-label">{{localize "ExEss.Essence"}}</label>
-                <input type="number" name="data.essence.value" value="{{data.data.essence.value}}"
+                <input type="number" name="system.essence.value" value="{{system.essence.value}}"
                     data-dtype="Number" />
             </div>
             <div class="flex-center">
                 <div class="resource-label">{{localize "ExEss.Battlegroup"}}</div>
-                <input data-dtype="Boolean" name="data.battlegroup" type="checkbox" {{checked data.data.battlegroup}}>
+                <input data-dtype="Boolean" name="system.battlegroup" type="checkbox" {{checked system.battlegroup}}>
             </div>
         </div>
         <div class="header-fields">
@@ -19,8 +19,8 @@
                         placeholder="{{localize 'ExEss.NameTitle'}}" /></h1>
             </div>
             <div class="grid grid-3col flexrow">
-                <h1 class="charname"> <select name="data.creaturetype" data-type="String">
-                        {{#select data.data.creaturetype}}
+                <h1 class="charname"> <select name="system.creaturetype" data-type="String">
+                        {{#select system.creaturetype}}
                         <option value="animal">{{localize "ExEss.Animal"}}</option>
                         <option value="demon">{{localize "ExEss.Demon"}}</option>
                         <option value="elemental">{{localize "ExEss.Elemental"}}</option>
@@ -32,9 +32,9 @@
                         <option value="other">{{localize "ExEss.Other"}}</option>
                         {{/select}}
                     </select></h1>
-                {{#ifEquals data.data.creaturetype 'demon'}}
-                <h1 class="charname"> <select name="data.details.exalt" data-type="String">
-                        {{#select data.data.details.exalt}}
+                {{#ifEquals system.creaturetype 'demon'}}
+                <h1 class="charname"> <select name="system.details.exalt" data-type="String">
+                        {{#select system.details.exalt}}
                         <option value="first">{{localize "ExEss.First"}} {{localize "ExEss.Circle"}}</option>
                         <option value="second">{{localize "ExEss.Second"}} {{localize "ExEss.Circle"}}</option>
                         <option value="third">{{localize "ExEss.Third"}} {{localize "ExEss.Circle"}}</option>
@@ -42,9 +42,9 @@
                     </select></h1>
                 {{/ifEquals}}
 
-                {{#ifEquals data.data.creaturetype 'exalt'}}
-                <h1 class="charname"> <select name="data.details.exalt" data-type="String">
-                        {{#select data.data.details.exalt}}
+                {{#ifEquals system.creaturetype 'exalt'}}
+                <h1 class="charname"> <select name="system.details.exalt" data-type="String">
+                        {{#select system.details.exalt}}
                         <option value="abyssal">{{localize "ExEss.Abyssal"}}</option>
                         <option value="alchemical">{{localize "ExEss.Alchemical"}}</option>
                         <option value="dragonblooded">{{localize "ExEss.Dragonblooded"}}</option>
@@ -58,13 +58,13 @@
                         <option value="other">{{localize "ExEss.Other"}}</option>
                         {{/select}}
                     </select></h1>
-                <h1 class="charname"><input name="data.details.caste" type="text" value="{{data.data.details.caste}}"
+                <h1 class="charname"><input name="system.details.caste" type="text" value="{{system.details.caste}}"
                         placeholder="{{localize 'ExEss.CasteAspect'}}" /></h1>
                 {{/ifEquals}}
 
-                {{#ifEquals data.data.creaturetype 'fae'}}
-                <h1 class="charname"> <select name="data.details.exalt" data-type="String">
-                        {{#select data.data.details.exalt}}
+                {{#ifEquals system.creaturetype 'fae'}}
+                <h1 class="charname"> <select name="system.details.exalt" data-type="String">
+                        {{#select system.details.exalt}}
                         <option value="creature">{{localize "ExEss.Creature"}}</option>
                         <option value="raksha">{{localize "ExEss.Raksha"}}</option>
                         {{/select}}
@@ -79,15 +79,15 @@
                     <div>
                         <label class="resource-label">{{localize "ExEss.Motes"}}</label>
                         <div class="resource-content flexrow flex-center flex-between">
-                            <input type="number" name="data.motes.value" value="{{data.data.motes.value}}"
+                            <input type="number" name="system.motes.value" value="{{system.motes.value}}"
                                 data-dtype="Number" />
                             /
-                            <div>{{data.data.motes.total}}</div>
+                            <div>{{system.motes.total}}</div>
                         </div>
                     </div>
                     <div>
                         <label class="resource-label">{{localize "ExEss.Committed"}}</label>
-                        <input type="number" name="data.motes.commited" value="{{data.data.motes.commited}}"
+                        <input type="number" name="system.motes.commited" value="{{system.motes.commited}}"
                             data-dtype="Number" />
                     </div>
                 </div>
@@ -96,40 +96,40 @@
                         <i id="anima-down" class="fas fa-caret-down cursor-pointer"></i><label
                             class="resource-label">{{localize
                             "ExEss.Anima"}}</label><i id="anima-up" class="fas fa-caret-up cursor-pointer"></i>
-                        <input type="number" name="data.anima.value" value="{{data.data.anima.value}}"
+                        <input type="number" name="system.anima.value" value="{{system.anima.value}}"
                             data-dtype="Number" />
                     </div>
                     <div>
-                        <div class="resource-label" style="margin-top: 18px;">{{data.data.anima.level}}</div>
+                        <div class="resource-label" style="margin-top: 18px;">{{system.anima.level}}</div>
                     </div>
                 </div>
                 <div class="resource-content flexrow flex-center flex-between">
-                    {{#ifEquals data.data.details.exalt 'getimian'}}
+                    {{#ifEquals system.details.exalt 'getimian'}}
                     <div>
                         <label class="resource-label">{{localize "ExEss.Flowing"}}</label>
                         <div class="resource-content flexrow flex-center flex-between">
-                            <input type="number" name="data.flowing.value" value="{{data.data.flowing.value}}"
+                            <input type="number" name="system.flowing.value" value="{{system.flowing.value}}"
                                 data-dtype="Number" />
                             /
-                            <input type="number" name="data.flowing.total" value="{{data.data.flowing.total}}"
+                            <input type="number" name="system.flowing.total" value="{{system.flowing.total}}"
                                 data-dtype="Number" />
                         </div>
                     </div>
                     <div>
                         <label class="resource-label">{{localize "ExEss.Still"}}</label>
                         <div class="resource-content flexrow flex-center flex-between">
-                            <input type="number" name="data.still.value" value="{{data.data.still.value}}"
+                            <input type="number" name="system.still.value" value="{{system.still.value}}"
                                 data-dtype="Number" />
                             /
-                            <input type="number" name="data.still.total" value="{{data.data.still.total}}"
+                            <input type="number" name="system.still.total" value="{{system.still.total}}"
                                 data-dtype="Number" />
                         </div>
                     </div>
                     {{/ifEquals}}
-                    {{#ifEquals data.data.details.exalt 'lunar'}}
+                    {{#ifEquals system.details.exalt 'lunar'}}
                     <div>
                         <label class="resource-label">{{localize "ExEss.SacredHunt"}}</label>
-                        <input type="text" name="data.details.hunt" value="{{data.data.details.hunt}}" />
+                        <input type="text" name="system.details.hunt" value="{{system.details.hunt}}" />
                     </div>
                     {{/ifEquals}}
 
@@ -141,16 +141,16 @@
                 center all of its child elements content and text. --}}
                 <div class="resource flex-group-center">
                     <div class="flexrow">
-                        <label for="data.health" class="resource-label"><i class="fas fa-calculator cursor-pointer"
+                        <label for="system.health" class="resource-label"><i class="fas fa-calculator cursor-pointer"
                                 id="calculate-health" style="margin-right:3px;" title="Calculate Health"></i>{{localize
                             "ExEss.Health"}}<i id="recoveryScene" title="Recovery Scene"
                                 class="fas fa-plus-square cursor-pointer" style="margin-left:3px;"></i></label>
                     </div>
                     <div class="resource-content flexrow flex-center flex-between">
                         <div class="resource-counter" data-states="/:lethal,x:aggravated"
-                            data-max="{{data.data.health.levels}}" data-lethal="{{data.data.health.lethal}}"
-                            data-aggravated="{{data.data.health.aggravated}}" data-name="data.health">
-                            {{#numLoop data.data.health.levels}}
+                            data-max="{{system.health.levels}}" data-lethal="{{system.health.lethal}}"
+                            data-aggravated="{{system.health.aggravated}}" data-name="system.health">
+                            {{#numLoop system.health.levels}}
                             <span class="resource-counter-step" data-index="{{this}}" data-state=""></span>
                             {{/numLoop}}
                         </div>
@@ -159,7 +159,7 @@
                 <div>
                     <div class="flex-center">
                         <div class="resource-label">{{localize "ExEss.WoundPenalty"}}</div>
-                        <div class="resource-calculated-value">-{{data.data.health.penalty}}</div>
+                        <div class="resource-calculated-value">-{{system.health.penalty}}</div>
                     </div>
                 </div>
             </div>
@@ -185,9 +185,9 @@
                         {{localize "ExEss.Primary"}} {{localize "ExEss.Pool"}}
                     </label>
                     <div class="d-flex">
-                        <input class="pool-value-input" type="number" name="data.pools.primary.value"
-                            value="{{data.data.pools.primary.value}}" data-dtype="Number" />
-                        <input type="text" name="data.pools.primary.actions" value="{{data.data.pools.primary.actions}}"
+                        <input class="pool-value-input" type="number" name="system.pools.primary.value"
+                            value="{{system.pools.primary.value}}" data-dtype="Number" />
+                        <input type="text" name="system.pools.primary.actions" value="{{system.pools.primary.actions}}"
                             placeholder="Input what actions this pool covers" />
                     </div>
                 </div>
@@ -196,10 +196,10 @@
                         {{localize "ExEss.Secondary"}} {{localize "ExEss.Pool"}}
                     </label>
                     <div class="d-flex">
-                        <input class="pool-value-input" type="number" name="data.pools.secondary.value"
-                            value="{{data.data.pools.secondary.value}}" data-dtype="Number" />
-                        <input type="text" name="data.pools.secondary.actions"
-                            value="{{data.data.pools.secondary.actions}}"
+                        <input class="pool-value-input" type="number" name="system.pools.secondary.value"
+                            value="{{system.pools.secondary.value}}" data-dtype="Number" />
+                        <input type="text" name="system.pools.secondary.actions"
+                            value="{{system.pools.secondary.actions}}"
                             placeholder="Input what actions this pool covers" />
                     </div>
                 </div>
@@ -208,10 +208,10 @@
                         {{localize "ExEss.Tertiary"}} {{localize "ExEss.Pool"}}
                     </label>
                     <div class="d-flex">
-                        <input class="pool-value-input" type="number" name="data.pools.tertiary.value"
-                            value="{{data.data.pools.tertiary.value}}" data-dtype="Number" />
-                        <input type="text" name="data.pools.tertiary.actions"
-                            value="{{data.data.pools.tertiary.actions}}"
+                        <input class="pool-value-input" type="number" name="system.pools.tertiary.value"
+                            value="{{system.pools.tertiary.value}}" data-dtype="Number" />
+                        <input type="text" name="system.pools.tertiary.actions"
+                            value="{{system.pools.tertiary.actions}}"
                             placeholder="Input what actions this pool covers" />
                     </div>
                 </div>
@@ -220,17 +220,17 @@
                 <div class="resource-content flexrow flex-center flex-between">
                     <div>
                         <label class="resource-label">{{localize "ExEss.Power"}}</label>
-                        <input type="number" name="data.power.value" value="{{data.data.power.value}}"
+                        <input type="number" name="system.power.value" value="{{system.power.value}}"
                             data-dtype="Number" />
                     </div>
                     <div>
                         <label class="resource-label">{{localize "ExEss.Will"}}</label>
-                        <input type="number" name="data.will.value" value="{{data.data.will.value}}"
+                        <input type="number" name="system.will.value" value="{{system.will.value}}"
                             data-dtype="Number" />
                     </div>
                     <div>
                         <label class="resource-label">{{localize "ExEss.Stunt"}} {{localize "ExEss.Dice"}}</label>
-                        <input type="number" name="data.stunt.value" value="{{data.data.stunt.value}}"
+                        <input type="number" name="system.stunt.value" value="{{system.stunt.value}}"
                             data-dtype="Number" />
                     </div>
                 </div>
@@ -256,44 +256,44 @@
                 <div class="resource-content flexrow flex-center flex-between">
                     <div>
                         <label class="resource-label">{{localize "ExEss.Defense"}}</label>
-                        <input type="number" name="data.defence.value" value="{{data.data.defence.value}}"
+                        <input type="number" name="system.defence.value" value="{{system.defence.value}}"
                             data-dtype="Number" />
                     </div>
                     <div>
                         <label class="resource-label">{{localize "ExEss.Resolve"}}</label>
-                        <input type="number" name="data.resolve.value" value="{{data.data.resolve.value}}"
+                        <input type="number" name="system.resolve.value" value="{{system.resolve.value}}"
                             data-dtype="Number" />
                     </div>
                 </div>
                 <div class="resource-content flexrow flex-center flex-between">
                     <div>
                         <label class="resource-label">{{localize "ExEss.Soak"}}</label>
-                        <input type="number" name="data.soak.value" value="{{data.data.soak.value}}"
+                        <input type="number" name="system.soak.value" value="{{system.soak.value}}"
                             data-dtype="Number" />
                     </div>
                     <div>
                         <label class="resource-label">{{localize "ExEss.Hardness"}}</label>
-                        <input type="number" name="data.hardness.value" value="{{data.data.hardness.value}}"
+                        <input type="number" name="system.hardness.value" value="{{system.hardness.value}}"
                             data-dtype="Number" />
                     </div>
                 </div>
-                {{#if data.data.battlegroup}}
+                {{#if system.battlegroup}}
                 <div class="resource-content flexrow flex-center flex-between">
                     <div>
                         <label class="resource-label">{{localize "ExEss.Size"}}</label>
-                        <input type="number" name="data.size.value" value="{{data.data.size.value}}"
+                        <input type="number" name="system.size.value" value="{{system.size.value}}"
                             data-dtype="Number" />
                     </div>
                     <div>
                         <label class="resource-label">{{localize "ExEss.Drill"}}</label>
-                        <input type="number" name="data.drill.value" value="{{data.data.drill.value}}"
+                        <input type="number" name="system.drill.value" value="{{system.drill.value}}"
                             data-dtype="Number" />
                     </div>
                 </div>
                 {{/if}}
             </div>
             <div>
-                <textarea type="text" name="data.qualities" rows="6">{{data.data.qualities}}</textarea>
+                <textarea type="text" name="system.qualities" rows="6">{{system.qualities}}</textarea>
             </div>
             {{> systems/exaltedessence/templates/actor/equipment-list.html}}
 
@@ -321,7 +321,7 @@
                 </li>
                 <li>
                     <div>
-                        {{{item.data.description}}}
+                        {{{item.system.description}}}
                     </div>
                 </li>
                 {{/each}}
@@ -348,7 +348,7 @@
 
         {{!-- Biography Tab --}}
         <div class="tab biography" data-group="primary" data-tab="description">
-            {{editor content=data.data.biography target="data.biography" button=true owner=owner editable=true}}
+            {{editor system.biography target="system.biography" button=true owner=owner editable=true}}
         </div>
     </section>
 </form>

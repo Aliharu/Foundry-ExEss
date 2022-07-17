@@ -6,7 +6,7 @@
       <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100" />
       <div class="flex-center">
         <label class="resource-label">{{localize "ExEss.Essence"}}</label>
-        <input type="number" name="data.essence.value" value="{{data.data.essence.value}}" data-dtype="Number" />
+        <input type="number" name="system.essence.value" value="{{system.essence.value}}" data-dtype="Number" />
       </div>
     </div>
     <div class="header-fields">
@@ -16,10 +16,10 @@
       </div>
       <div class="grid grid-2col flexrow">
 
-        <!-- <h1 class="charname"><input name="data.details.exalt" type="text" value="{{data.data.details.exalt}}"
+        <!-- <h1 class="charname"><input name="system.details.exalt" type="text" value="{{system.details.exalt}}"
           placeholder="{{localize 'ExEss.Exalt'}}" /></h1> -->
-        <h1 class="charname"> <select name="data.details.exalt" data-type="String">
-            {{#select data.data.details.exalt}}
+        <h1 class="charname"> <select name="system.details.exalt" data-type="String">
+            {{#select system.details.exalt}}
             <option value="abyssal">{{localize "ExEss.Abyssal"}}</option>
             <option value="alchemical">{{localize "ExEss.Alchemical"}}</option>
             <option value="dragonblooded">{{localize "ExEss.Dragonblooded"}}</option>
@@ -33,7 +33,7 @@
             <option value="other">{{localize "ExEss.Other"}}</option>
             {{/select}}
           </select></h1>
-        <h1 class="charname"><input name="data.details.caste" type="text" value="{{data.data.details.caste}}"
+        <h1 class="charname"><input name="system.details.caste" type="text" value="{{system.details.caste}}"
             placeholder="{{localize 'ExEss.CasteAspect'}}" /></h1>
       </div>
       {{!-- The grid classes are defined in scss/global/_grid.scss. To use,
@@ -44,56 +44,56 @@
           <div>
             <label class="resource-label">{{localize "ExEss.Motes"}}</label>
             <div class="resource-content flexrow flex-center flex-between">
-              <input type="number" name="data.motes.value" value="{{data.data.motes.value}}" data-dtype="Number" />
+              <input type="number" name="system.motes.value" value="{{system.motes.value}}" data-dtype="Number" />
               /
-              <div>{{data.data.motes.total}}</div>
+              <div>{{system.motes.total}}</div>
             </div>
           </div>
           <div>
             <label class="resource-label">{{localize "ExEss.Committed"}}</label>
-            <input type="number" name="data.motes.commited" value="{{data.data.motes.commited}}" data-dtype="Number" />
+            <input type="number" name="system.motes.commited" value="{{system.motes.commited}}" data-dtype="Number" />
           </div>
         </div>
         <div class="resource-content flexrow flex-center flex-between">
           <div>
             <i id="anima-down" class="fas fa-caret-down cursor-pointer"></i><label class="resource-label">{{localize
               "ExEss.Anima"}}</label><i id="anima-up" class="fas fa-caret-up cursor-pointer"></i>
-            <input type="number" name="data.anima.value" value="{{data.data.anima.value}}" data-dtype="Number" />
+            <input type="number" name="system.anima.value" value="{{system.anima.value}}" data-dtype="Number" />
           </div>
           <div>
-            <div class="resource-label" style="margin-top: 18px;">{{data.data.anima.level}}</div>
+            <div class="resource-label" style="margin-top: 18px;">{{system.anima.level}}</div>
           </div>
         </div>
         <div class="resource-content flexrow flex-center flex-between">
-          {{#ifEquals data.data.details.exalt 'getimian'}}
+          {{#ifEquals system.details.exalt 'getimian'}}
           <div>
             <label class="resource-label">{{localize "ExEss.Flowing"}}</label>
             <div class="resource-content flexrow flex-center flex-between">
-              <input type="number" name="data.flowing.value" value="{{data.data.flowing.value}}" data-dtype="Number" />
+              <input type="number" name="system.flowing.value" value="{{system.flowing.value}}" data-dtype="Number" />
               /
-              <input type="number" name="data.flowing.total" value="{{data.data.flowing.total}}" data-dtype="Number" />
+              <input type="number" name="system.flowing.total" value="{{system.flowing.total}}" data-dtype="Number" />
             </div>
           </div>
           <div>
             <label class="resource-label">{{localize "ExEss.Still"}}</label>
             <div class="resource-content flexrow flex-center flex-between">
-              <input type="number" name="data.still.value" value="{{data.data.still.value}}" data-dtype="Number" />
+              <input type="number" name="system.still.value" value="{{system.still.value}}" data-dtype="Number" />
               /
-              <input type="number" name="data.still.total" value="{{data.data.still.total}}" data-dtype="Number" />
+              <input type="number" name="system.still.total" value="{{system.still.total}}" data-dtype="Number" />
             </div>
           </div>
           {{/ifEquals}}
-          {{#ifEquals data.data.details.exalt 'lunar'}}
+          {{#ifEquals system.details.exalt 'lunar'}}
           <div>
             <label class="resource-label">{{localize "ExEss.SacredHunt"}}</label>
-            <input type="text" name="data.details.hunt" value="{{data.data.details.hunt}}" />
+            <input type="text" name="system.details.hunt" value="{{system.details.hunt}}" />
           </div>
           {{/ifEquals}}
-          {{#ifEquals data.data.details.exalt 'dragonblooded'}}
+          {{#ifEquals system.details.exalt 'dragonblooded'}}
           <div>
             <div class="resource-label">{{localize "ExEss.Aura"}}</div>
-            <select name="data.details.aura" data-type="String">
-              {{#select data.data.details.aura}}
+            <select name="system.details.aura" data-type="String">
+              {{#select system.details.aura}}
               <option value="none">{{localize "ExEss.None"}}</option>
               <option value="air">{{localize "ExEss.Air"}}</option>
               <option value="earth">{{localize "ExEss.Earth"}}</option>
@@ -104,10 +104,10 @@
             </select>
           </div>
           {{/ifEquals}}
-          {{#ifEquals data.data.details.exalt 'liminal'}}
+          {{#ifEquals system.details.exalt 'liminal'}}
           <div>
             <label class="resource-label">{{localize "ExEss.Nature"}}</label>
-            <input type="text" name="data.details.nature" value="{{data.data.details.nature}}" />
+            <input type="text" name="system.details.nature" value="{{system.details.nature}}" />
           </div>
           {{/ifEquals}}
 
@@ -117,16 +117,16 @@
         <div class="resource flex-group-center d-flex">
           <div style="width:180px;margin-right:20px;">
             <div class="flexrow">
-              <label for="data.health" class="resource-label"><i class="fas fa-calculator cursor-pointer"
+              <label for="system.health" class="resource-label"><i class="fas fa-calculator cursor-pointer"
                   id="calculate-health" style="margin-right:3px;" title="Calculate Health"></i>{{localize
                 "ExEss.Health"}}<i id="recoveryScene" title="Recovery Scene" class="fas fa-plus-square cursor-pointer"
                   style="margin-left:3px;"></i></label>
             </div>
             <div class="resource-content flexrow flex-center flex-between">
-              <div class="resource-counter" data-states="/:lethal,x:aggravated" data-max="{{data.data.health.max}}"
-                data-lethal="{{data.data.health.lethal}}" data-aggravated="{{data.data.health.aggravated}}"
-                data-name="data.health">
-                {{#numLoop data.data.health.max}}
+              <div class="resource-counter" data-states="/:lethal,x:aggravated" data-max="{{system.health.max}}"
+                data-lethal="{{system.health.lethal}}" data-aggravated="{{system.health.aggravated}}"
+                data-name="system.health">
+                {{#numLoop system.health.max}}
                 <span class="resource-counter-step" data-index="{{this}}" data-state=""></span>
                 {{/numLoop}}
               </div>
@@ -135,7 +135,7 @@
           <div>
             <div class="flex-center">
               <div class="resource-label">{{localize "ExEss.WoundPenalty"}}</div>
-              <div>-{{data.data.health.penalty}}</div>
+              <div>-{{system.health.penalty}}</div>
             </div>
           </div>
         </div>
@@ -195,13 +195,13 @@
         <label class="resource-label">{{localize "ExEss.Attributes"}}</label>
       </div>
       <div class="attributes grid grid-3col flex-group-center">
-        {{#each data.data.attributes as |attribute key|}}
+        {{#each system.attributes as |attribute key|}}
         <div class="attribute flexrow flex-center">
-          <label for="data.attributes.{{key}}.value" class="resource-label resource-value"
+          <label for="system.attributes.{{key}}.value" class="resource-label resource-value"
             data-roll="{{attribute.value}}" data-label="{{attribute.name}}">{{localize attribute.name}}{{#ifEquals
-            ../data.data.details.exalt 'alchemical'}}<i title="Toggle Augmented Attribute" data-name="{{key}}"
+            ../system.details.exalt 'alchemical'}}<i title="Toggle Augmented Attribute" data-name="{{key}}"
               class="augment-attribute fas fa-cog {{#if attribute.aug}}augment-attribute-active{{/if}}"></i>{{/ifEquals}}</label>
-          <div class="resource-value" data-value="{{attribute.value}}" data-name="data.attributes.{{key}}.value">
+          <div class="resource-value" data-value="{{attribute.value}}" data-name="system.attributes.{{key}}.value">
             {{#numLoop 5}}
             <span class="resource-value-step" data-index="{{this}}"></span>
             {{/numLoop}}
@@ -211,12 +211,12 @@
       </div>
       <label class="resource-label">{{localize "ExEss.Abilities"}}</label>
       <div class="attributes grid grid-3col flex-group-center">
-        {{#each data.data.abilities as |ability key|}}
+        {{#each system.abilities as |ability key|}}
         <div class="ability flexrow flex-center">
-          <label for="data.abilities.{{key}}.value" class="resource-label vrollable roll-ability"
+          <label for="system.abilities.{{key}}.value" class="resource-label vrollable roll-ability"
             data-roll="{{ability.value}}" data-ability="{{key}}" data-label="{{ability.name}}">{{localize
             ability.name}}</label>
-          <div class="resource-value" data-value="{{ability.value}}" data-name="data.abilities.{{key}}.value">
+          <div class="resource-value" data-value="{{ability.value}}" data-name="system.abilities.{{key}}.value">
             {{#numLoop 5}}
             <span class="resource-value-step" data-index="{{this}}"></span>
             {{/numLoop}}
@@ -230,15 +230,15 @@
             <div class="resource-content flexrow flex-center flex-between">
               <div>
                 <label class="resource-label">{{localize "ExEss.Power"}}</label>
-                <input type="number" name="data.power.value" value="{{data.data.power.value}}" data-dtype="Number" />
+                <input type="number" name="system.power.value" value="{{system.power.value}}" data-dtype="Number" />
               </div>
               <div>
                 <label class="resource-label">{{localize "ExEss.Will"}}</label>
-                <input type="number" name="data.will.value" value="{{data.data.will.value}}" data-dtype="Number" />
+                <input type="number" name="system.will.value" value="{{system.will.value}}" data-dtype="Number" />
               </div>
               <div>
                 <label class="resource-label">{{localize "ExEss.Stunt"}} {{localize "ExEss.Dice"}}</label>
-                <input type="number" name="data.stunt.value" value="{{data.data.stunt.value}}" data-dtype="Number" />
+                <input type="number" name="system.stunt.value" value="{{system.stunt.value}}" data-dtype="Number" />
               </div>
             </div>
             <div class="resource-content flexrow flex-center flex-between">
@@ -263,25 +263,25 @@
             <div class="resource-content flexrow flex-center flex-between">
               <div>
                 <label class="resource-label">{{localize "ExEss.Defense"}}</label>
-                <input type="number" name="data.defence.value" value="{{data.data.defence.value}}"
+                <input type="number" name="system.defence.value" value="{{system.defence.value}}"
                   data-dtype="Number" />
               </div>
             </div>
             <div class="resource-content flexrow flex-center flex-between">
               <div>
                 <label class="resource-label">{{localize "ExEss.Soak"}}</label>
-                <input type="number" name="data.soak.value" value="{{data.data.soak.value}}" data-dtype="Number" />
+                <input type="number" name="system.soak.value" value="{{system.soak.value}}" data-dtype="Number" />
               </div>
               <div>
                 <label class="resource-label">{{localize "ExEss.Hardness"}}</label>
-                <input type="number" name="data.hardness.value" value="{{data.data.hardness.value}}"
+                <input type="number" name="system.hardness.value" value="{{system.hardness.value}}"
                   data-dtype="Number" />
               </div>
             </div>
             <div class="resource-content flexrow flex-center flex-between">
               <div>
                 <label class="resource-label">{{localize "ExEss.Resolve"}}</label>
-                <input type="number" name="data.resolve.value" value="{{data.data.resolve.value}}"
+                <input type="number" name="system.resolve.value" value="{{system.resolve.value}}"
                   data-dtype="Number" />
               </div>
               <div>
@@ -306,15 +306,15 @@
         </li>
         <li>
           <label class="resource-label">{{localize "ExEss.Passive"}}</label>
-          <textarea type="text" name="data.anima.passive" rows="4">{{data.data.anima.passive}}</textarea>
+          <textarea type="text" name="system.anima.passive" rows="4">{{system.anima.passive}}</textarea>
         </li>
         <li>
           <label class="resource-label">{{localize "ExEss.Active"}}</label>
-          <textarea type="text" name="data.anima.active" rows="4">{{data.data.anima.active}}</textarea>
+          <textarea type="text" name="system.anima.active" rows="4">{{system.anima.active}}</textarea>
         </li>
         <li>
           <label class="resource-label">{{localize "ExEss.Iconic"}}</label>
-          <textarea type="text" name="data.anima.iconic" rows="4">{{data.data.anima.iconic}}</textarea>
+          <textarea type="text" name="system.anima.iconic" rows="4">{{system.anima.iconic}}</textarea>
         </li>
         {{> systems/exaltedessence/templates/actor/charm-list.html}}
       </ol>
@@ -341,28 +341,28 @@
           </div>
         </li>
         <li>
-          <textarea type="text" name="data.advantages.one" rows="4">{{data.data.advantages.one}}</textarea>
+          <textarea type="text" name="system.advantages.one" rows="4">{{system.advantages.one}}</textarea>
         </li>
         <li>
-          <textarea type="text" name="data.advantages.two" rows="4">{{data.data.advantages.two}}</textarea>
+          <textarea type="text" name="system.advantages.two" rows="4">{{system.advantages.two}}</textarea>
         </li>
-        {{#ifEquals data.data.details.exalt 'infernal'}}
+        {{#ifEquals system.details.exalt 'infernal'}}
         <li>
           <label class="resource-label">{{localize "ExEss.DevilBody"}}</label>
-          <textarea type="text" name="data.details.devilbody" rows="3">{{data.data.details.devilbody}}</textarea>
+          <textarea type="text" name="system.details.devilbody" rows="3">{{system.details.devilbody}}</textarea>
         </li>
         {{/ifEquals}}
         <li>
           <label class="resource-label">{{localize "ExEss.Resonance"}}</label>
-          <input type="text" name="data.advantages.resonance" value="{{data.data.advantages.resonance}}" />
+          <input type="text" name="system.advantages.resonance" value="{{system.advantages.resonance}}" />
         </li>
         <div class="mt-1">
           <label class="resource-label">{{localize "ExEss.Languages"}}</label>
-          <a class="trait-selector" data-options="languages" data-target="data.traits.languages">
+          <a class="trait-selector" data-options="languages" data-target="system.traits.languages">
             <i class="fas fa-edit"></i>
           </a>
           <div class="mt-1">
-            {{#each data.data.traits.languages.selected as |v k|}}
+            {{#each system.traits.languages.selected as |v k|}}
             <li class="tag {{k}}">{{v}}</li>
             {{/each}}
           </div>
@@ -386,7 +386,7 @@
         </li>
         <li>
           <div>
-            {{{item.data.description}}}
+            {{{item.system.description}}}
           </div>
         </li>
         {{/each}}
@@ -401,7 +401,7 @@
         <li class="item flexrow item-row" data-item-id="{{item._id}}">
           <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
           <h4 class="item-name">{{item.name}}</h4>
-          <div class="resource-value-static" data-value="{{item.data.points}}" data-name="items.{{item._id}}">
+          <div class="resource-value-static" data-value="{{item.system.points}}" data-name="items.{{item._id}}">
             {{#numLoop 5}}
             <span class="resource-value-static-step" data-index="{{this}}"></span>
             {{/numLoop}}
@@ -414,7 +414,7 @@
         </li>
         <li>
           <div>
-            {{{item.data.description}}}
+            {{{item.system.description}}}
           </div>
         </li>
         {{/each}}
@@ -430,25 +430,25 @@
         <div class="resource-content flexrow flex-center flex-between">
           <div>
             <label class="resource-label">{{localize "ExEss.Personal"}}</label>
-            <input name="data.milestones.personal" value="{{data.data.milestones.personal}}" type="text" />
+            <input name="system.milestones.personal" value="{{system.milestones.personal}}" type="text" />
           </div>
         </div>
         <div class="resource-content flexrow flex-center flex-between">
           <div>
             <label class="resource-label">{{localize "ExEss.Minor"}}</label>
-            <input name="data.milestones.minor" value="{{data.data.milestones.minor}}" type="text" />
+            <input name="system.milestones.minor" value="{{system.milestones.minor}}" type="text" />
           </div>
         </div>
         <div class="resource-content flexrow flex-center flex-between">
           <div>
             <label class="resource-label">{{localize "ExEss.Major"}}</label>
-            <input name="data.milestones.major" value="{{data.data.milestones.major}}" type="text" />
+            <input name="system.milestones.major" value="{{system.milestones.major}}" type="text" />
           </div>
         </div>
         <div class="resource-content flexrow flex-center flex-between">
           <div>
             <label class="resource-label">{{localize "ExEss.Exalt"}}</label>
-            <input name="data.milestones.exalt" value="{{data.data.milestones.exalt}}" type="text" />
+            <input name="system.milestones.exalt" value="{{system.milestones.exalt}}" type="text" />
           </div>
         </div>
       </div>
@@ -465,13 +465,13 @@
         {{localize "ExEss.Milestones"}}, {{localize "ExEss.Ventures"}}, {{localize "ExEss.Equipment"}}, {{localize
         "ExEss.GreatCurse"}}
       </div>
-      {{editor content=data.data.milestones.triggers target="data.milestones.triggers" button=true owner=owner
+      {{editor system.milestones.triggers target="system.milestones.triggers" button=true owner=owner
       editable=true}}
     </div>
 
     {{!-- Biography Tab --}}
     <div class="tab biography" data-group="primary" data-tab="description">
-      {{editor content=data.data.biography target="data.biography" button=true owner=owner editable=true}}
+      {{editor system.biography target="system.biography" button=true owner=owner editable=true}}
     </div>
 
   </section>

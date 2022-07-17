@@ -5,21 +5,21 @@
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
             <div class="d-flex flex-center">
                 <label class="resource-label">{{localize "ExEss.Strength"}}: </label>
-                <select name="data.strength" data-type="String">
-                    {{#select data.data.strength}}
+                <select name="system.strength" data-type="String">
+                    {{#select system.strength}}
                     <option value="minor">{{localize "ExEss.Minor"}}</option>
                     <option value="major">{{localize "ExEss.Major"}}</option>
                     {{/select}}
                 </select>
                 <label class="resource-label">{{localize "ExEss.Type"}}: </label>
-                <select name="data.intimacytype" data-type="String">
-                    {{#select data.data.intimacytype}}
+                <select name="system.intimacytype" data-type="String">
+                    {{#select system.intimacytype}}
                     <option value="tie">{{localize "ExEss.Tie"}}</option>
                     <option value="principle">{{localize "ExEss.Principle"}}</option>
                     {{/select}}
                 </select>
                 <label class="resource-label">{{localize "ExEss.Virtue"}}: </label>
-                <input type="text" name="data.virtue" value="{{data.data.virtue}}"/>
+                <input type="text" name="system.virtue" value="{{system.virtue}}"/>
             </div>
         </div>
     </header>
@@ -33,7 +33,7 @@
     <section class="sheet-body">
         {{!-- Description Tab --}}
         <div class="tab" data-group="primary" data-tab="description">
-            {{editor content=data.data.description target="data.description" button=true owner=owner editable=true}}
+            {{editor system.description target="system.description" button=true owner=owner editable=true}}
         </div>
 
         <div class="tab" data-group="primary" data-tab="effects">

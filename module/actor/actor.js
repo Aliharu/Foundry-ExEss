@@ -10,14 +10,11 @@ export class ExaltedessenceActor extends Actor {
   prepareData() {
     super.prepareData();
 
-    const actorData = this.data;
-    const data = actorData.data;
-    const flags = actorData.flags;
-
+    const actorData = this.system;
     // Make separate methods for each Actor type (character, npc, etc.) to keep
     // things organized.
-    if (actorData.type === 'character') this._prepareCharacterData(actorData);
-    if (actorData.type === 'npc') this._prepareNpcData(actorData);
+    if (this.type === 'character') this._prepareCharacterData(actorData);
+    if (this.type === 'npc') this._prepareNpcData(actorData);
   }
 
   /**
@@ -25,7 +22,7 @@ export class ExaltedessenceActor extends Actor {
    */
   _prepareCharacterData(actorData) {
     // Make modifications to data here. For example:
-    const data = actorData.data;
+    const data = actorData;
     this._prepareBaseActorData(data);
     let totalHealth = 0;
     let currentPenalty = 0;
@@ -49,7 +46,7 @@ export class ExaltedessenceActor extends Actor {
   }
 
   _prepareNpcData(actorData) {
-    const data = actorData.data;
+    const data = actorData;
     this._prepareBaseActorData(data);
     let currentPenalty = 0;
     if (data.health.levels > 1 && ((data.health.lethal + data.health.aggravated) >= Math.floor(data.health.levels / 2))) {

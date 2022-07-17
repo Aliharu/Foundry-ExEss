@@ -1,5 +1,5 @@
 <ol class="items-list">
-    {{#each data.data.savedRolls as |item id|}}
+    {{#each system.savedRolls as |item id|}}
     <li class="item flexrow" data-item-id="{{id}}">
         <h4 class="item-name">{{item.name}}</h4>
         <div class="resource-table-value resource-value-static">
@@ -34,15 +34,15 @@
     {{#each section.effects as |effect|}}
         <li class="item effect flexrow" data-effect-id="{{effect.id}}">
             <!-- <div class="item-name effect-name flexrow"> -->
-            <div class="item-image"><img src="{{effect.data.icon}}" title="{{effect.data.label}}" width="24" height="24" /></div>
+            <div class="item-image"><img src="{{effect.system.icon}}" title="{{effect.system.label}}" width="24" height="24" /></div>
             <!-- </div> -->
-            <h4>{{effect.data.label}}</h4>
+            <h4>{{effect.system.label}}</h4>
 
             <div class="effect-source">{{effect.sourceName}}</div>
             <div class="effect-duration">{{effect.duration.label}}</div>
             <div class="item-controls effect-controls flexrow">
                 <a class="effect-control" data-action="toggle" title="{{localize 'ExEss.EffectToggle'}}">
-                    <i class="fas {{#if effect.data.disabled}}fa-check{{else}}fa-times{{/if}}"></i>
+                    <i class="fas {{#if effect.disabled}}fa-check{{else}}fa-times{{/if}}"></i>
                 </a>
                 <a class="effect-control" data-action="edit" title="{{localize 'ExEss.EffectEdit'}}">
                     <i class="fas fa-edit"></i>

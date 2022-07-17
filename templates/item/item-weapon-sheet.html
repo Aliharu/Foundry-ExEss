@@ -5,10 +5,10 @@
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
             <div class="check-button">
                 <label class="resource-label">{{localize "ExEss.Equipped"}}: </label>
-                <input name="data.equiped" type="checkbox" value="data.equiped" {{checked data.data.equiped}}>
+                <input name="system.equiped" type="checkbox" value="system.equiped" {{checked system.equiped}}>
                 <label class="resource-label mr-1">{{localize "ExEss.Type"}}: </label>
-                <select name="data.weapontype" data-type="String">
-                    {{#select data.data.weapontype}}
+                <select name="system.weapontype" data-type="String">
+                    {{#select system.weapontype}}
                     <option value="melee">{{localize "ExEss.Melee"}}</option>
                     <option value="ranged">{{localize "ExEss.Ranged"}}</option>
                     <option value="thrown">{{localize "ExEss.Thrown"}}</option>
@@ -31,22 +31,22 @@
             <div class="d-flex flex-center resources">
                 <div>
                     <div>{{localize "ExEss.Accuracy"}}</div>
-                    <input type="number" name="data.accuracy" value="{{data.data.accuracy}}" data-dtype="Number" />
+                    <input type="number" name="system.accuracy" value="{{system.accuracy}}" data-dtype="Number" />
                 </div>
                 <div>
                     <div>{{localize "ExEss.Damage"}}</div>
-                    <input type="number" name="data.damage" value="{{data.data.damage}}" data-dtype="Number" />
+                    <input type="number" name="system.damage" value="{{system.damage}}" data-dtype="Number" />
                 </div>
                 <div>
                     <div>{{localize "ExEss.Defense"}}</div>
-                    <input type="number" name="data.defence" value="{{data.data.defence}}" data-dtype="Number" />
+                    <input type="number" name="system.defence" value="{{system.defence}}" data-dtype="Number" />
                 </div>
                 <div>
                     <div>{{localize "ExEss.Overwhelming"}}</div>
-                    <input type="number" name="data.overwhelming" value="{{data.data.overwhelming}}" data-dtype="Number" />
+                    <input type="number" name="system.overwhelming" value="{{system.overwhelming}}" data-dtype="Number" />
                 </div>
             </div>
-            {{editor content=data.data.description target="data.description" button=true owner=owner editable=true}}
+            {{editor system.description target="system.description" button=true owner=owner editable=true}}
         </div>
 
         <div class="tab" data-group="primary" data-tab="effects">

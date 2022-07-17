@@ -5,8 +5,8 @@
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
             <div>
                 <label class="resource-label">{{localize "ExEss.CharmType"}}:</label>
-                <select name="data.charmtype" data-type="String">
-                    {{#select data.data.charmtype}}
+                <select name="system.charmtype" data-type="String">
+                    {{#select system.charmtype}}
                     <option value="abyssal">{{localize "ExEss.Abyssal"}}</option>
                     <option value="alchemical">{{localize "ExEss.Alchemical"}}</option>
                     <option value="architect">{{localize "ExEss.Architect"}}</option>
@@ -29,8 +29,8 @@
                     {{/select}}
                 </select>
                 <label class="resource-label">{{localize "ExEss.Ability"}}: </label>
-                <select name="data.ability" data-type="String">
-                    {{#select data.data.ability}}
+                <select name="system.ability" data-type="String">
+                    {{#select system.ability}}
                         <option value="force">{{localize "ExEss.Force"}}</option>
                         <option value="finesse">{{localize "ExEss.Finesse"}}</option>
                         <option value="fortitude">{{localize "ExEss.Fortitude"}}</option>
@@ -54,8 +54,8 @@
                     {{/select}}
                 </select>
                 <label class="resource-label">{{localize "ExEss.Requirement"}}: </label>
-                <select name="data.requirement" data-type="String">
-                    {{#select data.data.requirement}}
+                <select name="system.requirement" data-type="String">
+                    {{#select system.requirement}}
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -65,8 +65,8 @@
                     {{/select}}
                 </select>
                 <label class="resource-label">{{localize "ExEss.Essence"}}: </label>
-                <select name="data.essence" data-type="String">
-                    {{#select data.data.essence}}
+                <select name="system.essence" data-type="String">
+                    {{#select system.essence}}
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -92,30 +92,30 @@
             <div class="d-flex flex-center resources">
                 <div>
                     <div>Motes</div>
-                    <input type="number" name="data.cost.motes" value="{{data.data.cost.motes}}" data-dtype="Number" />
+                    <input type="number" name="system.cost.motes" value="{{system.cost.motes}}" data-dtype="Number" />
                 </div>
                 <div>
                     <div>Committed</div>
-                    <input type="number" name="data.cost.committed" value="{{data.data.cost.committed}}" data-dtype="Number" />
+                    <input type="number" name="system.cost.committed" value="{{system.cost.committed}}" data-dtype="Number" />
                 </div>
                 <div>
                     <div>Anima</div>
-                    <input type="number" name="data.cost.anima" value="{{data.data.cost.anima}}" data-dtype="Number" />
+                    <input type="number" name="system.cost.anima" value="{{system.cost.anima}}" data-dtype="Number" />
                 </div>
                 <div>
                     <div>Health</div>
-                    <input type="number" name="data.cost.health" value="{{data.data.cost.health}}" data-dtype="Number" />
+                    <input type="number" name="system.cost.health" value="{{system.cost.health}}" data-dtype="Number" />
                 </div>
                 <div>
                     <div>Stunt</div>
-                    <input type="number" name="data.cost.stunt" value="{{data.data.cost.stunt}}" data-dtype="Number" />
+                    <input type="number" name="system.cost.stunt" value="{{system.cost.stunt}}" data-dtype="Number" />
                 </div>
                 <div>
                     <div>Power</div>
-                    <input type="number" name="data.cost.power" value="{{data.data.cost.power}}" data-dtype="Number" />
+                    <input type="number" name="system.cost.power" value="{{system.cost.power}}" data-dtype="Number" />
                 </div>
             </div>
-            {{editor content=data.data.description target="data.description" button=true owner=owner editable=true}}
+            {{editor system.description target="system.description" button=true owner=owner editable=true}}
         </div>
 
         <div class="tab" data-group="primary" data-tab="effects">

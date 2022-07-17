@@ -43,26 +43,30 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
   /** @override */
   getData() {
-    const data = super.getData();
-    data.dtypes = ["String", "Number", "Boolean"];
+    const context = super.getData();
+    context.dtypes = ["String", "Number", "Boolean"];
+
+    const actorData = this.actor.toObject(false);
+    context.system = actorData.system;
+    context.flags = actorData.flags;
 
     // Update traits
-    this._prepareTraits(data.data.data.traits);
+    this._prepareTraits(context.system.traits);
 
     // Prepare items.
-    if (this.actor.data.type === 'character') {
-      for (let attr of Object.values(data.data.data.attributes)) {
+    if (this.actor.type === 'character') {
+      for (let attr of Object.values(context.system.attributes)) {
         attr.isCheckbox = attr.dtype === "Boolean";
       }
-      this._prepareCharacterItems(data);
+      this._prepareCharacterItems(context);
     }
-    if (this.actor.data.type === 'npc') {
-      this._prepareCharacterItems(data);
+    if (this.actor.type === 'npc') {
+      this._prepareCharacterItems(context);
     }
 
-    data.effects = prepareActiveEffectCategories(this.document.effects);
+    context.effects = prepareActiveEffectCategories(this.document.effects);
 
-    return data;
+    return context;
   }
 
   /**
@@ -115,8 +119,6 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     // Iterate through items, allocating to containers
     for (let i of sheetData.items) {
-      let item = i.data;
-
       i.img = i.img || DEFAULT_TOKEN;
       // Append to gear.
       if (i.type === 'item') {
@@ -143,15 +145,15 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       }
       // Append to charms.
       else if (i.type === 'charm') {
-        if (i.data.ability !== undefined) {
-          charms[i.data.ability].list.push(i);
-          charms[i.data.ability].visible = true;
+        if (i.system.ability !== undefined) {
+          charms[i.system.ability].list.push(i);
+          charms[i.system.ability].visible = true;
         }
       }
       else if (i.type === 'spell') {
-        if (i.data.circle !== undefined) {
-          spells[i.data.circle].list.push(i);
-          spells[i.data.circle].visible = true;
+        if (i.system.circle !== undefined) {
+          spells[i.system.circle].list.push(i);
+          spells[i.system.circle].visible = true;
         }
       }
     }

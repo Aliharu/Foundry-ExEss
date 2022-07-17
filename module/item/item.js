@@ -11,31 +11,31 @@ export class ExaltedessenceItem extends Item {
 
     // Get the Item's data
     const itemData = this.data;
-    const actorData = this.actor ? this.actor.data : {};
+    const actorData = this.actor ? this.actor.system : {};
     const data = itemData.data;
   }
 
   async _preCreate(createData, options, userId) {
     if (createData.type === 'intimacy') {
-      this.data.update({ img: "systems/exaltedessence/assets/icons/hearts.svg" });
+      this.updateSource({ img: "systems/exaltedessence/assets/icons/hearts.svg" });
     }
     if (createData.type === 'spell' || createData.type === 'ritual') {
-      this.data.update({ img: "icons/svg/book.svg" });
+      this.updateSource({ img: "icons/svg/book.svg" });
     }
     if (createData.type === 'merit') {
-      this.data.update({ img: "icons/svg/coins.svg" });
+      this.updateSource({ img: "icons/svg/coins.svg" });
     }
     if (createData.type === 'quality') {
-      this.data.update({ img: "icons/svg/aura.svg" });
+      this.updateSource({ img: "icons/svg/aura.svg" });
     }
     if (createData.type === 'weapon') {
-      this.data.update({ img: "icons/svg/sword.svg" });
+      this.updateSource({ img: "icons/svg/sword.svg" });
     }
     if (createData.type === 'armor') {
-      this.data.update({ img: "systems/exaltedessence/assets/icons/breastplate.svg" });
+      this.updateSource({ img: "systems/exaltedessence/assets/icons/breastplate.svg" });
     }
     if (createData.type === 'charm') {
-      this.data.update({ img: "icons/svg/explosion.svg" });
+      this.updateSource({ img: "icons/svg/explosion.svg" });
     }
   }
 
@@ -47,9 +47,9 @@ export class ExaltedessenceItem extends Item {
   async roll() {
     // Basic template rendering data
     const token = this.actor.token;
-    const item = this.data;
-    const actorData = this.actor ? this.actor.data.data : {};
-    const itemData = item.data;
+    const item = this;
+    const actorData = this.actor ? this.actor.system : {};
+    const itemData = item.system;
 
     // let roll = new Roll('d20+@abilities.str.mod', actorData);
     // let label = `Rolling ${item.name}`;

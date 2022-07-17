@@ -5,18 +5,18 @@
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
             <div>
                 <label class="resource-label">{{localize "ExEss.Cost"}}: </label>
-                <input type="text" name="data.cost" value="{{data.data.cost}}" style="width:55px;" />
+                <input type="text" name="system.cost" value="{{system.cost}}" style="width:55px;" />
                 <label class="resource-label">{{localize "ExEss.Circle"}}: </label>
-                <select name="data.circle" data-type="String">
-                    {{#select data.data.circle}}
+                <select name="system.circle" data-type="String">
+                    {{#select system.circle}}
                         <option value="first">{{localize "ExEss.First"}} {{localize "ExEss.Circle"}}</option>
                         <option value="second">{{localize "ExEss.Second"}} {{localize "ExEss.Circle"}}</option>
                         <option value="third">{{localize "ExEss.Third"}} {{localize "ExEss.Circle"}}</option>
                     {{/select}}
                 </select>
                 <label class="resource-label">{{localize "ExEss.Type"}}: </label>
-                <select name="data.spelltype" data-type="String">
-                    {{#select data.data.spelltype}}
+                <select name="system.spelltype" data-type="String">
+                    {{#select system.spelltype}}
                         <option value="universal">{{localize "ExEss.Universal"}}</option>
                         <option value="necromancy">{{localize "ExEss.Necromancy"}}</option>
                         <option value="sorcery">{{localize "ExEss.Sorcery"}}</option>
@@ -35,7 +35,7 @@
     <section class="sheet-body">
         {{!-- Description Tab --}}
         <div class="tab" data-group="primary" data-tab="description">
-            {{editor content=data.data.description target="data.description" button=true owner=owner editable=true}}
+            {{editor system.description target="system.description" button=true owner=owner editable=true}}
         </div>
 
         <div class="tab" data-group="primary" data-tab="effects">

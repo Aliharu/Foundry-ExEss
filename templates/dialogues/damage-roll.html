@@ -3,28 +3,28 @@
         <div class="resource flex-center grid-2col mb-2">
             <div>
                 <label class="resource-label">{{localize "ExEss.Successes"}} </label>
-                <input name="object.accuracyResult" value="{{data.accuracyResult}}" type="number">
+                <input name="object.accuracyResult" value="{{system.accuracyResult}}" type="number">
             </div>
-            {{#ifEquals data.rollType 'gambit'}}
+            {{#ifEquals system.rollType 'gambit'}}
             <div>
                 <label class="resource-label">{{localize "ExEss.PowerSpent"}} </label>
-                <input name="object.powerSpent" value="{{data.powerSpent}}" type="number">
+                <input name="object.powerSpent" value="{{system.powerSpent}}" type="number">
             </div>
             {{/ifEquals}}
-            {{#ifEquals data.rollType 'decisive'}}
+            {{#ifEquals system.rollType 'decisive'}}
             <div>
                 <label class="resource-label">{{localize "ExEss.Power"}} </label>
-                <input name="object.power" value="{{data.power}}" type="number">
+                <input name="object.power" value="{{system.power}}" type="number">
             </div>
             {{/ifEquals}}
-            {{#ifEquals data.rollType 'withering'}}
+            {{#ifEquals system.rollType 'withering'}}
             <div>
                 <label class="resource-label">{{localize "ExEss.Overwhelming"}} </label>
-                <input name="object.overwhelming" value="{{data.overwhelming}}" type="number">
+                <input name="object.overwhelming" value="{{system.overwhelming}}" type="number">
             </div>
             {{/ifEquals}}
         </div>
-        {{#ifEquals data.rollType 'decisive'}}
+        {{#ifEquals system.rollType 'decisive'}}
         <div class="flex-center resource-label" style="font-weight: bold;">
             Damage
         </div>
@@ -32,22 +32,22 @@
             <div class="resource grid grid-2col flex-center">
                 <div>
                     <label class="resource-label">{{localize "ExEss.DamageDice"}} </label>
-                    <input name="object.damage.damageDice" value="{{data.damage.damageDice}}" type="number">
+                    <input name="object.damage.damageDice" value="{{system.damage.damageDice}}" type="number">
                 </div>
                 <div>
                     <label class="resource-label">{{localize "ExEss.DamageSuccesses"}} </label>
-                    <input name="object.damage.damageSuccessModifier" value="{{data.damage.damageSuccessModifier}}"
+                    <input name="object.damage.damageSuccessModifier" value="{{system.damage.damageSuccessModifier}}"
                         type="number">
                 </div>
             </div>
             <div class="resource grid grid-2col flex-center">
                 <div>
                     <label class="resource-label">{{localize "ExEss.DoubleSuccess"}} </label>
-                    <input name="object.damage.doubleSuccess" value="{{data.damage.doubleSuccess}}" type="number">
+                    <input name="object.damage.doubleSuccess" value="{{system.damage.doubleSuccess}}" type="number">
                 </div>
                 <div>
                     <label class="resource-label">{{localize "ExEss.TargetNumber"}} </label>
-                    <input name="object.damage.targetNumber" value="{{data.damage.targetNumber}}" type="number">
+                    <input name="object.damage.targetNumber" value="{{system.damage.targetNumber}}" type="number">
                 </div>
             </div>
         </div>
@@ -56,19 +56,19 @@
         <div class="flex-center resource-label" style="font-weight: bold;">
             Defender
         </div>
-        <div class="resource {{#ifEquals data.rollType 'decisive'}} grid-2col {{/ifEquals}} flex-center mb-2">
+        <div class="resource {{#ifEquals system.rollType 'decisive'}} grid-2col {{/ifEquals}} flex-center mb-2">
             <div>
                 <div class="flex-center resource-label">
                     {{localize "ExEss.Defense"}}
                 </div>
-                <input name="object.defense" value="{{data.defense}}" type="number">
+                <input name="object.defense" value="{{system.defense}}" type="number">
             </div>
-            {{#ifEquals data.rollType 'decisive'}}
+            {{#ifEquals system.rollType 'decisive'}}
             <div>
                 <div class="flex-center resource-label">
                     {{localize "ExEss.Soak"}}
                 </div>
-                <input name="object.soak" value="{{data.soak}}" type="number">
+                <input name="object.soak" value="{{system.soak}}" type="number">
             </div>
             {{/ifEquals}}
         </div>
@@ -85,12 +85,12 @@
             </label>
             <div class="resource flex-center grid grid-2col">
                 <span class="resource-label">Double Extra Successes</span>
-                <input name="object.damage.doubleExtraSuccess" value="{{data.damage.doubleExtraSuccess}}"
-                    type="checkbox" {{checked data.damage.doubleExtraSuccess}}>
-                {{#ifEquals data.rollType 'decisive'}}
+                <input name="object.damage.doubleExtraSuccess" value="{{system.damage.doubleExtraSuccess}}"
+                    type="checkbox" {{checked system.damage.doubleExtraSuccess}}>
+                {{#ifEquals system.rollType 'decisive'}}
                 <label class="resource-label">{{localize "ExEss.DamageType"}}</label>
-                <select name="object.damage.type" value="{{data.damage.type}}" data-type="String">
-                    {{#select data.damage.type}}
+                <select name="object.damage.type" value="{{system.damage.type}}" data-type="String">
+                    {{#select system.damage.type}}
                     <option value="lethal">{{localize "ExEss.Lethal"}}</option>
                     <option value="aggravated">{{localize "ExEss.Aggravated"}}</option>
                     {{/select}}
