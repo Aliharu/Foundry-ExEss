@@ -10,9 +10,8 @@ export class ExaltedessenceItem extends Item {
     super.prepareData();
 
     // Get the Item's data
-    const itemData = this.data;
+    const itemData = this.system;
     const actorData = this.actor ? this.actor.system : {};
-    const data = itemData.data;
   }
 
   async _preCreate(createData, options, userId) {

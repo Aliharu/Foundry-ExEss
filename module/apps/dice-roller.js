@@ -4,13 +4,13 @@ export class RollForm extends FormApplication {
         this.actor = actor;
 
         if (data.rollId) {
-            this.object = this.actor.data.data.savedRolls[data.rollId];
+            this.object = this.actor.system.savedRolls[data.rollId];
         }
         else {
             this.object.rollType = data.rollType;
             this.object.resolve = 0;
             if (data.rollType !== 'base') {
-                if (this.actor.data.type === 'npc') {
+                if (this.actor.type === 'npc') {
                     this.object.pool = data.pool || "primary";
                 }
                 else {
@@ -22,7 +22,7 @@ export class RollForm extends FormApplication {
                     }
                     this.object.ability = data.ability || "athletics";
                 }
-                this.object.characterType = this.actor.data.type;
+                this.object.characterType = this.actor.type;
                 this.object.buildPowerTarget = 'self';
 
 
@@ -31,10 +31,10 @@ export class RollForm extends FormApplication {
                 this.object.doubleExtraSuccess = false;
                 this.object.resolve = 0;
                 this.object.accuracySuccesses = data.accuracy || 0;
-                this.object.power = this.actor.data.data.power.value || 0;
+                this.object.power = this.actor.system.power.value || 0;
                 this.object.damageSuccesses = data.damage || 0;
                 this.object.overwhelming = data.overwhelming || 0;
-                this.object.conditions = (this.actor.token && this.actor.token.data.actorData.effects) ? this.actor.token.data.actorData.effects : [];
+                this.object.conditions = (this.actor.token && this.actor.token.actorData.effects) ? this.actor.token.actorData.effects : [];
                 this.object.weaponType = data.weaponType || 'melee';
                 this.object.diceModifier = 0;
 
@@ -69,7 +69,7 @@ export class RollForm extends FormApplication {
             this.object.flurry = false;
             this.object.woundPenalty = true;
             this.object.stunt = false;
-            if (data.rollType !== 'base' && this.actor.data.type === 'character') {
+            if (data.rollType !== 'base' && this.actor.type === 'character') {
                 this.object.stunt = true;
             }
             this.object.armorPenalty = false;
@@ -127,29 +127,29 @@ export class RollForm extends FormApplication {
             this.object.target = Array.from(game.user.targets)[0] || null;
 
             if (this.object.target) {
-                this.object.defense = this.object.target.actor.data.data.defence.value;
-                this.object.soak = this.object.target.actor.data.data.soak.value;
+                this.object.defense = this.object.target.actor.system.defence.value;
+                this.object.soak = this.object.target.actor.system.soak.value;
 
                 if (this.object.rollType === 'social') {
-                    this.object.resolve = this.object.target.actor.data.data.resolve.value;
+                    this.object.resolve = this.object.target.actor.system.resolve.value;
                 }
 
-                if (this.object.target.data.actorData.effects) {
-                    if (this.object.target.data.actorData.effects.some(e => e.name === 'concealment')) {
+                if (this.object.target.actorData.effects) {
+                    if (this.object.target.actorData.effects.some(e => e.name === 'concealment')) {
                         this.object.diceModifier -= 2;
                     }
-                    if (this.object.target.data.actorData.effects.some(e => e.name === 'prone')) {
+                    if (this.object.target.actorData.effects.some(e => e.name === 'prone')) {
                         this.object.defense -= 2;
                     }
-                    if (this.object.target.data.actorData.effects.some(e => e.name === 'surprised')) {
+                    if (this.object.target.actorData.effects.some(e => e.name === 'surprised')) {
                         this.object.defense -= 1;
                     }
-                    if (this.object.target.data.actorData.effects.some(e => e.name === 'lightcover')) {
+                    if (this.object.target.actorData.effects.some(e => e.name === 'lightcover')) {
                         if (this.object.weaponType !== 'melee') {
                             this.object.defense += 1;
                         }
                     }
-                    if (this.object.target.data.actorData.effects.some(e => e.name === 'heavycover')) {
+                    if (this.object.target.actorData.effects.some(e => e.name === 'heavycover')) {
                         if (this.object.weaponType !== 'melee') {
                             this.object.defense += 2;
                         }
@@ -280,18 +280,18 @@ export class RollForm extends FormApplication {
             dice = this.object.dice;
         }
         else {
-            if (this.actor.data.type === 'character') {
-                let attributeDice = this.actor.data.data.attributes[this.object.attribute].value;
-                let abilityDice = this.actor.data.data.abilities[this.object.ability].value;
+            if (this.actor.type === 'character') {
+                let attributeDice = this.actor.system.attributes[this.object.attribute].value;
+                let abilityDice = this.actor.system.abilities[this.object.ability].value;
 
                 if (this.object.attributeExcellency) {
                     attributeDice = attributeDice * 2;
-                    if (this.actor.data.data.details.exalt === "alchemical") {
-                        if (this.actor.data.data.attributes[this.object.attribute].aug) {
-                            if (this.actor.data.data.attributes[this.object.attribute].value < 5) {
+                    if (this.actor.system.details.exalt === "alchemical") {
+                        if (this.actor.system.attributes[this.object.attribute].aug) {
+                            if (this.actor.system.attributes[this.object.attribute].value < 5) {
                                 attributeDice++;
                             }
-                            if (this.actor.data.data.essence.value > 1) {
+                            if (this.actor.system.essence.value > 1) {
                                 if (this.object.doubleSuccess === 10) {
                                     this.object.doubleSuccess = 9;
                                 }
@@ -306,15 +306,15 @@ export class RollForm extends FormApplication {
                     abilityDice = abilityDice * 2;
                 }
 
-                if (this.actor.data.data.creaturetype === 'exalt') {
-                    if (this.actor.data.data.details.exalt === "getimian") {
-                        if (this.object.attribute === "force" && (this.actor.data.data.still.total < this.actor.data.data.flowing.total)) {
+                if (this.actor.system.creaturetype === 'exalt') {
+                    if (this.actor.system.details.exalt === "getimian") {
+                        if (this.object.attribute === "force" && (this.actor.system.still.total < this.actor.system.flowing.total)) {
                             this.object.successModifier += 1;
                         }
-                        if (this.object.attribute === "finesse" && (this.actor.data.data.still.total > this.actor.data.data.flowing.total)) {
+                        if (this.object.attribute === "finesse" && (this.actor.system.still.total > this.actor.system.flowing.total)) {
                             this.object.successModifier += 1;
                         }
-                        if (this.object.attribute === "fortitude" && (this.actor.data.data.still.total >= (this.actor.data.data.flowing.total - 1) && this.actor.data.data.still.total <= (this.actor.data.data.flowing.total + 1))) {
+                        if (this.object.attribute === "fortitude" && (this.actor.system.still.total >= (this.actor.system.flowing.total - 1) && this.actor.system.still.total <= (this.actor.system.flowing.total + 1))) {
                             this.object.successModifier += 1;
                         }
                     }
@@ -322,8 +322,8 @@ export class RollForm extends FormApplication {
 
                 dice = attributeDice + abilityDice;
             }
-            else if (this.actor.data.type === 'npc') {
-                let poolDice = this.actor.data.data.pools[this.object.pool].value;
+            else if (this.actor.type === 'npc') {
+                let poolDice = this.actor.system.pools[this.object.pool].value;
                 dice = poolDice;
 
                 if (this.object.poolExcellency) {
@@ -335,12 +335,12 @@ export class RollForm extends FormApplication {
                     }
                 }
 
-                if (this.actor.data.data.battlegroup && this.object.rollType == 'attack') {
-                    dice += this.actor.data.data.drill.value;
+                if (this.actor.system.battlegroup && this.object.rollType == 'attack') {
+                    dice += this.actor.system.drill.value;
                 }
             }
-            if (this.object.woundPenalty && this.actor.data.data.health.penalty !== 'inc') {
-                dice -= this.actor.data.data.health.penalty;
+            if (this.object.woundPenalty && this.actor.system.health.penalty !== 'inc') {
+                dice -= this.actor.system.health.penalty;
             }
             if (this.object.armorPenalty) {
                 for (let armor of this.actor.armor) {
@@ -457,8 +457,8 @@ export class RollForm extends FormApplication {
         var total = this.object.total - 3;
         let self = (this.object.buildPowerTarget || 'self') === 'self';
 
-        if (this.actor.data.type === 'npc' && this.object.rollType === 'buildPower') {
-            if (this.actor.data.data.battlegroup) {
+        if (this.actor.type === 'npc' && this.object.rollType === 'buildPower') {
+            if (this.actor.system.battlegroup) {
                 this.object.successModifier += data.drill.value;
             }
         }
@@ -476,14 +476,14 @@ export class RollForm extends FormApplication {
             if (self) {
                 const actorData = duplicate(this.actor);
                 if (this.object.rollType === 'buildPower') {
-                    if (total + actorData.data.power.value > 10) {
-                        const extraPowerValue = Math.floor((total + 1 + actorData.data.power.value - 10));
+                    if (total + actorData.system.power.value > 10) {
+                        const extraPowerValue = Math.floor((total + 1 + actorData.system.power.value - 10));
                         extraPower = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
                     }
-                    actorData.data.power.value = Math.min(10, total + actorData.data.power.value + 1);
+                    actorData.system.power.value = Math.min(10, total + actorData.system.power.value + 1);
                 }
                 else {
-                    actorData.data.will.value = Math.min(10, total + actorData.data.will.value + 1);
+                    actorData.system.will.value = Math.min(10, total + actorData.system.will.value + 1);
                 }
                 this.actor.update(actorData);
             }
@@ -558,9 +558,9 @@ export class RollForm extends FormApplication {
         }
         var messageContent = '';
 
-        if (this.actor.data.type === 'npc') {
-            if (actorData.data.battlegroup) {
-                this.object.overwhelming = Math.min(actorData.data.size.value + 1, 5);
+        if (this.actor.type === 'npc') {
+            if (actorData.system.battlegroup) {
+                this.object.overwhelming = Math.min(actorData.system.size.value + 1, 5);
             }
         }
 
@@ -569,14 +569,14 @@ export class RollForm extends FormApplication {
             let extraPowerMessage = ``;
             if (this.object.rollType === 'withering') {
                 overwhlemingMessage = `<h4 class="dice-total">${this.object.overwhelming} Power Built!</h4>`;
-                actorData.data.power.value = Math.min(10, this.object.overwhelming + actorData.data.power.value);
-                if (this.object.overwhelming + actorData.data.power.value > 10) {
-                    const extraPowerValue = Math.floor((this.object.overwhelming + actorData.data.power.value - 10));
+                actorData.system.power.value = Math.min(10, this.object.overwhelming + actorData.system.power.value);
+                if (this.object.overwhelming + actorData.system.power.value > 10) {
+                    const extraPowerValue = Math.floor((this.object.overwhelming + actorData.system.power.value - 10));
                     extraPowerMessage = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
                 }
             }
             else {
-                actorData.data.power.value = Math.max(0, actorData.data.power.value - 1);
+                actorData.system.power.value = Math.max(0, actorData.system.power.value - 1);
             }
             this.actor.update(actorData);
             messageContent = `
@@ -606,9 +606,9 @@ export class RollForm extends FormApplication {
             if (this.object.rollType === 'decisive') {
                 // Deal Damage
                 let damage = postDefenceTotal + this.object.power + this.object.damage.damageDice;
-                if (this.actor.data.type === 'npc') {
-                    if (actorData.data.battlegroup) {
-                        damage += actorData.data.drill.value;
+                if (this.actor.type === 'npc') {
+                    if (actorData.system.battlegroup) {
+                        damage += actorData.system.drill.value;
                     }
                 }
                 let damageRoll = new Roll(`${damage}d10${this.object.damage.rerollFailed ? `r<${this.object.damage.targetNumber}` : ""}cs>=${this.object.damage.targetNumber}`).evaluate({ async: false });
@@ -630,7 +630,7 @@ export class RollForm extends FormApplication {
                 if (damageBonus) damageSuccess += damageBonus;
                 let damageTotal = damageSuccess - this.object.soak;
 
-                actorData.data.power.value = Math.max(0, actorData.data.power.value - this.object.power);
+                actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.power);
                 this.actor.update(actorData);
                 if(damageTotal > 0) {
                     this.dealHealthDamage(damageTotal);
@@ -669,11 +669,11 @@ export class RollForm extends FormApplication {
                     powerGained = this.object.overwhelming + 1;
                 }
                 let extraPowerMessage = ``;
-                if (powerGained + actorData.data.power.value > 10) {
-                    const extraPowerValue = Math.floor((powerGained + actorData.data.power.value - 10));
+                if (powerGained + actorData.system.power.value > 10) {
+                    const extraPowerValue = Math.floor((powerGained + actorData.system.power.value - 10));
                     extraPowerMessage = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
                 }
-                actorData.data.power.value = Math.min(10, powerGained + actorData.data.power.value);
+                actorData.system.power.value = Math.min(10, powerGained + actorData.system.power.value);
                 this.actor.update(actorData);
                 messageContent = `
           <div class="chat-card">
@@ -698,7 +698,7 @@ export class RollForm extends FormApplication {
                 ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
             }
             else if (this.object.rollType === 'gambit') {
-                actorData.data.power.value = Math.max(0, actorData.data.power.value - this.object.powerSpent);
+                actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.powerSpent);
                 this.actor.update(actorData);
                 messageContent = `
           <div class="chat-card">
@@ -760,19 +760,19 @@ export class RollForm extends FormApplication {
             let totalHealth = 0;
             const targetActorData = duplicate(this.object.target.actor);
             if(this.object.target.actor.type === 'npc') {
-                totalHealth = targetActorData.data.health.max;
+                totalHealth = targetActorData.system.health.max;
             }
             else {
-                for (let [key, health_level] of Object.entries(targetActorData.data.health.levels)) {
+                for (let [key, health_level] of Object.entries(targetActorData.system.health.levels)) {
                     totalHealth += health_level.value;
                 }
             }
 
             if (this.object.damage.type === 'lethal') {
-                targetActorData.data.health.lethal = Math.min(totalHealth - targetActorData.data.health.aggravated, targetActorData.data.health.lethal + characterDamage);
+                targetActorData.system.health.lethal = Math.min(totalHealth - targetActorData.system.health.aggravated, targetActorData.system.health.lethal + characterDamage);
             }
             if (this.object.damage.type === 'aggravated') {
-                targetActorData.data.health.aggravated = Math.min(totalHealth - targetActorData.data.health.lethal, targetActorData.data.health.aggravated + characterDamage);
+                targetActorData.system.health.aggravated = Math.min(totalHealth - targetActorData.system.health.lethal, targetActorData.system.health.aggravated + characterDamage);
             }
             this.object.target.actor.update(targetActorData);
         }
@@ -787,7 +787,7 @@ export class RollForm extends FormApplication {
     _getHighestAttribute() {
         var highestAttributeNumber = 0;
         var highestAttribute = "force";
-        for (let [name, attribute] of Object.entries(this.actor.data.data.attributes)) {
+        for (let [name, attribute] of Object.entries(this.actor.system.attributes)) {
             if (attribute.value > highestAttributeNumber) {
                 highestAttributeNumber = attribute.value;
                 highestAttribute = name;

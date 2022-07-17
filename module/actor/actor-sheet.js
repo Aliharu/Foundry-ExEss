@@ -24,7 +24,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
  * @type {String}
  */
   get template() {
-    if (this.actor.data.type === "npc") return "systems/exaltedessence/templates/actor/npc-sheet.html";
+    if (this.actor.type === "npc") return "systems/exaltedessence/templates/actor/npc-sheet.html";
     return "systems/exaltedessence/templates/actor/actor-sheet.html";
   }
 
@@ -195,7 +195,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       if (trait.custom) {
         trait.custom.split(";").forEach((c, i) => trait.selected[`custom${i + 1}`] = c.trim());
       }
-      trait.cssClass = !isObjectEmpty(trait.selected) ? "" : "inactive";
+      trait.cssClass = !isEmpty(trait.selected) ? "" : "inactive";
     }
   }
 
@@ -353,18 +353,18 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     html.find('.roll-withering').mousedown(ev => {
       let item = this.actor.items.get($(ev.target).attr("data-item-id"));
-      new RollForm(this.actor, { event: ev }, {}, { rollType: 'withering', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming, "ability": item.data.data.weapontype === "melee" ? "close" : "ranged", 'weaponType': item.data.data.weapontype  }).render(true);
+      new RollForm(this.actor, { event: ev }, {}, { rollType: 'withering', 'accuracy': item.system.accuracy, 'damage': item.system.damage, 'overwhelming': item.system.overwhelming, "ability": item.system.weapontype === "melee" ? "close" : "ranged", 'weaponType': item.system.weapontype  }).render(true);
       // openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'withering');
     });
 
     html.find('.roll-decisive').mousedown(ev => {
       let item = this.actor.items.get($(ev.target).attr("data-item-id"));
-      new RollForm(this.actor, { event: ev }, {}, { rollType: 'decisive', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming, "ability": item.data.data.weapontype === "melee" ? "close" : "ranged", 'weaponType': item.data.data.weapontype  }).render(true);
+      new RollForm(this.actor, { event: ev }, {}, { rollType: 'decisive', 'accuracy': item.system.accuracy, 'damage': item.system.damage, 'overwhelming': item.system.overwhelming, "ability": item.system.weapontype === "melee" ? "close" : "ranged", 'weaponType': item.system.weapontype  }).render(true);
     });
 
     html.find('.roll-gambit').mousedown(ev => {
       let item = this.actor.items.get($(ev.target).attr("data-item-id"));
-      new RollForm(this.actor, { event: ev }, {}, { rollType: 'gambit', 'accuracy': item.data.data.accuracy, 'damage': item.data.data.damage, 'overwhelming': item.data.data.overwhelming, "ability": item.data.data.weapontype === "melee" ? "close" : "ranged", 'weaponType': item.data.data.weapontype }).render(true);
+      new RollForm(this.actor, { event: ev }, {}, { rollType: 'gambit', 'accuracy': item.system.accuracy, 'damage': item.system.damage, 'overwhelming': item.system.overwhelming, "ability": item.system.weapontype === "melee" ? "close" : "ranged", 'weaponType': item.system.weapontype }).render(true);
     });
 
     html.find('#anima-up').click(ev => {
@@ -442,7 +442,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
   _updateAnima(direction) {
     const actorData = duplicate(this.actor);
-    const data = actorData.data;
+    const data = actorData.system;
     let newLevel = 0;
     if (direction === "up") {
       if (data.anima.value == 0) {
@@ -485,7 +485,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   async calculateHealth() {
     let confirmed = false;
     const actorData = duplicate(this.actor);
-    const data = actorData.data;
+    const data = actorData.system;
     let template;
     let html;
 
@@ -529,7 +529,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
   async catchBreath() {
     const actorData = duplicate(this.actor);
-    const data = actorData.data;
+    const data = actorData.system;
     data.anima.value = 0;
     data.motes.total = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
     data.motes.value = Math.min(data.motes.value + Math.ceil(data.motes.total / 2), data.motes.total);
@@ -539,7 +539,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
   async recoverHealth() {
     const actorData = duplicate(this.actor);
-    const data = actorData.data;
+    const data = actorData.system;
     data.health.lethal = 0;
     this.actor.update(actorData);
   }
@@ -558,7 +558,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
   async fullRest() {
     const actorData = duplicate(this.actor);
-    const data = actorData.data;
+    const data = actorData.system;
     data.anima.value = 0;
     data.motes.total = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
     data.motes.value = data.motes.total;
@@ -583,7 +583,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   async pickColor() {
     let confirmed = false;
     const actorData = duplicate(this.actor);
-    const data = actorData.data;
+    const data = actorData.system;
     const template = "systems/exaltedessence/templates/dialogues/color-picker.html"
     const html = await renderTemplate(template, { 'color': data.details.color });
     new Dialog({
@@ -670,7 +670,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     steps.each(function (i) {
       if (i <= index) {
         // $(this).addClass('active')
-        $(this).css("background-color", actorData.data.details.color);
+        $(this).css("background-color", actorData.system.details.color);
       }
     })
     this._assignToActorField(fields, index + 1)
@@ -682,7 +682,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     if (fields.length === 2 && fields[0] === 'items') {
       for (const i of actorData.items) {
         if (fields[1] === i._id) {
-          i.data.points = value
+          i.system.points = value
           break
         }
       }
@@ -700,7 +700,6 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
   _onDotCounterEmpty(event) {
     event.preventDefault()
-    const actorData = duplicate(this.actor)
     const element = event.currentTarget
     const parent = $(element.parentNode)
     const fieldStrings = parent[0].dataset.name
@@ -718,7 +717,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       $(this).find('.resource-value-step').each(function (i) {
         if (i + 1 <= value) {
           $(this).addClass('active')
-          $(this).css("background-color", actorData.data.details.color);
+          $(this).css("background-color", actorData.system.details.color);
         }
       })
     })
@@ -727,7 +726,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       $(this).find('.resource-value-static-step').each(function (i) {
         if (i + 1 <= value) {
           $(this).addClass('active')
-          $(this).css("background-color", actorData.data.details.color);
+          $(this).css("background-color", actorData.system.details.color);
         }
       })
     })
@@ -761,8 +760,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const element = event.currentTarget
     const attribute = element.dataset.name
     const actorData = duplicate(this.actor)
-    var augStatus = actorData.data.attributes[attribute].aug;
-    actorData.data.attributes[attribute].aug = !augStatus;
+    var augStatus = actorData.system.attributes[attribute].aug;
+    actorData.system.attributes[attribute].aug = !augStatus;
     this.actor.update(actorData);
   }
 
@@ -785,10 +784,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const itemData = {
       name: name,
       type: type,
-      data: data
+      system: data
     };
     // Remove the type from the dataset since it's in the itemData.type prop.
-    delete itemData.data["type"];
+    delete itemData.system["type"];
 
     // Finally, create the item!
     return this.actor.createEmbeddedDocuments("Item", [itemData])
@@ -819,7 +818,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const dataset = element.dataset;
 
     if (dataset.roll) {
-      let roll = new Roll(dataset.roll, this.actor.data.data);
+      let roll = new Roll(dataset.roll, this.actor.system);
       let label = dataset.label ? `Rolling ${dataset.label}` : '';
       roll.roll().toMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
@@ -845,7 +844,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const templateData = {
       actor: this.actor,
       tokenId: token?.uuid || null,
-      item: item.data,
+      item: item,
       labels: this.labels,
     };
     const html = await renderTemplate("systems/exaltedessence/templates/chat/item-card.html", templateData);
@@ -873,19 +872,19 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     let item = this.actor.items.get(li.data("item-id"));
 
     if (item.type === 'charm') {
-      actorData.data.motes.value = Math.max(0, actorData.data.motes.value - item.data.data.cost.motes);
-      actorData.data.motes.commited += item.data.data.cost.committed;
-      actorData.data.stunt.value = Math.max(0, actorData.data.stunt.value - item.data.data.cost.stunt);
-      actorData.data.power.value = Math.max(0, actorData.data.power.value - item.data.data.cost.power);
-      actorData.data.anima.value = Math.max(0, actorData.data.anima.value - item.data.data.cost.anima);
+      actorData.system.motes.value = Math.max(0, actorData.system.motes.value - item.system.cost.motes);
+      actorData.system.motes.commited += item.system.cost.committed;
+      actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - item.system.cost.stunt);
+      actorData.system.power.value = Math.max(0, actorData.system.power.value - item.system.cost.power);
+      actorData.system.anima.value = Math.max(0, actorData.system.anima.value - item.system.cost.anima);
       let totalHealth = 0;
-      for (let [key, health_level] of Object.entries(actorData.data.health.levels)) {
+      for (let [key, health_level] of Object.entries(actorData.system.health.levels)) {
         totalHealth += health_level.value;
       }
-      actorData.data.health.lethal = Math.min(totalHealth - actorData.data.health.aggravated, actorData.data.health.lethal + item.data.data.cost.health);
+      actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.data.health.lethal + item.system.cost.health);
     }
     if (item.type === 'spell') {
-      actorData.data.will.value = Math.max(0, actorData.data.will.value - item.data.data.cost);
+      actorData.system.will.value = Math.max(0, actorData.system.will.value - item.system.cost);
     }
     this.actor.update(actorData);
   }
