@@ -34,9 +34,9 @@
     {{#each section.effects as |effect|}}
         <li class="item effect flexrow" data-effect-id="{{effect.id}}">
             <!-- <div class="item-name effect-name flexrow"> -->
-            <div class="item-image"><img src="{{effect.system.icon}}" title="{{effect.system.label}}" width="24" height="24" /></div>
+            <div class="item-image"><img class="list-item-image" src="{{effect.icon}}" title="{{effect.label}}" width="24" height="24" /></div>
             <!-- </div> -->
-            <h4>{{effect.system.label}}</h4>
+            <h4>{{effect.label}}</h4>
 
             <div class="effect-source">{{effect.sourceName}}</div>
             <div class="effect-duration">{{effect.duration.label}}</div>

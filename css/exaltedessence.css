@@ -164,6 +164,7 @@
 }
 
 .exaltedessence .sheet-header .profile-img {
+  background: black;
   -webkit-box-flex: 0;
   -ms-flex: 0 0 100px;
   flex: 0 0 100px;
@@ -344,6 +345,10 @@
   border-bottom: 1px solid #BBB;
 }
 
+.exaltedessence .items-list .item .list-item-image {
+  background: black;
+}
+
 .exaltedessence .items-list .item .item-image {
   -webkit-box-flex: 0;
   -ms-flex: 0 0 24px;
@@ -412,6 +417,15 @@
 
 .exaltedessence .items-list .effects-list {
   padding: 0;
+}
+
+.exaltedessence .window-content {
+  background: url("../assets/backgrounds/solar-background.jpg");
+}
+
+.solar-background .window-content {
+  background: url("../assets/backgrounds/solar-background.jpg");
+  background-size: cover;
 }
 
 .exaltedessence .window-content .abilities,

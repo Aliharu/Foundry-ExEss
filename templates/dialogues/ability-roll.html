@@ -1,18 +1,18 @@
 <form>
     <div class="sheet-body exaltedessence">
-        {{#ifEquals system.rollType 'base'}}
+        {{#ifEquals data.rollType 'base'}}
         <div class="flex-center resource-label" style="font-weight: bold;">
             {{localize "ExEss.SocialInfluence"}}
         </div>
         {{/ifEquals}}
-        {{#ifEquals system.rollType 'buildPower'}}
+        {{#ifEquals data.rollType 'buildPower'}}
         <div class="flex-center resource-label" style="font-weight: bold;">
             {{localize "ExEss.BuildPower"}}
         </div>
         <div class="resource grid grid-2col flex-center">
             <label class="resource-label">{{localize "ExEss.Target"}}: </label>
-            <select name="object.buildPowerTarget" value="{{system.buildPowerTarget}}" data-type="String">
-                {{#select system.buildPowerTarget}}
+            <select name="object.buildPowerTarget" value="{{data.buildPowerTarget}}" data-type="String">
+                {{#select data.buildPowerTarget}}
                 <option value="self">{{localize "ExEss.Self"}}</option>
                 <option value="allies">{{localize "ExEss.Allies"}}</option>
                 {{/select}}
@@ -20,12 +20,12 @@
         </div>
         {{/ifEquals}}
         {{> systems/exaltedessence/templates/dialogues/ability-base.html}}
-        {{#ifEquals system.rollType 'social'}}
+        {{#ifEquals data.rollType 'social'}}
         <div class="resource grid grid-2col flex-center">
             <div>
                 <label class="resource-label">{{localize "ExEss.SupportingVirtue"}}</label>
-                <select name="object.supportedVirtue" value="{{system.supportedVirtue}}" data-type="String">
-                    {{#select system.supportedVirtue}}
+                <select name="object.supportedVirtue" value="{{data.supportedVirtue}}" data-type="String">
+                    {{#select data.supportedVirtue}}
                     <option value="0">{{localize "ExEss.None"}}</option>
                     <option value="2">{{localize "ExEss.Minor"}}</option>
                     <option value="3">{{localize "ExEss.Major"}}</option>
@@ -34,8 +34,8 @@
             </div>
             <div>
                 <label class="resource-label">{{localize "ExEss.OpposedVirtue"}} </label>
-                <select name="object.opposedVirtue" value="{{system.opposedVirtue}}" data-type="String">
-                    {{#select system.opposedVirtue}}
+                <select name="object.opposedVirtue" value="{{data.opposedVirtue}}" data-type="String">
+                    {{#select data.opposedVirtue}}
                     <option value="0">{{localize "ExEss.None"}}</option>
                     <option value="2">{{localize "ExEss.Minor"}}</option>
                     <option value="3">{{localize "ExEss.Major"}}</option>
@@ -44,8 +44,8 @@
             </div>
             <div>
                 <label class="resource-label">{{localize "ExEss.SupportingIntimacy"}}</label>
-                <select name="object.supportedIntimacy" value="{{system.supportedIntimacy}}" data-type="String">
-                    {{#select system.supportedIntimacy}}
+                <select name="object.supportedIntimacy" value="{{data.supportedIntimacy}}" data-type="String">
+                    {{#select data.supportedIntimacy}}
                     <option value="0">{{localize "ExEss.None"}}</option>
                     <option value="2">{{localize "ExEss.Minor"}}</option>
                     <option value="3">{{localize "ExEss.Major"}}</option>
@@ -54,8 +54,8 @@
             </div>
             <div>
                 <label class="resource-label">{{localize "ExEss.OpposedIntimacy"}} </label>
-                <select name="object.opposedIntimacy" value="{{system.opposedIntimacy}}" data-type="String">
-                    {{#select system.opposedIntimacy}}
+                <select name="object.opposedIntimacy" value="{{data.opposedIntimacy}}" data-type="String">
+                    {{#select data.opposedIntimacy}}
                     <option value="0">{{localize "ExEss.None"}}</option>
                     <option value="2">{{localize "ExEss.Minor"}}</option>
                     <option value="3">{{localize "ExEss.Major"}}</option>
@@ -84,7 +84,7 @@
             <label class="resource-label">{{localize "ExEss.Resolve"}}</label>
         </div>
         <div class="resource d-flex flex-center mb-1">
-            <input type="number" name="object.resolve" value="{{system.resolve}}">
+            <input type="number" name="object.resolve" value="{{data.resolve}}">
         </div>
         {{/ifEquals}}
         <div class="d-flex">

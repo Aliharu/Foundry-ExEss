@@ -110,7 +110,7 @@
   <div class="query-results">
     {{#each items as |item|}}
     <div class="search-item-row item-row cursor-pointer" data-item-id={{item.id}} data-filter-id={{item.filterId}}>
-      <div class="item-image mr-1"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+      <div class="item-image mr-1"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
       <div class="item-name">{{item.name}}</div>
     </div>
     {{/each}}

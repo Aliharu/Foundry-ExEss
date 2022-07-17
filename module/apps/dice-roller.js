@@ -134,22 +134,22 @@ export class RollForm extends FormApplication {
                     this.object.resolve = this.object.target.actor.system.resolve.value;
                 }
 
-                if (this.object.target.actorData.effects) {
-                    if (this.object.target.actorData.effects.some(e => e.name === 'concealment')) {
+                if (this.object.target.actor.effects) {
+                    if (this.object.target.actor.effects.some(e => e.name === 'concealment')) {
                         this.object.diceModifier -= 2;
                     }
-                    if (this.object.target.actorData.effects.some(e => e.name === 'prone')) {
+                    if (this.object.target.actor.effects.some(e => e.name === 'prone')) {
                         this.object.defense -= 2;
                     }
-                    if (this.object.target.actorData.effects.some(e => e.name === 'surprised')) {
+                    if (this.object.target.actor.effects.some(e => e.name === 'surprised')) {
                         this.object.defense -= 1;
                     }
-                    if (this.object.target.actorData.effects.some(e => e.name === 'lightcover')) {
+                    if (this.object.target.actor.effects.some(e => e.name === 'lightcover')) {
                         if (this.object.weaponType !== 'melee') {
                             this.object.defense += 1;
                         }
                     }
-                    if (this.object.target.actorData.effects.some(e => e.name === 'heavycover')) {
+                    if (this.object.target.actor.effects.some(e => e.name === 'heavycover')) {
                         if (this.object.weaponType !== 'melee') {
                             this.object.defense += 2;
                         }
@@ -191,7 +191,7 @@ export class RollForm extends FormApplication {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["dialog"],
+            classes: ["dialog", `solar-background`],
             popOut: true,
             template: "systems/storypath-fvtt/templates/dialogues/skill-roll.html",
             id: "roll-form",
@@ -722,7 +722,7 @@ export class RollForm extends FormApplication {
             }
         }
         if (this.object.target && game.settings.get("exaltedessence", "calculateOnslaught")) {
-            const onslaught = this.object.target.actor.effects.find(i => i.data.label == "Onslaught");
+            const onslaught = this.object.target.actor.effects.find(i => i.label == "Onslaught");
             if (this.object.rollType === 'decisive') {
                 if (onslaught) {
                     onslaught.delete();
@@ -731,7 +731,7 @@ export class RollForm extends FormApplication {
             else if (this.object.rollType === 'withering') {
                 if (onslaught) {
                     let changes = duplicate(onslaught.data.changes);
-                    if (this.object.target.actor.data.data.hardness.value > 0) {
+                    if (this.object.target.actor.system.hardness.value > 0) {
                         changes[0].value = changes[0].value - 1;
                         onslaught.update({ changes });
                     }
