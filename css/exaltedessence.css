@@ -554,6 +554,11 @@
   text-shadow: 0 0 black;
 }
 
+.chat-message {
+  background: url("../assets/backgrounds/chat-background.jpg");
+  background-size: cover;
+}
+
 .roll-pool {
   cursor: pointer;
 }
@@ -578,6 +583,7 @@
   -ms-flex: 0 0 36px;
   flex: 0 0 36px;
   margin-right: 5px;
+  background: black;
 }
 
 .chat-card .card-content {
