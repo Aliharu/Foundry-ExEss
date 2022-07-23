@@ -23,6 +23,17 @@
 //   background-size: cover;
 // }
 
+@font-face {
+  font-family: "MinionPro";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../fonts/MinionPro.otf") format("truetype");
+}
+
+// * {
+//   font-family: "MinionPro";
+// }
+
 .exaltedessence .window-content {
   background: url('../assets/backgrounds/solar-background.jpg');
 }
