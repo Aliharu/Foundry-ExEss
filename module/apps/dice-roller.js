@@ -122,6 +122,9 @@ export class RollForm extends FormApplication {
         if (this.object.damage.type === undefined) {
             this.object.damage.type = 'lethal';
         }
+        if(this.object.diceToSuccesses === undefined) {
+            this.object.diceToSuccesses = 0;
+        }
 
         if (this.object.rollType !== 'base') {
             this.object.target = Array.from(game.user.targets)[0] || null;
@@ -377,7 +380,12 @@ export class RollForm extends FormApplication {
             dice += this.object.diceModifier;
         }
 
-        let roll = new Roll(`${dice}d10${rerollString}${this.object.rerollFailed ? `r<${this.update.targetNumber}` : ""}cs>=${this.object.targetNumber}`).evaluate({ async: false });
+        if(this.object.diceToSuccesses > 0) {
+            this.object.successModifier += Math.min(dice, this.object.diceToSuccesses);
+            dice = Math.max(0, dice - this.object.diceToSuccesses);
+        }
+
+        let roll = new Roll(`${dice}d10${rerollString}${this.object.rerollFailed ? `r<${this.object.targetNumber}` : ""}cs>=${this.object.targetNumber}`).evaluate({ async: false });
         let diceRoll = roll.dice[0].results;
         var failedDice = Math.min(dice - roll.total, this.object.rerollNumber);
         let rerolledDice = 0;
