@@ -354,7 +354,6 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     html.find('.roll-withering').mousedown(ev => {
       let item = this.actor.items.get($(ev.target).attr("data-item-id"));
       new RollForm(this.actor, { event: ev }, {}, { rollType: 'withering', 'accuracy': item.system.accuracy, 'damage': item.system.damage, 'overwhelming': item.system.overwhelming, "ability": item.system.weapontype === "melee" ? "close" : "ranged", 'weaponType': item.system.weapontype  }).render(true);
-      // openAttackDialogue(this.actor, $(ev.target).attr("data-accuracy"), $(ev.target).attr("data-damage"), $(ev.target).attr("data-overwhelming"), $(ev.target).attr("data-weapontype"), 'withering');
     });
 
     html.find('.roll-decisive').mousedown(ev => {

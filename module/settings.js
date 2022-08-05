@@ -16,4 +16,13 @@ export function registerSettings() {
         type: Boolean,
         config: true,
     });
+    
+    game.settings.register('exaltedessence', 'weaponToWithering', {
+        name: game.i18n.localize('ExEss.WeaponDamageWithering'),
+        hint: game.i18n.localize('ExEss.WeaponDamageWitheringDescription'),
+        default: false,
+        scope: 'world',
+        type: Boolean,
+        config: true,
+    });
 }

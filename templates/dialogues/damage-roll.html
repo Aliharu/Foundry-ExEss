@@ -24,6 +24,13 @@
             </div>
             {{/ifEquals}}
         </div>
+        {{#ifEquals data.rollType 'withering'}}
+        <div class="resource flex-center mb-2">
+            <label class="resource-label">{{localize "ExEss.BonusPower"}} </label>
+            <input name="object.bonusPower" value="{{data.bonusPower}}" type="number">
+        </div>
+        {{/ifEquals}}
+
         {{#ifEquals data.rollType 'decisive'}}
         <div class="flex-center resource-label" style="font-weight: bold;">
             Damage

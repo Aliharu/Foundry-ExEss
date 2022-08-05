@@ -297,5 +297,9 @@
     "ExEss.AutoDecisiveDamage": "Auto Decisive Damage",
     "ExEss.AutoDecisiveDamageDescription": "Health damage will be automatically added to characeters hit by decisive attack.",
     "ExEss.Lethal": "Lethal",
-    "ExEss.Aggravated": "Aggravated"
+    "ExEss.Aggravated": "Aggravated",
+
+    "ExEss.BonusPower": "Bonus Power",
+    "ExEss.WeaponDamageWithering": "Weapon damage to withering",
+    "ExEss.WeaponDamageWitheringDescription": "Add weapon damage to withering attacks."
 }

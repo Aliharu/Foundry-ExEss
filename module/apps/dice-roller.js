@@ -125,7 +125,14 @@ export class RollForm extends FormApplication {
         if(this.object.diceToSuccesses === undefined) {
             this.object.diceToSuccesses = 0;
         }
-
+        if(this.object.bonusPower === undefined) {
+            if(game.settings.get("exaltedessence", "weaponToWithering")) {
+                this.object.bonusPower = data.damage || 0;
+            }
+            else {
+                this.object.bonusPower = 0;
+            }
+        }
         if (this.object.rollType !== 'base') {
             this.object.target = Array.from(game.user.targets)[0] || null;
 
@@ -624,7 +631,6 @@ export class RollForm extends FormApplication {
                 let damageBonus = 0;
                 let getDamageDice = "";
                 for (let dice of damageDiceRoll) {
-                    // comment out if no double successes
                     if (dice.result >= this.object.damage.doubleSuccess) {
                         damageBonus++;
                         getDamageDice += `<li class="roll die d10 success double-success">${dice.result}</li>`;
@@ -672,7 +678,7 @@ export class RollForm extends FormApplication {
                 ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: damageRoll });
             }
             else if (this.object.rollType === 'withering') {
-                var powerGained = postDefenceTotal + 1;
+                var powerGained = postDefenceTotal + this.object.bonusPower + 1;
                 if (postDefenceTotal < this.object.overwhelming) {
                     powerGained = this.object.overwhelming + 1;
                 }
@@ -692,6 +698,7 @@ export class RollForm extends FormApplication {
                           <div class="dice-roll">
                               <div class="dice-result">
                                   <h4 class="dice-formula">${this.object.accuracyResult} Succeses vs ${this.object.defense} defense</h4>
+                                  <h4 class="dice-formula">${this.object.bonusPower} Bonus Power</h4>
                                   <h4 class="dice-formula">1 Base + ${postDefenceTotal} Extra Succeses</h4>
                                   <h4 class="dice-formula">${this.object.overwhelming} Overwhelming</h4>
                                   <h4 class="dice-total">${powerGained} Power Built!</h4>
