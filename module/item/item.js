@@ -18,7 +18,10 @@ export class ExaltedessenceItem extends Item {
     if (createData.type === 'intimacy') {
       this.updateSource({ img: "systems/exaltedessence/assets/icons/hearts.svg" });
     }
-    if (createData.type === 'spell' || createData.type === 'ritual') {
+    if (createData.type === 'spell') {
+      this.updateSource({ img: "systems/exaltedessence/assets/icons/magic-swirl.svg"  });
+    }
+    if (createData.type === 'ritual') {
       this.updateSource({ img: "icons/svg/book.svg" });
     }
     if (createData.type === 'merit') {

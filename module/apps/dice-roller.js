@@ -20,6 +20,7 @@ export class RollForm extends FormApplication {
                     else {
                         this.object.attribute = this._getHighestAttribute();
                     }
+                    this._checkAttributeBonuses();
                     this.object.ability = data.ability || "athletics";
                 }
                 this.object.characterType = this.actor.type;
@@ -122,11 +123,20 @@ export class RollForm extends FormApplication {
         if (this.object.damage.type === undefined) {
             this.object.damage.type = 'lethal';
         }
-        if(this.object.diceToSuccesses === undefined) {
+        if (this.object.damage.type === undefined) {
+            this.object.damage.type = 'lethal';
+        }
+        if (this.object.getimianflow === undefined && this.actor.type !== 'npc') {
+            this._checkAttributeBonuses();
+        }
+        if (this.object.augmentattribute === undefined && this.actor.type !== 'npc') {
+            this._checkExcellencyBonuses();
+        }
+        if (this.object.diceToSuccesses === undefined) {
             this.object.diceToSuccesses = 0;
         }
-        if(this.object.bonusPower === undefined) {
-            if(game.settings.get("exaltedessence", "weaponToWithering")) {
+        if (this.object.bonusPower === undefined) {
+            if (game.settings.get("exaltedessence", "weaponToWithering")) {
                 this.object.bonusPower = data.damage || 0;
             }
             else {
@@ -259,6 +269,17 @@ export class RollForm extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
 
+        html.on("change", "#attribute-select", ev => {
+            this._checkAttributeBonuses();
+            this._checkExcellencyBonuses();
+            this.render();
+        });
+
+        html.on("change", "#attribute-excellency-select", ev => {
+            this._checkExcellencyBonuses();
+            this.render();
+        });
+
         html.find('#roll-button').click((event) => {
             this._roll();
             this.close();
@@ -296,18 +317,16 @@ export class RollForm extends FormApplication {
 
                 if (this.object.attributeExcellency) {
                     attributeDice = attributeDice * 2;
-                    if (this.actor.system.details.exalt === "alchemical") {
-                        if (this.actor.system.attributes[this.object.attribute].aug) {
-                            if (this.actor.system.attributes[this.object.attribute].value < 5) {
-                                attributeDice++;
+                    if (this.object.augmentattribute) {
+                        if (this.actor.system.attributes[this.object.attribute].value < 5) {
+                            attributeDice++;
+                        }
+                        if (this.actor.system.essence.value > 1) {
+                            if (this.object.doubleSuccess === 10) {
+                                this.object.doubleSuccess = 9;
                             }
-                            if (this.actor.system.essence.value > 1) {
-                                if (this.object.doubleSuccess === 10) {
-                                    this.object.doubleSuccess = 9;
-                                }
-                                else if (this.object.doubleSuccess === 9) {
-                                    this.object.doubleSuccess = 8;
-                                }
+                            else if (this.object.doubleSuccess === 9) {
+                                this.object.doubleSuccess = 8;
                             }
                         }
                     }
@@ -316,18 +335,8 @@ export class RollForm extends FormApplication {
                     abilityDice = abilityDice * 2;
                 }
 
-                if (this.actor.system.creaturetype === 'exalt') {
-                    if (this.actor.system.details.exalt === "getimian") {
-                        if (this.object.attribute === "force" && (this.actor.system.still.total < this.actor.system.flowing.total)) {
-                            this.object.successModifier += 1;
-                        }
-                        if (this.object.attribute === "finesse" && (this.actor.system.still.total > this.actor.system.flowing.total)) {
-                            this.object.successModifier += 1;
-                        }
-                        if (this.object.attribute === "fortitude" && (this.actor.system.still.total >= (this.actor.system.flowing.total - 1) && this.actor.system.still.total <= (this.actor.system.flowing.total + 1))) {
-                            this.object.successModifier += 1;
-                        }
-                    }
+                if (this.object.getimianflow) {
+                    this.object.successModifier += 1;
                 }
 
                 dice = attributeDice + abilityDice;
@@ -387,7 +396,7 @@ export class RollForm extends FormApplication {
             dice += this.object.diceModifier;
         }
 
-        if(this.object.diceToSuccesses > 0) {
+        if (this.object.diceToSuccesses > 0) {
             this.object.successModifier += Math.min(dice, this.object.diceToSuccesses);
             dice = Math.max(0, dice - this.object.diceToSuccesses);
         }
@@ -646,7 +655,7 @@ export class RollForm extends FormApplication {
 
                 actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.power);
                 this.actor.update(actorData);
-                if(damageTotal > 0) {
+                if (damageTotal > 0) {
                     this.dealHealthDamage(damageTotal);
                 }
 
@@ -774,7 +783,7 @@ export class RollForm extends FormApplication {
         if (this.object.target && game.combat && game.settings.get("exaltedessence", "autoDecisiveDamage") && characterDamage > 0) {
             let totalHealth = 0;
             const targetActorData = duplicate(this.object.target.actor);
-            if(this.object.target.actor.type === 'npc') {
+            if (this.object.target.actor.type === 'npc') {
                 totalHealth = targetActorData.system.health.max;
             }
             else {
@@ -796,6 +805,31 @@ export class RollForm extends FormApplication {
 
     _roll() {
         this._abilityRoll();
+    }
+
+    _checkAttributeBonuses() {
+        this.object.getimianflow = false;
+        this.object.augmentattribute = false;
+        if (this.actor.type !== 'npc' || this.actor.system.creaturetype === 'exalt') {
+            if (this.actor.system.details.exalt === "getimian") {
+                if (this.object.attribute === "force" && (this.actor.system.still.total < this.actor.system.flowing.total)) {
+                    this.object.getimianflow = true;
+                }
+                if (this.object.attribute === "finesse" && (this.actor.system.still.total > this.actor.system.flowing.total)) {
+                    this.object.getimianflow = true;
+                }
+                if (this.object.attribute === "fortitude" && (this.actor.system.still.total >= (this.actor.system.flowing.total - 1) && this.actor.system.still.total <= (this.actor.system.flowing.total + 1))) {
+                    this.object.getimianflow = true;
+                }
+            }
+        }
+    }
+
+    _checkExcellencyBonuses() {
+        this.object.augmentattribute = false;
+        if (this.object.attributeExcellency && this.actor.system.details.exalt === "alchemical" && this.actor.system.attributes[this.object.attribute].aug) {
+            this.object.augmentattribute = true;
+        }
     }
 
 

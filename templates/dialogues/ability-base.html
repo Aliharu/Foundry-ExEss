@@ -6,7 +6,7 @@
     {{#ifEquals data.characterType 'character'}}
 
     <label class="resource-label">{{localize "ExEss.Attribute"}}: </label>
-    <select name="object.attribute" value="{{data.attribute}}" data-type="String">
+    <select id="attribute-select" name="object.attribute" value="{{data.attribute}}" data-type="String">
         {{#select data.attribute}}
         <option value="force">{{localize "ExEss.Force"}}</option>
         <option value="finesse">{{localize "ExEss.Finesse"}}</option>
@@ -15,7 +15,8 @@
     </select>
 
     <label class="resource-label">{{localize "ExEss.Excellency"}}: </label>
-    <input type="checkbox" name="object.attributeExcellency" value="{{data.attributeExcellency}}" {{checked data.attributeExcellency}}>
+    <input id="attribute-excellency-select" type="checkbox" name="object.attributeExcellency"
+        value="{{data.attributeExcellency}}" {{checked data.attributeExcellency}}>
 
     <label class="resource-label">{{localize "ExEss.Ability"}}: </label>
     <select name="object.ability" value="{{data.ability}}" data-type="String">
@@ -39,7 +40,8 @@
     </select>
 
     <label class="resource-label">{{localize "ExEss.Excellency"}}: </label>
-    <input type="checkbox" name="object.abilityExcellency" value="{{data.abilityExcellency}}" {{checked data.abilityExcellency}}>
+    <input type="checkbox" name="object.abilityExcellency" value="{{data.abilityExcellency}}" {{checked
+        data.abilityExcellency}}>
 
     {{/ifEquals}}
 
@@ -156,7 +158,7 @@
 
 <div class="d-flex flex-between mb-1 collapsable cursor-pointer">
     <div class="resource-label">
-        {{localize "ExEss.Conditions"}}
+        {{localize "ExEss.Effects"}}
     </div>
     <div>
         <i class="fas fa-caret-down"></i>
@@ -168,6 +170,18 @@
         {{condition.label}}
     </div>
     {{/each}}
+    <div>
+        {{#if data.getimianflow}}
+        <div>
+            Getimian Flow (+1 Success)
+        </div>
+        {{/if}}
+        {{#if data.augmentattribute}}
+        <div>
+            Augmented Attribute
+        </div>
+        {{/if}}
+    </div>
 </div>
 
 
@@ -182,7 +196,7 @@
     <input type="checkbox" name="object.woundPenalty" value="{{data.woundPenalty}}" {{checked data.woundPenalty}}>
 
     <label class="resource-label">{{localize "ExEss.Flurry"}}: </label>
-    <input type="checkbox"name="object.flurry" value="{{data.flurry}}" {{checked data.flurry}}>
+    <input type="checkbox" name="object.flurry" value="{{data.flurry}}" {{checked data.flurry}}>
 
     <label class="resource-label">{{localize "ExEss.ArmorPenalty"}}: </label>
     <input type="checkbox" name="object.armorPenalty" value="{{data.armorPenalty}}" {{checked data.armorPenalty}}>
