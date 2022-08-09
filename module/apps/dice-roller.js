@@ -316,7 +316,7 @@ export class RollForm extends FormApplication {
                 let abilityDice = this.actor.system.abilities[this.object.ability].value;
 
                 if (this.object.attributeExcellency) {
-                    attributeDice = attributeDice * 2;
+                    attributeDice += Math.max(attributeDice, abilityDice);
                     if (this.object.augmentattribute) {
                         if (this.actor.system.attributes[this.object.attribute].value < 5) {
                             attributeDice++;
