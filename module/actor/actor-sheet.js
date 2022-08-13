@@ -223,7 +223,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       const rollButton = {
         label: game.i18n.localize('ExEss.Roll'),
         class: 'roll-dice',
-        icon: 'fas fa-dice',
+        icon: 'fas fa-dice-d10',
         onclick: () => new RollForm(this.actor, {}, {}, { rollType: 'base' }).render(true),
       };
       buttons = [rollButton, ...buttons];
