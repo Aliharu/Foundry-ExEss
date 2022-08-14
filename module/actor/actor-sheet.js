@@ -322,7 +322,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       new RollForm(this.actor, { event: ev }, {}, { rollType: 'base' }).render(true);
     });
 
-    html.find('#rollAbility').mousedown(ev => {
+    html.find('.rollAbility').mousedown(ev => {
       new RollForm(this.actor, { event: ev }, {}, { rollType: 'ability' }).render(true);
     });
 

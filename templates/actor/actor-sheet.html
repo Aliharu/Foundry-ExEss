@@ -209,7 +209,8 @@
         </div>
         {{/each}}
       </div>
-      <label class="resource-label">{{localize "ExEss.Abilities"}}</label>
+      <label class="resource-label">{{localize "ExEss.Abilities"}}<i id="rollAbility"
+        class="fas fa-dice-d10 cursor-pointer rollAbility" style="margin-left:5px;"></i></label>
       <div class="attributes grid grid-3col flex-group-center">
         {{#each system.abilities as |ability key|}}
         <div class="ability flexrow flex-center">
@@ -242,11 +243,6 @@
               </div>
             </div>
             <div class="resource-content flexrow flex-center flex-between">
-              <div>
-                <label class="resource-label">{{localize "ExEss.RollAbility"}}</label>
-                <button id="rollAbility" class="roll-button"><i class="fas fa-dice-d10"></i>{{localize
-                  "ExEss.Roll"}}</button>
-              </div>
               <div>
                 <label class="resource-label">{{localize "ExEss.BuildPower"}}</label>
                 <button id="buildPower" class="roll-button"><i class="fas fa-bolt"></i>{{localize

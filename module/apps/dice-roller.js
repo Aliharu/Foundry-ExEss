@@ -126,12 +126,6 @@ export class RollForm extends FormApplication {
         if (this.object.damage.type === undefined) {
             this.object.damage.type = 'lethal';
         }
-        if (this.object.getimianflow === undefined && this.actor.type !== 'npc') {
-            this._checkAttributeBonuses();
-        }
-        if (this.object.augmentattribute === undefined && this.actor.type !== 'npc') {
-            this._checkExcellencyBonuses();
-        }
         if (this.object.diceToSuccesses === undefined) {
             this.object.diceToSuccesses = 0;
         }
@@ -144,6 +138,12 @@ export class RollForm extends FormApplication {
             }
         }
         if (this.object.rollType !== 'base') {
+            if (this.object.getimianflow === undefined && this.actor.type !== 'npc') {
+                this._checkAttributeBonuses();
+            }
+            if (this.object.augmentattribute === undefined && this.actor.type !== 'npc') {
+                this._checkExcellencyBonuses();
+            }
             this.object.target = Array.from(game.user.targets)[0] || null;
 
             if (this.object.target) {
