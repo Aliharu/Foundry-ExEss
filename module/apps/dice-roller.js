@@ -66,6 +66,7 @@ export class RollForm extends FormApplication {
 
             this.object.doubleSuccess = 10;
             this.object.rerollFailed = false;
+            this.object.rollTwice = false;
 
             this.object.flurry = false;
             this.object.woundPenalty = true;
@@ -128,6 +129,9 @@ export class RollForm extends FormApplication {
         }
         if (this.object.diceToSuccesses === undefined) {
             this.object.diceToSuccesses = 0;
+        }
+        if (this.object.rollTwice === undefined) {
+            this.object.rollTwice = false;
         }
         if (this.object.bonusPower === undefined) {
             if (game.settings.get("exaltedessence", "weaponToWithering")) {
@@ -400,27 +404,51 @@ export class RollForm extends FormApplication {
             this.object.successModifier += Math.min(dice, this.object.diceToSuccesses);
             dice = Math.max(0, dice - this.object.diceToSuccesses);
         }
-
-        let roll = new Roll(`${dice}d10${rerollString}${this.object.rerollFailed ? `r<${this.object.targetNumber}` : ""}cs>=${this.object.targetNumber}`).evaluate({ async: false });
+        let diceString = `${dice}d10${rerollString}${this.object.rerollFailed ? `r<${this.object.targetNumber}` : ""}cs>=${this.object.targetNumber}`;
+        if (this.object.rollTwice) {
+            diceString = `{${dice}d10${rerollString}${this.object.rerollFailed ? `r<${this.object.targetNumber}` : ""}cs>=${this.object.targetNumber}, ${dice}d10${rerollString}${this.object.rerollFailed ? `r<${this.object.targetNumber}` : ""}cs>=${this.object.targetNumber}}kh`;
+        }
+        let roll = new Roll(diceString).evaluate({ async: false });
         let diceRoll = roll.dice[0].results;
+        let total = roll.total;
         var failedDice = Math.min(dice - roll.total, this.object.rerollNumber);
+        for (let dice of diceRoll) {
+            if (dice.result >= this.object.doubleSuccess) {
+                total++;
+            }
+        }
+        if (this.object.rollTwice) {
+            var secondTotal = roll.dice[1].total;
+            diceRoll = diceRoll.concat(roll.dice[1].results);
+            for (let dice of roll.dice[1].results) {
+                if (dice.result >= this.object.doubleSuccess) {
+                    secondTotal++;
+                }
+            }
+            if (secondTotal > total) {
+                total = secondTotal;
+                failedDice = Math.min(dice - roll.dice[1].total, this.object.rerollNumber);
+            };
+        }
         let rerolledDice = 0;
-        let total = 0;
 
         while (failedDice !== 0 && (rerolledDice < this.object.rerollNumber)) {
             rerolledDice += failedDice;
             var failedDiceRoll = new Roll(`${failedDice}d10cs>=${this.object.targetNumber}`).evaluate({ async: false });
             failedDice = Math.min(failedDice - failedDiceRoll.total, (this.object.rerollNumber - rerolledDice));
             diceRoll = diceRoll.concat(failedDiceRoll.dice[0].results);
+            for (let dice of failedDiceRoll.dice[0].results) {
+                if (dice.result >= this.object.doubleSuccess) {
+                    total++;
+                }
+            }
             total += failedDiceRoll.total;
         }
 
         let getDice = "";
-        let bonus = 0;
 
         for (let dice of diceRoll) {
             if (dice.result >= this.object.doubleSuccess) {
-                bonus++;
                 getDice += `<li class="roll die d10 success double-success">${dice.result}</li>`;
             }
             else if (dice.result >= this.object.targetNumber) { getDice += `<li class="roll die d10 success">${dice.result}</li>`; }
@@ -429,8 +457,6 @@ export class RollForm extends FormApplication {
             else { getDice += `<li class="roll die d10">${dice.result}</li>`; }
         }
 
-        total += roll.total;
-        if (bonus) total += bonus;
         this.object.preBonusSuccesses = total;
         if (this.object.successModifier) total += this.object.successModifier;
         if (this.object.accuracySuccesses) total += this.object.accuracySuccesses;

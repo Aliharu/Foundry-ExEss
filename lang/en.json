@@ -141,6 +141,7 @@
     "ExEss.TargetNumber": "Target Number",
     "ExEss.Reroll": "Reroll",
     "ExEss.RerollFailed": "Reroll Failed",
+    "ExEss.RollTwiceKeepHighest": "Roll Twice (Keep Highest)",
     "ExEss.DoubleSuccess": "Double Success",
     "ExEss.RerollNumDice": "Reroll # Failed",
     "ExEss.DicetoSuccesses": "Dice to Successes",
