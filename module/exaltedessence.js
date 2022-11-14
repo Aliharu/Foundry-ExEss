@@ -25,7 +25,8 @@ Hooks.once('init', async function () {
       ExaltedessenceItem,
     },
     config: EXALTEDESSENCE,
-    rollItemMacro: rollItemMacro
+    rollItemMacro: rollItemMacro,
+    RollForm
   };
 
   /**
