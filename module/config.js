@@ -55,7 +55,7 @@ EXALTEDESSENCE.statusEffects = [
         name: 'surprised'
     },
     {
-        icon: 'icons/magic/perception/shadow-stealth-eyes-purple.webp',
+        icon: 'systems/exaltedessence/assets/icons/hooded-figure.svg', 
         id: 'concealment',
         label: 'ExEss.Concealment',
         name: 'concealment'
@@ -65,5 +65,5 @@ EXALTEDESSENCE.statusEffects = [
         id: 'incapacitated',
         label: 'ExEss.Incapacitated',
     },
-   
+
 ]
