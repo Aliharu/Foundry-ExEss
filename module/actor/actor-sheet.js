@@ -240,6 +240,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     this._setupDotCounters(html)
     this._setupSquareCounters(html)
 
+    html.find('.item-row').click(ev => {
+      const li = $(ev.currentTarget).next();
+      li.toggle("fast");
+    });
+
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
 
@@ -380,11 +385,6 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     html.find('.item-spend').click(ev => {
       this._spendItem(ev);
-    });
-
-    html.find('.item-row').click(ev => {
-      const li = $(ev.currentTarget).next();
-      li.toggle("fast");
     });
 
     html.find('.saved-roll').click(ev => {
