@@ -26,7 +26,7 @@ export class ExaltedessenceActor extends Actor {
     this._prepareBaseActorData(data);
     let totalHealth = 0;
     let currentPenalty = 0;
-    data.motes.total = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
+    data.motes.max = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
     for (let [key, health_level] of Object.entries(data.health.levels)) {
       if ((data.health.lethal + data.health.aggravated) > totalHealth) {
         currentPenalty = health_level.penalty;
@@ -60,9 +60,9 @@ export class ExaltedessenceActor extends Actor {
     await super._preUpdate(updateData, options, user);
     if(updateData?.system?.motes) {
       if(updateData?.system?.motes.commited !== undefined && this.system.details.exalt !== 'getimian') {
-        const commitChange = Math.max(0, system.motes.commited - this.system.motes.commited);
+        const commitChange = Math.max(0, updateData.system.motes.commited - this.system.motes.commited);
         const newMotes = Math.max(0, this.system.motes.value - commitChange);
-        updateData.data.motes.value = newMotes;
+        updateData.system.motes.value = newMotes;
       }
       if(updateData?.system?.motes.value !== undefined) {
         const animaChange = Math.max(0, this.system.motes.value - updateData.system.motes.value);
@@ -83,7 +83,7 @@ export class ExaltedessenceActor extends Actor {
   }
 
   _prepareBaseActorData(data) {
-    data.motes.total = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
+    data.motes.max = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
     let animaLevel = "";
     if (data.anima.value >= 1) {
       animaLevel = "dim";

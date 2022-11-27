@@ -26,8 +26,9 @@
         },
         "motes": {
           "value": 0,
-          "total": 0,
+          "total": 5,
           "min": 0,
+          "max": 5,
           "commited": 0
         },
         "flowing": {

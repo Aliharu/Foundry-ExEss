@@ -129,10 +129,10 @@ Hooks.on('updateCombat', (async (combat, update) => {
   }
 
   if (update && update.round) {
-    for(var combatant of combat.data.combatants) {
+    for(var combatant of combat.combatants) {
       const actorData = duplicate(combatant.actor)
-      if(actorData.data.motes.value < (actorData.data.motes.total - actorData.data.motes.commited)) {
-        actorData.data.motes.value++;
+      if(actorData.system.motes.value < (actorData.system.motes.max - actorData.system.motes.commited)) {
+        actorData.system.motes.value++;
       }
       combatant.actor.update(actorData);
     }

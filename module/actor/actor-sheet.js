@@ -530,8 +530,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const actorData = duplicate(this.actor);
     const data = actorData.system;
     data.anima.value = 0;
-    data.motes.total = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
-    data.motes.value = Math.min(data.motes.value + Math.ceil(data.motes.total / 2), data.motes.total);
+    data.motes.max = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
+    data.motes.value = Math.min(data.motes.value + Math.ceil(data.motes.max / 2), data.motes.max);
     this.actor.update(actorData);
     this._updateAnima("down");
   }
@@ -559,8 +559,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const actorData = duplicate(this.actor);
     const data = actorData.system;
     data.anima.value = 0;
-    data.motes.total = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
-    data.motes.value = data.motes.total;
+    data.motes.max = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
+    data.motes.value = data.motes.max;
     this.actor.update(actorData);
   }
 

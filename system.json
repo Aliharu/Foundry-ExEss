@@ -4,7 +4,7 @@
   "description": "Exalted Essence system module for FoundryVTT!",
   "url": "https://github.com/Aliharu/Foundry-ExEss",
   "license": "LICENSE.txt",
-  "version": "0.9.8",
+  "version": "0.10.0",
   "compatibility": {
     "minimum": "10",
     "verified": "10"
@@ -25,7 +25,7 @@
   ],
   "relationships": [],
   "manifest": "https://raw.githubusercontent.com/Aliharu/Foundry-ExEss/master/system.json",
-  "download": "https://github.com/Aliharu/Foundry-ExEss/releases/download/v0.9.8/release0.9.8.zip",
+  "download": "https://github.com/Aliharu/Foundry-ExEss/releases/download/v0.10.0/release0.10.0.zip",
   "gridDistance": 5,
   "gridUnits": "ft",
   "primaryTokenAttribute": "power",
