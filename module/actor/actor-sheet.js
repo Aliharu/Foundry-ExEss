@@ -565,9 +565,6 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   }
 
   async helpDialogue(type) {
-    let confirmed = false;
-    const actorData = duplicate(this.actor);
-    const data = actorData.data;
     const template = "systems/exaltedessence/templates/dialogues/help-dialogue.html"
     const html = await renderTemplate(template, { 'type': type });
     new Dialog({
@@ -880,7 +877,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       for (let [key, health_level] of Object.entries(actorData.system.health.levels)) {
         totalHealth += health_level.value;
       }
-      actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.data.health.lethal + item.system.cost.health);
+      actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.system.health.lethal + item.system.cost.health);
     }
     if (item.type === 'spell') {
       actorData.system.will.value = Math.max(0, actorData.system.will.value - item.system.cost);

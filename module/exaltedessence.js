@@ -39,10 +39,10 @@ Hooks.once('init', async function () {
     const actor = this.actor;
     var initDice = 0;
     if (this.actor.type != 'npc') {
-      initDice = actor.data.data.attributes.finesse.value + Math.max(actor.data.data.abilities.ranged.value, actor.data.data.abilities.close.value) + 2;
+      initDice = actor.system.attributes.finesse.value + Math.max(actor.system.abilities.ranged.value, actor.system.abilities.close.value) + 2;
     }
     else {
-      initDice = actor.data.data.pools.primary.value;
+      initDice = actor.system.pools.primary.value;
     }
     let roll = new Roll(`${initDice}d10cs>=7`).evaluate({ async: false });
     let diceRoll = roll.total;
@@ -65,6 +65,8 @@ Hooks.once('init', async function () {
   CONFIG.Combatant.documentClass = ExaltedCombatant;
   CONFIG.ui.combat = ExaltedCombatTracker;
 
+  game.socket.on('system.exaltedessence', handleSocket);
+
   // Register sheet application classes
   Actors.unregisterSheet("core", ActorSheet);
   Actors.registerSheet("exaltedessence", ExaltedessenceActorSheet, { makeDefault: true });
@@ -81,6 +83,57 @@ Hooks.once('init', async function () {
     "systems/exaltedessence/templates/dialogues/accuracy-roll.html",
     "systems/exaltedessence/templates/dialogues/damage-roll.html",
   ]);
+
+  function handleSocket({ type, id, data }) {
+    if (!game.user.isGM) return;
+
+    // if the logged in user is the active GM with the lowest user id
+    const isResponsibleGM = game.users
+      .some(user => user.isGM && user.active)
+
+    if (!isResponsibleGM) return;
+    if (type === 'healthDamage') {
+      const targetedActor = game.canvas.tokens.get(id).actor;
+      if (targetedActor) {
+        const targetActorData = duplicate(targetedActor);
+        targetActorData.system.health = data;
+        targetedActor.update(targetActorData);
+      }
+    }
+    if (type === 'addOnslaught') {
+      const targetedActor = game.canvas.tokens.get(id).actor;
+      const onslaught = targetedActor.effects.find(i => i.label == "Onslaught");
+      if (onslaught) {
+        let changes = duplicate(onslaught.data.changes);
+        if (targetedActor.system.hardness.value > 0) {
+          changes[0].value = changes[0].value - 1;
+          onslaught.update({ changes });
+        }
+      }
+      else {
+        targetedActor.createEmbeddedDocuments('ActiveEffect', [{
+          label: 'Onslaught',
+          icon: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
+          origin: targetedActor.uuid,
+          disabled: false,
+          "changes": [
+            {
+              "key": "data.hardness.value",
+              "value": -1,
+              "mode": 2
+            }
+          ]
+        }]);
+      }
+    }
+    if(type === 'deleteOnslaught') {
+      const targetedActor = game.canvas.tokens.get(id).actor;
+      const onslaught = targetedActor.effects.find(i => i.label == "Onslaught");
+      if (onslaught) {
+          onslaught.delete();
+      }
+    }
+  }
 
   // If you need to add Handlebars helpers, here are a few useful examples:
   Handlebars.registerHelper('concat', function () {
@@ -117,21 +170,22 @@ $(document).ready(() => {
 
   $(document).on('click', diceIconSelector, ev => {
     ev.preventDefault();
-    new RollForm(null, {}, {}, {rollType: 'base'}).render(true);;
+    new RollForm(null, {}, {}, { rollType: 'base' }).render(true);;
   });
 });
 
 Hooks.on('updateCombat', (async (combat, update) => {
   // Handle non-gm users.
+  if(!game.user.isGM) return;
 
   if (combat.current === undefined) {
     combat = game.combat;
   }
 
   if (update && update.round) {
-    for(var combatant of combat.combatants) {
+    for (var combatant of combat.combatants) {
       const actorData = duplicate(combatant.actor)
-      if(actorData.system.motes.value < (actorData.system.motes.max - actorData.system.motes.commited)) {
+      if (actorData.system.motes.value < (actorData.system.motes.max - actorData.system.motes.commited)) {
         actorData.system.motes.value++;
       }
       combatant.actor.update(actorData);

@@ -773,33 +773,51 @@ export class RollForm extends FormApplication {
         }
         if (this.object.target && game.settings.get("exaltedessence", "calculateOnslaught")) {
             const onslaught = this.object.target.actor.effects.find(i => i.label == "Onslaught");
-            if (this.object.rollType === 'decisive') {
-                if (onslaught) {
-                    onslaught.delete();
-                }
-            }
-            else if (this.object.rollType === 'withering') {
-                if (onslaught) {
-                    let changes = duplicate(onslaught.data.changes);
-                    if (this.object.target.actor.system.hardness.value > 0) {
-                        changes[0].value = changes[0].value - 1;
-                        onslaught.update({ changes });
+            if (game.user.isGM) {
+                if (this.object.rollType === 'decisive') {
+                    if (onslaught) {
+                        onslaught.delete();
                     }
                 }
-                else {
-                    this.object.target.actor.createEmbeddedDocuments('ActiveEffect', [{
-                        label: 'Onslaught',
-                        icon: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
-                        origin: this.object.target.actor.uuid,
-                        disabled: false,
-                        "changes": [
-                            {
-                                "key": "data.hardness.value",
-                                "value": -1,
-                                "mode": 2
-                            }
-                        ]
-                    }]);
+                else if (this.object.rollType === 'withering') {
+                    if (onslaught) {
+                        let changes = duplicate(onslaught.data.changes);
+                        if (this.object.target.actor.system.hardness.value > 0) {
+                            changes[0].value = changes[0].value - 1;
+                            onslaught.update({ changes });
+                        }
+                    }
+                    else {
+                        this.object.target.actor.createEmbeddedDocuments('ActiveEffect', [{
+                            label: 'Onslaught',
+                            icon: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
+                            origin: this.object.target.actor.uuid,
+                            disabled: false,
+                            "changes": [
+                                {
+                                    "key": "data.hardness.value",
+                                    "value": -1,
+                                    "mode": 2
+                                }
+                            ]
+                        }]);
+                    }
+                }
+            }
+            else {
+                if (this.object.rollType === 'decisive') {
+                    game.socket.emit('system.exaltedessence', {
+                        type: 'deleteOnslaught',
+                        id: this.object.target.id,
+                        data: null,
+                    });
+                }
+                else if (this.object.rollType === 'withering') {
+                    game.socket.emit('system.exaltedessence', {
+                        type: 'addOnslaught',
+                        id: this.object.target.id,
+                        data: null,
+                    });
                 }
             }
         }
@@ -817,14 +835,22 @@ export class RollForm extends FormApplication {
                     totalHealth += health_level.value;
                 }
             }
-
             if (this.object.damage.type === 'lethal') {
                 targetActorData.system.health.lethal = Math.min(totalHealth - targetActorData.system.health.aggravated, targetActorData.system.health.lethal + characterDamage);
             }
             if (this.object.damage.type === 'aggravated') {
                 targetActorData.system.health.aggravated = Math.min(totalHealth - targetActorData.system.health.lethal, targetActorData.system.health.aggravated + characterDamage);
             }
-            this.object.target.actor.update(targetActorData);
+            if (game.user.isGM) {
+                this.object.target.actor.update(targetActorData);
+            }
+            else {
+                game.socket.emit('system.exaltedessence', {
+                    type: 'healthDamage',
+                    id: this.object.target.id,
+                    data: targetActorData.system.health,
+                });
+            }
         }
     }
 
