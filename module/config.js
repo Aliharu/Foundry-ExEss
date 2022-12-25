@@ -29,6 +29,42 @@ EXALTEDESSENCE.languages = {
     "localtongue": "Local Tongue",
 };
 
+EXALTEDESSENCE.weapontags = {
+    "aggravated": "Aggravated",
+    "artifact": "Artifact",
+    "balanced": "Balanced",
+    "chopping": "Chopping",
+    "concealable": "Concealable",
+    "defensive": "Defensive",
+    "disarming": "Disarming",
+    "flame": "Flame",
+    "flexible": "Flexible",
+    "improvised": "Improvised",
+    "magicdamage": "Magic Damage",
+    "melee": "Melee",
+    "mounted": "Mounted",
+    "natural": "Natural",
+    "worn": "Worn",
+    "offhand": "Off-Hand",
+    "onehanded": "One-Handed",
+    "paired": "Paired",
+    "piercing": "Piercing",
+    "pulling": "Pulling",
+    "powerful": "Powerful",
+    "ranged": "Ranged",
+    "reaching": "Reaching",
+    "shield": "Shield",
+    "smashing": "Smashing",
+    "thrown": "Thrown",
+    "twohanded": "Two-Handed",
+};
+
+EXALTEDESSENCE.armortags = {
+    "artifact": "Artifact",
+    "buoyant": "Buoyant",
+    "silent": "Silent",
+};
+
 EXALTEDESSENCE.statusEffects = [
     {
         icon: 'icons/svg/falling.svg',

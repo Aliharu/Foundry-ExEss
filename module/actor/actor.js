@@ -109,3 +109,52 @@ export class ExaltedessenceActor extends Actor {
     data.anima.level = animaLevel;
   }
 }
+
+export async function addDefensePenalty(actor, label="Defense Penalty") {
+  const existingPenalty = actor.effects.find(i => i.label == label);
+  if (existingPenalty) {
+    let changes = duplicate(existingPenalty.changes);
+    if(actor.type === 'character'){
+      changes[0].value = changes[0].value - 1;
+      changes[1].value = changes[1].value - 1;
+    }
+    else {
+      changes[0].value = changes[0].value - 1;
+    }
+    existingPenalty.update({ changes });
+  }
+  else {
+    var changes = [
+      {
+        "key": "data.evasion.value",
+        "value": -1,
+        "mode": 2
+      },
+      {
+        "key": "data.parry.value",
+        "value": -1,
+        "mode": 2
+      }
+    ];
+    if(actor.type === 'npc') {
+      changes = [
+        {
+          "key": "data.defense.value",
+          "value": -1,
+          "mode": 2
+        },
+      ];
+    }
+    actor.createEmbeddedDocuments('ActiveEffect', [{
+      label: label,
+      icon: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
+      origin: actor.uuid,
+      disabled: false,
+      duration: {
+        rounds: 10,
+      },
+      "changes": changes
+    }]);
+
+  }
+}

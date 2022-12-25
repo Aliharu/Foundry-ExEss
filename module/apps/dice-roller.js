@@ -187,14 +187,24 @@ export class RollForm extends FormApplication {
 
             if (this.object.specialAttacksList === undefined) {
                 this.object.specialAttacksList = [
-                    { id: 'chopping', name: "Chopping", added: false, show: false, description: 'Cost: 1i and reduce defense by 1. Increase damage by 3 on withering.  -2 hardness on decisive', img: 'systems/exaltedthird/assets/icons/battered-axe.svg' },
-                    { id: 'flurry', name: "Flurry", added: false, show: false, description: 'Cost: 3 dice and reduce defense by 1.', img: 'systems/exaltedthird/assets/icons/spinning-blades.svg' },
-                    { id: 'piercing', name: "Piercing", added: false, show: false, description: 'Cost: 1i and reduce defense by 1.  Ignore 4 soak', img: 'systems/exaltedthird/assets/icons/fast-arrow.svg' },
+                    { id: 'chopping', name: "Chopping", added: false, show: false, description: 'Cost: 1i and reduce defense by 1. Increase damage by 3 on withering.  -2 enemy hardness on decisive', img: 'systems/exaltedessence/assets/icons/battered-axe.svg' },
+                    { id: 'flurry', name: "Flurry", added: false, show: false, description: 'Cost: 3 dice and reduce defense by 1.', img: 'systems/exaltedessence/assets/icons/spinning-blades.svg' },
+                    { id: 'piercing', name: "Piercing", added: false, show: false, description: 'Cost: 1i and reduce defense by 1.  Ignore 4 soak', img: 'systems/exaltedessence/assets/icons/fast-arrow.svg' },
                 ];
             }
 
             if (this.object.target) {
-                this.object.defense = this.object.target.actor.system.defence.value;
+                if(this.object.target.actor.type === 'npc'){
+                    this.object.defense = this.object.target.actor.system.defense.value;
+                }
+                else {
+                    if (this.object.target.actor.system.parry.value >= this.object.target.actor.system.evasion.value) {
+                        this.object.defense = this.object.target.actor.system.parry.value;
+                    }
+                    else {
+                        this.object.defense = this.object.target.actor.system.evasion.value;
+                    }
+                }
                 this.object.soak = this.object.target.actor.system.soak.value;
 
                 if (this.object.rollType === 'social') {
@@ -221,6 +231,9 @@ export class RollForm extends FormApplication {
                             this.object.defense += 2;
                         }
                     }
+                }
+                if(this.object.defense < 0) {
+                    this.object.defense = 0;
                 }
             }
         }
@@ -561,7 +574,7 @@ export class RollForm extends FormApplication {
             }
             if (this.object.armorPenalty) {
                 for (let armor of this.actor.armor) {
-                    if (armor.data.equiped) {
+                    if (armor.data.equipped) {
                         dice = dice - Math.abs(armor.data.penalty);
                     }
                 }
@@ -790,7 +803,7 @@ export class RollForm extends FormApplication {
     _damageRoll() {
         const actorData = duplicate(this.actor);
 
-        var postDefenceTotal = this.object.accuracyResult - this.object.defense;
+        var postDefenseTotal = this.object.accuracyResult - this.object.defense;
         let title = "Decisive Attack";
         if (this.object.rollType === 'withering') {
             title = "Withering Attack";
@@ -801,7 +814,7 @@ export class RollForm extends FormApplication {
         if (this.object.damage.doubleExtraSuccess) {
             var basePostDefenseTotal = this.object.preBonusSuccesses - this.object.defense;
             if (basePostDefenseTotal > 0) {
-                postDefenceTotal += basePostDefenseTotal;
+                postDefenseTotal += basePostDefenseTotal;
             }
         }
         var messageContent = '';
@@ -812,7 +825,7 @@ export class RollForm extends FormApplication {
             }
         }
 
-        if (postDefenceTotal < 0) {
+        if (postDefenseTotal < 0) {
             var overwhlemingMessage = '';
             let extraPowerMessage = ``;
             if (this.object.rollType === 'withering') {
@@ -836,7 +849,7 @@ export class RollForm extends FormApplication {
                       <div class="dice-roll">
                           <div class="dice-result">
                               <h4 class="dice-formula">${this.object.accuracyResult} Succeses</h4>
-                              <h4 class="dice-formula">${this.object.defense} defence</h4>
+                              <h4 class="dice-formula">${this.object.defense} defense</h4>
                               ${this.object.rollType === 'withering' ? `<h4 class="dice-formula">${this.object.overwhelming} Overwhelming</h4>` : ``}
                               <h4 class="dice-total">Attack Missed!</h4>
                               ${overwhlemingMessage}
@@ -853,7 +866,7 @@ export class RollForm extends FormApplication {
         else {
             if (this.object.rollType === 'decisive') {
                 // Deal Damage
-                let damage = postDefenceTotal + this.object.power + this.object.damage.damageDice;
+                let damage = postDefenseTotal + this.object.power + this.object.damage.damageDice;
                 if (this.actor.type === 'npc') {
                     if (actorData.system.battlegroup) {
                         damage += actorData.system.drill.value;
@@ -891,8 +904,8 @@ export class RollForm extends FormApplication {
                     <div>
                         <div class="dice-roll">
                             <div class="dice-result">
-                                <h4 class="dice-formula">${this.object.accuracyResult} Succeses vs ${this.object.defense} defence</h4>
-                                <h4 class="dice-formula">${postDefenceTotal} Extra Succeses + ${this.object.power} power</h4>
+                                <h4 class="dice-formula">${this.object.accuracyResult} Succeses vs ${this.object.defense} defense</h4>
+                                <h4 class="dice-formula">${postDefenseTotal} Extra Succeses + ${this.object.power} power</h4>
                                 <h4 class="dice-formula">${damage} Damage dice + ${this.object.damage.damageSuccessModifier} successes </h4>
                                 <div class="dice-tooltip">
                                   <div class="dice">
@@ -911,8 +924,8 @@ export class RollForm extends FormApplication {
                 ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: damageRoll });
             }
             else if (this.object.rollType === 'withering') {
-                var powerGained = postDefenceTotal + this.object.bonusPower + 1;
-                if (postDefenceTotal < this.object.overwhelming) {
+                var powerGained = postDefenseTotal + this.object.bonusPower + 1;
+                if (postDefenseTotal < this.object.overwhelming) {
                     powerGained = this.object.overwhelming + 1;
                 }
                 let extraPowerMessage = ``;
@@ -932,7 +945,7 @@ export class RollForm extends FormApplication {
                               <div class="dice-result">
                                   <h4 class="dice-formula">${this.object.accuracyResult} Succeses vs ${this.object.defense} defense</h4>
                                   <h4 class="dice-formula">${this.object.bonusPower} Bonus Power</h4>
-                                  <h4 class="dice-formula">1 Base + ${postDefenceTotal} Extra Succeses</h4>
+                                  <h4 class="dice-formula">1 Base + ${postDefenseTotal} Extra Succeses</h4>
                                   <h4 class="dice-formula">${this.object.overwhelming} Overwhelming</h4>
                                   <h4 class="dice-total">${powerGained} Power Built!</h4>
                                   ${extraPowerMessage}
@@ -956,7 +969,7 @@ export class RollForm extends FormApplication {
                       <div>
                           <div class="dice-roll">
                               <div class="dice-result">
-                                <h4 class="dice-formula">${this.object.accuracyResult} Succeses vs ${this.object.defense} defence</h4>
+                                <h4 class="dice-formula">${this.object.accuracyResult} Succeses vs ${this.object.defense} defense</h4>
                                   <h4 class="dice-formula">${this.object.powerSpent} Power Spent</h4>
                                   <h4 class="dice-total">Gambit Successful!</h4>
                               </div>

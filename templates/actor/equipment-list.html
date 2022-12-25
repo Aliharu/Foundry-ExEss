@@ -24,7 +24,7 @@
         {{item.system.damage}}
       </div>
       <div class="resource-value-static">
-        {{item.system.defence}}
+        {{item.system.defense}}
       </div>
       <div class="resource-value-static">
         {{item.system.overwhelming}}
@@ -35,11 +35,16 @@
         <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
       </div>
     </li>
-    <li class="item-description">
+    <div class="item-description">
         <div>
+            <div class="mt-1">
+              {{#each item.system.traits.weapontags.selected as |v k|}}
+              <li class="tag {{k}}">{{v}}</li>
+              {{/each}}
+            </div>
             {{{item.system.description}}}
         </div>
-    </li>
+    </div>
     <li class="item item-large flexrow">
       <div>
         <button class="roll-button weapon-roll" data-item-id="{{item._id}}" data-roll-type="withering"><i class="fas fa-bolt weapon-icon"></i>{{localize
@@ -90,11 +95,16 @@
         <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
       </div>
     </li>
-    <li class="item-description">
+    <div class="item-description">
         <div>
+            <div class="mt-1">
+              {{#each item.system.traits.armortags.selected as |v k|}}
+              <li class="tag {{k}}">{{v}}</li>
+              {{/each}}
+            </div>
             {{{item.system.description}}}
         </div>
-    </li>
+    </div>
     {{/each}}
   </ol>
 </div>

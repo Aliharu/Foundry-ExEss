@@ -15,5 +15,16 @@
     </li>
     {{/each}}
 </ol>
+<div class="resource-label list-section-header d-flex flex-between">
+    <div>
+        {{localize "ExEss.EffectTriggers"}}
+    </div>
+</div>
+<div class="grid grid-2col flex-group-center">
+    <div>
+        <button class="roll-button add-defense-penalty"><i class="fas fa-shield-slash"></i>+{{localize
+            "ExEss.DefensePenalty"}}</button>
+    </div>
+</div>
 {{> systems/exaltedessence/templates/actor/active-effects.html}}
 </ol>

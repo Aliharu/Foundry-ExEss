@@ -298,7 +298,10 @@
     "ExEss.AddCharm": "Add Charm",
     "ExEss.Done": "Done",
     "ExEss.EnterNewRollName": "Enter New Roll Name",
-    "ExEss.SavedRolls": "Saved Rolls",
+    "ExEss.EffectTriggers": "Effect Triggers",
+    "ExEss.DefensePenalty": "Defense Penalty",
+    "ExEss.OnslaughtPenalty": "Onslaught Penalty",
+
     "ExEss.DamageType": "Damage Type",
     "ExEss.AutoDecisiveDamage": "Auto Decisive Damage",
     "ExEss.AutoDecisiveDamageDescription": "Health damage will be automatically added to characeters hit by decisive attack.",
@@ -315,5 +318,6 @@
     "ExEss.DoubleExtraSuccesses": "Double Extra Successes",
     "ExEss.OtherModifiers": "Other Modifiers",
     "ExEss.IgnoreSoak": "Ignore Soak",
-    "ExEss.HealthType": "Health Type"
+    "ExEss.HealthType": "Health Type",
+    "ExEss.SavedRolls": "Saved Rolls"
 }

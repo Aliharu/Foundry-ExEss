@@ -4,6 +4,8 @@
 import TraitSelector from "../apps/trait-selector.js";
 import { RollForm } from "../apps/dice-roller.js";
 import { onManageActiveEffect, prepareActiveEffectCategories } from "../effects.js";
+import { prepareItemTraits } from "../item/item.js";
+import { addDefensePenalty } from "./actor.js";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -55,12 +57,21 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     // Prepare items.
     if (this.actor.type === 'character') {
+      if (context.system.defence.value !== 0) {
+        context.system.parry.value = context.system.defence.value;
+        context.system.evasion.value = context.system.defence.value;
+        context.system.defence.value = 0;
+      }
       for (let attr of Object.values(context.system.attributes)) {
         attr.isCheckbox = attr.dtype === "Boolean";
       }
       this._prepareCharacterItems(context);
     }
     if (this.actor.type === 'npc') {
+      if (context.system.defence.value !== 0) {
+        context.system.defense.value = context.system.defence.value;
+        context.system.defence.value = 0;
+      }
       this._prepareCharacterItems(context);
     }
 
@@ -125,9 +136,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         gear.push(i);
       }
       else if (i.type === 'weapon') {
+        prepareItemTraits('weapon', i);
         weapons.push(i);
       }
       else if (i.type === 'armor') {
+        prepareItemTraits('armor', i);
         armor.push(i);
       }
       // Append to merits.
@@ -293,6 +306,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           }
         }
       }).render(true);
+    });
+
+    html.find('.add-defense-penalty').mousedown(ev => {
+      addDefensePenalty(this.actor);
     });
 
     html.find('.show-weapon-tags').mousedown(ev => {
