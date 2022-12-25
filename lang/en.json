@@ -319,5 +319,6 @@
     "ExEss.OtherModifiers": "Other Modifiers",
     "ExEss.IgnoreSoak": "Ignore Soak",
     "ExEss.HealthType": "Health Type",
-    "ExEss.SavedRolls": "Saved Rolls"
+    "ExEss.SavedRolls": "Saved Rolls",
+    "ExEss.SpecialAttacks": "Special Attacks"
 }

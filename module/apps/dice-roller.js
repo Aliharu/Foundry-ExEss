@@ -122,12 +122,12 @@ export class RollForm extends FormApplication {
             };
 
             if (data.weapon) {
-                // this.object.weaponTags = data.weapon.traits.weapontags.selected;
+                this.object.weaponTags = data.weapon.traits.weapontags.selected;
                 this.object.accuracySuccesses = data.weapon.accuracy || 0;
                 this.object.damage.damageSuccessModifier = data.weapon.damage || 0;
-                // if(this.object.weaponTags['aggravated']) {
-                //     this.object.damage.type = 'aggravated';
-                // }
+                if(this.object.weaponTags && this.object.rollType === 'decisive' && this.object.weaponTags['aggravated']) {
+                    this.object.damage.type = 'aggravated';
+                }
                 this.object.overwhelming = data.weapon.overwhelming || 0;
                 this.object.weaponType = data.weapon.weapontype || "melee";
                 this.object.attackEffectPreset = data.weapon.attackeffectpreset || "none";
@@ -278,20 +278,20 @@ export class RollForm extends FormApplication {
                     else {
                         ev.currentTarget.innerHTML = `<i class="fas fa-bolt"></i> ${game.i18n.localize('ExEss.Done')}`;
                     }
-                    // if (this._isAttackRoll()) {
-                    //     this.object.showSpecialAttacks = true;
-                    //     if(this.object.rollType !== 'gambit') {
-                    //         for (var specialAttack of this.object.specialAttacksList) {
-                    //             if (this.object.weaponTags[specialAttack.id] || specialAttack.id === 'flurry') {
-                    //                 specialAttack.show = true;
-                    //             }
-                    //             else {
-                    //                 specialAttack.added = false;
-                    //                 specialAttack.show = false;
-                    //             }
-                    //         }
-                    //     }
-                    // }
+                    if (this._isAttackRoll()) {
+                        this.object.showSpecialAttacks = true;
+                        if(this.object.rollType !== 'gambit') {
+                            for (var specialAttack of this.object.specialAttacksList) {
+                                if (this.object.weaponTags[specialAttack.id] || specialAttack.id === 'flurry') {
+                                    specialAttack.show = true;
+                                }
+                                else {
+                                    specialAttack.added = false;
+                                    specialAttack.show = false;
+                                }
+                            }
+                        }
+                    }
                     this.object.addingCharms = !this.object.addingCharms;
                     this.render();
                 },
@@ -362,6 +362,10 @@ export class RollForm extends FormApplication {
             actor: this.actor,
             data: this.object,
         };
+    }
+
+    _isAttackRoll() {
+        return this.object.rollType === 'withering' || this.object.rollType === 'decisive' || this.object.rollType === 'gambit';
     }
 
     async _updateObject(event, formData) {
