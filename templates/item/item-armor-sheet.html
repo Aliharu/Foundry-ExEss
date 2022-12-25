@@ -3,10 +3,6 @@
         <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
         <div class="header-fields">
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
-            <div class="check-button">
-                <label class="resource-label">{{localize "ExEss.Equipped"}}: </label>
-                <input name="system.equiped" type="checkbox" value="system.equiped" {{checked system.equiped}}>
-            </div>
         </div>
     </header>
 
@@ -20,7 +16,7 @@
 
         {{!-- Description Tab --}}
         <div class="tab" data-group="primary" data-tab="description">
-            <div class="d-flex flex-center resources">
+            <div class="grid grid-4col flex-center resources">
                 <div>
                     <div class="resource-label">{{localize "ExEss.Soak"}}</div>
                     <input type="number" name="system.soak" value="{{system.soak}}" data-dtype="Number" />
@@ -32,6 +28,10 @@
                 <div>
                     <div class="resource-label">{{localize "ExEss.Hardness"}}</div>
                     <input type="number" name="system.hardness" value="{{system.hardness}}" data-dtype="Number" />
+                </div>
+                <div>
+                    <div class="resource-label">{{localize "ExEss.Equipped"}}</div>
+                    <input name="system.equiped" type="checkbox" value="system.equiped" {{checked system.equiped}}>
                 </div>
             </div>
             {{editor system.description target="system.description" button=true owner=owner editable=true}}

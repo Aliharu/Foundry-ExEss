@@ -120,6 +120,22 @@ export class RollForm extends FormApplication {
                     ten: { status: false, number: 10 },
                 }
             };
+
+            if (data.weapon) {
+                // this.object.weaponTags = data.weapon.traits.weapontags.selected;
+                this.object.accuracySuccesses = data.weapon.accuracy || 0;
+                this.object.damage.damageSuccessModifier = data.weapon.damage || 0;
+                // if(this.object.weaponTags['aggravated']) {
+                //     this.object.damage.type = 'aggravated';
+                // }
+                this.object.overwhelming = data.weapon.overwhelming || 0;
+                this.object.weaponType = data.weapon.weapontype || "melee";
+                this.object.attackEffectPreset = data.weapon.attackeffectpreset || "none";
+                this.object.attackEffect = data.weapon.attackeffect || "";
+                if (game.settings.get("exaltedessence", "weaponToWithering")) {
+                    this.object.bonusPower = data.weapon.damage || 0;
+                }
+            }
         }
 
         if (this.object.damage.type === undefined) {
@@ -133,6 +149,9 @@ export class RollForm extends FormApplication {
         }
         if (this.object.damage.ignoreSoak === undefined) {
             this.object.damage.ignoreSoak = 0;
+        }
+        if (this.object.weaponTags === undefined) {
+            this.object.weaponTags = {};
         }
         if (this.object.cost === undefined) {
             this.object.cost = {

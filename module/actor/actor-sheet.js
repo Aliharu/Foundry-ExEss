@@ -356,19 +356,19 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       new RollForm(this.actor, { event: ev }, {}, { rollType: 'social', 'ability': 'embassy' }).render(true);
     });
 
-    html.find('.roll-withering').mousedown(ev => {
+
+
+    html.find('.weapon-roll').click(ev => {
       let item = this.actor.items.get($(ev.target).attr("data-item-id"));
-      new RollForm(this.actor, { event: ev }, {}, { rollType: 'withering', 'accuracy': item.system.accuracy, 'damage': item.system.damage, 'overwhelming': item.system.overwhelming, "ability": item.system.weapontype === "melee" ? "close" : "ranged", 'weaponType': item.system.weapontype  }).render(true);
+      let rollType = $(ev.target).attr("data-roll-type");
+      new RollForm(this.actor, { event: ev }, {}, { rollType: rollType, weapon: item.system }).render(true);
     });
 
-    html.find('.roll-decisive').mousedown(ev => {
-      let item = this.actor.items.get($(ev.target).attr("data-item-id"));
-      new RollForm(this.actor, { event: ev }, {}, { rollType: 'decisive', 'accuracy': item.system.accuracy, 'damage': item.system.damage, 'overwhelming': item.system.overwhelming, "ability": item.system.weapontype === "melee" ? "close" : "ranged", 'weaponType': item.system.weapontype  }).render(true);
-    });
-
-    html.find('.roll-gambit').mousedown(ev => {
-      let item = this.actor.items.get($(ev.target).attr("data-item-id"));
-      new RollForm(this.actor, { event: ev }, {}, { rollType: 'gambit', 'accuracy': item.system.accuracy, 'damage': item.system.damage, 'overwhelming': item.system.overwhelming, "ability": item.system.weapontype === "melee" ? "close" : "ranged", 'weaponType': item.system.weapontype }).render(true);
+    html.find('.weapon-icon').click(ev => {
+      ev.stopPropagation();
+      let item = this.actor.items.get($(ev.target.parentElement).attr("data-item-id"));
+      let rollType = $(ev.target.parentElement).attr("data-roll-type");
+      new RollForm(this.actor, { event: ev }, {}, { rollType: rollType, weapon: item.system }).render(true);
     });
 
     html.find('#anima-up').click(ev => {
@@ -431,12 +431,25 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     // Drag events for macros.
     if (this.actor.isOwner) {
       let handler = ev => this._onDragStart(ev);
+      let savedRollhandler = ev => this._onDragSavedRoll(ev);
       html.find('li.item').each((i, li) => {
         if (li.classList.contains("inventory-header")) return;
         li.setAttribute("draggable", true);
-        li.addEventListener("dragstart", handler, false);
+        if (li.classList.contains("saved-roll-row")) {
+          li.addEventListener("dragstart", savedRollhandler, false);
+        }
+        else {
+          li.addEventListener("dragstart", handler, false);
+        }
       });
     }
+  }
+
+  async _onDragSavedRoll(ev) {
+    const li = ev.currentTarget;
+    if (ev.target.classList.contains("content-link")) return;
+    const savedRoll = this.actor.system.savedRolls[li.dataset.itemId];
+    ev.dataTransfer.setData("text/plain", JSON.stringify({ actorId: this.actor.uuid, type: 'savedRoll', id: li.dataset.itemId, name: savedRoll.name }));
   }
 
   _updateAnima(direction) {
@@ -565,6 +578,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   }
 
   async helpDialogue(type) {
+    let confirmed = false;
     const template = "systems/exaltedessence/templates/dialogues/help-dialogue.html"
     const html = await renderTemplate(template, { 'type': type });
     new Dialog({

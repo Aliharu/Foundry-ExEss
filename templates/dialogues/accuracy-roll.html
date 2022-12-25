@@ -10,10 +10,10 @@
                 <input type="number" name="object.accuracySuccesses" value="{{data.accuracySuccesses}}">
             </div>
         </div>
-        {{#ifEquals system.rollType 'gambit'}}
+        {{#ifEquals data.rollType 'gambit'}}
         <div class="d-flex flex-between mb-1 collapsable cursor-pointer">
             <div class="resource-label">
-                Gambits
+                {{localize "ExEss.Gambits"}}
             </div>
             <div>
                 <i class="fas fa-caret-down"></i>

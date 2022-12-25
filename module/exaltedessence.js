@@ -78,6 +78,7 @@ Hooks.once('init', async function () {
     "systems/exaltedessence/templates/dialogues/ability-base.html",
     "systems/exaltedessence/templates/dialogues/add-roll-charm.html",
     "systems/exaltedessence/templates/actor/active-effects.html",
+    "systems/exaltedessence/templates/actor/effects-tab.html",
     "systems/exaltedessence/templates/actor/equipment-list.html",
     "systems/exaltedessence/templates/actor/charm-list.html",
     "systems/exaltedessence/templates/actor/intimacies-list.html",
@@ -225,23 +226,37 @@ Hooks.once("ready", async function () {
  * @returns {Promise}
  */
 async function createExaltedessenceMacro(data, slot) {
-  if (data.type !== "Item") return;
-  if (!("data" in data)) return ui.notifications.warn("You can only create macro buttons for owned Items");
-  const item = data.data;
-
-  // Create the macro command
-  const command = `game.exaltedessence.rollItemMacro("${item.name}");`;
-  let macro = game.macros.entities.find(m => (m.name === item.name) && (m.command === command));
-  if (!macro) {
-    macro = await Macro.create({
-      name: item.name,
-      type: "script",
-      img: item.img,
-      command: command,
-      flags: { "exaltedessence.itemMacro": true }
-    });
+  if (data.type !== "Item" && data.type !== "savedRoll") return;
+  if(data.type === "Item") {
+    if (!("data" in data)) return ui.notifications.warn("You can only create macro buttons for owned Items");
+    const item = data.data;
+  
+    // Create the macro command
+    const command = `game.exaltedessence.rollItemMacro("${item.name}");`;
+    let macro = game.macros.entities.find(m => (m.name === item.name) && (m.command === command));
+    if (!macro) {
+      macro = await Macro.create({
+        name: item.name,
+        type: "script",
+        img: item.img,
+        command: command,
+        flags: { "exaltedessence.itemMacro": true }
+      });
+    }
+    game.user.assignHotbarMacro(macro, slot);
   }
-  game.user.assignHotbarMacro(macro, slot);
+  else{
+    const command = `const formActor = await fromUuid("${data.actorId}");
+    new game.exaltedessence.RollForm(${data.actorId.includes('Token') ? 'formActor.actor' : 'formActor'}, {}, {}, { rollId: "${data.id}" }).render(true);`;
+    const macro = await Macro.create({
+      name: data.name,
+      img: 'systems/exaltedessence/assets/icons/d10.svg',
+      type: "script",
+      command: command,
+    });
+    game.user.assignHotbarMacro(macro, slot);
+  }
+
   return false;
 }
 
