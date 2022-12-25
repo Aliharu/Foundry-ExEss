@@ -261,8 +261,26 @@
           "committed": 0,
           "anima": 0,
           "health": 0,
+          "healthtype": "bashing",
           "stunt": 0,
           "power": 0
+        },
+        "diceroller": {
+          "bonusdice": 0,
+          "bonussuccesses": 0,
+          "doublesuccess": 11,
+          "rerolldice": 0,
+          "dicetosuccesses": 0,
+          "rerollfailed": false,
+          "damage": {
+            "bonusdice": 0,
+            "bonussuccesses": 0,
+            "doublesuccess": 11,
+            "targetnumber": 7,
+            "overwhelming": 0,
+            "ignoresoak": 0,
+            "doubleextrasuccess": false
+          }
         }
       }
     },
@@ -281,7 +299,16 @@
       "defence": 0,
       "overwhelming": 0,
       "tags": "",
-      "equiped": true
+      "equiped": true,
+      "weapontype": "melee",
+      "attackeffectpreset": "none",
+      "attackeffect": "",
+      "traits": {
+        "weapontags": {
+          "value": [],
+          "custom": ""
+        }
+      }
     },
     "armor": {
       "templates": [
@@ -292,7 +319,12 @@
       "hardness": 0,
       "tags": "",
       "equiped": true,
-      "weapontype": "melee"
+      "traits": {
+        "weapontags": {
+          "value": [],
+          "custom": ""
+        }
+      }
     },
     "charm": {
       "templates": [

@@ -56,8 +56,9 @@
         </div>
         <div class="resource-content flexrow flex-center flex-between">
           <div>
-            <i id="anima-down" class="fas fa-caret-down cursor-pointer"></i><label class="resource-label">{{localize
-              "ExEss.Anima"}}</label><i id="anima-up" class="fas fa-caret-up cursor-pointer"></i>
+            <a><i id="anima-down" class="fas fa-caret-down cursor-pointer"></i></a><label
+              class="resource-label">{{localize
+              "ExEss.Anima"}}</label><a><i id="anima-up" class="fas fa-caret-up cursor-pointer"></i></a>
             <input type="number" name="system.anima.value" value="{{system.anima.value}}" data-dtype="Number" />
           </div>
           <div>
@@ -117,10 +118,10 @@
         <div class="resource flex-group-center d-flex">
           <div style="width:180px;margin-right:20px;">
             <div class="flexrow">
-              <label for="system.health" class="resource-label"><i class="fas fa-calculator cursor-pointer"
-                  id="calculate-health" style="margin-right:3px;" title="Calculate Health"></i>{{localize
-                "ExEss.Health"}}<i id="recoveryScene" title="Recovery Scene" class="fas fa-plus-square cursor-pointer"
-                  style="margin-left:3px;"></i></label>
+              <label for="system.health" class="resource-label"><a><i class="fas fa-calculator cursor-pointer"
+                id="calculate-health" style="margin-right:3px;" title="Calculate Health"></i></a>{{localize
+                "ExEss.Health"}}<a><i id="recoveryScene" title="Recovery Scene" class="fas fa-plus-square cursor-pointer"
+                  style="margin-left:3px;"></i></a></label>
             </div>
             <div class="resource-content flexrow flex-center flex-between">
               <div class="resource-counter" data-states="/:lethal,x:aggravated" data-max="{{system.health.max}}"
@@ -209,8 +210,8 @@
         </div>
         {{/each}}
       </div>
-      <label class="resource-label">{{localize "ExEss.Abilities"}}<i id="rollAbility"
-        class="fas fa-dice-d10 cursor-pointer rollAbility" style="margin-left:5px;"></i></label>
+      <label class="resource-label">{{localize "ExEss.Abilities"}}<a><i id="rollAbility"
+            class="fas fa-dice-d10 cursor-pointer rollAbility" style="margin-left:5px;"></i></a></label>
       <div class="attributes grid grid-3col flex-group-center">
         {{#each system.abilities as |ability key|}}
         <div class="ability flexrow flex-center">
@@ -259,8 +260,7 @@
             <div class="resource-content flexrow flex-center flex-between">
               <div>
                 <label class="resource-label">{{localize "ExEss.Defense"}}</label>
-                <input type="number" name="system.defence.value" value="{{system.defence.value}}"
-                  data-dtype="Number" />
+                <input type="number" name="system.defence.value" value="{{system.defence.value}}" data-dtype="Number" />
               </div>
             </div>
             <div class="resource-content flexrow flex-center flex-between">
@@ -277,8 +277,7 @@
             <div class="resource-content flexrow flex-center flex-between">
               <div>
                 <label class="resource-label">{{localize "ExEss.Resolve"}}</label>
-                <input type="number" name="system.resolve.value" value="{{system.resolve.value}}"
-                  data-dtype="Number" />
+                <input type="number" name="system.resolve.value" value="{{system.resolve.value}}" data-dtype="Number" />
               </div>
               <div>
                 <label class="resource-label">{{localize "ExEss.Social"}}</label>
@@ -372,7 +371,8 @@
         </div>
         {{#each actor.rituals as |item id|}}
         <li class="item flexrow item-row" data-item-id="{{item._id}}">
-          <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+          <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
+              height="24" /></div>
           <h4 class="item-name">{{item.name}}</h4>
           <div class="item-controls">
             <a class="item-control item-chat" title="Chat Item"><i class="fas fa-comment"></i></a>
@@ -395,7 +395,8 @@
         </div>
         {{#each actor.merits as |item id|}}
         <li class="item flexrow item-row" data-item-id="{{item._id}}">
-          <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+          <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
+              height="24" /></div>
           <h4 class="item-name">{{item.name}}</h4>
           <div class="resource-value-static" data-value="{{item.system.points}}" data-name="items.{{item._id}}">
             {{#numLoop 5}}
@@ -423,7 +424,8 @@
         </div>
         {{#each actor.gear as |item id|}}
         <li class="item flexrow item-row" data-item-id="{{item._id}}">
-          <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+          <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
+              height="24" /></div>
           <h4 class="item-name">{{item.name}}</h4>
           <div class="item-controls">
             <a class="item-control item-chat" title="Chat Item"><i class="fas fa-comment"></i></a>

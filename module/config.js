@@ -61,6 +61,30 @@ EXALTEDESSENCE.statusEffects = [
         name: 'concealment'
     },
     {
+        icon: 'icons/svg/blood.svg',
+        id: 'bleeding',
+        label: 'EFFECT.StatusBleeding',
+        name: 'bleeding'
+    },
+    {
+        icon: 'icons/svg/poison.svg',
+        id: 'poisoned',
+        label: 'EFFECT.StatusPoison',
+        name: 'poisoned'
+    },
+    {
+        icon: 'icons/svg/fire.svg',
+        id: 'burning',
+        label: 'EFFECT.StatusBurning',
+        name: 'burning'
+    },
+    {
+        icon: 'icons/svg/invisible.svg',
+        id: 'dematerialized',
+        label: 'ExEss.Dematerialized',
+        name: 'dematerialized'
+    },
+    {
         icon: 'icons/svg/skull.svg',
         id: 'incapacitated',
         label: 'ExEss.Incapacitated',

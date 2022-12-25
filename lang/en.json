@@ -285,6 +285,7 @@
     "ExEss.Surprised": "Surprised",
     "ExEss.Incapacitated": "Incapacitated",
     "ExEss.Concealment": "Concealment",
+    "ExEss.Dematerialized": "Dematerialized",
 
     "ExEss.SupportingVirtue": "Supporting Virtue",
     "ExEss.OpposedVirtue": "Opposed Virtue",
@@ -293,6 +294,8 @@
     
     "ExEss.Save": "Save",
     "ExEss.Update": "Update",
+    "ExEss.AddCharm": "Add Charm",
+    "ExEss.Done": "Done",
     "ExEss.EnterNewRollName": "Enter New Roll Name",
     "ExEss.SavedRolls": "Saved Rolls",
     "ExEss.DamageType": "Damage Type",
@@ -303,5 +306,13 @@
 
     "ExEss.BonusPower": "Bonus Power",
     "ExEss.WeaponDamageWithering": "Weapon damage to withering",
-    "ExEss.WeaponDamageWitheringDescription": "Add weapon damage to withering attacks."
+    "ExEss.WeaponDamageWitheringDescription": "Add weapon damage to withering attacks.",
+    "ExEss.RollBonuses": "Roll Bonuses",
+    "ExEss.DiceRollModifiers": "Dice Roll Modifiers",
+    "ExEss.DiceBonus": "Dice Bonus",
+    "ExEss.SuccessBonus": "Success Bonus",
+    "ExEss.DoubleExtraSuccesses": "Double Extra Successes",
+    "ExEss.OtherModifiers": "Other Modifiers",
+    "ExEss.IgnoreSoak": "Ignore Soak",
+    "ExEss.HealthType": "Health Type"
 }

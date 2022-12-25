@@ -1,5 +1,8 @@
 <form>
     <div class="sheet-body exaltedessence">
+        {{#if data.addingCharms }}
+        {{> systems/exaltedessence/templates/dialogues/add-roll-charm.html}}
+        {{else}}  
         {{#if data.showDamage}}
         {{> systems/exaltedessence/templates/dialogues/damage-roll.html}}
         <div class="d-flex">
@@ -12,6 +15,7 @@
             <button type="button" id="roll-accuracy">Accuracy</button>
             <button type="button" id="cancel">Cancel</button>
         </div>
+        {{/if}}
         {{/if}}
     </div>
 </form>

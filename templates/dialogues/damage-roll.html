@@ -81,7 +81,7 @@
         </div>
         <div class="d-flex flex-between mb-1 collapsable cursor-pointer">
             <div class="resource-label">
-                Other Modifiers
+                {{localize "ExEss.OtherModifiers"}}
             </div>
             <div>
                 <i class="fas fa-caret-down"></i>
@@ -91,7 +91,7 @@
             <label class="check-button" style="align-items:center;display:flex;">
             </label>
             <div class="resource flex-center grid grid-2col">
-                <span class="resource-label">Double Extra Successes</span>
+                <span class="resource-label">{{localize "ExEss.DoubleExtraSuccesses"}}</span>
                 <input name="object.damage.doubleExtraSuccess" value="{{data.damage.doubleExtraSuccess}}"
                     type="checkbox" {{checked data.damage.doubleExtraSuccess}}>
                 {{#ifEquals data.rollType 'decisive'}}
@@ -102,6 +102,10 @@
                     <option value="aggravated">{{localize "ExEss.Aggravated"}}</option>
                     {{/select}}
                 </select>
+                <label class="flex-center resource-label">
+                    {{localize "ExEss.IgnoreSoak"}}
+                </label>
+                <input name="object.damage.ignoreSoak" value="{{data.damage.ignoreSoak}}" type="number">
                 {{/ifEquals}}
             </div>
         </div>

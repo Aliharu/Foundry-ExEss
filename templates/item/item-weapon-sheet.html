@@ -25,33 +25,30 @@
 
     {{!-- Sheet Body --}}
     <section class="sheet-body">
-
         {{!-- Description Tab --}}
         <div class="tab" data-group="primary" data-tab="description">
             <div class="d-flex flex-center resources">
                 <div>
-                    <div>{{localize "ExEss.Accuracy"}}</div>
+                    <div class="resource-label">{{localize "ExEss.Accuracy"}}</div>
                     <input type="number" name="system.accuracy" value="{{system.accuracy}}" data-dtype="Number" />
                 </div>
                 <div>
-                    <div>{{localize "ExEss.Damage"}}</div>
+                    <div class="resource-label">{{localize "ExEss.Damage"}}</div>
                     <input type="number" name="system.damage" value="{{system.damage}}" data-dtype="Number" />
                 </div>
                 <div>
-                    <div>{{localize "ExEss.Defense"}}</div>
+                    <div class="resource-label">{{localize "ExEss.Defense"}}</div>
                     <input type="number" name="system.defence" value="{{system.defence}}" data-dtype="Number" />
                 </div>
                 <div>
-                    <div>{{localize "ExEss.Overwhelming"}}</div>
+                    <div class="resource-label">{{localize "ExEss.Overwhelming"}}</div>
                     <input type="number" name="system.overwhelming" value="{{system.overwhelming}}" data-dtype="Number" />
                 </div>
             </div>
             {{editor system.description target="system.description" button=true owner=owner editable=true}}
         </div>
-
         <div class="tab" data-group="primary" data-tab="effects">
             {{> systems/exaltedessence/templates/actor/active-effects.html}}
         </div>
-
     </section>
 </form>

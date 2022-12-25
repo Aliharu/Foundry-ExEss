@@ -81,6 +81,7 @@
 
     <nav class="sheet-tabs tabs" data-group="primary">
         <a class="item" data-tab="description">{{localize "ExEss.Description"}}</a>
+        <a class="item" data-tab="rollbonuses">{{localize "ExEss.RollBonuses"}}</a>
         <a class="item" data-tab="effects">{{localize "ExEss.Effects"}}</a>
     </nav>
 
@@ -91,31 +92,117 @@
         <div class="tab" data-group="primary" data-tab="description">
             <div class="d-flex flex-center resources">
                 <div>
-                    <div>Motes</div>
+                    <div class="resource-label">Motes</div>
                     <input type="number" name="system.cost.motes" value="{{system.cost.motes}}" data-dtype="Number" />
                 </div>
                 <div>
-                    <div>Committed</div>
+                    <div class="resource-label">Committed</div>
                     <input type="number" name="system.cost.committed" value="{{system.cost.committed}}" data-dtype="Number" />
                 </div>
                 <div>
-                    <div>Anima</div>
+                    <div class="resource-label">Anima</div>
                     <input type="number" name="system.cost.anima" value="{{system.cost.anima}}" data-dtype="Number" />
                 </div>
                 <div>
-                    <div>Health</div>
-                    <input type="number" name="system.cost.health" value="{{system.cost.health}}" data-dtype="Number" />
-                </div>
-                <div>
-                    <div>Stunt</div>
+                    <div class="resource-label">Stunt</div>
                     <input type="number" name="system.cost.stunt" value="{{system.cost.stunt}}" data-dtype="Number" />
                 </div>
                 <div>
-                    <div>Power</div>
+                    <div class="resource-label">Power</div>
                     <input type="number" name="system.cost.power" value="{{system.cost.power}}" data-dtype="Number" />
+                </div>
+                <div>
+                    <div class="resource-label">Health</div>
+                    <input type="number" name="system.cost.health" value="{{system.cost.health}}" data-dtype="Number" />
+                </div>
+                <div>
+                    <div class="resource-label">{{localize "ExEss.HealthType"}}</div>
+                    <select name="system.cost.healthtype" data-type="String">
+                        {{#select system.cost.healthtype}}
+                        <option value="lethal">{{localize "ExEss.Lethal"}}</option>
+                        <option value="aggravated">{{localize "ExEss.Aggravated"}}</option>
+                        {{/select}}
+                    </select>
                 </div>
             </div>
             {{editor system.description target="system.description" button=true owner=owner editable=true}}
+        </div>
+
+        <div class="tab" data-group="primary" data-tab="rollbonuses">
+            <div class="resource flex-center">
+                <label class="resource-label">{{localize "ExEss.DiceRollModifiers"}}</label>
+            </div>
+
+            <div>
+                <div class="resource grid grid-3col flex-center">
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.DiceBonus"}} </label>
+                        <input name="system.diceroller.bonusdice" value="{{system.diceroller.bonusdice}}" type="number">
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.SuccessBonus"}} </label>
+                        <input name="system.diceroller.bonussuccesses" value="{{system.diceroller.bonussuccesses}}"
+                            type="number">
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.DoubleSuccess"}} + </label>
+                        <input name="system.diceroller.doublesuccess" value="{{system.diceroller.doublesuccess}}"
+                            type="number">
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.RerollNumDice"}} </label>
+                        <input name="system.diceroller.rerolldice" value="{{system.diceroller.rerolldice}}"
+                            type="number">
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.DicetoSuccesses"}} </label>
+                        <input name="system.diceroller.dicetosuccesses" value="{{system.diceroller.dicetosuccesses}}"
+                            type="number">
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.RerollFailed"}} </label>
+                        <div>
+                            <input type="checkbox" name="system.diceroller.rerollfailed"
+                                value="system.diceroller.rerollfailed" {{checked system.diceroller.rerollfailed}}>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.RollTwiceKeepHighest"}} </label>
+                        <div>
+                            <input type="checkbox" name="system.diceroller.rolltwice"
+                                value="system.diceroller.rolltwice" {{checked system.diceroller.rolltwice}}>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="resource flex-center">
+                <label class="resource-label">{{localize "ExEss.Damage"}}</label>
+            </div>
+            <div>
+                <div class="resource grid grid-3col flex-center">
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.DiceBonus"}} </label>
+                        <input name="system.diceroller.damage.bonusdice" value="{{system.diceroller.damage.bonusdice}}" type="number">
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.SuccessBonus"}} </label>
+                        <input name="system.diceroller.damage.bonussuccesses" value="{{system.diceroller.damage.bonussuccesses}}"
+                            type="number">
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Overwhelming"}} </label>
+                        <input name="system.diceroller.damage.overwhelming" value="{{system.diceroller.damage.overwhelming}}"
+                            type="number">
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.DoubleExtraSuccesses"}} </label>
+                        <div>
+                            <input type="checkbox" name="system.diceroller.damage.doubleextrasuccess"
+                                value="system.diceroller.damage.doubleextrasuccess" {{checked system.diceroller.damage.doubleextrasuccess}}>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="tab" data-group="primary" data-tab="effects">

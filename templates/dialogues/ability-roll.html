@@ -1,5 +1,8 @@
 <form>
     <div class="sheet-body exaltedessence">
+        {{#if data.addingCharms }}
+        {{> systems/exaltedessence/templates/dialogues/add-roll-charm.html}}
+        {{else}}  
         {{#ifEquals data.rollType 'base'}}
         <div class="flex-center resource-label" style="font-weight: bold;">
             {{localize "ExEss.SocialInfluence"}}
@@ -91,5 +94,6 @@
             <button type="button" id="roll-button">Roll</button>
             <button type="button" id="cancel">Cancel</button>
         </div>
+    {{/if}}
     </div>
 </form>

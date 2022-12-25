@@ -58,6 +58,9 @@ export class ExaltedessenceActor extends Actor {
 
   async _preUpdate(updateData, options, user) {
     await super._preUpdate(updateData, options, user);
+    if(updateData?.system?.anima) {
+      this.system.anima.value = updateData?.system?.anima?.value;
+    }
     if(updateData?.system?.motes) {
       if(updateData?.system?.motes.commited !== undefined && this.system.details.exalt !== 'getimian') {
         const commitChange = Math.max(0, updateData.system.motes.commited - this.system.motes.commited);
@@ -79,6 +82,9 @@ export class ExaltedessenceActor extends Actor {
       const animaChange = Math.max(0, this.system.still.value - updateData.system.still.value);
       const newAnima = Math.min(10, this.system.anima.value + animaChange);
       updateData.system.anima = { 'value': newAnima };
+    }
+    if (updateData.system.anima && this.system.anima.value !== updateData.system.anima) {
+        // animaTokenMagic(this.actor, newValue);
     }
   }
 

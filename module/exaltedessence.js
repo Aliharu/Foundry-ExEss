@@ -76,6 +76,7 @@ Hooks.once('init', async function () {
   // Pre-load templates
   loadTemplates([
     "systems/exaltedessence/templates/dialogues/ability-base.html",
+    "systems/exaltedessence/templates/dialogues/add-roll-charm.html",
     "systems/exaltedessence/templates/actor/active-effects.html",
     "systems/exaltedessence/templates/actor/equipment-list.html",
     "systems/exaltedessence/templates/actor/charm-list.html",
@@ -150,6 +151,10 @@ Hooks.once('init', async function () {
     return str.toLowerCase();
   });
 
+  Handlebars.registerHelper('ifGreater', function (arg1, arg2, options) {
+    return (arg1 > arg2) ? options.fn(this) : options.inverse(this);
+  });
+
   Handlebars.registerHelper('numLoop', function (num, options) {
     let ret = ''
 
@@ -163,6 +168,10 @@ Hooks.once('init', async function () {
 
 Handlebars.registerHelper('ifEquals', function (arg1, arg2, options) {
   return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});
+
+Handlebars.registerHelper('ifNotEquals', function (arg1, arg2, options) {
+  return (arg1 != arg2) ? options.fn(this) : options.inverse(this);
 });
 
 $(document).ready(() => {

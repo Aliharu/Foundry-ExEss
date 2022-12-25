@@ -106,6 +106,7 @@ export class RollForm extends FormApplication {
                 rerollFailed: false,
                 targetNumber: data.targetNumber || 7,
                 doubleExtraSuccess: false,
+                ignoreSoak: 0,
                 reroll: {
                     one: { status: false, number: 1 },
                     two: { status: false, number: 2 },
@@ -124,14 +125,25 @@ export class RollForm extends FormApplication {
         if (this.object.damage.type === undefined) {
             this.object.damage.type = 'lethal';
         }
-        if (this.object.damage.type === undefined) {
-            this.object.damage.type = 'lethal';
-        }
         if (this.object.diceToSuccesses === undefined) {
             this.object.diceToSuccesses = 0;
         }
         if (this.object.rollTwice === undefined) {
             this.object.rollTwice = false;
+        }
+        if (this.object.damage.ignoreSoak === undefined) {
+            this.object.damage.ignoreSoak = 0;
+        }
+        if (this.object.cost === undefined) {
+            this.object.cost = {
+                motes: 0,
+                committed: 0,
+                power: 0,
+                anima: 0,
+                stunt: 0,
+                healthAggravated: 0,
+                healthLethal: 0,
+            }
         }
         if (this.object.bonusPower === undefined) {
             if (game.settings.get("exaltedessence", "weaponToWithering")) {
@@ -149,6 +161,18 @@ export class RollForm extends FormApplication {
                 this._checkExcellencyBonuses();
             }
             this.object.target = Array.from(game.user.targets)[0] || null;
+
+            if (this.object.addedCharms === undefined) {
+                this.object.addedCharms = [];
+            }
+
+            if (this.object.specialAttacksList === undefined) {
+                this.object.specialAttacksList = [
+                    { id: 'chopping', name: "Chopping", added: false, show: false, description: 'Cost: 1i and reduce defense by 1. Increase damage by 3 on withering.  -2 hardness on decisive', img: 'systems/exaltedthird/assets/icons/battered-axe.svg' },
+                    { id: 'flurry', name: "Flurry", added: false, show: false, description: 'Cost: 3 dice and reduce defense by 1.', img: 'systems/exaltedthird/assets/icons/spinning-blades.svg' },
+                    { id: 'piercing', name: "Piercing", added: false, show: false, description: 'Cost: 1i and reduce defense by 1.  Ignore 4 soak', img: 'systems/exaltedthird/assets/icons/fast-arrow.svg' },
+                ];
+            }
 
             if (this.object.target) {
                 this.object.defense = this.object.target.actor.system.defence.value;
@@ -199,6 +223,48 @@ export class RollForm extends FormApplication {
         let buttons = super._getHeaderButtons();
         // Token Configuration
         if (this.object.rollType !== 'base') {
+            const charmsButton = {
+                label: game.i18n.localize('ExEss.AddCharm'),
+                class: 'add-charm',
+                id: "add-charm",
+                icon: 'fas fa-bolt',
+                onclick: (ev) => {
+                    this.object.charmList = this.actor.charms;
+                    for (var charmlist of Object.values(this.object.charmList)) {
+                        for (const charm of charmlist.list) {
+                            if (this.object.addedCharms.some((addedCharm) => addedCharm._id === charm._id)) {
+                                charm.charmAdded = true;
+                            }
+                            else {
+                                charm.charmAdded = false;
+                            }
+                        }
+                    }
+                    if (this.object.addingCharms) {
+                        ev.currentTarget.innerHTML = `<i class="fas fa-bolt"></i> ${game.i18n.localize('ExEss.AddCharm')}`;
+                    }
+                    else {
+                        ev.currentTarget.innerHTML = `<i class="fas fa-bolt"></i> ${game.i18n.localize('ExEss.Done')}`;
+                    }
+                    // if (this._isAttackRoll()) {
+                    //     this.object.showSpecialAttacks = true;
+                    //     if(this.object.rollType !== 'gambit') {
+                    //         for (var specialAttack of this.object.specialAttacksList) {
+                    //             if (this.object.weaponTags[specialAttack.id] || specialAttack.id === 'flurry') {
+                    //                 specialAttack.show = true;
+                    //             }
+                    //             else {
+                    //                 specialAttack.added = false;
+                    //                 specialAttack.show = false;
+                    //             }
+                    //         }
+                    //     }
+                    // }
+                    this.object.addingCharms = !this.object.addingCharms;
+                    this.render();
+                },
+            };
+            buttons = [charmsButton, ...buttons];
             const rollButton = {
                 label: this.object.id ? game.i18n.localize('ExEss.Update') : game.i18n.localize('ExEss.Save'),
                 class: 'roll-dice',
@@ -281,6 +347,115 @@ export class RollForm extends FormApplication {
 
         html.on("change", "#attribute-excellency-select", ev => {
             this._checkExcellencyBonuses();
+            this.render();
+        });
+
+        html.find('.add-charm').click(ev => {
+            ev.stopPropagation();
+            let li = $(ev.currentTarget).parents(".item");
+            let item = this.actor.items.get(li.data("item-id"));
+            this.object.addedCharms.push(item);
+            for (var charmlist of Object.values(this.object.charmList)) {
+                for (const charm of charmlist.list) {
+                    if (this.object.addedCharms.some((addedCharm) => addedCharm._id === charm._id)) {
+                        charm.charmAdded = true;
+                    }
+                }
+            }
+
+            this.object.cost.motes += item.system.cost.motes;
+            this.object.cost.committed += item.system.cost.committed;
+            this.object.cost.anima += item.system.cost.anima;
+            this.object.cost.health += item.system.cost.health;
+            if (item.system.cost.health > 0) {
+                if (item.system.cost.healthtype === 'lethal') {
+                    this.object.cost.healthLethal += item.system.cost.health;
+                }
+                else {
+                    this.object.cost.healthAggravated += item.system.cost.health;
+                }
+            }
+            this.object.cost.stunt += item.system.cost.stunt;
+            this.object.cost.power += item.system.cost.power;
+
+            this.object.diceModifier += item.system.diceroller.bonusdice;
+            this.object.successModifier += item.system.diceroller.bonussuccesses;
+            if (item.system.diceroller.doublesuccess < this.object.doubleSuccess) {
+                this.object.doubleSuccess = item.system.diceroller.doublesuccess;
+            }
+            if (item.system.diceroller.rerollfailed) {
+                this.object.rerollFailed = item.system.diceroller.rerollfailed;
+            }
+            if (item.system.diceroller.rolltwice) {
+                this.object.rollTwice = item.system.diceroller.rolltwice;
+            }
+            this.object.rerollNumber += item.system.diceroller.rerolldice;
+            this.object.diceToSuccesses += item.system.diceroller.dicetosuccesses;
+
+            this.object.damage.damageDice += item.system.diceroller.damage.bonusdice;
+            this.object.damage.damageSuccessModifier += item.system.diceroller.damage.bonussuccesses;
+            this.object.overwhelming += item.system.diceroller.damage.overwhelming;
+            this.object.damage.postSoakDamage += item.system.diceroller.damage.postsoakdamage;
+            if (item.system.diceroller.damage.doubleextrasuccess) {
+                this.object.damage.doubleExtraSuccess = item.system.diceroller.damage.doubleextrasuccess;
+            }
+            if (item.system.diceroller.damage.ignoresoak > 0) {
+                this.object.damage.ignoreSoak += item.system.diceroller.damage.ignoresoak;
+            }
+            this.render();
+        });
+
+        html.find('.remove-charm').click(ev => {
+            ev.stopPropagation();
+            let li = $(ev.currentTarget).parents(".item");
+            let item = this.actor.items.get(li.data("item-id"));
+            const index = this.object.addedCharms.findIndex(addedItem => item.id === addedItem._id);
+            if (index > -1) {
+                for (var charmlist of Object.values(this.object.charmList)) {
+                    for (const charm of charmlist.list) {
+                        if (charm._id === item.id) {
+                            charm.charmAdded = false;
+                        }
+                    }
+                }
+                this.object.addedCharms.splice(index, 1);
+
+                this.object.cost.motes -= item.system.cost.motes;
+                this.object.cost.committed -= item.system.cost.committed;
+                this.object.cost.anima -= item.system.cost.anima;
+                if (item.system.cost.health > 0) {
+                    if (item.system.cost.healthtype === 'lethal') {
+                        this.object.cost.healthLethal -= item.system.cost.health;
+                    }
+                    else {
+                        this.object.cost.healthAggravated -= item.system.cost.health;
+                    }
+                }
+                this.object.cost.stunt -= item.system.cost.stunt;
+                this.object.cost.power -= item.system.cost.power;
+
+                this.object.diceModifier -= item.system.diceroller.bonusdice;
+                this.object.successModifier -= item.system.diceroller.bonussuccesses;
+                if (item.system.diceroller.rerollfailed) {
+                    this.object.rerollFailed = false;
+                }
+                if (item.system.diceroller.rolltwice) {
+                    this.object.rollTwice = false;
+                }
+                this.object.rerollNumber -= item.system.diceroller.rerolldice;
+                this.object.diceToSuccesses -= item.system.diceroller.dicetosuccesses;
+
+                this.object.damage.damageDice -= item.system.diceroller.damage.bonusdice;
+                this.object.damage.damageSuccessModifier -= item.system.diceroller.damage.bonussuccesses;
+                this.object.overwhelming -= item.system.diceroller.damage.overwhelming;
+                this.object.damage.postSoakDamage -= item.system.diceroller.damage.postsoakdamage;
+                if (item.system.diceroller.damage.doubleextrasuccess) {
+                    this.object.damage.doubleExtraSuccess = false;
+                }
+                if (item.system.diceroller.damage.ignoresoak > 0) {
+                    this.object.damage.ignoreSoak -= item.system.diceroller.damage.ignoresoak;
+                }
+            }
             this.render();
         });
 
@@ -466,6 +641,9 @@ export class RollForm extends FormApplication {
         this.object.roll = roll;
         this.object.getDice = getDice;
         this.object.total = total;
+        if (this.object.rollType !== 'base') {
+            this._spendResources();
+        }
     }
 
     _abilityRoll() {
@@ -525,6 +703,7 @@ export class RollForm extends FormApplication {
             let extraPower = ``;
             if (self) {
                 const actorData = duplicate(this.actor);
+                actorData.system.power.value = this.actor.system.power.value;
                 if (this.object.rollType === 'buildPower') {
                     if (total + actorData.system.power.value > 10) {
                         const extraPowerValue = Math.floor((total + 1 + actorData.system.power.value - 10));
@@ -677,7 +856,7 @@ export class RollForm extends FormApplication {
 
                 let damageSuccess = damageRoll.total + this.object.damage.damageSuccessModifier;
                 if (damageBonus) damageSuccess += damageBonus;
-                let damageTotal = damageSuccess - this.object.soak;
+                let damageTotal = damageSuccess - Math.max(0, this.object.soak - this.object.damage.ignoreSoak);
 
                 actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.power);
                 this.actor.update(actorData);
@@ -701,7 +880,7 @@ export class RollForm extends FormApplication {
                                       <ol class="dice-rolls">${getDamageDice}</ol>
                                   </div>
                                 </div>
-                                <h4 class="dice-formula">${damageSuccess} Damage - ${this.object.soak} soak</h4>
+                                <h4 class="dice-formula">${damageSuccess} Damage - ${this.object.soak} soak (Ignore ${this.object.damage.ignoreSoak})</h4>
                                 <h4 class="dice-total">${damageTotal} Total Damage</h4>
                             </div>
                         </div>
@@ -895,5 +1074,28 @@ export class RollForm extends FormApplication {
             }
         }
         return highestAttribute;
+    }
+
+    async _spendResources() {
+        const actorData = duplicate(this.actor);
+        var newAnimaValue = Math.max(0, actorData.system.anima.value - this.object.cost.anima);
+        actorData.system.motes.value = Math.max(0, actorData.system.motes.value - this.object.cost.motes);
+        actorData.system.motes.commited += this.object.cost.committed;
+        actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - this.object.cost.stunt);
+        actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.cost.power);
+        this.object.power = actorData.system.power.value;
+        actorData.system.anima.value = newAnimaValue;
+        let totalHealth = 0;
+        for (let [key, health_level] of Object.entries(actorData.system.health.levels)) {
+            totalHealth += health_level.value;
+        }
+        if (this.object.cost.healthAggravated > 0) {
+            actorData.system.health.aggravated = Math.min(totalHealth - actorData.system.health.lethal, actorData.system.health.aggravated + this.object.cost.healthAggravated);
+        }
+        if (this.object.cost.healthLethal > 0) {
+            actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.system.health.lethal + this.object.cost.healthLethal);
+        }
+        this.actor.system.power.value = actorData.system.power.value;
+        await this.actor.update(actorData);
     }
 }
