@@ -41,10 +41,6 @@ export class ExaltedessenceItemSheet extends ItemSheet {
     context.system = itemData.system;
 
     if (itemData.type === 'weapon' || itemData.type === 'armor') {
-      if(itemData.type === 'weapon' && context.system.defence !== 0) {
-          context.system.defense = context.system.defence;
-          context.system.defence = 0;
-      }
       this._prepareTraits(itemData.type, context.system.traits);
     }
 

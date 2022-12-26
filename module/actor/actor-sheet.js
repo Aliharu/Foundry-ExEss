@@ -57,21 +57,12 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     // Prepare items.
     if (this.actor.type === 'character') {
-      if (context.system.defence.value !== 0) {
-        context.system.parry.value = context.system.defence.value;
-        context.system.evasion.value = context.system.defence.value;
-        context.system.defence.value = 0;
-      }
       for (let attr of Object.values(context.system.attributes)) {
         attr.isCheckbox = attr.dtype === "Boolean";
       }
       this._prepareCharacterItems(context);
     }
     if (this.actor.type === 'npc') {
-      if (context.system.defence.value !== 0) {
-        context.system.defense.value = context.system.defence.value;
-        context.system.defence.value = 0;
-      }
       this._prepareCharacterItems(context);
     }
 
