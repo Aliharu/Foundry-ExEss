@@ -29,7 +29,7 @@
           "total": 5,
           "min": 0,
           "max": 5,
-          "commited": 0
+          "committed": 0
         },
         "flowing": {
           "value": 0,
@@ -81,6 +81,9 @@
           "aura": "none",
           "devilbody": "",
           "nature": ""
+        },
+        "settings": {
+          "charmspendpool": "flowing"
         }
       }
     },

@@ -1217,8 +1217,18 @@ export class RollForm extends FormApplication {
     async _spendResources() {
         const actorData = duplicate(this.actor);
         var newAnimaValue = Math.max(0, actorData.system.anima.value - this.object.cost.anima);
-        actorData.system.motes.value = Math.max(0, actorData.system.motes.value - this.object.cost.motes);
-        actorData.system.motes.commited += this.object.cost.committed;
+        if (actorData.system.details.exalt === 'getimian') {
+            if (actorData.system.settings.charmspendpool === 'still') {
+                actorData.system.still.value = Math.max(0, actorData.system.still.value - this.object.cost.motes - this.object.cost.committed);
+            }
+            if (actorData.system.settings.charmspendpool === 'flowing') {
+                actorData.system.flowing.value = Math.max(0, actorData.system.flowing.value - this.object.cost.motes - this.object.cost.committed);
+            }
+        }
+        else {
+            actorData.system.motes.value = Math.max(0, actorData.system.motes.value - this.object.cost.motes - this.object.cost.committed);
+        }
+        actorData.system.motes.committed += this.object.cost.committed;
         actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - this.object.cost.stunt);
         actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.cost.power);
         this.object.power = actorData.system.power.value;

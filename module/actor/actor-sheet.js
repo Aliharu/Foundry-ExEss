@@ -250,8 +250,9 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
-    this._setupDotCounters(html)
-    this._setupSquareCounters(html)
+    this._setupDotCounters(html);
+    this._setupSquareCounters(html);
+    this._setupButtons(html);
 
     html.find('.item-row').click(ev => {
       const li = $(ev.currentTarget).next();
@@ -373,6 +374,14 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       new RollForm(this.actor, { event: ev }, {}, { rollType: 'social', 'ability': 'embassy' }).render(true);
     });
 
+    html.find('.set-pool-flowing').mousedown(ev => {
+      this.setSpendPool('flowing');
+    });
+
+
+    html.find('.set-pool-still').mousedown(ev => {
+      this.setSpendPool('still');
+    });
 
 
     html.find('.weapon-roll').click(ev => {
@@ -406,7 +415,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     html.find('.saved-roll').click(ev => {
       let li = $(event.currentTarget).parents(".item");
-      new RollForm(this.actor, {event:ev}, {}, {rollId: li.data("item-id")}).render(true);
+      new RollForm(this.actor, { event: ev }, {}, { rollId: li.data("item-id") }).render(true);
     });
 
     html.find('.delete-saved-roll').click(ev => {
@@ -422,7 +431,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             icon: '<i class="fa fa-check"></i>',
             label: "Delete",
             callback: dlg => {
-              this.actor.update({[rollDeleteString]: null});
+              this.actor.update({ [rollDeleteString]: null });
               ui.notifications.notify(`Saved Roll Deleted`);
             }
           },
@@ -467,6 +476,12 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     if (ev.target.classList.contains("content-link")) return;
     const savedRoll = this.actor.system.savedRolls[li.dataset.itemId];
     ev.dataTransfer.setData("text/plain", JSON.stringify({ actorId: this.actor.uuid, type: 'savedRoll', id: li.dataset.itemId, name: savedRoll.name }));
+  }
+
+  async setSpendPool(type) {
+    const actorData = duplicate(this.actor);
+    actorData.system.settings.charmspendpool = type;
+    this.actor.update(actorData);
   }
 
   _updateAnima(direction) {
@@ -782,6 +797,20 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     })
   }
 
+  _setupButtons(html) {
+    const actorData = duplicate(this.actor)
+    html.find('.set-pool-flowing').each(function (i) {
+      if (actorData.system.settings.charmspendpool === 'flowing') {
+        $(this).css("color", '#F9B516');
+      }
+    });
+    html.find('.set-pool-still').each(function (i) {
+      if (actorData.system.settings.charmspendpool === 'still') {
+        $(this).css("color", '#F9B516');
+      }
+    });
+  }
+
   _toggleAugment(event) {
     event.preventDefault()
     const element = event.currentTarget
@@ -899,8 +928,18 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     let item = this.actor.items.get(li.data("item-id"));
 
     if (item.type === 'charm') {
-      actorData.system.motes.value = Math.max(0, actorData.system.motes.value - item.system.cost.motes);
-      actorData.system.motes.commited += item.system.cost.committed;
+      if (actorData.system.details.exalt === 'getimian') {
+        if (actorData.system.settings.charmspendpool === 'still') {
+          actorData.system.still.value = Math.max(0, actorData.system.still.value - item.system.cost.motes - item.system.cost.committed);
+        }
+        if (actorData.system.settings.charmspendpool === 'flowing') {
+          actorData.system.flowing.value = Math.max(0, actorData.system.flowing.value - item.system.cost.motes - item.system.cost.committed);
+        }
+      }
+      else {
+        actorData.system.motes.value = Math.max(0, actorData.system.motes.value - item.system.cost.motes - item.system.cost.committed);
+      }
+      actorData.system.motes.committed += item.system.cost.committed;
       actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - item.system.cost.stunt);
       actorData.system.power.value = Math.max(0, actorData.system.power.value - item.system.cost.power);
       actorData.system.anima.value = Math.max(0, actorData.system.anima.value - item.system.cost.anima);

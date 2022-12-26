@@ -51,7 +51,7 @@
           </div>
           <div>
             <label class="resource-label">{{localize "ExEss.Committed"}}</label>
-            <input type="number" name="system.motes.commited" value="{{system.motes.commited}}" data-dtype="Number" />
+            <input type="number" name="system.motes.committed" value="{{system.motes.committed}}" data-dtype="Number" />
           </div>
         </div>
         <div class="resource-content flexrow flex-center flex-between">
@@ -68,7 +68,8 @@
         <div class="resource-content flexrow flex-center flex-between">
           {{#ifEquals system.details.exalt 'getimian'}}
           <div>
-            <label class="resource-label">{{localize "ExEss.Flowing"}}</label>
+            <label class="resource-label"><a><i class="fas fa-burn set-pool-flowing cursor-pointer"
+              title="Spend motes from this pool"></i></a> {{localize "ExEss.Flowing"}}</label>
             <div class="resource-content flexrow flex-center flex-between">
               <input type="number" name="system.flowing.value" value="{{system.flowing.value}}" data-dtype="Number" />
               /
@@ -76,7 +77,8 @@
             </div>
           </div>
           <div>
-            <label class="resource-label">{{localize "ExEss.Still"}}</label>
+            <label class="resource-label"><a><i class="fas fa-burn set-pool-still cursor-pointer"
+              title="Spend motes from this pool"></i></a> {{localize "ExEss.Still"}}</label>
             <div class="resource-content flexrow flex-center flex-between">
               <input type="number" name="system.still.value" value="{{system.still.value}}" data-dtype="Number" />
               /

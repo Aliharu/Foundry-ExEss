@@ -156,8 +156,8 @@ export class ExaltedessenceActor extends Actor {
       this.system.anima.value = updateData?.system?.anima?.value;
     }
     if (updateData?.system?.motes) {
-      if (updateData?.system?.motes.commited !== undefined && this.system.details.exalt !== 'getimian') {
-        const commitChange = Math.max(0, updateData.system.motes.commited - this.system.motes.commited);
+      if (updateData?.system?.motes.committed !== undefined && this.system.details.exalt !== 'getimian') {
+        const commitChange = Math.max(0, updateData.system.motes.committed - this.system.motes.committed);
         const newMotes = Math.max(0, this.system.motes.value - commitChange);
         updateData.system.motes.value = newMotes;
       }
