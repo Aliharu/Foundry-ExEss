@@ -62,6 +62,44 @@
             {{editor system.description target="system.description" button=true owner=owner editable=true}}
         </div>
         <div class="tab" data-group="primary" data-tab="effects">
+            <div>
+                <div class="d-flex flex-center resources">
+                    <label class="resource-label mr-1">{{localize "ExEss.AttackEffect"}} </label>
+                </div>
+                <div>
+                    <label class="resource-label mr-1">{{localize "ExEss.Preset"}}: </label>
+                    <select name="system.attackeffectpreset" data-type="String">
+                        {{#select system.attackeffectpreset}}
+                        <option value="arrow">{{localize "ExEss.Arrow"}}</option>
+                        <option value="bite">{{localize "ExEss.Bite"}}</option>
+                        <option value="brawl">{{localize "ExEss.Brawl"}}</option>
+                        <option value="claws">{{localize "ExEss.Claws"}}</option>
+                        <option value="fireball">{{localize "ExEss.Fireball"}}</option>
+                        <option value="firebreath">{{localize "ExEss.Firebreath"}}</option>
+                        <option value="flamepiece">{{localize "ExEss.Flamepiece"}}</option>
+                        <option value="glaive">{{localize "ExEss.Glaive"}}</option>
+                        <option value="goremaul">{{localize "ExEss.Goremaul"}}</option>
+                        <option value="greatsaxe">{{localize "ExEss.Greataxe"}}</option>
+                        <option value="greatsword">{{localize "ExEss.Greatsword"}}</option>
+                        <option value="handaxe">{{localize "ExEss.Handaxe"}}</option>
+                        <option value="lightning">{{localize "ExEss.Lightning"}}</option>
+                        <option value="quarterstaff">{{localize "ExEss.Quarterstaff"}}</option>
+                        <option value="rapier">{{localize "ExEss.Rapier"}}</option>
+                        <option value="scimitar">{{localize "ExEss.Scimitar"}}</option>
+                        <option value="shortsword">{{localize "ExEss.Shortsword"}}</option>
+                        <option value="spear">{{localize "ExEss.Spear"}}</option>
+                        <option value="sword">{{localize "ExEss.Sword"}}</option>
+                        <option value="throwdagger">{{localize "ExEss.ThrownDagger"}}</option>
+                        <option value="none">{{localize "ExEss.None"}}</option>
+                        {{/select}}
+                    </select>
+                    <div>
+                        <label class="resource-label mr-1">{{localize "ExEss.CustomInput"}}: </label>
+                        <input type="text" name="system.attackeffect" value="{{system.attackeffect}}"
+                            placeholder="jb2a.quarterstaff.melee.01.white" />
+                    </div>
+                </div>
+            </div>
             {{> systems/exaltedessence/templates/actor/active-effects.html}}
         </div>
     </section>

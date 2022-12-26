@@ -249,7 +249,6 @@ export async function addDefensePenalty(actor, label = "Defense Penalty") {
       },
       "changes": changes
     }]);
-
   }
 }
 

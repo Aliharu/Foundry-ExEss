@@ -38,6 +38,8 @@ export class RollForm extends FormApplication {
                 this.object.conditions = (this.actor.token && this.actor.token.actorData.effects) ? this.actor.token.actorData.effects : [];
                 this.object.weaponType = data.weaponType || 'melee';
                 this.object.diceModifier = 0;
+                this.object.triggerSelfDefensePenalty = 0;
+
 
                 if (data.rollType === 'withering' || data.rollType === 'gambit' || data.rollType === 'decisive') {
                     if (this.object.conditions.some(e => e.name === 'prone')) {
@@ -125,7 +127,7 @@ export class RollForm extends FormApplication {
                 this.object.weaponTags = data.weapon.traits.weapontags.selected;
                 this.object.accuracySuccesses = data.weapon.accuracy || 0;
                 this.object.damage.damageSuccessModifier = data.weapon.damage || 0;
-                if(this.object.weaponTags && this.object.rollType === 'decisive' && this.object.weaponTags['aggravated']) {
+                if (this.object.weaponTags && this.object.rollType === 'decisive' && this.object.weaponTags['aggravated']) {
                     this.object.damage.type = 'aggravated';
                 }
                 this.object.overwhelming = data.weapon.overwhelming || 0;
@@ -149,6 +151,7 @@ export class RollForm extends FormApplication {
         }
         if (this.object.damage.ignoreSoak === undefined) {
             this.object.damage.ignoreSoak = 0;
+            this.object.triggerSelfDefensePenalty = 0;
         }
         if (this.object.weaponTags === undefined) {
             this.object.weaponTags = {};
@@ -195,7 +198,7 @@ export class RollForm extends FormApplication {
             }
 
             if (this.object.target) {
-                if(this.object.target.actor.type === 'npc'){
+                if (this.object.target.actor.type === 'npc') {
                     this.object.defense = this.object.target.actor.system.defense.value;
                 }
                 else {
@@ -233,7 +236,7 @@ export class RollForm extends FormApplication {
                         }
                     }
                 }
-                if(this.object.defense < 0) {
+                if (this.object.defense < 0) {
                     this.object.defense = 0;
                 }
             }
@@ -281,7 +284,7 @@ export class RollForm extends FormApplication {
                     }
                     if (this._isAttackRoll()) {
                         this.object.showSpecialAttacks = true;
-                        if(this.object.rollType !== 'gambit') {
+                        if (this.object.rollType !== 'gambit') {
                             for (var specialAttack of this.object.specialAttacksList) {
                                 if (specialAttack.id === 'chopping' && this.object.rollType === 'withering') {
                                     specialAttack.show = true;
@@ -289,7 +292,7 @@ export class RollForm extends FormApplication {
                                 else if (specialAttack.id === 'piercing' && this.object.rollType === 'decisive') {
                                     specialAttack.show = true;
                                 }
-                                else if (specialAttack.id === 'aim' || specialAttack.id === 'rush'){
+                                else if (specialAttack.id === 'aim' || specialAttack.id === 'rush') {
                                     specialAttack.show = true;
                                 }
                                 else {
@@ -1087,6 +1090,54 @@ export class RollForm extends FormApplication {
                 }
             }
         }
+        if (this.object.triggerSelfDefensePenalty > 0) {
+            const existingPenalty = this.actor.effects.find(i => i.label == "Defense Penalty");
+            if (existingPenalty) {
+                let changes = duplicate(existingPenalty.changes);
+                if (this.actor.type === 'character') {
+                    changes[0].value = changes[0].value - 1;
+                    changes[1].value = changes[1].value - 1;
+                }
+                else {
+                    changes[0].value = changes[0].value - 1;
+                }
+                existingPenalty.update({ changes });
+            }
+            else {
+                var changes = [
+                    {
+                        "key": "data.evasion.value",
+                        "value": -1,
+                        "mode": 2
+                    },
+                    {
+                        "key": "data.parry.value",
+                        "value": -1,
+                        "mode": 2
+                    }
+                ];
+                if (this.actor.type === 'npc') {
+                    changes = [
+                        {
+                            "key": "data.defense.value",
+                            "value": -1,
+                            "mode": 2
+                        },
+                    ];
+                }
+                this.actor.createEmbeddedDocuments('ActiveEffect', [{
+                    label: "Defense Penalty",
+                    icon: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
+                    origin: this.actor.uuid,
+                    disabled: false,
+                    duration: {
+                        rounds: 10,
+                    },
+                    "changes": changes
+                }]);
+            }
+        }
+        this.attackSequence();
     }
 
     async dealHealthDamage(characterDamage) {
@@ -1184,5 +1235,113 @@ export class RollForm extends FormApplication {
         }
         this.actor.system.power.value = actorData.system.power.value;
         await this.actor.update(actorData);
+    }
+
+    attackSequence() {
+        if (this.object.target && this.actor.token && game.settings.get("exaltedessence", "attackEffects")) {
+            var actorToken = canvas.tokens.placeables.filter(x => x.id === this.actor.token.id)[0];
+            if (this.object.attackEffectPreset !== 'none') {
+                let effectsMap = {
+                    'arrow': 'jb2a.arrow.physical.white.01.05ft',
+                    'bite': 'jb2a.bite.400px.red',
+                    'brawl': 'jb2a.flurry_of_blows.physical.blue',
+                    'claws': 'jb2a.claws.400px.red',
+                    'fireball': 'jb2a.fireball.beam.orange',
+                    'firebreath': 'jb2a.breath_weapons.fire.line.orange',
+                    'flamepiece': 'jb2a.bullet.01.orange.05ft',
+                    'glaive': 'jb2a.glaive.melee.01.white.5',
+                    'goremaul': 'jb2a.maul.melee.standard.white',
+                    'greatsaxe': 'jb2a.greataxe.melee.standard.white',
+                    'greatsword': 'jb2a.greatsword.melee.standard.white',
+                    'handaxe': 'jb2a.handaxe.melee.standard.white',
+                    'lightning': 'jb2a.chain_lightning.primary.blue.05ft',
+                    'quarterstaff': 'jb2a.quarterstaff.melee.01.white.3',
+                    'rapier': 'jb2a.rapier.melee.01.white.4',
+                    'scimitar': 'jb2a.scimitar.melee.01.white.0',
+                    'shortsword': 'jb2a.shortsword.melee.01.white.0',
+                    'spear': 'jb2a.spear.melee.01.white.2',
+                    'sword': 'jb2a.sword.melee.01.white.4',
+                    'throwdagger': 'jb2a.dagger.throw.01.white.15ft',
+                }
+
+                switch (this.object.attackEffectPreset) {
+                    case 'fireball':
+                        new Sequence()
+                            // .effect()
+                            // .file('animated-spell-effects-cartoon.fire.118')
+                            // .atLocation(actorToken)
+                            // .delay(300)
+                            .effect()
+                            .file(effectsMap[this.object.attackEffectPreset])
+                            .atLocation(actorToken)
+                            .stretchTo(this.object.target)
+                            .effect()
+                            .file("jb2a.fireball.explosion.orange")
+                            .atLocation(this.object.target)
+                            .delay(2100)
+                            .effect()
+                            .file("jb2a.ground_cracks.orange.01")
+                            .atLocation(this.object.target)
+                            .belowTokens()
+                            .scaleIn(0.5, 150, { ease: "easeOutExpo" })
+                            .duration(5000)
+                            .fadeOut(3250, { ease: "easeInSine" })
+                            .name("Fireball_Impact")
+                            .delay(2300)
+                            .waitUntilFinished(-3250)
+                            .effect()
+                            .file("jb2a.impact.ground_crack.still_frame.01")
+                            .atLocation(this.object.target)
+                            .belowTokens()
+                            .fadeIn(300, { ease: "easeInSine" })
+                            .play();
+                        break;
+                    case 'flamepiece':
+                        new Sequence()
+                            .effect()
+                            .file(effectsMap[this.object.attackEffectPreset])
+                            .atLocation(actorToken)
+                            .stretchTo(this.object.target)
+                            .waitUntilFinished(-500)
+                            .effect()
+                            .file("jb2a.impact.010.orange")
+                            .atLocation(this.object.target)
+                            .play()
+                        break;
+                    case 'goremaul':
+                        new Sequence()
+                            .effect()
+                            .file(effectsMap[this.object.attackEffectPreset])
+                            .atLocation(actorToken)
+                            .stretchTo(this.object.target)
+                            .waitUntilFinished(-1100)
+                            .effect()
+                            .file("jb2a.impact.ground_crack.orange")
+                            .atLocation(this.object.target)
+                            .scale(0.5)
+                            .belowTokens()
+                            .play();
+                        break;
+                    case 'none':
+                        break;
+                    default:
+                        new Sequence()
+                            .effect()
+                            .file(effectsMap[this.object.attackEffectPreset])
+                            .atLocation(actorToken)
+                            .stretchTo(this.object.target)
+                            .play()
+                        break;
+                }
+            }
+            else if (this.object.attackEffect) {
+                new Sequence()
+                    .effect()
+                    .file(this.object.attackEffect)
+                    .atLocation(actorToken)
+                    .stretchTo(this.object.target)
+                    .play()
+            }
+        }
     }
 }
