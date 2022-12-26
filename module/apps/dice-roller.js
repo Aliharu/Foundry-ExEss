@@ -187,9 +187,10 @@ export class RollForm extends FormApplication {
 
             if (this.object.specialAttacksList === undefined) {
                 this.object.specialAttacksList = [
-                    { id: 'chopping', name: "Chopping", added: false, show: false, description: 'Cost: 1i and reduce defense by 1. Increase damage by 3 on withering.  -2 enemy hardness on decisive', img: 'systems/exaltedessence/assets/icons/battered-axe.svg' },
-                    { id: 'flurry', name: "Flurry", added: false, show: false, description: 'Cost: 3 dice and reduce defense by 1.', img: 'systems/exaltedessence/assets/icons/spinning-blades.svg' },
-                    { id: 'piercing', name: "Piercing", added: false, show: false, description: 'Cost: 1i and reduce defense by 1.  Ignore 4 soak', img: 'systems/exaltedessence/assets/icons/fast-arrow.svg' },
+                    { id: 'aim', name: "Aim", added: false, show: this._isAttackRoll(), description: '+3 Dice, Cannot be used on the same turn as a reflexive move or flurry.', img: 'systems/exaltedessence/assets/icons/targeting.svg' },
+                    { id: 'chopping', name: "Chopping", added: false, show: false, description: 'Reduce defense by 1. Increase dice by 3 on withering.  -2 enemy hardness on decisive', img: 'systems/exaltedessence/assets/icons/battered-axe.svg' },
+                    { id: 'piercing', name: "Piercing", added: false, show: false, description: 'Reduce defense by 1.  Ignore 2 soak.', img: 'systems/exaltedessence/assets/icons/fast-arrow.svg' },
+                    { id: 'rush', name: "Rush", added: false, show: this._isAttackRoll(), description: 'Special attacked, move 1 range band closer and gain +3 dice on attack.', img: 'systems/exaltedessence/assets/icons/running-ninja.svg' },
                 ];
             }
 
@@ -282,7 +283,13 @@ export class RollForm extends FormApplication {
                         this.object.showSpecialAttacks = true;
                         if(this.object.rollType !== 'gambit') {
                             for (var specialAttack of this.object.specialAttacksList) {
-                                if (this.object.weaponTags[specialAttack.id] || specialAttack.id === 'flurry') {
+                                if (specialAttack.id === 'chopping' && this.object.rollType === 'withering') {
+                                    specialAttack.show = true;
+                                }
+                                else if (specialAttack.id === 'piercing' && this.object.rollType === 'decisive') {
+                                    specialAttack.show = true;
+                                }
+                                else if (specialAttack.id === 'aim' || specialAttack.id === 'rush'){
                                     specialAttack.show = true;
                                 }
                                 else {
@@ -492,6 +499,50 @@ export class RollForm extends FormApplication {
                     this.object.damage.ignoreSoak -= item.system.diceroller.damage.ignoresoak;
                 }
             }
+            this.render();
+        });
+
+        html.find('.add-special-attack').click((ev) => {
+            ev.stopPropagation();
+            let li = $(ev.currentTarget).parents(".item");
+            let id = li.data("item-id");
+            for (var specialAttack of this.object.specialAttacksList) {
+                if (specialAttack.id === id) {
+                    specialAttack.added = true;
+                }
+            }
+            if (id === 'chopping' && this.object.rollType === 'withering') {
+                this.object.diceModifier += 3;
+            }
+            else if (id === 'piercing' && this.object.rollType === 'decisive') {
+                this.object.damage.ignoreSoak += 2;
+            }
+            else {
+                this.object.diceModifier += 3;
+            }
+            this.object.triggerSelfDefensePenalty += 1;
+            this.render();
+        });
+
+        html.find('.remove-special-attack').click((ev) => {
+            ev.stopPropagation();
+            let li = $(ev.currentTarget).parents(".item");
+            let id = li.data("item-id");
+            for (var specialAttack of this.object.specialAttacksList) {
+                if (specialAttack.id === id) {
+                    specialAttack.added = false;
+                }
+            }
+            if (id === 'chopping') {
+                this.object.diceModifier -= 3;
+            }
+            else if (id === 'piercing') {
+                this.object.damage.ignoreSoak -= 2;
+            }
+            else {
+                this.object.diceModifier -= 3;
+            }
+            this.object.triggerSelfDefensePenalty = Math.max(0, this.object.triggerSelfDefensePenalty - 1);
             this.render();
         });
 
