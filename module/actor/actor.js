@@ -151,6 +151,7 @@ export class ExaltedessenceActor extends Actor {
 
   async _preUpdate(updateData, options, user) {
     await super._preUpdate(updateData, options, user);
+    var oldValue = this.system.anima.value;
     if (updateData?.system?.anima) {
       this.system.anima.value = updateData?.system?.anima?.value;
     }
@@ -176,8 +177,8 @@ export class ExaltedessenceActor extends Actor {
       const newAnima = Math.min(10, this.system.anima.value + animaChange);
       updateData.system.anima = { 'value': newAnima };
     }
-    if (updateData.system.anima && this.system.anima.value !== updateData.system.anima) {
-      // animaTokenMagic(this.actor, newValue);
+    if (updateData?.system?.anima?.value !== undefined && oldValue !== updateData.system.anima.value) {
+      animaTokenMagic(this, updateData.system.anima.value);
     }
   }
 
@@ -249,5 +250,194 @@ export async function addDefensePenalty(actor, label = "Defense Penalty") {
       "changes": changes
     }]);
 
+  }
+}
+
+async function animaTokenMagic(actor, newAnimaValue) {
+  if (game.settings.get("exaltedessence", "animaTokenMagic") && actor.token) {
+      let effectColor = Number(`0x${actor.system.details.color.replace('#', '')}`);
+      var actorToken = canvas.tokens.placeables.filter(x => x.id === actor.token.id)[0];
+
+      let sovereign =
+          [{
+              filterType: "xfire",
+              filterId: "myChromaticXFire",
+              time: 0,
+              blend: 2,
+              amplitude: 1.1,
+              dispersion: 0,
+              chromatic: true,
+              scaleX: 1,
+              scaleY: 1,
+              inlay: false,
+              animated:
+              {
+                  time:
+                  {
+                      active: true,
+                      speed: -0.0015,
+                      animType: "move"
+                  }
+              }
+          }];
+
+      let glowing =
+          [{
+              filterType: "glow",
+              filterId: "superSpookyGlow",
+              outerStrength: 4,
+              innerStrength: 0,
+              color: effectColor,
+              quality: 0.5,
+              padding: 10,
+              animated:
+              {
+                  color:
+                  {
+                      active: true,
+                      loopDuration: 3000,
+                      animType: "colorOscillation",
+                      val1: 0xFFFFFF,
+                      val2: effectColor
+                  }
+              }
+          }];
+      let burning =
+          [
+              {
+                  filterType: "zapshadow",
+                  filterId: "myPureFireShadow",
+                  alphaTolerance: 0.50
+              },
+              {
+                  filterType: "xglow",
+                  filterId: "myPureFireAura",
+                  auraType: 2,
+                  color: effectColor,
+                  thickness: 9.8,
+                  scale: 4.,
+                  time: 0,
+                  auraIntensity: 2,
+                  subAuraIntensity: 1.5,
+                  threshold: 0.40,
+                  discard: true,
+                  animated:
+                  {
+                      time:
+                      {
+                          active: true,
+                          speed: 0.0027,
+                          animType: "move"
+                      },
+                      thickness:
+                      {
+                          active: true,
+                          loopDuration: 3000,
+                          animType: "cosOscillation",
+                          val1: 2,
+                          val2: 5
+                      }
+                  }
+              }];
+
+      let bonfire =
+          [{
+              filterType: "zapshadow",
+              filterId: "myZap",
+              alphaTolerance: 0.45
+          }, {
+              filterType: "field",
+              filterId: "myLavaRing",
+              shieldType: 6,
+              gridPadding: 1.25,
+              color: effectColor,
+              time: 0,
+              blend: 14,
+              intensity: 1,
+              lightAlpha: 0,
+              lightSize: 0.7,
+              scale: 1,
+              radius: 1,
+              chromatic: false,
+              discardThreshold: 0.30,
+              hideRadius: 0.95,
+              alphaDiscard: true,
+              animated:
+              {
+                  time:
+                  {
+                      active: true,
+                      speed: 0.0015,
+                      animType: "move"
+                  },
+                  radius:
+                  {
+                      active: true,
+                      loopDuration: 6000,
+                      animType: "cosOscillation",
+                      val1: 1,
+                      val2: 0.8
+                  },
+                  hideRadius:
+                  {
+                      active: true,
+                      loopDuration: 3000,
+                      animType: "cosOscillation",
+                      val1: 0.75,
+                      val2: 0.4
+                  }
+              }
+          }, {
+              filterType: "xglow",
+              filterId: "myBurningAura",
+              auraType: 2,
+              color: effectColor,
+              thickness: 9.8,
+              scale: 1.,
+              time: 0,
+              auraIntensity: 2,
+              subAuraIntensity: 1,
+              threshold: 0.30,
+              discard: true,
+              zOrder: 3000,
+              animated:
+              {
+                  time:
+                  {
+                      active: true,
+                      speed: 0.0027,
+                      animType: "move"
+                  },
+                  thickness:
+                  {
+                      active: true,
+                      loopDuration: 600,
+                      animType: "cosOscillation",
+                      val1: 4,
+                      val2: 8
+                  }
+              }
+          }];
+
+      if (actorToken) {
+          await TokenMagic.deleteFilters(actorToken);
+          if (newAnimaValue > 2) {
+              if (newAnimaValue >= 7) {
+                  await TokenMagic.addUpdateFilters(actorToken, bonfire);
+                  if (actorToken.actor.system.details.caste.toLowerCase() === "sovereign") {
+                      await TokenMagic.addUpdateFilters(actorToken, sovereign);
+                  }
+              }
+              else if (newAnimaValue >= 5) {
+                  await TokenMagic.addUpdateFilters(actorToken, burning);
+                  if (actorToken.actor.system.details.caste.toLowerCase() === "sovereign") {
+                      await TokenMagic.addUpdateFilters(actorToken, sovereign);
+                  }
+              }
+              else {
+                await TokenMagic.addUpdateFilters(actorToken, glowing);
+              }
+          }
+      }
   }
 }

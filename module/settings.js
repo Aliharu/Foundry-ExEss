@@ -25,4 +25,22 @@ export function registerSettings() {
         type: Boolean,
         config: true,
     });
+
+    game.settings.register('exaltedessence', 'animaTokenMagic', {
+        name: game.i18n.localize('ExEss.AnimaTokenEffects'),
+        hint: game.i18n.localize('ExEss.AnimaTokenEffectsDescription'),
+        default: false,
+        scope: 'world',
+        type: Boolean,
+        config: true,
+    });
+
+    game.settings.register('exaltedessence', 'attackEffects', {
+        name: game.i18n.localize('ExEss.AttackEffects'),
+        hint: game.i18n.localize('ExEss.AttackEffectsDescription'),
+        default: false,
+        scope: 'world',
+        type: Boolean,
+        config: true,
+    });
 }
