@@ -295,6 +295,12 @@
             "overwhelming": 0,
             "ignoresoak": 0,
             "doubleextrasuccess": false
+          },
+          "opposedbonuses": {
+            "enabled": false,
+            "defense": 0,
+            "soak": 0,
+            "resolve": 0
           }
         }
       }

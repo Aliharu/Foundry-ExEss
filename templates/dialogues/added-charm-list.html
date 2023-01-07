@@ -1,0 +1,80 @@
+<div class="d-flex flex-between mb-1 collapsable cursor-pointer">
+    <div class="resource-label">
+        {{localize "ExEss.Charms"}}
+    </div>
+    <div>
+        <i class="fas fa-caret-down"></i>
+    </div>
+</div>
+<div style="display:none;">
+    <ol class="items-list">
+        {{#each data.addedCharms as |item id|}}
+        <li class="item flexrow item-row" data-item-id="{{item.id}}">
+            <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+            <h4 class="item-name">{{item.name}}</h4>
+            <div class="item-controls">
+                <a class="item-control remove-charm" title="Remove Charm"><i class="fas fa-trash"></i></a>
+            </div>
+        </li>
+        {{/each}}
+    </ol>
+    {{#if data.showDamage}}
+    {{else}}
+    <div class="resource flex-center">
+        <label class="resource-label">{{localize "ExEss.Cost"}}</label>
+    </div>
+    <div class="resource grid grid-3col flex-center">
+        <div>
+            <label class="resource-label">{{localize "ExEss.Motes"}}</label>
+            <input type="number" name="object.cost.motes" value="{{data.cost.motes}}">
+        </div>
+        <div>
+            <label class="resource-label">{{localize "ExEss.Committed"}} </label>
+            <input type="number" name="object.cost.committed" value="{{data.cost.committed}}">
+        </div>
+        <div>
+            <label class="resource-label">{{localize "ExEss.Power"}} </label>
+            <input type="number" name="object.cost.power" value="{{data.cost.power}}">
+        </div>
+        <div>
+            <label class="resource-label">{{localize "ExEss.Anima"}} </label>
+            <input type="number" name="object.cost.anima" value="{{data.cost.anima}}">
+        </div>
+        <div>
+            <label class="resource-label">{{localize "ExEss.Stunt"}} </label>
+            <input type="number" name="object.cost.stunt" value="{{data.cost.stunt}}">
+        </div>
+        <div>
+            <div class="resource-label">{{localize "ExEss.Health"}}(l)</div>
+            <input type="number" name="object.cost.healthLethal" value="{{data.cost.healthLethal}}" data-dtype="Number" />
+        </div>
+        <div>
+            <div class="resource-label">{{localize "ExEss.Health"}}(a)</div>
+            <input type="number" name="object.cost.healthAggravated" value="{{data.cost.healthAggravated}}" data-dtype="Number" />
+        </div>
+    </div>
+    {{/if}}
+</div>
+{{#ifGreater data.opposingCharms.length 0}}
+<div class="d-flex flex-between mb-1 collapsable cursor-pointer">
+    <div class="resource-label">
+        {{localize "ExEss.OpposingCharms"}}
+    </div>
+    <div>
+        <i class="fas fa-caret-down"></i>
+    </div>
+</div>
+<div style="display:none;">
+    <ol class="items-list">
+        {{#each data.opposingCharms as |item id|}}
+        <li class="item flexrow item-row" data-item-id="{{item._id}}">
+            <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+            <h4 class="item-name">{{item.name}}</h4>
+            <div class="item-controls">
+                <a class="item-control remove-opposing-charm" title="Remove Opposing Charm"><i class="fas fa-trash"></i></a>
+            </div>
+        </li>
+        {{/each}}
+    </ol>
+</div>
+{{/ifGreater}}

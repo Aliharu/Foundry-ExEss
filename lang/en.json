@@ -347,5 +347,7 @@
     "ExEss.Shortsword": "Shortsword",
     "ExEss.Spear": "Spear",
     "ExEss.Sword": "Sword",
-    "ExEss.ThrownDagger": "Thrown Dagger"
+    "ExEss.ThrownDagger": "Thrown Dagger",
+    "ExEss.OpposedBonuses": "Opposed Bonuses",
+    "ExEss.OpposingCharms": "Opposing Charms"
 }

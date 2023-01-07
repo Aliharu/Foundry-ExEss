@@ -8,37 +8,41 @@ export class ExaltedessenceItem extends Item {
    */
   prepareData() {
     super.prepareData();
-
-    // Get the Item's data
-    const itemData = this.system;
-    const actorData = this.actor ? this.actor.system : {};
   }
 
-  async _preCreate(createData, options, userId) {
-    if (createData.type === 'intimacy') {
-      this.updateSource({ img: "systems/exaltedessence/assets/icons/hearts.svg" });
+  async _preCreate(data, options, user) {
+    await super._preCreate(data, options, user);
+    if (!data.img || data.img == "icons/svg/item-bag.svg") {
+      this.updateSource({ img: this.getImageUrl(data.type) });
     }
-    if (createData.type === 'spell') {
-      this.updateSource({ img: "systems/exaltedessence/assets/icons/magic-swirl.svg"  });
+  }
+
+  getImageUrl(type) {
+    if (type === 'intimacy') {
+      return "systems/exaltedessence/assets/icons/hearts.svg";
     }
-    if (createData.type === 'ritual') {
-      this.updateSource({ img: "icons/svg/book.svg" });
+    if (type === 'spell') {
+      return "systems/exaltedessence/assets/icons/magic-swirl.svg";
     }
-    if (createData.type === 'merit') {
-      this.updateSource({ img: "icons/svg/coins.svg" });
+    if (type === 'ritual') {
+      return "icons/svg/book.svg";
     }
-    if (createData.type === 'quality') {
-      this.updateSource({ img: "icons/svg/aura.svg" });
+    if (type === 'merit') {
+      return "icons/svg/coins.svg";
     }
-    if (createData.type === 'weapon') {
-      this.updateSource({ img: "icons/svg/sword.svg" });
+    if (type === 'quality') {
+      return "icons/svg/aura.svg";
     }
-    if (createData.type === 'armor') {
-      this.updateSource({ img: "systems/exaltedessence/assets/icons/breastplate.svg" });
+    if (type === 'weapon') {
+      return "icons/svg/sword.svg";
     }
-    if (createData.type === 'charm') {
-      this.updateSource({ img: "icons/svg/explosion.svg" });
+    if (type === 'armor') {
+      return "systems/exaltedessence/assets/icons/breastplate.svg";
     }
+    if (type === 'charm') {
+      return "icons/svg/explosion.svg";
+    }
+    return "icons/svg/item-bag.svg";
   }
 
   /**

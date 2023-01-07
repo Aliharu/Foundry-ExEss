@@ -4,10 +4,11 @@
   "description": "Exalted Essence system module for FoundryVTT!",
   "url": "https://github.com/Aliharu/Foundry-ExEss",
   "license": "LICENSE.txt",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "compatibility": {
     "minimum": "10",
-    "verified": "10"
+    "verified": "10",
+    "maximum": "10"
   },
   "esmodules": [
     "module/exaltedessence.js"
@@ -25,7 +26,7 @@
   ],
   "relationships": [],
   "manifest": "https://raw.githubusercontent.com/Aliharu/Foundry-ExEss/master/system.json",
-  "download": "https://github.com/Aliharu/Foundry-ExEss/releases/download/v0.11.0/release0.11.0.zip",
+  "download": "https://github.com/Aliharu/Foundry-ExEss/releases/download/v0.11.1/release0.11.1.zip",
   "gridDistance": 5,
   "gridUnits": "ft",
   "socket": true,

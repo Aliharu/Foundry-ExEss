@@ -203,6 +203,31 @@
                     </div>
                 </div>
             </div>
+            <hr>
+            <div class="d-flex flex-center resource-label" style="font-weight: bold;font-size: 17px;">
+                <div>
+                    {{localize "ExEss.OpposedBonuses"}}
+                </div>
+                <input name="system.diceroller.opposedbonuses.enabled" value="system.diceroller.opposedbonuses.enabled"
+                    type="checkbox" {{checked system.diceroller.opposedbonuses.enabled}}>
+            </div>
+            <div>
+                <div class="resource grid grid-3col flex-center">
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Resolve"}}</label>
+                        <input name="system.diceroller.opposedbonuses.resolve" value="{{system.diceroller.opposedbonuses.resolve}}"
+                            type="number">
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Defense"}}</label>
+                        <input name="system.diceroller.opposedbonuses.defense" value="{{system.diceroller.opposedbonuses.defense}}" type="number">
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Soak"}}</label>
+                        <input name="system.diceroller.opposedbonuses.soak" value="{{system.diceroller.opposedbonuses.soak}}" type="number">
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="tab" data-group="primary" data-tab="effects">

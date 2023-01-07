@@ -362,7 +362,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     html.find('#socialInfluence').mousedown(ev => {
       // socialInfluence(this.actor);
-      new RollForm(this.actor, { event: ev }, {}, { rollType: 'social', 'ability': 'embassy' }).render(true);
+      game.rollForm = new RollForm(this.actor, { event: ev }, {}, { rollType: 'social', 'ability': 'embassy' }).render(true);
     });
 
     html.find('.set-pool-flowing').mousedown(ev => {
@@ -378,14 +378,14 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     html.find('.weapon-roll').click(ev => {
       let item = this.actor.items.get($(ev.target).attr("data-item-id"));
       let rollType = $(ev.target).attr("data-roll-type");
-      new RollForm(this.actor, { event: ev }, {}, { rollType: rollType, weapon: item.system }).render(true);
+      game.rollForm = new RollForm(this.actor, { event: ev }, {}, { rollType: rollType, weapon: item.system }).render(true);
     });
 
     html.find('.weapon-icon').click(ev => {
       ev.stopPropagation();
       let item = this.actor.items.get($(ev.target.parentElement).attr("data-item-id"));
       let rollType = $(ev.target.parentElement).attr("data-roll-type");
-      new RollForm(this.actor, { event: ev }, {}, { rollType: rollType, weapon: item.system }).render(true);
+      game.rollForm = new RollForm(this.actor, { event: ev }, {}, { rollType: rollType, weapon: item.system }).render(true);
     });
 
     html.find('#anima-up').click(ev => {
@@ -402,6 +402,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     html.find('.item-spend').click(ev => {
       this._spendItem(ev);
+    });
+
+    html.find('.add-opposing-charm').click(ev => {
+      this._addOpposingCharm(ev);
     });
 
     html.find('.saved-roll').click(ev => {
@@ -907,6 +911,23 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     // Create the Chat Message or return its data
     return ChatMessage.create(chatData);
+  }
+
+  _addOpposingCharm(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    let li = $(event.currentTarget).parents(".item");
+    let item = this.actor.items.get(li.data("item-id"));
+
+    if (game.rollForm) {
+      game.rollForm.addOpposingCharm(item);
+    }
+
+    game.socket.emit('system.exaltedessence', {
+      type: 'addOpposingCharm',
+      data: item,
+    });
   }
 
   _spendItem(event) {

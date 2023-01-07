@@ -176,6 +176,7 @@ export class RollForm extends FormApplication {
             }
         }
         if (this.object.rollType !== 'base') {
+            this.object.opposingCharms = [];
             if (this.object.getimianflow === undefined && this.actor.type !== 'npc') {
                 this._checkAttributeBonuses();
             }
@@ -186,6 +187,18 @@ export class RollForm extends FormApplication {
 
             if (this.object.addedCharms === undefined) {
                 this.object.addedCharms = [];
+            } else {
+                for (const addedCharm of this.object.addedCharms) {
+                    if(addedCharm.saveId) {
+                        addedCharm.id = addedCharm.saveId;
+                    }
+                    else{
+                        var actorItem = this.actor.items.find((item) => item.name==addedCharm.name && item.type=='charm');
+                        if(actorItem) {
+                            addedCharm.id = actorItem.id;
+                        }
+                    }
+                }
             }
 
             if (this.object.specialAttacksList === undefined) {
@@ -193,7 +206,7 @@ export class RollForm extends FormApplication {
                     { id: 'aim', name: "Aim", added: false, show: this._isAttackRoll(), description: '+3 Dice, Cannot be used on the same turn as a reflexive move or flurry.', img: 'systems/exaltedessence/assets/icons/targeting.svg' },
                     { id: 'chopping', name: "Chopping", added: false, show: false, description: 'Reduce defense by 1. Increase dice by 3 on withering.  -2 enemy hardness on decisive', img: 'systems/exaltedessence/assets/icons/battered-axe.svg' },
                     { id: 'piercing', name: "Piercing", added: false, show: false, description: 'Reduce defense by 1.  Ignore 2 soak.', img: 'systems/exaltedessence/assets/icons/fast-arrow.svg' },
-                    { id: 'rush', name: "Rush", added: false, show: this._isAttackRoll(), description: 'Special attacked, move 1 range band closer and gain +3 dice on attack.', img: 'systems/exaltedessence/assets/icons/running-ninja.svg' },
+                    { id: 'rush', name: "Rush", added: false, show: this._isAttackRoll(), description: 'Special attack, move 1 range band closer and gain +3 dice on attack.', img: 'systems/exaltedessence/assets/icons/running-ninja.svg' },
                 ];
             }
 
@@ -268,7 +281,7 @@ export class RollForm extends FormApplication {
                     this.object.charmList = this.actor.charms;
                     for (var charmlist of Object.values(this.object.charmList)) {
                         for (const charm of charmlist.list) {
-                            if (this.object.addedCharms.some((addedCharm) => addedCharm._id === charm._id)) {
+                            if (this.object.addedCharms.some((addedCharm) => addedCharm.id === charm._id)) {
                                 charm.charmAdded = true;
                             }
                             else {
@@ -382,6 +395,22 @@ export class RollForm extends FormApplication {
         mergeObject(this, formData);
     }
 
+    async addOpposingCharm(charm) {
+        const index = this.object.opposingCharms.findIndex(opposedCharm => charm._id === opposedCharm._id);
+        if (index === -1) {
+            this.object.opposingCharms.push(charm);
+            if (this._isAttackRoll()) {
+                this.object.defense += charm.system.diceroller.opposedbonuses.defense;
+                this.object.soak += charm.system.diceroller.opposedbonuses.soak;
+            }
+            if (this.object.rollType === 'social') {
+                this.object.resolve += charm.system.diceroller.opposedbonuses.resolve;
+            }
+            this.render();
+        }
+    }
+
+
     activateListeners(html) {
         super.activateListeners(html);
 
@@ -400,10 +429,11 @@ export class RollForm extends FormApplication {
             ev.stopPropagation();
             let li = $(ev.currentTarget).parents(".item");
             let item = this.actor.items.get(li.data("item-id"));
+            item.saveId = item.id;
             this.object.addedCharms.push(item);
             for (var charmlist of Object.values(this.object.charmList)) {
                 for (const charm of charmlist.list) {
-                    if (this.object.addedCharms.some((addedCharm) => addedCharm._id === charm._id)) {
+                    if (this.object.addedCharms.some((addedCharm) => addedCharm.id === charm._id)) {
                         charm.charmAdded = true;
                     }
                 }
@@ -455,7 +485,7 @@ export class RollForm extends FormApplication {
             ev.stopPropagation();
             let li = $(ev.currentTarget).parents(".item");
             let item = this.actor.items.get(li.data("item-id"));
-            const index = this.object.addedCharms.findIndex(addedItem => item.id === addedItem._id);
+            const index = this.object.addedCharms.findIndex(addedItem => item.id === addedItem.id);
             if (index > -1) {
                 for (var charmlist of Object.values(this.object.charmList)) {
                     for (const charm of charmlist.list) {
@@ -546,6 +576,26 @@ export class RollForm extends FormApplication {
                 this.object.diceModifier -= 3;
             }
             this.object.triggerSelfDefensePenalty = Math.max(0, this.object.triggerSelfDefensePenalty - 1);
+            this.render();
+        });
+
+        html.find('.remove-opposing-charm').click(ev => {
+            ev.stopPropagation();
+            let li = $(ev.currentTarget).parents(".item");
+            let id = li.data("item-id");
+            const charm = this.object.opposingCharms.find(opposedCharm => id === opposedCharm._id);
+            const index = this.object.opposingCharms.findIndex(opposedCharm => id === opposedCharm._id);
+            if (index > -1) {
+                this.object.opposingCharms.splice(index, 1);
+                if (this._isAttackRoll()) {
+                    this.object.defense -= charm.system.diceroller.opposedbonuses.defense;
+                    this.object.soak -= charm.system.diceroller.opposedbonuses.soak;
+                }
+                if (this.object.rollType === 'social') {
+                    this.object.resolve -= charm.system.diceroller.opposedbonuses.resolve;
+                }
+                this.render();
+            }
             this.render();
         });
 

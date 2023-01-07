@@ -77,6 +77,7 @@ Hooks.once('init', async function () {
   loadTemplates([
     "systems/exaltedessence/templates/dialogues/ability-base.html",
     "systems/exaltedessence/templates/dialogues/add-roll-charm.html",
+    "systems/exaltedessence/templates/dialogues/added-charm-list.html",
     "systems/exaltedessence/templates/actor/active-effects.html",
     "systems/exaltedessence/templates/actor/effects-tab.html",
     "systems/exaltedessence/templates/actor/equipment-list.html",
@@ -87,6 +88,11 @@ Hooks.once('init', async function () {
   ]);
 
   function handleSocket({ type, id, data }) {
+    if (type === 'addOpposingCharm') {
+      if(game.rollForm) {
+        game.rollForm.addOpposingCharm(data);
+      }
+    }
     if (!game.user.isGM) return;
 
     // if the logged in user is the active GM with the lowest user id
