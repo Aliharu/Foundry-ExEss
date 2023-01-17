@@ -177,6 +177,14 @@ export class RollForm extends FormApplication {
         }
         if (this.object.rollType !== 'base') {
             this.object.opposingCharms = [];
+            if (this.object.charmList === undefined) {
+                this.object.charmList = this.actor.charms;
+                for (var charmlist of Object.values(this.object.charmList)) {
+                    for (const charm of charmlist.list) {
+                        this.getEnritchedHTML(charm);
+                    }
+                }
+            }
             if (this.object.getimianflow === undefined && this.actor.type !== 'npc') {
                 this._checkAttributeBonuses();
             }
@@ -287,6 +295,7 @@ export class RollForm extends FormApplication {
                             else {
                                 charm.charmAdded = false;
                             }
+                            this.getEnritchedHTML(charm);
                         }
                     }
                     if (this.object.addingCharms) {
@@ -332,6 +341,10 @@ export class RollForm extends FormApplication {
         }
 
         return buttons;
+    }
+
+    async getEnritchedHTML(charm) {
+        charm.enritchedHTML = await TextEditor.enrichHTML(charm.system.description, { async: true, secrets: this.actor.isOwner, relativeTo: charm });
     }
 
     static get defaultOptions() {
@@ -727,7 +740,7 @@ export class RollForm extends FormApplication {
         let diceRoll = roll.dice[0].results;
         let total = roll.total;
         var failedDice = Math.min(dice - roll.total, this.object.rerollNumber);
-        for (let dice of diceRoll) {
+        for (let dice of diceRoll.sort((a, b) => b.result - a.result)) {
             if (dice.result >= this.object.doubleSuccess) {
                 total++;
             }
@@ -762,7 +775,7 @@ export class RollForm extends FormApplication {
 
         let getDice = "";
 
-        for (let dice of diceRoll) {
+        for (let dice of diceRoll.sort((a, b) => b.result - a.result)) {
             if (dice.result >= this.object.doubleSuccess) {
                 getDice += `<li class="roll die d10 success double-success">${dice.result}</li>`;
             }

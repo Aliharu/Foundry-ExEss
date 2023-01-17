@@ -42,7 +42,7 @@
               <li class="tag {{k}}">{{v}}</li>
               {{/each}}
             </div>
-            {{{item.system.description}}}
+            {{{enrichedHTMLItems ../this "description" item._id}}}
         </div>
     </div>
     <li class="item item-large flexrow">
@@ -102,7 +102,7 @@
               <li class="tag {{k}}">{{v}}</li>
               {{/each}}
             </div>
-            {{{item.system.description}}}
+            {{{enrichedHTMLItems ../this "description" item._id}}}
         </div>
     </div>
     {{/each}}

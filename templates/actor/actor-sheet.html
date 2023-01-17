@@ -69,7 +69,7 @@
           {{#ifEquals system.details.exalt 'getimian'}}
           <div>
             <label class="resource-label"><a><i class="fas fa-burn set-pool-flowing cursor-pointer"
-              title="Spend motes from this pool"></i></a> {{localize "ExEss.Flowing"}}</label>
+                  title="Spend motes from this pool"></i></a> {{localize "ExEss.Flowing"}}</label>
             <div class="resource-content flexrow flex-center flex-between">
               <input type="number" name="system.flowing.value" value="{{system.flowing.value}}" data-dtype="Number" />
               /
@@ -78,7 +78,7 @@
           </div>
           <div>
             <label class="resource-label"><a><i class="fas fa-burn set-pool-still cursor-pointer"
-              title="Spend motes from this pool"></i></a> {{localize "ExEss.Still"}}</label>
+                  title="Spend motes from this pool"></i></a> {{localize "ExEss.Still"}}</label>
             <div class="resource-content flexrow flex-center flex-between">
               <input type="number" name="system.still.value" value="{{system.still.value}}" data-dtype="Number" />
               /
@@ -121,9 +121,9 @@
           <div style="width:180px;margin-right:20px;">
             <div class="flexrow">
               <label for="system.health" class="resource-label"><a><i class="fas fa-calculator cursor-pointer"
-                id="calculate-health" style="margin-right:3px;" title="Calculate Health"></i></a>{{localize
-                "ExEss.Health"}}<a><i id="recoveryScene" title="Recovery Scene" class="fas fa-plus-square cursor-pointer"
-                  style="margin-left:3px;"></i></a></label>
+                    id="calculate-health" style="margin-right:3px;" title="Calculate Health"></i></a>{{localize
+                "ExEss.Health"}}<a><i id="recoveryScene" title="Recovery Scene"
+                    class="fas fa-plus-square cursor-pointer" style="margin-left:3px;"></i></a></label>
             </div>
             <div class="resource-content flexrow flex-center flex-between">
               <div class="resource-counter" data-states="/:lethal,x:aggravated" data-max="{{system.health.max}}"
@@ -387,7 +387,7 @@
         </li>
         <li>
           <div>
-            {{{item.system.description}}}
+            {{{enrichedHTMLItems ../this "description" item._id}}}
           </div>
         </li>
         {{/each}}
@@ -416,7 +416,7 @@
         </li>
         <li>
           <div>
-            {{{item.system.description}}}
+            {{{enrichedHTMLItems ../this "description" item._id}}}
           </div>
         </li>
         {{/each}}
@@ -440,7 +440,7 @@
         </li>
         <li>
           <div>
-            {{{item.system.description}}}
+            {{{enrichedHTMLItems ../this "description" item._id}}}
           </div>
         </li>
         {{/each}}
@@ -497,7 +497,7 @@
 
     {{!-- Biography Tab --}}
     <div class="tab biography" data-group="primary" data-tab="description">
-      {{editor system.biography target="system.biography" button=true owner=owner editable=true}}
+      {{editor biographyHTML target="system.biography" button=true editable=editable engine="prosemirror"}} 
     </div>
 
   </section>

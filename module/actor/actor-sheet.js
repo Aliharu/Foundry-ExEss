@@ -44,13 +44,17 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   /* -------------------------------------------- */
 
   /** @override */
-  getData() {
+  async getData() {
     const context = super.getData();
     context.dtypes = ["String", "Number", "Boolean"];
 
     const actorData = this.actor.toObject(false);
     context.system = actorData.system;
     context.flags = actorData.flags;
+    context.biographyHTML = await TextEditor.enrichHTML(context.system.biography, {
+      secrets: this.document.isOwner,
+      async: true
+    });
 
     // Update traits
     this._prepareTraits(context.system.traits);
@@ -64,6 +68,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }
     if (this.actor.type === 'npc') {
       this._prepareCharacterItems(context);
+    }
+
+    context.itemDescriptions = {};
+    for (let item of this.actor.items) {
+      context.itemDescriptions[item.id] = await TextEditor.enrichHTML(item.system.description, {async: true, secrets: this.actor.isOwner, relativeTo: item});
     }
 
     context.effects = prepareActiveEffectCategories(this.document.effects);

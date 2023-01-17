@@ -321,7 +321,7 @@
                 </li>
                 <li>
                     <div>
-                        {{{item.system.description}}}
+                        {{{enrichedHTMLItems ../this "description" item._id}}}
                     </div>
                 </li>
                 {{/each}}
@@ -345,7 +345,7 @@
 
         {{!-- Biography Tab --}}
         <div class="tab biography" data-group="primary" data-tab="description">
-            {{editor system.biography target="system.biography" button=true owner=owner editable=true}}
+            {{editor biographyHTML target="system.biography" button=true editable=editable engine="prosemirror"}}
         </div>
     </section>
 </form>

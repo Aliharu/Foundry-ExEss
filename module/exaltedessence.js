@@ -170,7 +170,11 @@ Hooks.once('init', async function () {
     }
 
     return ret
-  })
+  });
+  
+  Handlebars.registerHelper("enrichedHTMLItems", function (sheetData, type, itemID) {
+    return sheetData.itemDescriptions[itemID];
+  });
 });
 
 Handlebars.registerHelper('ifEquals', function (arg1, arg2, options) {
