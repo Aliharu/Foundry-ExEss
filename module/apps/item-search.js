@@ -41,10 +41,10 @@ export default class ItemSearch extends Application {
   }
 
   getData() {
-    let data = super.getData();
-    data.filters = this.filters;
-    data.items = this.items;
-    return data;
+    let context = super.getData();
+    context.filters = this.filters;
+    context.items = this.items;
+    return context;
   }
 
   async loadItems() {
