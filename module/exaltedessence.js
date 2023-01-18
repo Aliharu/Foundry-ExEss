@@ -27,6 +27,8 @@ Hooks.once('init', async function () {
       ExaltedessenceItem,
     },
     config: EXALTEDESSENCE,
+    weaponAttack: weaponAttack,
+    triggerItem: triggerItem,
     rollItemMacro: rollItemMacro,
     RollForm
   };
@@ -171,7 +173,7 @@ Hooks.once('init', async function () {
 
     return ret
   });
-  
+
   Handlebars.registerHelper("enrichedHTMLItems", function (sheetData, type, itemID) {
     return sheetData.itemDescriptions[itemID];
   });
@@ -225,7 +227,12 @@ Hooks.on('updateCombat', (async (combat, update) => {
 
 Hooks.once("ready", async function () {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
-  Hooks.on("hotbarDrop", (bar, data, slot) => createExaltedessenceMacro(data, slot));
+  Hooks.on("hotbarDrop", (bar, data, slot) => {
+    if (["Item", "savedRoll"].includes(data.type)) {
+      createItemMacro(data, slot);
+      return false;
+    }
+  });
 
   $("#chat-log").on("click", " .item-row", ev => {
     const li = $(ev.currentTarget).next();
@@ -234,40 +241,46 @@ Hooks.once("ready", async function () {
 
 });
 
-/* -------------------------------------------- */
-/*  Hotbar Macros                               */
-/* -------------------------------------------- */
-
-/**
- * Create a Macro from an Item drop.
- * Get an existing item macro if one exists, otherwise create a new one.
- * @param {Object} data     The dropped data
- * @param {number} slot     The hotbar slot to use
- * @returns {Promise}
- */
-async function createExaltedessenceMacro(data, slot) {
+async function createItemMacro(data, slot) {
   if (data.type !== "Item" && data.type !== "savedRoll") return;
-  if(data.type === "Item") {
-    if (!("data" in data)) return ui.notifications.warn("You can only create macro buttons for owned Items");
-    const item = data.data;
-  
-    // Create the macro command
-    const command = `game.exaltedessence.rollItemMacro("${item.name}");`;
-    let macro = game.macros.entities.find(m => (m.name === item.name) && (m.command === command));
-    if (!macro) {
-      macro = await Macro.create({
-        name: item.name,
-        type: "script",
-        img: item.img,
-        command: command,
-        flags: { "exaltedessence.itemMacro": true }
-      });
+  if (data.type === "Item") {
+    if (!data.uuid.includes('Actor.') && !data.uuid.includes('Token.')) {
+      return ui.notifications.warn("You can only create macro buttons for owned Items");
     }
-    game.user.assignHotbarMacro(macro, slot);
+    const item = await Item.fromDropData(data);
+    let command = `Hotbar.toggleDocumentSheet("${data.uuid}");`;
+    if(item.type === 'weapon') {
+      command = `//Swtich withering with (decisive, gambit) to roll different attack types\ngame.exaltedessence.weaponAttack("${data.uuid}", 'withering');`;
+    }
+    if(item.type === 'charm') {
+      command = `//Will add this charm to any roll you have open and if opposed any roll another player has open\ngame.exaltedessence.triggerItem("${data.uuid}");`;
+    }
+    let macro = game.macros.find(m => (m.name === item.name) && (m.command === command));
+    if (!macro) {
+      if (item.type === 'weapon' || item.type === 'charm') {
+        macro = await Macro.create({
+          name: item.name,
+          type: "script",
+          img: item.img,
+          command: command,
+          flags: { "exaltedessence.itemMacro": true }
+        });
+      }
+      else {
+        const name = item.name || `Default`;
+        macro = await Macro.create({
+          name: `${game.i18n.localize("Display")} ${name}`,
+          type: "script",
+          img: item.img,
+          command: command
+        });
+      }
+      game.user.assignHotbarMacro(macro, slot);
+    }
   }
-  else{
+  else {
     const command = `const formActor = await fromUuid("${data.actorId}");
-    new game.exaltedessence.RollForm(${data.actorId.includes('Token') ? 'formActor.actor' : 'formActor'}, {}, {}, { rollId: "${data.id}" }).render(true);`;
+        game.rollForm = new game.exaltedessence.RollForm(${data.actorId.includes('Token') ? 'formActor.actor' : 'formActor'}, {}, {}, { rollId: "${data.id}" }).render(true); `;
     const macro = await Macro.create({
       name: data.name,
       img: 'systems/exaltedessence/assets/icons/d10.svg',
@@ -276,9 +289,51 @@ async function createExaltedessenceMacro(data, slot) {
     });
     game.user.assignHotbarMacro(macro, slot);
   }
-
   return false;
 }
+
+function weaponAttack(itemUuid, attackType='withering') {
+  // Reconstruct the drop data so that we can load the item.
+  const dropData = {
+    type: 'Item',
+    uuid: itemUuid
+  };
+  // Load the item from the uuid.
+  Item.fromDropData(dropData).then(item => {
+    // Determine if the item loaded and if it's an owned item.
+    if (!item || !item.parent) {
+      const itemName = item?.name ?? itemUuid;
+      return ui.notifications.warn(`Could not find item ${itemName}. You may need to delete and recreate this macro.`);
+    }
+    game.rollForm = new RollForm(item.parent, {}, {}, { rollType: attackType, weapon: item.system }).render(true);
+  });
+}
+
+function triggerItem(itemUuid) {
+  // Reconstruct the drop data so that we can load the item.
+  const dropData = {
+    type: 'Item',
+    uuid: itemUuid
+  };
+  // Load the item from the uuid.
+  Item.fromDropData(dropData).then(item => {
+    // Determine if the item loaded and if it's an owned item.
+    if (!item || !item.parent) {
+      const itemName = item?.name ?? itemUuid;
+      return ui.notifications.warn(`Could not find item ${itemName}. You may need to delete and recreate this macro.`);
+    }
+    if(game.rollForm) {
+      game.rollForm.addCharm(item);
+    }
+    if(item.system.diceroller.opposedbonuses.enabled) {
+      game.socket.emit('system.exaltedessence', {
+        type: 'addOpposingCharm',
+        data: item,
+      });
+    }
+  });
+}
+
 
 /**
  * Create a Macro from an Item drop.
