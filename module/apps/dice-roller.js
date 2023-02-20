@@ -860,9 +860,9 @@ export class RollForm extends FormApplication {
         }
         else {
             let extraPower = ``;
-            if (self) {
-                const actorData = duplicate(this.actor);
-                actorData.system.power.value = this.actor.system.power.value;
+            const powerActor = self ? this.actor : (this.object.target.actor || null);
+            if (powerActor) {
+                const actorData = duplicate(powerActor);
                 if (this.object.rollType === 'buildPower') {
                     if (total + actorData.system.power.value > 10) {
                         const extraPowerValue = Math.floor((total + 1 + actorData.system.power.value - 10));
@@ -873,7 +873,7 @@ export class RollForm extends FormApplication {
                 else {
                     actorData.system.will.value = Math.min(10, total + actorData.system.will.value + 1);
                 }
-                this.actor.update(actorData);
+                powerActor.update(actorData);
             }
             if (this.object.rollType === 'buildPower') {
                 message = `<h4 class="dice-total">${total + 1} Power Built!</h4> ${extraPower}`;
