@@ -239,6 +239,22 @@ Hooks.once("ready", async function () {
     li.toggle("fast");
   });
 
+  if (isNewerVersion("1.0.0", game.settings.get("exaltedessence", "systemMigrationVersion"))) {
+    for (let actor of game.actors) {
+      try {
+        let updateData = foundry.utils.deepClone(actor.toObject());
+        updateData.system.details.animacolor = updateData.system.details.color;
+        if (!foundry.utils.isEmpty(updateData)) {
+          await actor.update(updateData, { enforceTypes: false });
+        }
+      } catch (error) {
+        error.message = `Failed migration for Actor ${actor.name}: ${error.message} `;
+        console.error(error);
+      }
+      await game.settings.set("exaltedessence", "systemMigrationVersion", game.system.version);
+    }
+  }
+
 });
 
 async function createItemMacro(data, slot) {

@@ -21,7 +21,9 @@
     "ExEss.MajorVirtue": "Major Virtue",
     "ExEss.MinorVirtue": "Minor Virtue",
 
+    "ExEss.DotColor": "Dot Color",
     "ExEss.DotColors": "Dot Colors",
+    "ExEss.AnimaColor": "Anima Color",
 
     "ExEss.Flowing": "Flowing",
     "ExEss.Still": "Still",

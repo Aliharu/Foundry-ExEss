@@ -600,7 +600,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const actorData = duplicate(this.actor);
     const data = actorData.system;
     const template = "systems/exaltedessence/templates/dialogues/color-picker.html"
-    const html = await renderTemplate(template, { 'color': data.details.color });
+    const html = await renderTemplate(template, { 'color': data.details.color, animaColor: data.details.animacolor });
     new Dialog({
       title: `Pick Color`,
       content: html,
@@ -611,8 +611,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       close: html => {
         if (confirmed) {
           let color = html.find('#color').val();
+          let animaColor = html.find('#animaColor').val();
           if (isColor(color)) {
-            data.details.color = color
+            data.details.color = color;
+            data.details.animacolor = animaColor;
             this.actor.update(actorData)
           }
         }
