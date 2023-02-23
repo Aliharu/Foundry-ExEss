@@ -82,6 +82,7 @@ export class RollForm extends FormApplication {
             this.object.poolExcellency = false;
             this.object.showDamage = false;
             this.object.powerSpent = 0;
+            this.object.activateAura = 'none';
 
             this.object.supportedIntimacy = 0;
             this.object.opposedIntimacy = 0;
@@ -156,6 +157,9 @@ export class RollForm extends FormApplication {
         if (this.object.weaponTags === undefined) {
             this.object.weaponTags = {};
         }
+        if(this.object.activateAura === undefined) {
+            this.object.activateAura = 'none';
+        }
         if (this.object.cost === undefined) {
             this.object.cost = {
                 motes: 0,
@@ -167,6 +171,7 @@ export class RollForm extends FormApplication {
                 healthLethal: 0,
             }
         }
+
         if (this.object.bonusPower === undefined) {
             if (game.settings.get("exaltedessence", "weaponToWithering")) {
                 this.object.bonusPower = data.damage || 0;
@@ -208,11 +213,10 @@ export class RollForm extends FormApplication {
                     }
                 }
             }
-
             if (this.object.specialAttacksList === undefined) {
                 this.object.specialAttacksList = [
                     { id: 'aim', name: "Aim", added: false, show: this._isAttackRoll(), description: '+3 Dice, Cannot be used on the same turn as a reflexive move or flurry.', img: 'systems/exaltedessence/assets/icons/targeting.svg' },
-                    { id: 'chopping', name: "Chopping", added: false, show: false, description: 'Reduce defense by 1. Increase dice by 3 on withering.  -2 enemy hardness on decisive', img: 'systems/exaltedessence/assets/icons/battered-axe.svg' },
+                    { id: 'chopping', name: "Chopping/Powerful", added: false, show: false, description: 'Reduce defense by 1. Increase dice by 2 on withering.  -1 enemy hardness on decisive', img: 'systems/exaltedessence/assets/icons/battered-axe.svg' },
                     { id: 'piercing', name: "Piercing", added: false, show: false, description: 'Reduce defense by 1.  Ignore 2 soak.', img: 'systems/exaltedessence/assets/icons/fast-arrow.svg' },
                     { id: 'rush', name: "Rush", added: false, show: this._isAttackRoll(), description: 'Special attack, move 1 range band closer and gain +3 dice on attack.', img: 'systems/exaltedessence/assets/icons/running-ninja.svg' },
                 ];
@@ -404,6 +408,20 @@ export class RollForm extends FormApplication {
         return this.object.rollType === 'withering' || this.object.rollType === 'decisive' || this.object.rollType === 'gambit';
     }
 
+    _getActorCombatant() {
+        if (game.combat && (this.actor.token || this.actor.getActiveTokens()[0])) {
+            const tokenId = this.actor.token?.id || this.actor.getActiveTokens()[0].id;
+            return game.combat.combatants.find(c => c.tokenId === tokenId);
+        }
+    }
+
+    _getActorToken() {
+        if (this.actor.token || this.actor.getActiveTokens()[0]) {
+            const tokenId = this.actor.token?.id || this.actor.getActiveTokens()[0].id;
+            return canvas.tokens.placeables.filter(x => x.id === tokenId)[0];
+        }
+    }
+
     async _updateObject(event, formData) {
         mergeObject(this, formData);
     }
@@ -460,6 +478,9 @@ export class RollForm extends FormApplication {
             if (item.system.diceroller.damage.ignoresoak > 0) {
                 this.object.damage.ignoreSoak += item.system.diceroller.damage.ignoresoak;
             }
+            if (item.system.diceroller.activateaura !== 'none') {
+                this.object.activateAura = item.system.diceroller.activateaura;
+            }
             this.render();
         }
     }
@@ -498,6 +519,7 @@ export class RollForm extends FormApplication {
             ev.stopPropagation();
             let li = $(ev.currentTarget).parents(".item");
             let item = this.actor.items.get(li.data("item-id"));
+            this.addCharm(item);
         });
 
         html.find('.remove-charm').click(ev => {
@@ -550,6 +572,9 @@ export class RollForm extends FormApplication {
                 if (item.system.diceroller.damage.ignoresoak > 0) {
                     this.object.damage.ignoreSoak -= item.system.diceroller.damage.ignoresoak;
                 }
+                if (item.system.diceroller.activateaura === this.object.activateAura) {
+                    this.object.activateAura = 'none';
+                }
             }
             this.render();
         });
@@ -564,7 +589,7 @@ export class RollForm extends FormApplication {
                 }
             }
             if (id === 'chopping' && this.object.rollType === 'withering') {
-                this.object.diceModifier += 3;
+                this.object.diceModifier += 2;
             }
             else if (id === 'piercing' && this.object.rollType === 'decisive') {
                 this.object.damage.ignoreSoak += 2;
@@ -586,7 +611,7 @@ export class RollForm extends FormApplication {
                 }
             }
             if (id === 'chopping') {
-                this.object.diceModifier -= 3;
+                this.object.diceModifier -= 2;
             }
             else if (id === 'piercing') {
                 this.object.damage.ignoreSoak -= 2;
@@ -1313,6 +1338,9 @@ export class RollForm extends FormApplication {
             actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.system.health.lethal + this.object.cost.healthLethal);
         }
         this.actor.system.power.value = actorData.system.power.value;
+        if (this.object.activateAura !== 'none') {
+            actorData.system.details.aura = this.object.activateAura;
+        }
         await this.actor.update(actorData);
     }
 

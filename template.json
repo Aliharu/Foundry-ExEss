@@ -74,7 +74,7 @@
         "details": {
           "majorvirtue": "",
           "minorvirtue": "",
-          "exalt": "abyssal",
+          "exalt": "other",
           "caste": "",
           "color": "#000000",
           "hunt": "",
@@ -287,6 +287,7 @@
           "rerolldice": 0,
           "dicetosuccesses": 0,
           "rerollfailed": false,
+          "activateaura": "none",
           "damage": {
             "bonusdice": 0,
             "bonussuccesses": 0,

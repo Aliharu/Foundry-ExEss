@@ -53,7 +53,6 @@
                         <option value="other">{{localize "ExEss.Other"}}</option>
                     {{/select}}
                 </select>
-                <label class="resource-label">{{localize "ExEss.Requirement"}}: </label>
                 <select name="system.requirement" data-type="String">
                     {{#select system.requirement}}
                         <option value="0">0</option>
@@ -173,7 +172,21 @@
                                 value="system.diceroller.rolltwice" {{checked system.diceroller.rolltwice}}>
                         </div>
                     </div>
+                    <div>
+                        <div class="resource-label">{{localize "ExEss.ActivateAura"}}</div>
+                        <select name="system.diceroller.activateaura" data-type="String">
+                            {{#select system.diceroller.activateaura}}
+                            <option value="none">{{localize "ExEss.None"}}</option>
+                            <option value="air">{{localize "ExEss.Air"}}</option>
+                            <option value="earth">{{localize "ExEss.Earth"}}</option>
+                            <option value="fire">{{localize "ExEss.Fire"}}</option>
+                            <option value="water">{{localize "ExEss.Water"}}</option>
+                            <option value="wood">{{localize "ExEss.Wood"}}</option>
+                            {{/select}}
+                        </select>
+                    </div>
                 </div>
+
             </div>
             <div class="resource flex-center">
                 <label class="resource-label">{{localize "ExEss.Damage"}}</label>

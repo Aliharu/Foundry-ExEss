@@ -199,5 +199,19 @@
 
     <label class="resource-label">{{localize "ExEss.ArmorPenalty"}}: </label>
     <input type="checkbox" name="object.armorPenalty" value="{{data.armorPenalty}}" {{checked data.armorPenalty}}>
+
+    {{#ifEquals actor.system.details.exalt 'dragonblooded'}}
+    <div class="resource-label">{{localize "ExEss.ActivateAura"}}</div>
+    <select name="object.activateAura" data-type="String">
+        {{#select data.activateAura}}
+        <option value="none">{{localize "ExEss.None"}}</option>
+        <option value="air">{{localize "ExEss.Air"}}</option>
+        <option value="earth">{{localize "ExEss.Earth"}}</option>
+        <option value="fire">{{localize "ExEss.Fire"}}</option>
+        <option value="water">{{localize "ExEss.Water"}}</option>
+        <option value="wood">{{localize "ExEss.Wood"}}</option>
+        {{/select}}
+    </select>
+    {{/ifEquals}}
 </div>
 {{/ifNotEquals}}
