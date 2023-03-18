@@ -157,7 +157,7 @@ export class RollForm extends FormApplication {
         if (this.object.weaponTags === undefined) {
             this.object.weaponTags = {};
         }
-        if(this.object.activateAura === undefined) {
+        if (this.object.activateAura === undefined) {
             this.object.activateAura = 'none';
         }
         if (this.object.cost === undefined) {
@@ -202,12 +202,12 @@ export class RollForm extends FormApplication {
                 this.object.addedCharms = [];
             } else {
                 for (const addedCharm of this.object.addedCharms) {
-                    if(addedCharm.saveId) {
+                    if (addedCharm.saveId) {
                         addedCharm.id = addedCharm.saveId;
                     }
-                    else{
-                        var actorItem = this.actor.items.find((item) => item.name==addedCharm.name && item.type=='charm');
-                        if(actorItem) {
+                    else {
+                        var actorItem = this.actor.items.find((item) => item.name === addedCharm.name && item.type === 'charm');
+                        if (actorItem) {
                             addedCharm.id = actorItem.id;
                         }
                     }
@@ -428,7 +428,7 @@ export class RollForm extends FormApplication {
 
     async addCharm(item) {
         var existingAddedCharm = this.object.addedCharms.find((addedCharm) => addedCharm.id === item._id);
-        if(!existingAddedCharm) {
+        if (!existingAddedCharm) {
             item.saveId = item.id;
             this.object.addedCharms.push(item);
             for (var charmlist of Object.values(this.object.charmList)) {
@@ -438,7 +438,7 @@ export class RollForm extends FormApplication {
                     }
                 }
             }
-    
+
             this.object.cost.motes += item.system.cost.motes;
             this.object.cost.committed += item.system.cost.committed;
             this.object.cost.anima += item.system.cost.anima;
@@ -453,7 +453,7 @@ export class RollForm extends FormApplication {
             }
             this.object.cost.stunt += item.system.cost.stunt;
             this.object.cost.power += item.system.cost.power;
-    
+
             this.object.diceModifier += item.system.diceroller.bonusdice;
             this.object.successModifier += item.system.diceroller.bonussuccesses;
             if (item.system.diceroller.doublesuccess < this.object.doubleSuccess) {
@@ -467,7 +467,7 @@ export class RollForm extends FormApplication {
             }
             this.object.rerollNumber += item.system.diceroller.rerolldice;
             this.object.diceToSuccesses += item.system.diceroller.dicetosuccesses;
-    
+
             this.object.damage.damageDice += item.system.diceroller.damage.bonusdice;
             this.object.damage.damageSuccessModifier += item.system.diceroller.damage.bonussuccesses;
             this.object.overwhelming += item.system.diceroller.damage.overwhelming;
@@ -588,16 +588,18 @@ export class RollForm extends FormApplication {
                     specialAttack.added = true;
                 }
             }
-            if (id === 'chopping' && this.object.rollType === 'withering') {
-                this.object.diceModifier += 2;
-            }
-            else if (id === 'piercing' && this.object.rollType === 'decisive') {
-                this.object.damage.ignoreSoak += 2;
-            }
-            else {
+            if (id === 'rush' || id === 'aim') {
                 this.object.diceModifier += 3;
             }
-            this.object.triggerSelfDefensePenalty += 1;
+            else {
+                if (id === 'chopping' && this.object.rollType === 'withering') {
+                    this.object.diceModifier += 2;
+                }
+                else if (id === 'piercing' && this.object.rollType === 'decisive') {
+                    this.object.damage.ignoreSoak += 2;
+                }
+                this.object.triggerSelfDefensePenalty += 1;
+            }
             this.render();
         });
 
@@ -605,21 +607,23 @@ export class RollForm extends FormApplication {
             ev.stopPropagation();
             let li = $(ev.currentTarget).parents(".item");
             let id = li.data("item-id");
-            for (var specialAttack of this.object.specialAttacksList) {
-                if (specialAttack.id === id) {
-                    specialAttack.added = false;
-                }
-            }
-            if (id === 'chopping') {
-                this.object.diceModifier -= 2;
-            }
-            else if (id === 'piercing') {
-                this.object.damage.ignoreSoak -= 2;
-            }
-            else {
+            if (id === 'rush' || id === 'aim') {
                 this.object.diceModifier -= 3;
             }
-            this.object.triggerSelfDefensePenalty = Math.max(0, this.object.triggerSelfDefensePenalty - 1);
+            else {
+                for (var specialAttack of this.object.specialAttacksList) {
+                    if (specialAttack.id === id) {
+                        specialAttack.added = false;
+                    }
+                }
+                if (id === 'chopping') {
+                    this.object.diceModifier -= 2;
+                }
+                else if (id === 'piercing') {
+                    this.object.damage.ignoreSoak -= 2;
+                }
+                this.object.triggerSelfDefensePenalty = Math.max(0, this.object.triggerSelfDefensePenalty - 1);
+            }
             this.render();
         });
 
