@@ -186,6 +186,8 @@
     "ExEss.Necromancy": "Necromancy",
     "ExEss.Sorcery": "Sorcery",
     "ExEss.Cost": "Cost",
+    "ExEss.Costs": "Costs",
+    "ExEss.Gain": "Gain",
 
     "ExEss.Emerald": "Emerald",
     "ExEss.Sapphire": "Sapphire",
@@ -283,6 +285,7 @@
     "ExEss.ActiveEffects": "Active Effects",
 
     "ExEss.Conditions": "Conditions",
+    "ExEss.Disarmed": "Disarmed",
     "ExEss.Prone": "Prone",
     "ExEss.LightCover": "Light Cover",
     "ExEss.HeavyCover": "Heavy Cover",
@@ -352,5 +355,15 @@
     "ExEss.Sword": "Sword",
     "ExEss.ThrownDagger": "Thrown Dagger",
     "ExEss.OpposedBonuses": "Opposed Bonuses",
-    "ExEss.OpposingCharms": "Opposing Charms"
+    "ExEss.OpposingCharms": "Opposing Charms",
+
+    "ExEss.Disarm": "Disarm",
+    "ExEss.Distract": "Distract",
+    "ExEss.Ensnare": "Ensnare",
+    "ExEss.Knockback": "Knockback",
+    "ExEss.Knockdown": "Knockdown",
+    "ExEss.Pilfer": "Pilfer",
+    "ExEss.Pull": "Pull",
+    "ExEss.RevealWeakness": "Reveal Weakness",
+    "ExEss.Unhorse": "Unhorse"
 }

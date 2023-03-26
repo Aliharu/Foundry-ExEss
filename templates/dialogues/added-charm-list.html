@@ -53,6 +53,30 @@
             <input type="number" name="object.cost.healthAggravated" value="{{data.cost.healthAggravated}}" data-dtype="Number" />
         </div>
     </div>
+    <div class="flex-center">
+        <div class="resource-label mt-2">{{localize "ExEss.Gain"}}</div>
+    </div>
+    <div class="grid grid-3col flex-center">
+        <div>
+            <div class="resource-label">{{localize "ExEss.Motes"}}</div>
+            <input type="number" name="object.gain.motes" value="{{data.gain.motes}}"
+                data-dtype="Number" />
+        </div>
+        <div>
+            <div class="resource-label">{{localize "ExEss.Anima"}}</div>
+            <input type="number" name="object.gain.anima" value="{{data.gain.anima}}" data-dtype="Number" />
+        </div>
+        <div>
+            <div class="resource-label">{{localize "ExEss.Health"}}</div>
+            <input type="number" name="object.gain.health" value="{{data.gain.health}}"
+                data-dtype="Number" />
+        </div>
+        <div>
+            <div class="resource-label">{{localize "ExEss.Power"}}</div>
+            <input type="number" name="object.gain.power" value="{{data.gain.power}}"
+                data-dtype="Number" />
+        </div>
+    </div>
     {{/if}}
 </div>
 {{#ifGreater data.opposingCharms.length 0}}

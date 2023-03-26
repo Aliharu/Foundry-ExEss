@@ -67,6 +67,12 @@ EXALTEDESSENCE.armortags = {
 
 EXALTEDESSENCE.statusEffects = [
     {
+        icon: 'systems/exaltedessence/assets/icons/drop-weapon.svg',
+        id: 'disarmed',
+        label: 'ExEss.Disarmed',
+        name: 'disarmed'
+    },
+    {
         icon: 'icons/svg/falling.svg',
         id: 'prone',
         label: 'ExEss.Prone',

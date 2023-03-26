@@ -281,6 +281,12 @@
           "stunt": 0,
           "power": 0
         },
+        "gain": {
+          "motes": 0,
+          "anima": 0,
+          "health": 0,
+          "power": 0
+        },
         "diceroller": {
           "bonusdice": 0,
           "bonussuccesses": 0,

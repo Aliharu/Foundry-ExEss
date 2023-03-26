@@ -504,6 +504,10 @@
   align-items: center;
 }
 
+.exaltedessence .query-results .list-item-image {
+  background: black;
+}
+
 .exaltedessence .resource-value .resource-value-empty {
   height: 14px;
   width: 14px;

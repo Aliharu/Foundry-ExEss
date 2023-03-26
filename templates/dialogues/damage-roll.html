@@ -1,33 +1,52 @@
 <form>
     <div class="sheet-body exaltedessence">
         {{> systems/exaltedessence/templates/dialogues/added-charm-list.html}}
+        {{#ifEquals data.rollType 'gambit'}}
+        <div class="resource grid grid-2col flex-center">
+            <div class="resource-label">{{localize "ExEss.Gambit"}}</div>
+            <select id="gambit" name="object.gambit" data-type="String">
+                {{#select data.gambit}}
+                <option value="disarm">{{localize "ExEss.Disarm"}}</option>
+                <option value="distract">{{localize "ExEss.Distract"}}</option>
+                <option value="ensnare">{{localize "ExEss.Ensnare"}}</option>
+                <option value="knockback">{{localize "ExEss.Knockback"}}</option>
+                <option value="knockdown">{{localize "ExEss.Knockdown"}}</option>
+                <option value="pilfer">{{localize "ExEss.Pilfer"}}</option>
+                <option value="pull">{{localize "ExEss.Pull"}}</option>
+                <option value="reveal_weakness">{{localize "ExEss.RevealWeakness"}}</option>
+                <option value="unhorse">{{localize "ExEss.Unhorse"}}</option>
+                <option value="none">{{localize "ExEss.None"}}</option>
+                {{/select}}
+            </select>
+        </div>
+        {{/ifEquals}}
         <div class="resource flex-center grid-2col mb-2">
             <div>
-                <label class="resource-label">{{localize "ExEss.Successes"}} </label>
+                <label class="resource-label">{{localize "ExEss.Successes"}}</label>
                 <input name="object.accuracyResult" value="{{data.accuracyResult}}" type="number">
             </div>
             {{#ifEquals data.rollType 'gambit'}}
             <div>
-                <label class="resource-label">{{localize "ExEss.PowerSpent"}} </label>
+                <label class="resource-label">{{localize "ExEss.PowerSpent"}}</label>
                 <input name="object.powerSpent" value="{{data.powerSpent}}" type="number">
             </div>
             {{/ifEquals}}
             {{#ifEquals data.rollType 'decisive'}}
             <div>
-                <label class="resource-label">{{localize "ExEss.Power"}} </label>
+                <label class="resource-label">{{localize "ExEss.Power"}}</label>
                 <input name="object.power" value="{{data.power}}" type="number">
             </div>
             {{/ifEquals}}
             {{#ifEquals data.rollType 'withering'}}
             <div>
-                <label class="resource-label">{{localize "ExEss.Overwhelming"}} </label>
+                <label class="resource-label">{{localize "ExEss.Overwhelming"}}</label>
                 <input name="object.overwhelming" value="{{data.overwhelming}}" type="number">
             </div>
             {{/ifEquals}}
         </div>
         {{#ifEquals data.rollType 'withering'}}
         <div class="resource flex-center mb-2">
-            <label class="resource-label">{{localize "ExEss.BonusPower"}} </label>
+            <label class="resource-label">{{localize "ExEss.BonusPower"}}</label>
             <input name="object.bonusPower" value="{{data.bonusPower}}" type="number">
         </div>
         {{/ifEquals}}
@@ -39,7 +58,7 @@
         <div>
             <div class="resource grid grid-2col flex-center">
                 <div>
-                    <label class="resource-label">{{localize "ExEss.DamageDice"}} </label>
+                    <label class="resource-label">{{localize "ExEss.DamageDice"}}</label>
                     <input name="object.damage.damageDice" value="{{data.damage.damageDice}}" type="number">
                 </div>
                 <div>

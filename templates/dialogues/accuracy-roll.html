@@ -4,12 +4,6 @@
     </div>
     <div>
         {{> systems/exaltedessence/templates/dialogues/ability-base.html}}
-        <div class="resource flex-center mb-2">
-            <div>
-                <label class="resource-label">{{localize "ExEss.Accuracy"}} </label>
-                <input type="number" name="object.accuracySuccesses" value="{{data.accuracySuccesses}}">
-            </div>
-        </div>
         {{#ifEquals data.rollType 'gambit'}}
         <div class="d-flex flex-between mb-1 collapsable cursor-pointer">
             <div class="resource-label">
@@ -25,9 +19,10 @@
             <p><b>Ensnare(3):</b> Target cannot do Movement actions, loses 1 Defense per success.  The target may break
                 free with a successful Close Combat roll vs extra Successes.</p>
             <p><b>Knockback(4):</b> Move target 1 range back, -1 Defense per success</p>
+            <p><b>Knockdown(4):</b>Knock target prone</p>
             <p><b>Pilfer(3):</b> Roll Attribute + Stealth to steal and item, Give ally 1 power per extra success.</p>
             <p><b>Pull(4):</b> Move target 1 range band closser, -1 Defense per success.</p>
-            <p><b>Reveal Weakness(3):</b> May be used with craft or war. Roll an attack vs defense and the target has -2 soak for round equal to the attacks extra successes.  If the target has 6+ soak their soak is halved instead</p>
+            <p><b>Reveal Weakness(3):</b> May be used with craft or war. Roll an attack vs defense and the target has -2 soak for rounds equal to the attacks extra successes.  If the target has 6+ soak their soak is halved instead</p>
             <p><b>Unhorse(5):</b> Knock horse from mount.  Target is either knocked prone or Decrease his soak by 1 for each extra successfor 1 round.</p>
         </div>
         {{/ifEquals}}

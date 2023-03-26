@@ -9,6 +9,7 @@ export class RollForm extends FormApplication {
         else {
             this.object.rollType = data.rollType;
             this.object.resolve = 0;
+            this.object.successModifier = 0;
             if (data.rollType !== 'base') {
                 if (this.actor.type === 'npc') {
                     this.object.pool = data.pool || "primary";
@@ -26,12 +27,18 @@ export class RollForm extends FormApplication {
                 this.object.characterType = this.actor.type;
                 this.object.buildPowerTarget = 'self';
 
+                this.object.gain = {
+                    motes: 0,
+                    anima: 0,
+                    health: 0,
+                    power: 0
+                };
 
                 this.object.defense = 0;
                 this.object.soak = 0;
                 this.object.doubleExtraSuccess = false;
                 this.object.resolve = 0;
-                this.object.accuracySuccesses = data.accuracy || 0;
+                this.object.successModifier = data.accuracy || 0;
                 this.object.power = this.actor.system.power.value || 0;
                 this.object.damageSuccesses = data.damage || 0;
                 this.object.overwhelming = data.overwhelming || 0;
@@ -61,7 +68,6 @@ export class RollForm extends FormApplication {
                 this.object.dice = 0;
             }
             this.object.targetNumber = 7;
-            this.object.successModifier = 0;
             this.object.difficulty = 0;
             this.object.rerollNumber = 0;
             this.object.dice = 0;
@@ -82,6 +88,7 @@ export class RollForm extends FormApplication {
             this.object.poolExcellency = false;
             this.object.showDamage = false;
             this.object.powerSpent = 0;
+            this.object.gambit = 'none';
             this.object.activateAura = 'none';
 
             this.object.supportedIntimacy = 0;
@@ -126,7 +133,7 @@ export class RollForm extends FormApplication {
 
             if (data.weapon) {
                 this.object.weaponTags = data.weapon.traits.weapontags.selected;
-                this.object.accuracySuccesses = data.weapon.accuracy || 0;
+                this.object.successModifier = data.weapon.accuracy || 0;
                 this.object.damage.damageSuccessModifier = data.weapon.damage || 0;
                 if (this.object.weaponTags && this.object.rollType === 'decisive' && this.object.weaponTags['aggravated']) {
                     this.object.damage.type = 'aggravated';
@@ -170,6 +177,18 @@ export class RollForm extends FormApplication {
                 healthAggravated: 0,
                 healthLethal: 0,
             }
+        }
+        if (this.object.gain === undefined) {
+            this.object.gain = {
+                motes: 0,
+                anima: 0,
+                health: 0,
+                power: 0
+            };
+            this.object.gambit = 'none';
+        }
+        if (this.object.accuracySuccesses) {
+            this.object.successModifier += this.object.accuracySuccesses;
         }
 
         if (this.object.bonusPower === undefined) {
@@ -394,7 +413,7 @@ export class RollForm extends FormApplication {
                     },
                 }
             }
-        }).render(true);
+        }, { classes: ["dialog", "solar-background"] }).render(true);
     }
 
     getData() {
@@ -438,6 +457,11 @@ export class RollForm extends FormApplication {
                     }
                 }
             }
+
+            this.object.gain.motes += item.system.gain.motes;
+            this.object.gain.anima += item.system.gain.anima;
+            this.object.gain.health += item.system.gain.health;
+            this.object.gain.power += item.system.gain.power;
 
             this.object.cost.motes += item.system.cost.motes;
             this.object.cost.committed += item.system.cost.committed;
@@ -504,6 +528,29 @@ export class RollForm extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
 
+        html.on("change", "#gambit", ev => {
+            const gambitCosts = {
+                'none': 0,
+                'disarm': this.object.defense,
+                'distract': 2,
+                'ensnare': 3,
+                'knockback': 4,
+                'knockdown': 4,
+                'pilfer': 3,
+                'pull': 4,
+                'reveal_weakness': 3,
+                'unhorse': 5,
+            }
+            this.object.powerSpent = gambitCosts[this.object.gambit];
+            if((this.object.gambit === 'knockback' || this.object.gambit === 'knockdown') && this.object.weaponTags['smashing']) {
+                this.object.powerSpent--;
+            }
+            if(this.object.gambit === 'ensnare' && this.object.weaponTags['flexible']) {
+                this.object.powerSpent--;
+            }
+            this.render();
+        });
+
         html.on("change", "#attribute-select", ev => {
             this._checkAttributeBonuses();
             this._checkExcellencyBonuses();
@@ -536,6 +583,11 @@ export class RollForm extends FormApplication {
                     }
                 }
                 this.object.addedCharms.splice(index, 1);
+
+                this.object.gain.motes -= item.system.gain.motes;
+                this.object.gain.anima -= item.system.gain.anima;
+                this.object.gain.health -= item.system.gain.health;
+                this.object.gain.power -= item.system.gain.power;
 
                 this.object.cost.motes -= item.system.cost.motes;
                 this.object.cost.committed -= item.system.cost.committed;
@@ -672,6 +724,114 @@ export class RollForm extends FormApplication {
         });
     }
 
+    // Dovie'andi se tovya sagain.
+    _rollTheDice(dice, diceModifiers) {
+        var total = 0;
+        var results = null;
+        let rerolls = [];
+        for (var rerollValue in diceModifiers.reroll) {
+            if (diceModifiers.reroll[rerollValue].status) {
+                rerolls.push(diceModifiers.reroll[rerollValue].number);
+            }
+        }
+        var roll = new Roll(`${dice}d10cs>=${diceModifiers.targetNumber}`).evaluate({ async: false });
+        results = roll.dice[0].results;
+        total = roll.total;
+        if (rerolls.length > 0) {
+            while (results.some(dieResult => (rerolls.includes(dieResult.result) && !dieResult.rerolled))) {
+                var toReroll = 0;
+                for (const diceResult of results) {
+                    if (!diceResult.rerolled && rerolls.includes(diceResult.result)) {
+                        toReroll++;
+                        diceResult.rerolled = true;
+                    }
+                }
+                var rerollRoll = new Roll(`${toReroll}d10cs>=${diceModifiers.targetNumber}`).evaluate({ async: false });
+                results = results.concat(rerollRoll.dice[0].results);
+                total += rerollRoll.total;
+            }
+        }
+        for (let dice of results) {
+            if (dice.result >= diceModifiers.doubleSuccess && dice.result >= diceModifiers.targetNumber) {
+                total += 1;
+                dice.doubled = true;
+            }
+        }
+
+        let rollResult = {
+            roll: roll,
+            results: results,
+            total: total,
+        };
+
+        return rollResult;
+    }
+
+    _calculateRoll(dice, diceModifiers) {
+        let rollResults = this._rollTheDice(dice, diceModifiers);
+        let diceRoll = rollResults.results;
+        let total = rollResults.total;
+        var possibleRerolls = 0;
+        if (diceModifiers.rerollFailed) {
+            for (const diceResult of diceRoll.sort((a, b) => a.result - b.result)) {
+                if (!diceResult.rerolled && diceResult.result < this.object.targetNumber) {
+                    possibleRerolls++;
+                    diceResult.rerolled = true;
+                }
+            }
+            var failedDiceRollResult = this._rollTheDice(possibleRerolls, diceModifiers);
+            diceRoll = diceRoll.concat(failedDiceRollResult.results);
+            total += failedDiceRollResult.total;
+        }
+
+        possibleRerolls = 0;
+        for (const diceResult of diceRoll.sort((a, b) => a.result - b.result)) {
+            if (diceModifiers.rerollNumber > possibleRerolls && !diceResult.rerolled && diceResult.result < this.object.targetNumber) {
+                possibleRerolls++;
+                diceResult.rerolled = true;
+            }
+        }
+
+        var diceToReroll = Math.min(possibleRerolls, diceModifiers.rerollNumber);
+        let rerolledDice = 0;
+        while (diceToReroll > 0 && (rerolledDice < diceModifiers.rerollNumber)) {
+            rerolledDice += possibleRerolls;
+            var rerollNumDiceResults = this._rollTheDice(diceToReroll, diceModifiers);
+            diceToReroll = 0
+            for (const diceResult of rerollNumDiceResults.results.sort((a, b) => a.result - b.result)) {
+                if (diceModifiers.rerollNumber > possibleRerolls && !diceResult.rerolled && diceResult.result < this.object.targetNumber) {
+                    possibleRerolls++;
+                    diceToReroll++;
+                    diceResult.rerolled = true;
+                }
+            }
+            diceRoll = diceRoll.concat(rerollNumDiceResults.results);
+            total += rerollNumDiceResults.total;
+        }
+        var preBonusSuccesses = total;
+        total += diceModifiers.successModifier;
+        rollResults.roll.dice[0].results = diceRoll;
+
+        let diceDisplay = "";
+        for (let dice of diceRoll.sort((a, b) => b.result - a.result)) {
+            if (dice.doubled) {
+                diceDisplay += `<li class="roll die d10 success double-success">${dice.result}</li>`;
+            }
+            else if (dice.result >= diceModifiers.targetNumber) { diceDisplay += `<li class="roll die d10 success">${dice.result}</li>`; }
+            else if (dice.rerolled) { diceDisplay += `<li class="roll die d10 rerolled">${dice.result}</li>`; }
+            else if (dice.result == 1) { diceDisplay += `<li class="roll die d10 failure">${dice.result}</li>`; }
+            else { diceDisplay += `<li class="roll die d10">${dice.result}</li>`; }
+        }
+
+        return {
+            roll: rollResults.roll,
+            diceDisplay: diceDisplay,
+            total: total,
+            preSuccessBonus: preBonusSuccesses,
+            diceRoll: diceRoll,
+        };
+    }
+
     _baseAbilityDieRoll() {
         let dice = 0;
         if (this.object.rollType === 'base') {
@@ -742,95 +902,44 @@ export class RollForm extends FormApplication {
                 dice -= 3;
             }
         }
-
-
-        let rerollString = '';
-        let rerolls = [];
-
         if (this.object.rollType === 'social') {
             this.object.resolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedIntimacy || 0) - parseInt(this.object.supportedIntimacy || 0));
             this.object.resolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedVirtue || 0) - parseInt(this.object.supportedVirtue || 0));
         }
 
-        for (var rerollValue in this.object.reroll) {
-            if (this.object.reroll[rerollValue].status) {
-                rerollString += `x${this.object.reroll[rerollValue].number}`;
-                rerolls.push(this.object.reroll[rerollValue].number);
-            }
+        if (dice < 0) {
+            dice = 0;
         }
-
-        if (this.object.diceModifier) {
-            dice += this.object.diceModifier;
-        }
-
-        if (this.object.diceToSuccesses > 0) {
-            this.object.successModifier += Math.min(dice, this.object.diceToSuccesses);
-            dice = Math.max(0, dice - this.object.diceToSuccesses);
-        }
-        let diceString = `${dice}d10${rerollString}${this.object.rerollFailed ? `r<${this.object.targetNumber}` : ""}cs>=${this.object.targetNumber}`;
-        if (this.object.rollTwice) {
-            diceString = `{${dice}d10${rerollString}${this.object.rerollFailed ? `r<${this.object.targetNumber}` : ""}cs>=${this.object.targetNumber}, ${dice}d10${rerollString}${this.object.rerollFailed ? `r<${this.object.targetNumber}` : ""}cs>=${this.object.targetNumber}}kh`;
-        }
-        let roll = new Roll(diceString).evaluate({ async: false });
-        let diceRoll = roll.dice[0].results;
-        let total = roll.total;
-        var failedDice = Math.min(dice - roll.total, this.object.rerollNumber);
-        for (let dice of diceRoll.sort((a, b) => b.result - a.result)) {
-            if (dice.result >= this.object.doubleSuccess) {
-                total++;
-            }
-        }
-        if (this.object.rollTwice) {
-            var secondTotal = roll.dice[1].total;
-            diceRoll = diceRoll.concat(roll.dice[1].results);
-            for (let dice of roll.dice[1].results) {
-                if (dice.result >= this.object.doubleSuccess) {
-                    secondTotal++;
-                }
-            }
-            if (secondTotal > total) {
-                total = secondTotal;
-                failedDice = Math.min(dice - roll.dice[1].total, this.object.rerollNumber);
-            };
-        }
-        let rerolledDice = 0;
-
-        while (failedDice !== 0 && (rerolledDice < this.object.rerollNumber)) {
-            rerolledDice += failedDice;
-            var failedDiceRoll = new Roll(`${failedDice}d10cs>=${this.object.targetNumber}`).evaluate({ async: false });
-            failedDice = Math.min(failedDice - failedDiceRoll.total, (this.object.rerollNumber - rerolledDice));
-            diceRoll = diceRoll.concat(failedDiceRoll.dice[0].results);
-            for (let dice of failedDiceRoll.dice[0].results) {
-                if (dice.result >= this.object.doubleSuccess) {
-                    total++;
-                }
-            }
-            total += failedDiceRoll.total;
-        }
-
-        let getDice = "";
-
-        for (let dice of diceRoll.sort((a, b) => b.result - a.result)) {
-            if (dice.result >= this.object.doubleSuccess) {
-                getDice += `<li class="roll die d10 success double-success">${dice.result}</li>`;
-            }
-            else if (dice.result >= this.object.targetNumber) { getDice += `<li class="roll die d10 success">${dice.result}</li>`; }
-            else if (rerolls.includes(dice.result)) { getDice += `<li class="roll die d10 discarded">${dice.result}</li>`; }
-            else if (dice.result == 1) { getDice += `<li class="roll die d10 failure">${dice.result}</li>`; }
-            else { getDice += `<li class="roll die d10">${dice.result}</li>`; }
-        }
-
-        this.object.preBonusSuccesses = total;
-        if (this.object.successModifier) total += this.object.successModifier;
-        if (this.object.accuracySuccesses) total += this.object.accuracySuccesses;
-
-
         this.object.dice = dice;
-        this.object.roll = roll;
-        this.object.getDice = getDice;
-        this.object.total = total;
+
+        var rollModifiers = {
+            successModifier: this.object.successModifier,
+            doubleSuccess: this.object.doubleSuccess,
+            targetNumber: this.object.targetNumber,
+            reroll: this.object.reroll,
+            rerollFailed: this.object.rerollFailed,
+            rerollNumber: this.object.rerollNumber,
+        }
+
+        const diceRollResults = this._calculateRoll(dice, rollModifiers);
+        this.object.roll = diceRollResults.roll;
+        this.object.displayDice = diceRollResults.diceDisplay;
+        this.object.total = diceRollResults.total;
+        this.object.preBonusSuccesses = diceRollResults.preBonusSuccesses;
+
+        if (this.object.rollTwice) {
+            const secondRoll = this._calculateRoll(dice, rollModifiers);
+            if (secondRoll.total > diceRollResults.total) {
+                this.object.roll = secondRoll.roll;
+                this.object.displayDice = secondRoll.diceDisplay;
+                this.object.total = secondRoll.total;
+                this.object.preBonusSuccesses = secondRoll.preBonusSuccesses;
+            }
+        }
+        this.object.roll.dice[0].options.rollOrder = 1;
+
         if (this.object.rollType !== 'base') {
-            this._spendResources();
+            this._updateCharacterResources();
         }
     }
 
@@ -854,7 +963,7 @@ export class RollForm extends FormApplication {
                           <h4 class="dice-formula">${this.object.dice} Dice + ${this.object.successModifier} successes</h4>
                           <div class="dice-tooltip">
                               <div class="dice">
-                                  <ol class="dice-rolls">${this.object.getDice}</ol>
+                                  <ol class="dice-rolls">${this.object.displayDice}</ol>
                               </div>
                           </div>
                           <h4 class="dice-total">${this.object.total} Succeses</h4>
@@ -936,10 +1045,10 @@ export class RollForm extends FormApplication {
               <div>
                   <div class="dice-roll">
                       <div class="dice-result">
-                          <h4 class="dice-formula">${this.object.dice} Dice + ${this.object.successModifier + this.object.accuracySuccesses} successes</h4>
+                          <h4 class="dice-formula">${this.object.dice} Dice + ${this.object.successModifier} successes</h4>
                           <div class="dice-tooltip">
                               <div class="dice">
-                                  <ol class="dice-rolls">${this.object.getDice}</ol>
+                                  <ol class="dice-rolls">${this.object.displayDice}</ol>
                               </div>
                           </div>
                           <h4 class="dice-total">${this.object.total} Succeses</h4>
@@ -1028,25 +1137,26 @@ export class RollForm extends FormApplication {
                         damage += actorData.system.drill.value;
                     }
                 }
-                let damageRoll = new Roll(`${damage}d10${this.object.damage.rerollFailed ? `r<${this.object.damage.targetNumber}` : ""}cs>=${this.object.damage.targetNumber}`).evaluate({ async: false });
-                let damageDiceRoll = damageRoll.dice[0].results;
-                let damageBonus = 0;
-                let getDamageDice = "";
-                for (let dice of damageDiceRoll) {
-                    if (dice.result >= this.object.damage.doubleSuccess) {
-                        damageBonus++;
-                        getDamageDice += `<li class="roll die d10 success double-success">${dice.result}</li>`;
-                    }
-                    else if (dice.result >= this.object.damage.targetNumber) { getDamageDice += `<li class="roll die d10 success">${dice.result}</li>`; }
-                    else if (dice.result == 1) { getDamageDice += `<li class="roll die d10 failure">${dice.result}</li>`; }
-                    else { getDamageDice += `<li class="roll die d10">${dice.result}</li>`; }
+                var rollModifiers = {
+                    successModifier: this.object.damage.damageSuccessModifier,
+                    doubleSuccess: this.object.damage.doubleSuccess,
+                    targetNumber: this.object.damage.targetNumber,
+                    reroll: this.object.damage.reroll,
+                    rerollFailed: this.object.damage.rerollFailed,
+                    rerollNumber: this.object.damage.rerollNumber,
+                    preRollMacros: [],
+                    macros: [],
                 }
-
-                let damageSuccess = damageRoll.total + this.object.damage.damageSuccessModifier;
-                if (damageBonus) damageSuccess += damageBonus;
-                let damageTotal = damageSuccess - Math.max(0, this.object.soak - this.object.damage.ignoreSoak);
-
+                var diceRollResults = this._calculateRoll(damage, rollModifiers);
+                if (this.object.damage.rollTwice) {
+                    const secondRoll = this._calculateRoll(damage, rollModifiers);
+                    if (secondRoll.total > diceRollResults.total) {
+                        diceRollResults = secondRoll;
+                    }
+                }
+                let damageTotal = diceRollResults.total - Math.max(0, this.object.soak - this.object.damage.ignoreSoak);
                 actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.power);
+
                 this.actor.update(actorData);
                 if (damageTotal > 0) {
                     this.dealHealthDamage(damageTotal);
@@ -1065,10 +1175,10 @@ export class RollForm extends FormApplication {
                                 <h4 class="dice-formula">${damage} Damage dice + ${this.object.damage.damageSuccessModifier} successes </h4>
                                 <div class="dice-tooltip">
                                   <div class="dice">
-                                      <ol class="dice-rolls">${getDamageDice}</ol>
+                                      <ol class="dice-rolls">${diceRollResults.displayDice}</ol>
                                   </div>
                                 </div>
-                                <h4 class="dice-formula">${damageSuccess} Damage - ${this.object.soak} soak (Ignore ${this.object.damage.ignoreSoak})</h4>
+                                <h4 class="dice-formula">${diceRollResults.total} Damage - ${this.object.soak} soak (Ignore ${this.object.damage.ignoreSoak})</h4>
                                 <h4 class="dice-total">${damageTotal} Total Damage</h4>
                             </div>
                         </div>
@@ -1312,23 +1422,25 @@ export class RollForm extends FormApplication {
         return highestAttribute;
     }
 
-    async _spendResources() {
+    async _updateCharacterResources() {
         const actorData = duplicate(this.actor);
-        var newAnimaValue = Math.max(0, actorData.system.anima.value - this.object.cost.anima);
+        var newAnimaValue = Math.max(0, actorData.system.anima.value - this.object.cost.anima + this.object.gain.anima);
         if (actorData.system.details.exalt === 'getimian') {
             if (actorData.system.settings.charmspendpool === 'still') {
                 actorData.system.still.value = Math.max(0, actorData.system.still.value - this.object.cost.motes - this.object.cost.committed);
+                actorData.system.still.value += this.object.gain.motes;
             }
             if (actorData.system.settings.charmspendpool === 'flowing') {
                 actorData.system.flowing.value = Math.max(0, actorData.system.flowing.value - this.object.cost.motes - this.object.cost.committed);
+                actorData.system.flowing.value += this.object.gain.motes;
             }
         }
         else {
-            actorData.system.motes.value = Math.max(0, actorData.system.motes.value - this.object.cost.motes - this.object.cost.committed);
+            actorData.system.motes.value = Math.max(0, actorData.system.motes.value - this.object.cost.motes - this.object.cost.committed + this.object.gain.motes);
         }
         actorData.system.motes.committed += this.object.cost.committed;
         actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - this.object.cost.stunt);
-        actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.cost.power);
+        actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.cost.power + this.object.gain.power);
         this.object.power = actorData.system.power.value;
         actorData.system.anima.value = newAnimaValue;
         let totalHealth = 0;
@@ -1340,6 +1452,9 @@ export class RollForm extends FormApplication {
         }
         if (this.object.cost.healthLethal > 0) {
             actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.system.health.lethal + this.object.cost.healthLethal);
+        }
+        if (this.object.gain.health > 0) {
+            actorData.system.health.lethal = Math.max(0, actorData.system.health.lethal - this.object.gain.health);
         }
         this.actor.system.power.value = actorData.system.power.value;
         if (this.object.activateAura !== 'none') {

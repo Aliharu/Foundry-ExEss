@@ -306,7 +306,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             li.slideUp(200, () => this.render(false));
           }
         }
-      }).render(true);
+      }, { classes: ["dialog", "solar-background"] }).render(true);
     });
 
     html.find('.add-defense-penalty').mousedown(ev => {
@@ -541,7 +541,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           this.actor.update(actorData);
         }
       }
-    }).render(true);
+    }, { classes: ["dialog", "solar-background"] }).render(true);
   }
 
   async catchBreath() {
@@ -570,7 +570,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       buttons: {
         cancel: { label: "Close" }
       }
-    }).render(true);
+    }, { classes: ["dialog", "solar-background"] }).render(true);
   }
 
   async fullRest() {
@@ -592,7 +592,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       buttons: {
         cancel: { label: "Close", callback: () => confirmed = false }
       }
-    }).render(true);
+    }, { classes: ["dialog", "solar-background"] }).render(true);
   }
 
   async pickColor() {
@@ -619,7 +619,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           }
         }
       }
-    }).render(true);
+    }, { classes: ["dialog", "solar-background"] }).render(true);
   }
 
   _onSquareCounterChange(event) {
