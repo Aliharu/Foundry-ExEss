@@ -922,24 +922,27 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     if (item.type === 'charm') {
       if (actorData.system.details.exalt === 'getimian') {
         if (actorData.system.settings.charmspendpool === 'still') {
-          actorData.system.still.value = Math.max(0, actorData.system.still.value - item.system.cost.motes - item.system.cost.committed);
+          actorData.system.still.value = Math.max(0, actorData.system.still.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
         }
         if (actorData.system.settings.charmspendpool === 'flowing') {
-          actorData.system.flowing.value = Math.max(0, actorData.system.flowing.value - item.system.cost.motes - item.system.cost.committed);
+          actorData.system.flowing.value = Math.max(0, actorData.system.flowing.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
         }
       }
       else {
-        actorData.system.motes.value = Math.max(0, actorData.system.motes.value - item.system.cost.motes - item.system.cost.committed);
+        actorData.system.motes.value = Math.max(0, actorData.system.motes.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
       }
       actorData.system.motes.committed += item.system.cost.committed;
       actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - item.system.cost.stunt);
-      actorData.system.power.value = Math.max(0, actorData.system.power.value - item.system.cost.power);
-      actorData.system.anima.value = Math.max(0, actorData.system.anima.value - item.system.cost.anima);
+      actorData.system.power.value = Math.max(0, actorData.system.power.value - item.system.cost.power + item.system.gain.power);
+      actorData.system.anima.value = Math.max(0, actorData.system.anima.value - item.system.cost.anima + item.system.gain.anima);
       let totalHealth = 0;
       for (let [key, health_level] of Object.entries(actorData.system.health.levels)) {
         totalHealth += health_level.value;
       }
       actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.system.health.lethal + item.system.cost.health);
+      if(actorData.system.health.lethal > 0) {
+        actorData.system.health.lethal = Math.max(0, actorData.system.health.lethal - item.system.gain.health);
+      }
     }
     if (item.type === 'spell') {
       actorData.system.will.value = Math.max(0, actorData.system.will.value - item.system.cost);

@@ -73,6 +73,12 @@ EXALTEDESSENCE.statusEffects = [
         name: 'disarmed'
     },
     {
+        icon: 'systems/exaltedessence/assets/icons/fishing-net.svg',
+        id: 'ensnared',
+        label: 'ExEss.Ensnared',
+        name: 'ensnared'
+    },
+    {
         icon: 'icons/svg/falling.svg',
         id: 'prone',
         label: 'ExEss.Prone',
