@@ -1175,7 +1175,7 @@ export class RollForm extends FormApplication {
                                 <h4 class="dice-formula">${damage} Damage dice + ${this.object.damage.damageSuccessModifier} successes </h4>
                                 <div class="dice-tooltip">
                                   <div class="dice">
-                                      <ol class="dice-rolls">${diceRollResults.displayDice}</ol>
+                                      <ol class="dice-rolls">${diceRollResults.diceDisplay}</ol>
                                   </div>
                                 </div>
                                 <h4 class="dice-formula">${diceRollResults.total} Damage - ${this.object.soak} soak (Ignore ${this.object.damage.ignoreSoak})</h4>
@@ -1187,7 +1187,7 @@ export class RollForm extends FormApplication {
             </div>
         </div>
       `
-                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: damageRoll });
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: diceRollResults.roll });
             }
             else if (this.object.rollType === 'withering') {
                 var powerGained = postDefenseTotal + this.object.bonusPower + 1;
