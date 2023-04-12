@@ -255,7 +255,7 @@ export async function addDefensePenalty(actor, label = "Defense Penalty") {
 async function animaTokenMagic(actor, newAnimaValue) {
   const tokenId = actor.token?.id || actor.getActiveTokens()[0]?.id;
   const actorToken = canvas.tokens.placeables.filter(x => x.id === tokenId)[0];
-  if (game.settings.get("exaltedessence", "animaTokenMagic") && actorToken) {
+  if (game.settings.get("exaltedessence", "animaTokenMagic") && actorToken && (actor.type === 'character' || actor.system.creaturetype === 'exalt')) {
       let effectColor = Number(`0x${actor.system.details.animacolor.replace('#', '')}`);
       let sovereign =
           [{

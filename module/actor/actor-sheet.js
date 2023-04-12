@@ -224,15 +224,13 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         onclick: () => this.helpDialogue(this.actor.type),
       };
       buttons = [helpButton, ...buttons];
-      if (this.actor.type != 'npc') {
-        const colorButton = {
-          label: game.i18n.localize('ExEss.DotColors'),
-          class: 'set-color',
-          icon: 'fas fa-palette',
-          onclick: (ev) => this.pickColor(ev),
-        };
-        buttons = [colorButton, ...buttons];
-      }
+      const colorButton = {
+        label: game.i18n.localize('ExEss.DotColors'),
+        class: 'set-color',
+        icon: 'fas fa-palette',
+        onclick: (ev) => this.pickColor(ev),
+      };
+      buttons = [colorButton, ...buttons];
       const rollButton = {
         label: game.i18n.localize('ExEss.Roll'),
         class: 'roll-dice',
