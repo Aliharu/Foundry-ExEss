@@ -1,20 +1,20 @@
 {
     "ExEss.Name": "Nom",
     "ExEss.NameTitle": "Nom/Titre",
-    "ExEss.Exalt": "Exalté",
+    "ExEss.Exalt": "Exalté.e",
     "ExEss.Caste": "Caste",
     "ExEss.Aspect": "Aspect",
     "ExEss.CasteAspect": "Caste/Aspect",
     "ExEss.Level": "Niveau",
     "ExEss.Essence": "Essence",
-    "ExEss.Motes": "Motes",
-    "ExEss.Committed": "Committé",
-    "ExEss.BuildPower": "Pouvoir construit",
+    "ExEss.Motes": "Particules",
+    "ExEss.Committed": "Engagé",
+    "ExEss.BuildPower": "Construire de la Puissance",
     "ExEss.Target": "Cible",
     "ExEss.Self": "Individu",
     "ExEss.Allies": "Alliés",
-    "ExEss.FocusWill": "Volonté Concentrée",
-    "ExEss.Power": "Pouvoir",
+    "ExEss.FocusWill": "Focalisation",
+    "ExEss.Power": "Puissance",
     "ExEss.Will": "Volonté",
     "ExEss.Health": "Santé",
     "ExEss.HealthLevels": "Niveau de santé",
@@ -23,16 +23,16 @@
 
     "ExEss.DotColor": "Couleur du marqueur",
     "ExEss.DotColors": "Couleurs du marqueur",
-    "ExEss.AnimaColor": "Couelur de l'Anima",
+    "ExEss.AnimaColor": "Couleur de l'Anima",
 
-    "ExEss.Flowing": "Houleuse",
+    "ExEss.Flowing": "Fluctuante",
     "ExEss.Still": "Calme",
 
     "ExEss.Aura": "Aura",
-    "ExEss.ActivateAura": "Activate Aura", // TODO
+    "ExEss.ActivateAura": "Aura Activate",
     "ExEss.Nature": "Nature",
-    "ExEss.SacredHunt": "Sacred Hunt", // TODO
-    "ExEss.DevilBody": "Devil Body", // TODO
+    "ExEss.SacredHunt": "Chasse sacrée", 
+    "ExEss.DevilBody": "Incarnation démoniaque", 
 
     "ExEss.Anima": "Anima",
     "ExEss.Passive": "Passive",
@@ -42,7 +42,7 @@
     "ExEss.Animal": "Animal",
     "ExEss.Mortal": "Mortel",
     "ExEss.Elemental": "Elementaire",
-    "ExEss.Fae": "Fey",
+    "ExEss.Fae": "Faey",
     "ExEss.God": "Dieu",
     "ExEss.Undead": "Mort-vivant",
     "ExEss.Demon": "Démon",
@@ -52,7 +52,7 @@
 
     "ExEss.Abyssal": "Abyssal",
     "ExEss.Alchemical": "Alchimique",
-    "ExEss.Dragonblooded": "Draconique",
+    "ExEss.Dragonblooded": "Sang Dragon",
     "ExEss.Exigent": "Exigeant",
     "ExEss.Getimian": "Getimien",
     "ExEss.Infernal": "Infernal",
@@ -63,13 +63,13 @@
     "ExEss.Other": "Autre",
 
     "ExEss.Sovereign": "Souverain",
-    "ExEss.Janest": "Janest", //TODO
-    "ExEss.Umbral": "Umbral", //TODO
-    "ExEss.Hearteater": "Hearteater", //TODO
-    "ExEss.DreamSouled": "DreamSouled", //TODO
+    "ExEss.Janest": "Janest", 
+    "ExEss.Umbral": "Umbral", 
+    "ExEss.Hearteater": "Hearteater", 
+    "ExEss.DreamSouled": "DreamSouled", 
     "ExEss.Architect": "Architecte",
 
-    "ExEss.CharmType": "Type du Charm",
+    "ExEss.CharmType": "Type du Charme",
 
     "ExEss.ItemSearch": "Recherche d'Objet",
     "ExEss.Types": "Types",
@@ -83,7 +83,7 @@
 
     "ExEss.Force": "Force",
     "ExEss.Finesse": "Finesse",
-    "ExEss.Fortitude": "Fermeté",
+    "ExEss.Fortitude": "Endurance",
 
     "ExEss.Ability": "Habilité",
     "ExEss.Abilities": "Habilités",
@@ -92,20 +92,20 @@
     "ExEss.Defense": "Défense",
     "ExEss.Parry": "Parade",
     "ExEss.Evasion": "Esquive",
-    "ExEss.Soak": "Trempe",
-    "ExEss.Hardness": "Dureté",
-    "ExEss.Resolve": "Résolution",
+    "ExEss.Soak": "Encaissement",
+    "ExEss.Hardness": "Résistance",
+    "ExEss.Resolve": "Détermination",
 
-    "ExEss.Battlegroup": "Groupe de combat",
+    "ExEss.Battlegroup": "Unité",
     "ExEss.Size": "Taille",
-    "ExEss.Drill": "Drill", //TODO
+    "ExEss.Drill": "Entrainement", 
 
     "ExEss.Equipped": "Equipé",
 
     "ExEss.Weapons": "Armes",
-    "ExEss.Accuracy": "Visé",
+    "ExEss.Accuracy": "Toucher",
     "ExEss.Damage": "Dégat",
-    "ExEss.Overwhelming": "Ecrasant", //Vérifier
+    "ExEss.Overwhelming": "Pénétration",
 
     "ExEss.Melee": "Melée",
     "ExEss.Ranged": "Distance",
@@ -116,42 +116,42 @@
 
     "ExEss.Attack": "Attaque",
     "ExEss.Decisive": "Décisive",
-    "ExEss.Withering": "Blessante",
+    "ExEss.Withering": "Affaiblissante",
 
     "ExEss.Athletics": "Athlétisme",
-    "ExEss.Awareness": "Sensibilité",
+    "ExEss.Awareness": "Perception",
     "ExEss.CloseCombat": "Combat Rapproché",
     "ExEss.Craft": "Artisanat",
-    "ExEss.Embassy": "Ambassade",
+    "ExEss.Embassy": "Diplomatie",
     "ExEss.Integrity": "Integrité",
-    "ExEss.Navigate": "Navigation",
-    "ExEss.Performance": "Prestation",
+    "ExEss.Navigate": "Voyage",
+    "ExEss.Performance": "Représentation",
     "ExEss.Physique": "Physique",
     "ExEss.Presence": "Présence",
     "ExEss.RangedCombat": "Conbat à Distance",
-    "ExEss.Sagacity": "Sagesse",
-    "ExEss.Stealth": "Discrétion",
-    "ExEss.War": "Art de la Guerre", // Vérifier
+    "ExEss.Sagacity": "Sagacité",
+    "ExEss.Stealth": "Furtivité",
+    "ExEss.War": "Guerre",
     "ExEss.MartialArts": "Arts Martiaux",
     "ExEss.Evocation": "Evocation",
     "ExEss.Evocations": "Evocations",
     "ExEss.CurrentPenalty": "Pénalité Actuelle",
-    "ExEss.WoundPenalty": "Pénalité des Blessures",
+    "ExEss.WoundPenalty": "Blessures",
     "ExEss.Flurry": "Rafale",
     "ExEss.ArmorPenalty": "Pénalité d'Armure",
-    "ExEss.CurrentWoundPenalty": "Pénalité des Blessures Actuelle",
+    "ExEss.CurrentWoundPenalty": "Blessures Actuelles",
 
     "ExEss.TargetNumber": "Numéro de la Cible",
     "ExEss.Reroll": "Relancer",
-    "ExEss.RerollFailed": "Relancement échoué", // Vérifier
-    "ExEss.RollTwiceKeepHighest": "Lancer deux fois (Garder le plus important)",
+    "ExEss.RerollFailed": "Relance échoué",
+    "ExEss.RollTwiceKeepHighest": "Avantage",
     "ExEss.DoubleSuccess": "Réussite Doublée",
-    "ExEss.RerollNumDice": "Relancement # échoué",
-    "ExEss.DicetoSuccesses": "Dice to Successes", // TODO
+    "ExEss.RerollNumDice": "Relance # échoué",
+    "ExEss.DicetoSuccesses": "Dé de succés",
     "ExEss.Excellency": "Excellence",
-    "ExEss.Stunt": "Stunt", // TODO
+    "ExEss.Stunt": "Cascade", 
     "ExEss.Dice": "Dé",
-    "ExEss.JoinBattle": "Rejoindre la Bataille",
+    "ExEss.JoinBattle": "Initiative",
 
     "ExEss.Virtue": "Virtue",
     "ExEss.Virtues": "Virtues",
@@ -195,32 +195,32 @@
 
     "ExEss.Points": "Points",
 
-    "ExEss.Roll": "Lancé",
-    "ExEss.RollDice": "Lancé de Dé",
-    "ExEss.RollAbility": "Lancé d'Abilité",
-    "ExEss.RollPool": "Lancé groupé", //Vérifier
+    "ExEss.Roll": "Lancer",
+    "ExEss.RollDice": "Lancer le Dé",
+    "ExEss.RollAbility": "Lancer l'Abilité",
+    "ExEss.RollPool": "Lancer la main ",
 
-    "ExEss.CatchBreath": "Court Repos",
-    "ExEss.FullRest": "Repos Complet",
+    "ExEss.CatchBreath": "Souffler",
+    "ExEss.FullRest": "Repos",
 
-    "ExEss.Strength": "Froce",
+    "ExEss.Strength": "Force",
     "ExEss.Milestones": "Jalons",
 
     "ExEss.Personal": "Personel",
     "ExEss.Minor": "Mineur",
     "ExEss.Major": "Majeur",
     "ExEss.Type": "Type",
-    "ExEss.Tie": "Egalité",
+    "ExEss.Tie": "Lien",
     "ExEss.Principle": "Principe",
 
-    "ExEss.BonusSuccesses": "Bonus de Succés",
+    "ExEss.BonusSuccesses": "Succés Bonus",
     "ExEss.MiscPenalty": "Pénalité Diverse",
-    "ExEss.DicePenalty": "Pénalité de Dé",
+    "ExEss.DicePenalty": "Pénalité aux Dés",
     "ExEss.DiceModifier": "Modificateur de Dé",
     "ExEss.SuccessModifier": "Modificateur de Succés",
 
     "ExEss.MiscBonus": "Bonus Divers",
-    "ExEss.BonusDice": "Bonus de Dé",
+    "ExEss.BonusDice": "Bonus aux Dés",
     "ExEss.Successes": "Succés",
     "ExEss.DamageDice": "Dés de Dégats",
     "ExEss.DamageSuccesses": "Succés de Dégat",
@@ -228,17 +228,17 @@
     "ExEss.Primary": "Principal",
     "ExEss.Secondary": "Secondaire",
     "ExEss.Tertiary": "Tertiaire",
-    "ExEss.Pool": "Réservoir",
-    "ExEss.Pools": "Résoires", //Vérifier
+    "ExEss.Pool": "Réserve",
+    "ExEss.Pools": "Réserves",
 
     "ExEss.Languages": "Langages",
     "ExEss.LowRealm": "Bas Domaine",
     "ExEss.HighRealm": "Haut Domaine",
     "ExEss.OldRealm": "Vieux Domaine",
-    "ExEss.Dragontongue": "Langue de Dragon",
+    "ExEss.Dragontongue": "Langue des Dragon",
     "ExEss.Riverspeak": "Langue de la Rivière",
     "ExEss.Skytongue": "Langue des Cieux",
-    "ExEss.Flametongue": "Langue des Flames",
+    "ExEss.Flametongue": "Langue des Flammes",
     "ExEss.Foresttongue": "Langue de la Forêt",
     "ExEss.Seatongue": "Langue de la Mer",
     "ExEss.GuildCant": "Jargon de la Guilde",
@@ -265,8 +265,8 @@
     "ExEss.Influence": "Influence",
     "ExEss.SocialInfluence": "Influence Sociale",
 
-    "ExEss.ConcentratedAttacks": "Attaques Concentrées",
-    "ExEss.ShowOnslaughtDescription": "Les cibles de l'attaque blessante subiront -1 de dureté par attaque jusqu'à ce qu'une soit décisive",
+    "ExEss.ConcentratedAttacks": "Attaques concertées",
+    "ExEss.ShowOnslaughtDescription": "Les cibles de l'attaque affaiblissante subiront -1 Résistance par attaque jusqu'à la prochaine attaque décisive subie",
 
     "ExEss.Help": "Aide",
 
@@ -277,27 +277,27 @@
     "ExEss.Water": "Eau",
     "ExEss.Wood": "Bois",
 
-    "ExEss.ExcellentStrike": "Frappe Excellent",
+    "ExEss.ExcellentStrike": "Frappe Parfaite",
 
-    "ExEss.Gambit": "Manoeuvre", // Reprendre là
+    "ExEss.Gambit": "Manoeuvre", 
     "ExEss.Gambits": "Manoeuvres",
-    "ExEss.PowerSpent": "Pouvoir Dépensé",
+    "ExEss.PowerSpent": "Puissance Dépensée",
     "ExEss.ActiveEffects": "Effets Actifs",
 
     "ExEss.Conditions": "Conditions",
     "ExEss.Disarmed": "Désarmé",
     "ExEss.Prone": "A Terre",
-    "ExEss.LightCover": "Légérement à Couvert",
-    "ExEss.HeavyCover": "Grandement à Couvert",
+    "ExEss.LightCover": "A couvert (léger)",
+    "ExEss.HeavyCover": "A couvert (fort)",
     "ExEss.Surprised": "Surpris",
     "ExEss.Incapacitated": "Neutralisé",
     "ExEss.Concealment": "Caché",
     "ExEss.Dematerialized": "Dématérialisé",
 
-    "ExEss.SupportingVirtue": "Vertue Soutenue",
-    "ExEss.OpposedVirtue": "Vertue Opposée", // Vérifier ou Opposé à la Vertue
-    "ExEss.SupportingIntimacy": "Itimité Soutenue",
-    "ExEss.OpposedIntimacy": "Intimité Opposée",
+    "ExEss.SupportingVirtue": "Adhère à la Vertue",
+    "ExEss.OpposedVirtue": "Opposé à la Vertue", 
+    "ExEss.SupportingIntimacy": "Adhère à l'Intimité",
+    "ExEss.OpposedIntimacy": "Opposé à l'Intimité",
     
     "ExEss.Save": "Sauvegarde",
     "ExEss.Update": "Update",
@@ -309,14 +309,14 @@
     "ExEss.OnslaughtPenalty": "Pénalité d'Assaut",
 
     "ExEss.DamageType": "Type de Dégat",
-    "ExEss.AutoDecisiveDamage": "Dégat Décisif Automatique", //Vérifier
+    "ExEss.AutoDecisiveDamage": "Dégat Décisif Automatique",
     "ExEss.AutoDecisiveDamageDescription": "Des dégats de santé seront automatiquement ajouté aux infividus frappé par l'attaque décisive",
     "ExEss.Lethal": "Mortel",
     "ExEss.Aggravated": "Aggravé",
 
-    "ExEss.BonusPower": "Bonus de Pouvoir",
-    "ExEss.WeaponDamageWithering": "Dégat d'Arme sur Attaque Blessante",
-    "ExEss.WeaponDamageWitheringDescription": "Ajouter les dégat de l'arme à l'attaque blessante.",
+    "ExEss.BonusPower": "Bonus de Puissance",
+    "ExEss.WeaponDamageWithering": "Dégat d'Arme sur Attaque Affaiblissante",
+    "ExEss.WeaponDamageWitheringDescription": "Ajouter les dégat de l'arme à l'attaque affaiblissante.",
     "ExEss.AnimaTokenEffects": "Effet d'Anima sur le token",
     "ExEss.AnimaTokenEffectsDescription": "Si activé, le changement des niveaux d'anima ajoutera les Token Magix Fx aux jetons, La coueur noire par défaut n'apparaitra pas. (Ne pas activer sans le module TokenMagicFx)",
     "ExEss.AttackEffects": "Ajoute les effets lors d'attaques réussites",
@@ -325,9 +325,9 @@
     "ExEss.DiceRollModifiers": "Modificateur de lancé de dés",
     "ExEss.DiceBonus": "Dés Bonus",
     "ExEss.SuccessBonus": "Succés Bonus",
-    "ExEss.DoubleExtraSuccesses": "Double Extra Succés", //A vérifier
+    "ExEss.DoubleExtraSuccesses": "Double Extra Succés", 
     "ExEss.OtherModifiers": "Autres Modificateurs",
-    "ExEss.IgnoreSoak": "Ignore Trempe",
+    "ExEss.IgnoreSoak": "Ignore Encaissement",
     "ExEss.HealthType": "Type de Santé",
     "ExEss.SavedRolls": "Lancés Sauvegardés",
     "ExEss.SpecialAttacks": "Attaques spéaciales",
@@ -346,7 +346,7 @@
     "ExEss.Greatsword": "Epée Longue",
     "ExEss.Handaxe": "Hache à une main",
     "ExEss.Lightning": "Foudre",
-    "ExEss.Goremaul": "Marteau lourd", // A vérife
+    "ExEss.Goremaul": "Marteau lourd", 
     "ExEss.Quarterstaff": "Bâton",
     "ExEss.Rapier": "Rapière",
     "ExEss.Scimitar": "Cimeterre",
@@ -360,9 +360,9 @@
     "ExEss.Disarm": "Désarmer",
     "ExEss.Distract": "Distraire",
     "ExEss.Ensnare": "Piéger",
-    "ExEss.Ensnared": "Prendre au piège",
-    "ExEss.Knockback": "Faire reculer",
-    "ExEss.Knockdown": "Mettre au sol",
+    "ExEss.Ensnared": "Pris au piège",
+    "ExEss.Knockback": "Repousser",
+    "ExEss.Knockdown": "Mettre à terre",
     "ExEss.Pilfer": "Dérober",
     "ExEss.Pull": "Tirer",
     "ExEss.RevealWeakness": "Révéler les faiblesses",
