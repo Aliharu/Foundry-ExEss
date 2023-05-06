@@ -1,4 +1,22 @@
 export function registerSettings() {
+    game.settings.register("exaltedessence", "sheetStyle", {
+        name: "ExEss.SheetStyle",
+        hint: "ExEss.SheetStyleDescription",
+        scope: "world",
+        config: true,
+        default: "solar",
+        type: String,
+        choices: {
+            "solar": "ExEss.Solar",
+            "lunar": "ExEss.Lunar",
+            "db": "ExEss.Dragonblooded",
+            "tree": "ExEss.Tree",
+        },
+        onChange: (choice) => {
+            window.location.reload();
+        },
+    });
+
     game.settings.register('exaltedessence', 'calculateOnslaught', {
         name: game.i18n.localize('ExEss.ConcentratedAttacks'),
         hint: game.i18n.localize('ExEss.ShowOnslaughtDescription'),

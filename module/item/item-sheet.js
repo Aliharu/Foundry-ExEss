@@ -9,6 +9,7 @@ export class ExaltedessenceItemSheet extends ItemSheet {
 
   constructor(...args) {
     super(...args);
+    this.options.classes = [...this.options.classes, this.getTypeSpecificCSSClasses()];
   }
 
   /** @override */
@@ -30,6 +31,10 @@ export class ExaltedessenceItemSheet extends ItemSheet {
     // Alternatively, you could use the following return statement to do a
     // unique item sheet by type, like `weapon-sheet.html`.
     return `${path}/item-${this.item.type}-sheet.html`;
+  }
+
+  getTypeSpecificCSSClasses() {
+    return `${game.settings.get("exaltedessence", "sheetStyle")}-background`;
   }
 
   /* -------------------------------------------- */

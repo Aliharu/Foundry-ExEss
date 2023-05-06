@@ -19,6 +19,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     this._filters = {
       effects: new Set()
     }
+    this.options.classes = [...this.options.classes, this.getTypeSpecificCSSClasses()];
   }
 
   /**
@@ -39,6 +40,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       height: 1026,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "stats" }]
     });
+  }
+
+  getTypeSpecificCSSClasses() {
+    return `${game.settings.get("exaltedessence", "sheetStyle")}-background`;
   }
 
   /* -------------------------------------------- */
@@ -304,7 +309,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
             li.slideUp(200, () => this.render(false));
           }
         }
-      }, { classes: ["dialog", "solar-background"] }).render(true);
+      }, { classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }).render(true);
     });
 
     html.find('.add-defense-penalty').mousedown(ev => {
@@ -539,7 +544,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           this.actor.update(actorData);
         }
       }
-    }, { classes: ["dialog", "solar-background"] }).render(true);
+    }, { classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }).render(true);
   }
 
   async catchBreath() {
@@ -568,7 +573,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       buttons: {
         cancel: { label: "Close" }
       }
-    }, { classes: ["dialog", "solar-background"] }).render(true);
+    }, { classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }).render(true);
   }
 
   async fullRest() {
@@ -590,7 +595,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       buttons: {
         cancel: { label: "Close", callback: () => confirmed = false }
       }
-    }, { classes: ["dialog", "solar-background"] }).render(true);
+    }, { classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }).render(true);
   }
 
   async pickColor() {
@@ -617,7 +622,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           }
         }
       }
-    }, { classes: ["dialog", "solar-background"] }).render(true);
+    }, { classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }).render(true);
   }
 
   _onSquareCounterChange(event) {

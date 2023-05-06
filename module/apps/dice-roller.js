@@ -372,7 +372,7 @@ export class RollForm extends FormApplication {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["dialog", `solar-background`],
+            classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`],
             popOut: true,
             template: "systems/storypath-fvtt/templates/dialogues/skill-roll.html",
             id: "roll-form",
@@ -413,7 +413,7 @@ export class RollForm extends FormApplication {
                     },
                 }
             }
-        }, { classes: ["dialog", "solar-background"] }).render(true);
+        }, { classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }).render(true);
     }
 
     getData() {

@@ -366,5 +366,9 @@
     "ExEss.Pilfer": "Pilfer",
     "ExEss.Pull": "Pull",
     "ExEss.RevealWeakness": "Reveal Weakness",
-    "ExEss.Unhorse": "Unhorse"
+    "ExEss.Unhorse": "Unhorse",
+    "ExEss.Tree": "Tree",
+
+    "ExEss.SheetStyle": "Sheet Style",
+    "ExEss.SheetStyleDescription": "The background image used on exalted sheets"
 }
