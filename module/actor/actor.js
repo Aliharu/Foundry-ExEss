@@ -205,7 +205,7 @@ export class ExaltedessenceActor extends Actor {
 }
 
 export async function addDefensePenalty(actor, label = "Defense Penalty") {
-  const existingPenalty = actor.effects.find(i => i.label == label);
+  const existingPenalty = actor.effects.find(i => i.name === label);
   if (existingPenalty) {
     let changes = duplicate(existingPenalty.changes);
     if (actor.type === 'character') {
@@ -240,7 +240,7 @@ export async function addDefensePenalty(actor, label = "Defense Penalty") {
       ];
     }
     actor.createEmbeddedDocuments('ActiveEffect', [{
-      label: label,
+      name: label,
       icon: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
       origin: actor.uuid,
       disabled: false,

@@ -1249,7 +1249,7 @@ export class RollForm extends FormApplication {
             }
         }
         if (this.object.target && game.settings.get("exaltedessence", "calculateOnslaught")) {
-            const onslaught = this.object.target.actor.effects.find(i => i.label == "Onslaught");
+            const onslaught = this.object.target.actor.effects.find(i => i.name === "Onslaught");
             if (game.user.isGM) {
                 if (this.object.rollType === 'decisive') {
                     if (onslaught) {
@@ -1266,7 +1266,7 @@ export class RollForm extends FormApplication {
                     }
                     else {
                         this.object.target.actor.createEmbeddedDocuments('ActiveEffect', [{
-                            label: 'Onslaught',
+                            name: 'Onslaught',
                             icon: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
                             origin: this.object.target.actor.uuid,
                             disabled: false,
@@ -1299,7 +1299,7 @@ export class RollForm extends FormApplication {
             }
         }
         if (this.object.triggerSelfDefensePenalty > 0) {
-            const existingPenalty = this.actor.effects.find(i => i.label == "Defense Penalty");
+            const existingPenalty = this.actor.effects.find(i => i.name === "Defense Penalty");
             if (existingPenalty) {
                 let changes = duplicate(existingPenalty.changes);
                 if (this.actor.type === 'character') {
@@ -1334,7 +1334,7 @@ export class RollForm extends FormApplication {
                     ];
                 }
                 this.actor.createEmbeddedDocuments('ActiveEffect', [{
-                    label: "Defense Penalty",
+                    name: "Defense Penalty",
                     icon: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
                     origin: this.actor.uuid,
                     disabled: false,

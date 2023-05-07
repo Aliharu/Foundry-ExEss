@@ -112,7 +112,7 @@ Hooks.once('init', async function () {
     }
     if (type === 'addOnslaught') {
       const targetedActor = game.canvas.tokens.get(id).actor;
-      const onslaught = targetedActor.effects.find(i => i.label == "Onslaught");
+      const onslaught = targetedActor.effects.find(i => i.name == "Onslaught");
       if (onslaught) {
         let changes = duplicate(onslaught.data.changes);
         if (targetedActor.system.hardness.value > 0) {
@@ -122,7 +122,7 @@ Hooks.once('init', async function () {
       }
       else {
         targetedActor.createEmbeddedDocuments('ActiveEffect', [{
-          label: 'Onslaught',
+          name: 'Onslaught',
           icon: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
           origin: targetedActor.uuid,
           disabled: false,
@@ -138,7 +138,7 @@ Hooks.once('init', async function () {
     }
     if(type === 'deleteOnslaught') {
       const targetedActor = game.canvas.tokens.get(id).actor;
-      const onslaught = targetedActor.effects.find(i => i.label == "Onslaught");
+      const onslaught = targetedActor.effects.find(i => i.name == "Onslaught");
       if (onslaught) {
           onslaught.delete();
       }
