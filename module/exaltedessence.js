@@ -66,6 +66,7 @@ Hooks.once('init', async function () {
   CONFIG.Combat.documentClass = ExaltedCombat;
   CONFIG.Combatant.documentClass = ExaltedCombatant;
   CONFIG.ui.combat = ExaltedCombatTracker;
+  CONFIG.ActiveEffect.legacyTransferral = false;
 
   game.socket.on('system.exaltedessence', handleSocket);
 
