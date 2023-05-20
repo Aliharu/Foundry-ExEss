@@ -67,6 +67,11 @@
   }
 }
 
+.leaves-background .window-content {
+  background: url("../assets/backgrounds/leaves-background.jpg");
+  background-size: cover;
+}
+
 .exaltedessence .window-content .abilities,
 .exaltedessence.sheet.actor .window-content .abilities {
   border: none;

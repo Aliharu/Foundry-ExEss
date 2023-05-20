@@ -11,6 +11,7 @@ export function registerSettings() {
             "lunar": "ExEss.Lunar",
             "db": "ExEss.Dragonblooded",
             "tree": "ExEss.Tree",
+            "leaves": "ExEss.Leaves",
         },
         onChange: (choice) => {
             window.location.reload();

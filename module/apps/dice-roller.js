@@ -42,7 +42,7 @@ export class RollForm extends FormApplication {
                 this.object.power = this.actor.system.power.value || 0;
                 this.object.damageSuccesses = data.damage || 0;
                 this.object.overwhelming = data.overwhelming || 0;
-                this.object.conditions = (this.actor.token && this.actor.token.actorData.effects) ? this.actor.token.actorData.effects : [];
+                this.object.conditions = (this.actor.token && this.actor.token.actor.effects) ? this.actor.token.actor.effects : [];
                 this.object.weaponType = data.weaponType || 'melee';
                 this.object.diceModifier = 0;
                 this.object.triggerSelfDefensePenalty = 0;
