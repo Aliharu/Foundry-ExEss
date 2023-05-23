@@ -1,10 +1,10 @@
 {
   "id": "exaltedessencefrenchtest",
-  "title": "Exalted Essence de anty",
+  "title": "Exalted Essence de anty autre",
   "description": "Exalted Essence system module for FoundryVTT!",
   "url": "https://github.com/Aliharu/Foundry-ExEss",
   "license": "LICENSE.txt",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "compatibility": {
     "minimum": "10",
     "verified": "10",
