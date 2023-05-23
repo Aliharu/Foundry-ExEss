@@ -128,7 +128,7 @@
     "ExEss.Performance": "Représentation",
     "ExEss.Physique": "Physique",
     "ExEss.Presence": "Présence",
-    "ExEss.RangedCombat": "Conbat à Distance",
+    "ExEss.RangedCombat": "Combat à Distance",
     "ExEss.Sagacity": "Sagacité",
     "ExEss.Stealth": "Furtivité",
     "ExEss.War": "Guerre",
@@ -141,7 +141,7 @@
     "ExEss.ArmorPenalty": "Pénalité d'Armure",
     "ExEss.CurrentWoundPenalty": "Blessures Actuelles",
 
-    "ExEss.TargetNumber": "Numéro de la Cible",
+    "ExEss.TargetNumber": "Nombre à atteindre",
     "ExEss.Reroll": "Relancer",
     "ExEss.RerollFailed": "Relance échoué",
     "ExEss.RollTwiceKeepHighest": "Avantage",
@@ -160,7 +160,7 @@
     "ExEss.Stats": "Statistiques",
     "ExEss.Qualities": "Qualités",
     "ExEss.Charms": "Charmes",
-    "ExEss.Advantages": "Advantages",
+    "ExEss.Advantages": "Avantages",
     "ExEss.Resonance": "Résonance",
     "ExEss.Merits": "Mérites",
     "ExEss.Rituals": "Rituels",
@@ -171,6 +171,14 @@
     "ExEss.Description": "Description",
     "ExEss.Items": "Objets",
     "ExEss.Templates": "Templates",
+
+    "ExEss.MilestonesExplain": "Grâce aux jalons, vous pouvez acheter les avancements suivants",
+    "ExEss.PersonalMilestoneExplain": "Rachat de charme, ajouter un mode de charme (personel inclut), ajouter un mérite tertiaire, aquérir le premier point d'une abilité.",
+    "ExEss.MinorMilestoneExplain": "Achat de charme, augmenter une abilité de +1.",
+    "ExEss.MajorMilstoneExplain": "Augmenter un attribut de +1, ajouter ou augmenter un mérite, changer une vertue (Si approprié à l'histoire).",
+    "ExEss.ExaltMilestoneExplain": "Avancement mineur ou personnel. Doit être dépensé pour un charme universel ou d'exalté",
+    "ExEss.EssenceIncrease": "Augmentation d'Essence",
+    "ExEss.EssanceIncreaseExplain": "Recevoir 1 excellence ou le charme Corps de Boeuf gratuitement",
 
     "ExEss.Requirement": "Condition",
 
