@@ -866,7 +866,7 @@ export class RollForm extends FormApplication {
                     this.object.successModifier += 1;
                 }
 
-                dice = attributeDice + abilityDice + this.object.diceModifier;
+                dice = attributeDice + abilityDice;
             }
             else if (this.actor.type === 'npc') {
                 let poolDice = this.actor.system.pools[this.object.pool].value;
@@ -902,7 +902,7 @@ export class RollForm extends FormApplication {
                 dice -= 3;
             }
             
-            dice += + this.object.diceModifier;
+            dice += this.object.diceModifier;
         }
         if (this.object.rollType === 'social') {
             this.object.resolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedIntimacy || 0) - parseInt(this.object.supportedIntimacy || 0));
