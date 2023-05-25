@@ -901,6 +901,8 @@ export class RollForm extends FormApplication {
             if (this.object.flurry) {
                 dice -= 3;
             }
+            
+            dice += this.object.diceModifier;
         }
         if (this.object.rollType === 'social') {
             this.object.resolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedIntimacy || 0) - parseInt(this.object.supportedIntimacy || 0));
