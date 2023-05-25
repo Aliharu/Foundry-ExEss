@@ -172,6 +172,14 @@
     "ExEss.Items": "Items",
     "ExEss.Templates": "Templates",
 
+    "ExEss.MilestonesExplain": "With milestones you may purchase the following advancements",
+    "ExEss.PersonalMilestoneExplain": "Repurchase charm, add charm mode (including personal), add tertiary merit, aquire first dot in an ability",
+    "ExEss.MinorMilestoneExplain": "Any Charm, Increase Ability by +1.",
+    "ExEss.MajorMilstoneExplain": "Increase Attribute by +1, Add or raise merit, Change Virtue (If applicable to the story).",
+    "ExEss.ExaltMilestoneExplain": "Minor or Personal Advancement. Must be spent on universal or exalt charms",
+    "ExEss.EssenceIncrease": "Essence Increase",
+    "ExEss.EssanceIncreaseExplain": "Receive 1 excellency or Ox-Body for free",
+
     "ExEss.Requirement": "Requirement",
 
     "ExEss.Spell": "Spell",
