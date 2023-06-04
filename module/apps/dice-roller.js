@@ -131,6 +131,8 @@ export class RollForm extends FormApplication {
                 }
             };
 
+            this.object.addstatuses = [];
+
             if (data.weapon) {
                 this.object.weaponTags = data.weapon.traits.weapontags.selected;
                 this.object.successModifier = data.weapon.accuracy || 0;
@@ -148,6 +150,9 @@ export class RollForm extends FormApplication {
             }
         }
 
+        if(this.object.addStatuses === undefined) {
+            this.object.addStatuses = []
+        }
         if (this.object.damage.type === undefined) {
             this.object.damage.type = 'lethal';
         }
@@ -216,6 +221,10 @@ export class RollForm extends FormApplication {
                 this._checkExcellencyBonuses();
             }
             this.object.target = Array.from(game.user.targets)[0] || null;
+            this.object.updateTargetActorData = false;
+            if (this.object.target) {
+                this.object.newTargetData = duplicate(this.object.target.actor);
+            }
 
             if (this.object.addedCharms === undefined) {
                 this.object.addedCharms = [];
@@ -542,10 +551,10 @@ export class RollForm extends FormApplication {
                 'unhorse': 5,
             }
             this.object.powerSpent = gambitCosts[this.object.gambit];
-            if((this.object.gambit === 'knockback' || this.object.gambit === 'knockdown') && this.object.weaponTags['smashing']) {
+            if ((this.object.gambit === 'knockback' || this.object.gambit === 'knockdown') && this.object.weaponTags['smashing']) {
                 this.object.powerSpent--;
             }
-            if(this.object.gambit === 'ensnare' && this.object.weaponTags['flexible']) {
+            if (this.object.gambit === 'ensnare' && this.object.weaponTags['flexible']) {
                 this.object.powerSpent--;
             }
             this.render();
@@ -901,7 +910,7 @@ export class RollForm extends FormApplication {
             if (this.object.flurry) {
                 dice -= 3;
             }
-            
+
             dice += this.object.diceModifier;
         }
         if (this.object.rollType === 'social') {
@@ -1000,9 +1009,8 @@ export class RollForm extends FormApplication {
         }
         else {
             let extraPower = ``;
-            const powerActor = self ? this.actor : (this.object.target.actor || null);
-            if (powerActor) {
-                const actorData = duplicate(powerActor);
+            if (self) {
+                const actorData = duplicate(this.actor);
                 if (this.object.rollType === 'buildPower') {
                     if (total + actorData.system.power.value > 10) {
                         const extraPowerValue = Math.floor((total + 1 + actorData.system.power.value - 10));
@@ -1013,7 +1021,20 @@ export class RollForm extends FormApplication {
                 else {
                     actorData.system.will.value = Math.min(10, total + actorData.system.will.value + 1);
                 }
-                powerActor.update(actorData);
+                this.actor.update(actorData);
+            }
+            else {
+                this.object.updateTargetActorData = true;
+                if (this.object.rollType === 'buildPower') {
+                    if (total + this.object.newTargetData.system.power.value > 10) {
+                        const extraPowerValue = Math.floor((total + 1 + this.object.newTargetData.system.power.value - 10));
+                        extraPower = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
+                    }
+                    this.object.newTargetData.system.power.value = Math.min(10, total + this.object.newTargetData.system.power.value + 1);
+                }
+                else {
+                    this.object.newTargetData.system.will.value = Math.min(10, total + this.object.newTargetData.system.will.value + 1);
+                }
             }
             if (this.object.rollType === 'buildPower') {
                 message = `<h4 class="dice-total">${total + 1} Power Built!</h4> ${extraPower}`;
@@ -1161,7 +1182,7 @@ export class RollForm extends FormApplication {
 
                 this.actor.update(actorData);
                 if (damageTotal > 0) {
-                    this.dealHealthDamage(damageTotal);
+                    this._dealHealthDamage(damageTotal);
                 }
 
                 messageContent = `
@@ -1250,55 +1271,11 @@ export class RollForm extends FormApplication {
                 ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
             }
         }
-        if (this.object.target && game.settings.get("exaltedessence", "calculateOnslaught")) {
-            const onslaught = this.object.target.actor.effects.find(i => i.name === "Onslaught");
-            if (game.user.isGM) {
-                if (this.object.rollType === 'decisive') {
-                    if (onslaught) {
-                        onslaught.delete();
-                    }
-                }
-                else if (this.object.rollType === 'withering') {
-                    if (onslaught) {
-                        let changes = duplicate(onslaught.data.changes);
-                        if (this.object.target.actor.system.hardness.value > 0) {
-                            changes[0].value = changes[0].value - 1;
-                            onslaught.update({ changes });
-                        }
-                    }
-                    else {
-                        this.object.target.actor.createEmbeddedDocuments('ActiveEffect', [{
-                            name: 'Onslaught',
-                            icon: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
-                            origin: this.object.target.actor.uuid,
-                            disabled: false,
-                            "changes": [
-                                {
-                                    "key": "data.hardness.value",
-                                    "value": -1,
-                                    "mode": 2
-                                }
-                            ]
-                        }]);
-                    }
-                }
-            }
-            else {
-                if (this.object.rollType === 'decisive') {
-                    game.socket.emit('system.exaltedessence', {
-                        type: 'deleteOnslaught',
-                        id: this.object.target.id,
-                        data: null,
-                    });
-                }
-                else if (this.object.rollType === 'withering') {
-                    game.socket.emit('system.exaltedessence', {
-                        type: 'addOnslaught',
-                        id: this.object.target.id,
-                        data: null,
-                    });
-                }
-            }
+        if (this.object.rollType === 'withering' && this.object.target && game.settings.get("exaltedessence", "calculateOnslaught")) {
+            this._addOnslaught(1);
+        }
+        if (this.object.rollType === 'decisive' && this.object.target && game.settings.get("exaltedessence", "calculateOnslaught")) {
+            this._removeOnslaught();
         }
         if (this.object.triggerSelfDefensePenalty > 0) {
             const existingPenalty = this.actor.effects.find(i => i.name === "Defense Penalty");
@@ -1347,43 +1324,96 @@ export class RollForm extends FormApplication {
                 }]);
             }
         }
+        if (this.object.updateTargetActorData) {
+            this._updateTargetActor();
+        }
         this.attackSequence();
     }
 
-    async dealHealthDamage(characterDamage) {
+    _addOnslaught(number = 1) {
+        this.object.updateTargetActorData = true;
+        const onslaught = this.object.newTargetData.effects.find(i => i.flags.exaltedessence?.statusId == "onslaught");
+        if (onslaught) {
+            onslaught.changes[0].value = onslaught.changes[0].value - number;
+        }
+        else {
+            this.object.newTargetData.effects.push({
+                name: 'Onslaught',
+                icon: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
+                origin: this.object.target.actor.uuid,
+                disabled: false,
+                duration: {
+                    rounds: 10,
+                },
+                flags: {
+                    "exaltedessence": {
+                        statusId: 'onslaught',
+                    }
+                },
+                changes: [
+                    {
+                        "key": "data.hardness.value",
+                        "value": number * -1,
+                        "mode": 2
+                    }
+                ]
+            });
+        }
+    }
+
+    _removeOnslaught() {
+        this.object.updateTargetActorData = true;
+        this.object.newTargetData.effects = this.object.newTargetData.effects.filter(i => i.flags.exaltedessence?.statusId !== "onslaught");
+    }
+
+    _dealHealthDamage(characterDamage) {
         if (this.object.target && game.combat && game.settings.get("exaltedessence", "autoDecisiveDamage") && characterDamage > 0) {
+            this.object.updateTargetActorData = true;
             let totalHealth = 0;
-            const targetActorData = duplicate(this.object.target.actor);
             if (this.object.target.actor.type === 'npc') {
-                totalHealth = targetActorData.system.health.max;
+                totalHealth = this.object.newTargetData.system.health.max;
             }
             else {
-                for (let [key, health_level] of Object.entries(targetActorData.system.health.levels)) {
+                for (let [key, health_level] of Object.entries(this.object.newTargetData.system.health.levels)) {
                     totalHealth += health_level.value;
                 }
             }
             if (this.object.damage.type === 'lethal') {
-                targetActorData.system.health.lethal = Math.min(totalHealth - targetActorData.system.health.aggravated, targetActorData.system.health.lethal + characterDamage);
+                this.object.newTargetData.system.health.lethal = Math.min(totalHealth - this.object.newTargetData.system.health.aggravated, this.object.newTargetData.system.health.lethal + characterDamage);
             }
             if (this.object.damage.type === 'aggravated') {
-                targetActorData.system.health.aggravated = Math.min(totalHealth - targetActorData.system.health.lethal, targetActorData.system.health.aggravated + characterDamage);
+                this.object.newTargetData.system.health.aggravated = Math.min(totalHealth - this.object.newTargetData.system.health.lethal, this.object.newTargetData.system.health.aggravated + characterDamage);
             }
-            if (game.user.isGM) {
-                this.object.target.actor.update(targetActorData);
+        }
+    }
+
+    async _updateTargetActor() {
+        if (game.user.isGM) {
+            await this.object.target.actor.update(this.object.newTargetData);
+            for (const status of this.object.addStatuses) {
+                const effectExists = this.object.target.actor.effects.find(e => e.statuses.has(status));
+                if (!effectExists) {
+                    const effect = CONFIG.statusEffects.find(e => e.id === status);
+                    await this.object.target.toggleEffect(effect);
+                }
             }
-            else {
-                game.socket.emit('system.exaltedessence', {
-                    type: 'healthDamage',
-                    id: this.object.target.id,
-                    data: targetActorData.system.health,
-                });
-            }
+        }
+        else {
+            game.socket.emit('system.exaltedessence', {
+                type: 'updateTargetData',
+                id: this.object.target.id,
+                data: this.object.newTargetData,
+                addStatuses: this.object.addStatuses
+            });
         }
     }
 
 
     _roll() {
         this._abilityRoll();
+        if (this.object.updateTargetActorData) {
+            this._updateTargetActor();
+        }
     }
 
     _checkAttributeBonuses() {

@@ -90,7 +90,7 @@ Hooks.once('init', async function () {
     "systems/exaltedessence/templates/dialogues/damage-roll.html",
   ]);
 
-  function handleSocket({ type, id, data }) {
+  async function handleSocket({ type, id, data, addStatuses = [] }) {
     if (type === 'addOpposingCharm') {
       if(game.rollForm) {
         game.rollForm.addOpposingCharm(data);
@@ -100,48 +100,22 @@ Hooks.once('init', async function () {
 
     // if the logged in user is the active GM with the lowest user id
     const isResponsibleGM = game.users
-      .some(user => user.isGM && user.active)
+      .some(user => user.isGM && user.active);
 
     if (!isResponsibleGM) return;
-    if (type === 'healthDamage') {
-      const targetedActor = game.canvas.tokens.get(id).actor;
+
+    const targetedActor = game.canvas.tokens.get(id)?.actor;
+
+    if (type === 'updateTargetData') {
       if (targetedActor) {
-        const targetActorData = duplicate(targetedActor);
-        targetActorData.system.health = data;
-        targetedActor.update(targetActorData);
-      }
-    }
-    if (type === 'addOnslaught') {
-      const targetedActor = game.canvas.tokens.get(id).actor;
-      const onslaught = targetedActor.effects.find(i => i.name == "Onslaught");
-      if (onslaught) {
-        let changes = duplicate(onslaught.data.changes);
-        if (targetedActor.system.hardness.value > 0) {
-          changes[0].value = changes[0].value - 1;
-          onslaught.update({ changes });
+        await targetedActor.update(data);
+        for (const status of addStatuses) {
+          const effectExists = targetedActor.effects.find(e => e.statuses.has(status));
+          if (!effectExists) {
+            const effect = CONFIG.statusEffects.find(e => e.id === status);
+            await game.canvas.tokens.get(id).toggleEffect(effect);
+          }
         }
-      }
-      else {
-        targetedActor.createEmbeddedDocuments('ActiveEffect', [{
-          name: 'Onslaught',
-          icon: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
-          origin: targetedActor.uuid,
-          disabled: false,
-          "changes": [
-            {
-              "key": "data.hardness.value",
-              "value": -1,
-              "mode": 2
-            }
-          ]
-        }]);
-      }
-    }
-    if(type === 'deleteOnslaught') {
-      const targetedActor = game.canvas.tokens.get(id).actor;
-      const onslaught = targetedActor.effects.find(i => i.name == "Onslaught");
-      if (onslaught) {
-          onslaught.delete();
       }
     }
   }
