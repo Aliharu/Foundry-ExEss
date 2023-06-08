@@ -118,6 +118,15 @@ Hooks.once('init', async function () {
         }
       }
     }
+
+    if (type === 'removeOnslaught') {
+      if (targetedActor) {
+        const onslaught = targetedActor.effects.find(i => i.flags.exaltedessence?.statusId == "onslaught");
+        if (onslaught) {
+            onslaught.delete();
+        }
+      }
+    }
   }
 
   // If you need to add Handlebars helpers, here are a few useful examples:

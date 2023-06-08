@@ -150,7 +150,7 @@ export class RollForm extends FormApplication {
             }
         }
 
-        if(this.object.addStatuses === undefined) {
+        if (this.object.addStatuses === undefined) {
             this.object.addStatuses = []
         }
         if (this.object.damage.type === undefined) {
@@ -566,7 +566,15 @@ export class RollForm extends FormApplication {
             this.render();
         });
 
-        html.on("change", "#attribute-excellency-select", ev => {
+        html.on("change", ".excellency-check", ev => {
+            if(this.actor.system.details.exalt !== 'solar') {
+                if(ev.target.checked) {
+                    this.object.cost.motes++;
+                }
+                else {
+                    this.object.cost.motes--;
+                }
+            }
             this._checkExcellencyBonuses();
             this.render();
         });
@@ -1274,9 +1282,15 @@ export class RollForm extends FormApplication {
         if (this.object.rollType === 'withering' && this.object.target && game.settings.get("exaltedessence", "calculateOnslaught")) {
             this._addOnslaught(1);
         }
-        if (this.object.rollType === 'decisive' && this.object.target && game.settings.get("exaltedessence", "calculateOnslaught")) {
-            this._removeOnslaught();
+        if (postDefenseTotal >= 0 && this.object.target) {
+            if (this.object.rollType === 'decisive' && game.settings.get("exaltedessence", "calculateOnslaught")) {
+                this._removeOnslaught();
+            }
+            if (this.object.rollType === 'gambit') {
+                this._resolveGambit(postDefenseTotal);
+            }
         }
+
         if (this.object.triggerSelfDefensePenalty > 0) {
             const existingPenalty = this.actor.effects.find(i => i.name === "Defense Penalty");
             if (existingPenalty) {
@@ -1362,8 +1376,107 @@ export class RollForm extends FormApplication {
     }
 
     _removeOnslaught() {
-        this.object.updateTargetActorData = true;
         this.object.newTargetData.effects = this.object.newTargetData.effects.filter(i => i.flags.exaltedessence?.statusId !== "onslaught");
+        if (game.user.isGM) {
+            const onslaught = this.object.target.actor.effects.find(i => i.flags.exaltedessence?.statusId == "onslaught");
+            if (onslaught) {
+                onslaught.delete();
+            }
+        }
+        else {
+            game.socket.emit('system.exaltedessence', {
+                type: 'removeOnslaught',
+                id: this.object.target.id,
+                data: null,
+            });
+        }
+    }
+
+    _resolveGambit(postDefenseTotal = 0) {
+        this.object.updateTargetActorData = true;
+        switch (this.object.gambit) {
+            case 'disarm':
+                this.object.addStatuses.push('disarmed');
+                break;
+            case 'knockdown':
+                this.object.addStatuses.push('prone');
+                break;
+            case 'ensnare':
+                this.object.addStatuses.push('ensnared');
+                break;
+            case 'reveal_weakness':
+                let soakReduction = (this.object.newTargetData.system.soak.value >= 6) ? (Math.ceil(this.object.newTargetData.system.soak.value / 2)) : 2;
+                this.object.newTargetData.effects.push({
+                    name: 'Reveal Weakness',
+                    icon: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
+                    origin: this.object.target.actor.uuid,
+                    disabled: false,
+                    duration: {
+                        rounds: postDefenseTotal,
+                    },
+                    flags: {
+                        "exaltedessence": {
+                            statusId: 'reveal_weakness',
+                        }
+                    },
+                    changes: [
+                        {
+                            "key": "data.soak.value",
+                            "value": soakReduction * -1,
+                            "mode": 2
+                        }
+                    ]
+                });
+                break;
+            case 'pull':
+                this._addEndofRoundDefensePenalty(postDefenseTotal);
+                break;
+            case 'pull':
+                this._addEndofRoundDefensePenalty(postDefenseTotal);
+                break;
+            case 'distract':
+                this._addEndofRoundDefensePenalty(postDefenseTotal + 1);
+                break;
+        }
+    }
+
+    _addEndofRoundDefensePenalty(value) {
+        var changes = [
+            {
+                "key": "data.evasion.value",
+                "value": value * -1,
+                "mode": 2
+            },
+            {
+                "key": "data.parry.value",
+                "value": value * -1,
+                "mode": 2
+            }
+        ];
+        if (this.object.target.actor.type === 'npc') {
+            changes = [
+                {
+                    "key": "data.defense.value",
+                    "value": value * -1,
+                    "mode": 2
+                },
+            ];
+        }
+        this.object.newTargetData.effects.push({
+            name: 'Defense Penalty',
+            icon: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
+            origin: this.object.target.actor.uuid,
+            disabled: false,
+            duration: {
+                rounds: 1,
+            },
+            flags: {
+                "exaltedessence": {
+                    statusId: 'end_of_round',
+                }
+            },
+            "changes": changes
+        });
     }
 
     _dealHealthDamage(characterDamage) {
