@@ -533,7 +533,6 @@ export class RollForm extends FormApplication {
         }
     }
 
-
     activateListeners(html) {
         super.activateListeners(html);
 
@@ -567,8 +566,8 @@ export class RollForm extends FormApplication {
         });
 
         html.on("change", ".excellency-check", ev => {
-            if(this.actor.system.details.exalt !== 'solar') {
-                if(ev.target.checked) {
+            if (this.actor.system.details.exalt !== 'solar') {
+                if (ev.target.checked) {
                     this.object.cost.motes++;
                 }
                 else {
@@ -1609,8 +1608,8 @@ export class RollForm extends FormApplication {
     }
 
     attackSequence() {
-        if (this.object.target && this.actor.token && game.settings.get("exaltedessence", "attackEffects")) {
-            var actorToken = canvas.tokens.placeables.filter(x => x.id === this.actor.token.id)[0];
+        const actorToken = this._getActorToken();
+        if (this.object.target && actorToken && game.settings.get("exaltedessence", "attackEffects")) {
             if (this.object.attackEffectPreset !== 'none') {
                 let effectsMap = {
                     'arrow': 'jb2a.arrow.physical.white.01.05ft',
@@ -1638,10 +1637,6 @@ export class RollForm extends FormApplication {
                 switch (this.object.attackEffectPreset) {
                     case 'fireball':
                         new Sequence()
-                            // .effect()
-                            // .file('animated-spell-effects-cartoon.fire.118')
-                            // .atLocation(actorToken)
-                            // .delay(300)
                             .effect()
                             .file(effectsMap[this.object.attackEffectPreset])
                             .atLocation(actorToken)
