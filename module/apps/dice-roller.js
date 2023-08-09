@@ -142,6 +142,15 @@ export class RollForm extends FormApplication {
                 }
                 this.object.overwhelming = data.weapon.overwhelming || 0;
                 this.object.weaponType = data.weapon.weapontype || "melee";
+                if(this.actor.type === 'character') {
+                    if(this.object.weaponType === 'melee') {
+                        this.object.ability = 'close';
+                    }
+                    else {
+                        this.object.ability = 'ranged';
+                    }
+                }
+
                 this.object.attackEffectPreset = data.weapon.attackeffectpreset || "none";
                 this.object.attackEffect = data.weapon.attackeffect || "";
                 if (game.settings.get("exaltedessence", "weaponToWithering")) {
