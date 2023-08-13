@@ -993,7 +993,7 @@ export class RollForm extends FormApplication {
                                   <ol class="dice-rolls">${this.object.displayDice}</ol>
                               </div>
                           </div>
-                          <h4 class="dice-total">${this.object.total} Succeses</h4>
+                          <h4 class="dice-total">${this.object.total} Successes</h4>
                           ${resourceResult}
                       </div>
                   </div>
@@ -1065,11 +1065,11 @@ export class RollForm extends FormApplication {
     _socialInfluence() {
         var message = '';
         if (this.object.total < this.object.resolve) {
-            message = `<h4 class="dice-formula">${this.object.total} Succeses vs ${this.object.resolve} Resolve</h4><h4 class="dice-total">Influence Failed</h4>`;
+            message = `<h4 class="dice-formula">${this.object.total} Successes vs ${this.object.resolve} Resolve</h4><h4 class="dice-total">Influence Failed</h4>`;
         }
         else {
             var total = this.object.total - this.object.resolve;
-            message = `<h4 class="dice-formula">${this.object.total} Succeses vs ${this.object.resolve} Resolve</h4> <h4 class="dice-total">${total} Extra Successes!</h4>`;
+            message = `<h4 class="dice-formula">${this.object.total} Successes vs ${this.object.resolve} Resolve</h4> <h4 class="dice-total">${total} Extra Successes!</h4>`;
         }
         return message;
     }
@@ -1090,7 +1090,7 @@ export class RollForm extends FormApplication {
                                   <ol class="dice-rolls">${this.object.displayDice}</ol>
                               </div>
                           </div>
-                          <h4 class="dice-total">${this.object.total} Succeses</h4>
+                          <h4 class="dice-total">${this.object.total} Successes</h4>
                       </div>
                   </div>
               </div>
@@ -1152,7 +1152,7 @@ export class RollForm extends FormApplication {
                   <div>
                       <div class="dice-roll">
                           <div class="dice-result">
-                              <h4 class="dice-formula">${this.object.accuracyResult} Succeses</h4>
+                              <h4 class="dice-formula">${this.object.accuracyResult} Successes</h4>
                               <h4 class="dice-formula">${this.object.defense} defense</h4>
                               ${this.object.rollType === 'withering' ? `<h4 class="dice-formula">${this.object.overwhelming} Overwhelming</h4>` : ``}
                               <h4 class="dice-total">Attack Missed!</h4>
@@ -1209,8 +1209,8 @@ export class RollForm extends FormApplication {
                     <div>
                         <div class="dice-roll">
                             <div class="dice-result">
-                                <h4 class="dice-formula">${this.object.accuracyResult} Succeses vs ${this.object.defense} defense</h4>
-                                <h4 class="dice-formula">${postDefenseTotal} Extra Succeses + ${this.object.power} power</h4>
+                                <h4 class="dice-formula">${this.object.accuracyResult} Successes vs ${this.object.defense} defense</h4>
+                                <h4 class="dice-formula">${postDefenseTotal} Extra Successes + ${this.object.power} power</h4>
                                 <h4 class="dice-formula">${damage} Damage dice + ${this.object.damage.damageSuccessModifier} successes </h4>
                                 <div class="dice-tooltip">
                                   <div class="dice">
@@ -1248,9 +1248,9 @@ export class RollForm extends FormApplication {
                       <div>
                           <div class="dice-roll">
                               <div class="dice-result">
-                                  <h4 class="dice-formula">${this.object.accuracyResult} Succeses vs ${this.object.defense} defense</h4>
+                                  <h4 class="dice-formula">${this.object.accuracyResult} Successes vs ${this.object.defense} defense</h4>
                                   <h4 class="dice-formula">${this.object.bonusPower} Bonus Power</h4>
-                                  <h4 class="dice-formula">1 Base + ${postDefenseTotal} Extra Succeses</h4>
+                                  <h4 class="dice-formula">1 Base + ${postDefenseTotal} Extra Successes</h4>
                                   <h4 class="dice-formula">${this.object.overwhelming} Overwhelming</h4>
                                   <h4 class="dice-total">${powerGained} Power Built!</h4>
                                   ${extraPowerMessage}
@@ -1274,7 +1274,7 @@ export class RollForm extends FormApplication {
                       <div>
                           <div class="dice-roll">
                               <div class="dice-result">
-                                <h4 class="dice-formula">${this.object.accuracyResult} Succeses vs ${this.object.defense} defense</h4>
+                                <h4 class="dice-formula">${this.object.accuracyResult} Successes vs ${this.object.defense} defense</h4>
                                   <h4 class="dice-formula">${this.object.powerSpent} Power Spent</h4>
                                   <h4 class="dice-total">Gambit Successful!</h4>
                               </div>
