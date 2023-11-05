@@ -494,10 +494,14 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   _updateAnima(direction) {
     const actorData = duplicate(this.actor);
     if (direction === "up") {
-      actorData.system.anima.value++;
+      if(actorData.system.anima.value < 10) {
+        actorData.system.anima.value++;
+      }
     }
     else {
-      actorData.system.anima.value--;
+      if(actorData.system.anima.value > 0) {
+        actorData.system.anima.value--;
+      }
     }
     this.actor.update(actorData);
   }

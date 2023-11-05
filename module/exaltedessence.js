@@ -33,30 +33,6 @@ Hooks.once('init', async function () {
     RollForm
   };
 
-  /**
-   * Set an initiative formula for the system
-   * @type {String}
-   */
-  Combatant.prototype._getInitiativeFormula = function () {
-    const actor = this.actor;
-    var initDice = 0;
-    if (this.actor.type != 'npc') {
-      initDice = actor.system.attributes.finesse.value + Math.max(actor.system.abilities.ranged.value, actor.system.abilities.close.value) + 2;
-    }
-    else {
-      initDice = actor.system.pools.primary.value;
-    }
-    let roll = new Roll(`${initDice}d10cs>=7`).evaluate({ async: false });
-    let diceRoll = roll.total;
-    let bonus = 0;
-    for (let dice of roll.dice[0].results) {
-      if (dice.result >= 10) {
-        bonus++;
-      }
-    }
-    return `${diceRoll + bonus}`;
-  }
-
   // Define custom Entity classes
   CONFIG.EXALTEDESSENCE = EXALTEDESSENCE;
   CONFIG.statusEffects = EXALTEDESSENCE.statusEffects;
@@ -404,6 +380,22 @@ export class ExaltedCombat extends Combat {
     await combatant?.toggleCombatantTurnOver();
     const turn = this.turns.findIndex(t => t.id === id);
     return this.update({ turn });
+  }
+
+  
+  async rollInitiative(ids, formulaopt, updateTurnopt, messageOptionsopt) {
+    const combatant = this.combatants.get(ids[0]);
+    if (combatant.token.actor) {
+      if (combatant.token.actor.type === "npc") {
+        game.rollForm = new RollForm(combatant.token.actor, {}, {}, { rollType: 'joinBattle', pool: 'primary' }).render(true);
+      }
+      else {
+        game.rollForm = new RollForm(combatant.token.actor, {}, {}, { rollType: 'joinBattle', ability: 'close'}).render(true);
+      }
+    }
+    else {
+      super.rollInitiative(ids, formulaopt, updateTurnopt, messageOptionsopt);
+    }
   }
 
   async rollAll(options) {

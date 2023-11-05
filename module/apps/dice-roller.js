@@ -980,6 +980,15 @@ export class RollForm extends FormApplication {
         if (this.object.rollType === 'social') {
             resourceResult = this._socialInfluence();
         }
+        if (this.object.rollType === "joinBattle") {
+            let combat = game.combat;
+            if (combat) {
+                let combatant = this._getActorCombatant();
+                if (combatant) {
+                    combat.setInitiative(combatant.id, this.object.total);
+                }
+            }
+        }
         let theContent = `
   <div class="chat-card">
       <div class="card-content">Dice Roll</div>
