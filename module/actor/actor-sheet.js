@@ -496,7 +496,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     if (direction === "up") {
       actorData.system.anima.value++;
     }
-    else {
+    else if (direction == "down" && actorData.system.anima.value >= 1) {
       actorData.system.anima.value--;
     }
     this.actor.update(actorData);
