@@ -44,8 +44,10 @@
           <div>
             <label class="resource-label">{{localize "ExEss.Motes"}}</label>
             <div class="resource-content flexrow flex-center flex-between">
+              {{#ifNotEquals system.details.exalt 'getimian'}}
               <input type="number" name="system.motes.value" value="{{system.motes.value}}" data-dtype="Number" />
               /
+              {{/ifNotEquals}}
               <div>{{system.motes.max}}</div>
             </div>
           </div>

@@ -135,11 +135,8 @@ export class RollForm extends FormApplication {
 
             if (data.weapon) {
                 this.object.weaponTags = data.weapon.traits.weapontags.selected;
-                this.object.successModifier = data.weapon.accuracy || 0;
+                var weaponAccuracy = data.weapon.accuracy || 0;
                 this.object.damage.damageSuccessModifier = data.weapon.damage || 0;
-                if (this.object.weaponTags && this.object.rollType === 'decisive' && this.object.weaponTags['aggravated']) {
-                    this.object.damage.type = 'aggravated';
-                }
                 this.object.overwhelming = data.weapon.overwhelming || 0;
                 this.object.weaponType = data.weapon.weapontype || "melee";
                 if(this.actor.type === 'character') {
@@ -150,7 +147,28 @@ export class RollForm extends FormApplication {
                         this.object.ability = 'ranged';
                     }
                 }
-
+                if (this.object.weaponTags) {
+                    if(this.object.rollType === 'decisive') {
+                        if(this.object.weaponTags['aggravated']) {
+                            this.object.damage.type = 'aggravated';
+                        }
+                        if(this.object.weaponTags['twohanded']) {
+                            this.object.damage.damageSuccessModifier++;
+                        }
+                    }
+                    if(this.object.rollType === 'withering') {
+                        if(this.object.weaponTags['balanced']) {
+                            this.object.overwhelming++;
+                        }
+                        if(this.object.weaponTags['paired']) {
+                            this.object.bonusPower++;
+                        }
+                    }
+                    if(this.object.weaponTags['improvised']) {
+                        weaponAccuracy -= Math.min(weaponAccuracy - 2, 0);
+                    }
+                }
+                this.object.successModifier = weaponAccuracy;
                 this.object.attackEffectPreset = data.weapon.attackeffectpreset || "none";
                 this.object.attackEffect = data.weapon.attackeffect || "";
                 if (game.settings.get("exaltedessence", "weaponToWithering")) {
@@ -968,6 +986,7 @@ export class RollForm extends FormApplication {
         if (this.object.rollType !== 'base') {
             this._updateCharacterResources();
         }
+        console.log(this.object);
     }
 
     _abilityRoll() {
@@ -1202,7 +1221,7 @@ export class RollForm extends FormApplication {
                         diceRollResults = secondRoll;
                     }
                 }
-                let damageTotal = diceRollResults.total - Math.max(0, this.object.soak - this.object.damage.ignoreSoak);
+                let damageTotal = Math.max(0, diceRollResults.total - Math.max(0, this.object.soak - this.object.damage.ignoreSoak));
                 actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.power);
 
                 this.actor.update(actorData);
