@@ -310,15 +310,15 @@
           </div>
         </li>
         <li>
-          <label class="resource-label">{{localize "ExEss.Passive"}}</label>
+          <label class="resource-label">{{localize "ExEss.Passive"}} <a class="item-control data-chat" title="Chat" data-type="passive"><i class="fas fa-comment"></i></a></label>
           <textarea type="text" name="system.anima.passive" rows="4">{{system.anima.passive}}</textarea>
         </li>
         <li>
-          <label class="resource-label">{{localize "ExEss.Active"}}</label>
+          <label class="resource-label">{{localize "ExEss.Active"}} <a class="item-control data-chat" title="Chat" data-type="active"><i class="fas fa-comment"></i></a></label>
           <textarea type="text" name="system.anima.active" rows="4">{{system.anima.active}}</textarea>
         </li>
         <li>
-          <label class="resource-label">{{localize "ExEss.Iconic"}}</label>
+          <label class="resource-label">{{localize "ExEss.Iconic"}} <a class="item-control data-chat" title="Chat" data-type="iconic"><i class="fas fa-comment"></i></a></label>
           <textarea type="text" name="system.anima.iconic" rows="4">{{system.anima.iconic}}</textarea>
         </li>
         {{> systems/exaltedessence/templates/actor/charm-list.html}}
@@ -338,14 +338,11 @@
     <div class="tab advantages" data-group="primary" data-tab="advantages">
       <ol class="items-list">
         <li>
-          <div class="resource-label list-section-header mb-2">
-            {{localize "ExEss.Advantages"}}
-          </div>
-        </li>
-        <li>
+          <label class="resource-label">{{localize "ExEss.Advantage"}} <a class="item-control data-chat" title="Chat" data-type="advantage1"><i class="fas fa-comment"></i></a></label>
           <textarea type="text" name="system.advantages.one" rows="4">{{system.advantages.one}}</textarea>
         </li>
         <li>
+          <label class="resource-label">{{localize "ExEss.Advantage"}} <a class="item-control data-chat" title="Chat" data-type="advantage2"><i class="fas fa-comment"></i></a></label>
           <textarea type="text" name="system.advantages.two" rows="4">{{system.advantages.two}}</textarea>
         </li>
         {{#ifEquals system.details.exalt 'infernal'}}

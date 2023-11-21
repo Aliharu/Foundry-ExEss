@@ -77,7 +77,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     context.itemDescriptions = {};
     for (let item of this.actor.items) {
-      context.itemDescriptions[item.id] = await TextEditor.enrichHTML(item.system.description, {async: true, secrets: this.actor.isOwner, relativeTo: item});
+      context.itemDescriptions[item.id] = await TextEditor.enrichHTML(item.system.description, { async: true, secrets: this.actor.isOwner, relativeTo: item });
     }
 
     context.effects = prepareActiveEffectCategories(this.document.effects);
@@ -408,6 +408,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       this._updateAnima("down");
     });
 
+    html.find('.data-chat').click(ev => {
+      this._displayDataChat(ev);
+    });
+
     html.find('.item-chat').click(ev => {
       this._displayCard(ev);
     });
@@ -494,12 +498,12 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   _updateAnima(direction) {
     const actorData = duplicate(this.actor);
     if (direction === "up") {
-      if(actorData.system.anima.value < 10) {
+      if (actorData.system.anima.value < 10) {
         actorData.system.anima.value++;
       }
     }
     else {
-      if(actorData.system.anima.value > 0) {
+      if (actorData.system.anima.value > 0) {
         actorData.system.anima.value--;
       }
     }
@@ -865,6 +869,60 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }
   }
 
+  async _displayDataChat(event) {
+    let type = $(event.currentTarget).data("type");
+    const token = this.actor.token;
+    var content = '';
+    var title = 'Advantage';
+    switch (type) {
+      case "passive":
+        content = this.actor.system.anima.passive;
+        title = "Passive";
+        break;
+      case "active":
+        content = this.actor.system.anima.active;
+        title = "Active";
+        break;
+      case "iconic":
+        content = this.actor.system.anima.iconic;
+        title = "Iconic";
+        break;
+      case "advantage1":
+        content = this.actor.system.advantages.one;
+        break;
+      case "advantage2":
+        content = this.actor.system.advantages.two;
+        break;
+      case "majorVirtue":
+        content = this.actor.system.details.majorvirtue;
+        title = "Major Virtue";
+        break;
+      case "minorVirtue":
+        content = this.actor.system.details.minorvirtue;
+        title = "Minor Virtue";
+        break;
+    }
+    const templateData = {
+      actor: this.actor,
+      tokenId: token?.uuid || null,
+      content: content,
+      title: title,
+    };
+    const html = await renderTemplate("systems/exaltedessence/templates/chat/exalt-ability-card.html", templateData);
+
+    // Create the ChatMessage data object
+    const chatData = {
+      user: game.user.id,
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      content: html,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor, token }),
+    };
+
+
+    // Create the Chat Message or return its data
+    return ChatMessage.create(chatData);
+  }
+
   /**
 * Display the chat card for an Item as a Chat Message
 * @param {object} options          Options which configure the display of the item chat card
@@ -947,7 +1005,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         totalHealth += health_level.value;
       }
       actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.system.health.lethal + item.system.cost.health);
-      if(actorData.system.health.lethal > 0) {
+      if (actorData.system.health.lethal > 0) {
         actorData.system.health.lethal = Math.max(0, actorData.system.health.lethal - item.system.gain.health);
       }
     }
