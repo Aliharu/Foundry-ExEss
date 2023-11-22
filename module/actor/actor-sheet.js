@@ -400,6 +400,14 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       game.rollForm = new RollForm(this.actor, { event: ev }, {}, { rollType: rollType, weapon: item.system }).render(true);
     });
 
+    html.find('.collapsable').click(ev => {
+      let type = $(ev.currentTarget).data("type");
+      const li = $(ev.currentTarget).next();
+      if(type) {
+        this.actor.update({ [`system.collapse.${type}`]: !li.is(":hidden") });
+      }
+    });
+
     html.find('#anima-up').click(ev => {
       this._updateAnima("up");
     });
@@ -409,6 +417,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     });
 
     html.find('.data-chat').click(ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
       this._displayDataChat(ev);
     });
 

@@ -85,6 +85,11 @@
         },
         "settings": {
           "charmspendpool": "flowing"
+        },
+        "collapse": {
+          "passive": false,
+          "active": false,
+          "iconic": false
         }
       }
     },
