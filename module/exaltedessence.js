@@ -169,10 +169,20 @@ Hooks.on('updateCombat', (async (combat, update) => {
       const actorData = duplicate(combatant.actor);
       if (actorData.system.details.exalt === 'getimian') {
         if (actorData.system.settings.charmspendpool === 'still') {
-          actorData.system.still.value++;
+          if(actorData.system.still.value < actorData.system.still.total) {
+            actorData.system.still.value++;
+          }
+          else if(actorData.system.flowing.value < actorData.system.flowing.total) {
+            actorData.system.flowing.value++;
+          }
         }
-        if (actorData.system.settings.charmspendpool === 'flowing') {
-          actorData.system.flowing.value++;
+        if (actorData.system.settings.charmspendpool === 'flowing' && actorData.system.flowing.value < actorData.system.flowing.total) {
+          if(actorData.system.flowing.value < actorData.system.flowing.total) {
+            actorData.system.flowing.value++;
+          }
+          else if(actorData.system.still.value < actorData.system.still.total) {
+            actorData.system.still.value++;
+          }
         }
       }
       else {
