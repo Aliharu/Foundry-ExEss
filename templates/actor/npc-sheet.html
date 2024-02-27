@@ -151,7 +151,7 @@
                             data-max="{{system.health.levels}}" data-lethal="{{system.health.lethal}}"
                             data-aggravated="{{system.health.aggravated}}" data-name="system.health">
                             {{#numLoop system.health.levels}}
-                            <span class="resource-counter-step" data-index="{{this}}" data-state=""></span>
+                            <span class="resource-counter-step  health-boxes" data-index="{{this}}" data-state=""></span>
                             {{/numLoop}}
                         </div>
                     </div>
@@ -243,6 +243,11 @@
                     <div>
                         <label class="resource-label">{{localize "ExEss.FocusWill"}}</label>
                         <button id="focusWill" class="roll-button"><i class="fas fa-hat-wizard"></i>{{localize
+                            "ExEss.Roll"}}</button>
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Social"}}</label>
+                        <button id="socialInfluence" class="roll-button"><i class="fas fa-heart"></i>{{localize
                             "ExEss.Roll"}}</button>
                     </div>
                 </div>

@@ -148,8 +148,6 @@
 }
 
 .exaltedessence .resource-counter .resource-counter-step {
-  height: 14px;
-  width: 14px;
   border: 1px solid black;
   display: inline-block;
   cursor: pointer;
@@ -195,6 +193,11 @@
 
 .exaltedessence .tab.disciplines .resource-value {
   margin-top: 2px;
+}
+
+.exaltedessence .health-boxes {
+  height: 17px;
+  width: 17px;
 }
 
 .list-section-header {

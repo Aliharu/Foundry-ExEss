@@ -147,6 +147,20 @@ Handlebars.registerHelper('ifNotEquals', function (arg1, arg2, options) {
   return (arg1 != arg2) ? options.fn(this) : options.inverse(this);
 });
 
+Handlebars.registerHelper('healthCheck', function (health, type, options) {
+  let healthLevels = options.data.root.system.health.levels;
+  if (health < healthLevels.zero.value) {
+    return '0'
+  }
+  else if (health < healthLevels.zero.value + healthLevels.one.value) {
+    return '1'
+  }
+  else if (health < healthLevels.zero.value + healthLevels.one.value + healthLevels.two.value) {
+    return '2'
+  }
+  return 'i'
+});
+
 $(document).ready(() => {
   const diceIconSelector = '#chat-controls .chat-control-icon .fa-dice-d20';
 

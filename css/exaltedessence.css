@@ -510,6 +510,11 @@
   overflow: scroll;
 }
 
+.exaltedessence .health-boxes {
+  height: 17px;
+  width: 17px;
+}
+
 .exaltedessence .query-results .search-item-row {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -538,8 +543,6 @@
 }
 
 .exaltedessence .resource-counter .resource-counter-step {
-  height: 14px;
-  width: 14px;
   border: 1px solid black;
   display: inline-block;
   cursor: pointer;

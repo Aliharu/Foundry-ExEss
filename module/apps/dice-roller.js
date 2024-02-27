@@ -768,7 +768,7 @@ export class RollForm extends FormApplication {
     }
 
     // Dovie'andi se tovya sagain.
-    _rollTheDice(dice, diceModifiers) {
+    async _rollTheDice(dice, diceModifiers) {
         var total = 0;
         var results = null;
         let rerolls = [];
@@ -777,7 +777,7 @@ export class RollForm extends FormApplication {
                 rerolls.push(diceModifiers.reroll[rerollValue].number);
             }
         }
-        var roll = new Roll(`${dice}d10cs>=${diceModifiers.targetNumber}`).evaluate({ async: false });
+        var roll = await new Roll(`${dice}d10cs>=${diceModifiers.targetNumber}`).evaluate();
         results = roll.dice[0].results;
         total = roll.total;
         if (rerolls.length > 0) {
@@ -789,7 +789,7 @@ export class RollForm extends FormApplication {
                         diceResult.rerolled = true;
                     }
                 }
-                var rerollRoll = new Roll(`${toReroll}d10cs>=${diceModifiers.targetNumber}`).evaluate({ async: false });
+                var rerollRoll = await new Roll(`${toReroll}d10cs>=${diceModifiers.targetNumber}`).evaluate();
                 results = results.concat(rerollRoll.dice[0].results);
                 total += rerollRoll.total;
             }
@@ -810,8 +810,8 @@ export class RollForm extends FormApplication {
         return rollResult;
     }
 
-    _calculateRoll(dice, diceModifiers) {
-        let rollResults = this._rollTheDice(dice, diceModifiers);
+    async _calculateRoll(dice, diceModifiers) {
+        let rollResults = await this._rollTheDice(dice, diceModifiers);
         let diceRoll = rollResults.results;
         let total = rollResults.total;
         var possibleRerolls = 0;
@@ -822,7 +822,7 @@ export class RollForm extends FormApplication {
                     diceResult.rerolled = true;
                 }
             }
-            var failedDiceRollResult = this._rollTheDice(possibleRerolls, diceModifiers);
+            var failedDiceRollResult = await this._rollTheDice(possibleRerolls, diceModifiers);
             diceRoll = diceRoll.concat(failedDiceRollResult.results);
             total += failedDiceRollResult.total;
         }
@@ -839,7 +839,7 @@ export class RollForm extends FormApplication {
         let rerolledDice = 0;
         while (diceToReroll > 0 && (rerolledDice < diceModifiers.rerollNumber)) {
             rerolledDice += possibleRerolls;
-            var rerollNumDiceResults = this._rollTheDice(diceToReroll, diceModifiers);
+            var rerollNumDiceResults = await this._rollTheDice(diceToReroll, diceModifiers);
             diceToReroll = 0
             for (const diceResult of rerollNumDiceResults.results.sort((a, b) => a.result - b.result)) {
                 if (diceModifiers.rerollNumber > possibleRerolls && !diceResult.rerolled && diceResult.result < this.object.targetNumber) {
@@ -875,7 +875,7 @@ export class RollForm extends FormApplication {
         };
     }
 
-    _baseAbilityDieRoll() {
+    async _baseAbilityDieRoll() {
         let dice = 0;
         if (this.object.rollType === 'base') {
             dice = this.object.dice;
@@ -966,14 +966,14 @@ export class RollForm extends FormApplication {
             rerollNumber: this.object.rerollNumber,
         }
 
-        const diceRollResults = this._calculateRoll(dice, rollModifiers);
+        const diceRollResults = await this._calculateRoll(dice, rollModifiers);
         this.object.roll = diceRollResults.roll;
         this.object.displayDice = diceRollResults.diceDisplay;
         this.object.total = diceRollResults.total;
         this.object.preBonusSuccesses = diceRollResults.preBonusSuccesses;
 
         if (this.object.rollTwice) {
-            const secondRoll = this._calculateRoll(dice, rollModifiers);
+            const secondRoll = await this._calculateRoll(dice, rollModifiers);
             if (secondRoll.total > diceRollResults.total) {
                 this.object.roll = secondRoll.roll;
                 this.object.displayDice = secondRoll.diceDisplay;
@@ -989,8 +989,8 @@ export class RollForm extends FormApplication {
         console.log(this.object);
     }
 
-    _abilityRoll() {
-        this._baseAbilityDieRoll();
+    async _abilityRoll() {
+        await this._baseAbilityDieRoll();
 
         var resourceResult = ``;
         if (this.object.rollType === 'buildPower' || this.object.rollType === 'focusWill') {
@@ -1039,7 +1039,7 @@ export class RollForm extends FormApplication {
 
         if (this.actor.type === 'npc' && this.object.rollType === 'buildPower') {
             if (this.actor.system.battlegroup) {
-                this.object.successModifier += data.drill.value;
+                this.object.successModifier += this.actor.system.drill.value;
             }
         }
         var message = '';
@@ -1102,8 +1102,8 @@ export class RollForm extends FormApplication {
         return message;
     }
 
-    _attackRoll() {
-        this._baseAbilityDieRoll();
+    async _attackRoll() {
+        await this._baseAbilityDieRoll();
         var messageContent = `
   <div class="chat-card">
       <div class="card-content">${this.object.title}</div>
@@ -1132,7 +1132,7 @@ export class RollForm extends FormApplication {
         this.render();
     }
 
-    _damageRoll() {
+    async _damageRoll() {
         const actorData = duplicate(this.actor);
 
         var postDefenseTotal = this.object.accuracyResult - this.object.defense;
@@ -1214,9 +1214,9 @@ export class RollForm extends FormApplication {
                     preRollMacros: [],
                     macros: [],
                 }
-                var diceRollResults = this._calculateRoll(damage, rollModifiers);
+                var diceRollResults = await this._calculateRoll(damage, rollModifiers);
                 if (this.object.damage.rollTwice) {
-                    const secondRoll = this._calculateRoll(damage, rollModifiers);
+                    const secondRoll = await this._calculateRoll(damage, rollModifiers);
                     if (secondRoll.total > diceRollResults.total) {
                         diceRollResults = secondRoll;
                     }
@@ -1558,8 +1558,8 @@ export class RollForm extends FormApplication {
     }
 
 
-    _roll() {
-        this._abilityRoll();
+    async _roll() {
+        await this._abilityRoll();
         if (this.object.updateTargetActorData) {
             this._updateTargetActor();
         }

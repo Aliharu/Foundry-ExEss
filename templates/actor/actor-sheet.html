@@ -132,7 +132,9 @@
                 data-lethal="{{system.health.lethal}}" data-aggravated="{{system.health.aggravated}}"
                 data-name="system.health">
                 {{#numLoop system.health.max}}
-                <span class="resource-counter-step" data-index="{{this}}" data-state=""></span>
+                <span class="resource-counter-step health-boxes" data-index="{{this}}" data-state="">
+                  {{healthCheck this 'character'}}
+                </span>
                 {{/numLoop}}
               </div>
             </div>
