@@ -12,6 +12,8 @@ import { RollForm } from "./apps/dice-roller.js";
 import ItemSearch from "./apps/item-search.js";
 import { ExaltedCombatant } from "./combat/combat.js";
 import { ExaltedCombatTracker } from "./combat/combat-tracker.js";
+import { CharacterData, NpcData } from "./template/actor-template.js";
+import { ItemArmorData, ItemCharmData, ItemData, ItemIntimacyData, ItemMeritData, ItemQualityData, ItemRitualData, ItemSpellData, ItemWeaponData } from "./template/item-template.js";
 
 Hooks.once('init', async function () {
 
@@ -32,6 +34,23 @@ Hooks.once('init', async function () {
     rollItemMacro: rollItemMacro,
     RollForm
   };
+
+  CONFIG.Actor.dataModels = {
+    character: CharacterData,
+    npc: NpcData
+  }
+
+  CONFIG.Item.dataModels = {
+    armor: ItemArmorData,
+    charm: ItemCharmData,
+    intimacy: ItemIntimacyData,
+    item: ItemData,
+    merit: ItemMeritData,
+    ritual: ItemRitualData,
+    spell: ItemSpellData,
+    quality: ItemQualityData,
+    weapon: ItemWeaponData,
+  }
 
   // Define custom Entity classes
   CONFIG.EXALTEDESSENCE = EXALTEDESSENCE;
@@ -65,6 +84,44 @@ Hooks.once('init', async function () {
     "systems/exaltedessence/templates/dialogues/accuracy-roll.html",
     "systems/exaltedessence/templates/dialogues/damage-roll.html",
   ]);
+
+  Combatant.prototype._getInitiativeFormula = function () {
+    const actor = this.actor;
+    var initDice = 0;
+    if (this.actor.type === 'npc') {
+      initDice = actor.system.pools.primary.value;
+    }
+    else {
+      var highestAttributeNumber = 0;
+      var highestAttribute = "force";
+      for (let [name, attribute] of Object.entries(this.actor.system.attributes)) {
+          if (attribute.value > highestAttributeNumber) {
+              highestAttributeNumber = attribute.value;
+              highestAttribute = name;
+          }
+      }
+      initDice = Math.max(actor.system.abilities.close.value, actor.system.abilities.ranged.value) + highestAttributeNumber + 2;
+    }
+    return `${initDice}d10cs>=7ds>=10`;
+  }
+
+  Die.prototype.constructor.MODIFIERS["ds"] = "doubleSuccess";
+  //add said function to the Die prototype
+  Die.prototype.doubleSuccess = function (modifier) {
+    const rgx = /(?:ds)([<>=]+)?([0-9]+)?/i;
+    const match = modifier.match(rgx);
+    if (!match) return false;
+    let [comparison, target] = match.slice(1);
+    comparison = comparison || "=";
+    target = parseInt(target) ?? this.faces;
+    for (let r of this.results) {
+      let success = DiceTerm.compareResult(r.result, comparison, target);
+      if (!r.success) {
+        r.success = success;
+      }
+      r.count += (success ? 1 : 0);
+    }
+  }
 
   async function handleSocket({ type, id, data, addStatuses = [] }) {
     if (type === 'addOpposingCharm') {

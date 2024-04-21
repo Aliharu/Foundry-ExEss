@@ -57,7 +57,7 @@
     </select>
 
     <label class="resource-label">{{localize "ExEss.Excellency"}}: </label>
-    <input class="excellency-check" type="checkbox" name="object.poolExcellency" value="{{data.poolExcellency}}" {{checked data.poolExcellency}}>
+    <input class="excellency-check" type="checkbox" name="object.poolExcellency" {{checked data.poolExcellency}}>
 
     {{/ifEquals}}
 </div>
@@ -106,9 +106,9 @@
         <label class="resource-label">{{localize "ExEss.DicetoSuccesses"}} </label>
         <input type="number" name="object.diceToSuccesses" value="{{data.diceToSuccesses}}">
         <label class="resource-label">{{localize "ExEss.RerollFailed"}}: </label>
-        <input type="checkbox" name="object.rerollFailed" value="{{data.rerollFailed}}" {{checked data.rerollFailed}}>
+        <input type="checkbox" name="object.rerollFailed" {{checked data.rerollFailed}}>
         <label class="resource-label">{{localize "ExEss.RollTwiceKeepHighest"}}: </label>
-        <input type="checkbox" name="object.rollTwice" value="{{data.rollTwice}}" {{checked data.rollTwice}}>
+        <input type="checkbox" name="object.rollTwice" {{checked data.rollTwice}}>
     </div>
     <div class="resource flex-center">
         <label class="resource-label">{{localize "ExEss.Reroll"}}</label>
@@ -188,16 +188,16 @@
 </div>
 <div class="resource grid grid-4col flex-center">
     <label class="resource-label">{{localize "ExEss.Stunt"}}: </label>
-    <input type="checkbox" name="object.stunt" value="{{data.stunt}}" {{checked data.stunt}}>
+    <input type="checkbox" name="object.stunt" {{checked data.stunt}}>
 
     <label class="resource-label">{{localize "ExEss.WoundPenalty"}}: </label>
-    <input type="checkbox" name="object.woundPenalty" value="{{data.woundPenalty}}" {{checked data.woundPenalty}}>
+    <input type="checkbox" name="object.woundPenalty" {{checked data.woundPenalty}}>
 
     <label class="resource-label">{{localize "ExEss.Flurry"}}: </label>
-    <input type="checkbox" name="object.flurry" value="{{data.flurry}}" {{checked data.flurry}}>
+    <input type="checkbox" name="object.flurry" {{checked data.flurry}}>
 
     <label class="resource-label">{{localize "ExEss.ArmorPenalty"}}: </label>
-    <input type="checkbox" name="object.armorPenalty" value="{{data.armorPenalty}}" {{checked data.armorPenalty}}>
+    <input type="checkbox" name="object.armorPenalty" {{checked data.armorPenalty}}>
 
     {{#ifEquals actor.system.details.exalt 'dragonblooded'}}
     <div class="resource-label">{{localize "ExEss.ActivateAura"}}</div>

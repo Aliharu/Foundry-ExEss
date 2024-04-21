@@ -403,7 +403,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     html.find('.collapsable').click(ev => {
       let type = $(ev.currentTarget).data("type");
       const li = $(ev.currentTarget).next();
-      if(type) {
+      if (type) {
         this.actor.update({ [`system.collapse.${type}`]: !li.is(":hidden") });
       }
     });
@@ -621,7 +621,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const actorData = duplicate(this.actor);
     const data = actorData.system;
     const template = "systems/exaltedessence/templates/dialogues/color-picker.html"
-    const html = await renderTemplate(template, { 'color': data.details.color, animaColor: data.details.animacolor });
+    const html = await renderTemplate(template, { 'color': data.details.color, animaColor: data.details.animacolor, 'initiativeIcon': this.actor.system.details.initiativeicon, 'initiativeIconColor': this.actor.system.details.initiativeiconcolor });
     new Dialog({
       title: `Pick Color`,
       content: html,
@@ -633,11 +633,19 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         if (confirmed) {
           let color = html.find('#color').val();
           let animaColor = html.find('#animaColor').val();
+          let initiativeIconColor = html.find('#initiativeIconColor').val();
+          let initiativeIcon = html.find('#initiativeIcon').val();
+
           if (isColor(color)) {
-            data.details.color = color;
-            data.details.animacolor = animaColor;
-            this.actor.update(actorData)
+            this.actor.update({ [`system.details.color`]: color });
           }
+          if (isColor(animaColor)) {
+            this.actor.update({ [`system.details.animacolor`]: animaColor });
+          }
+          if (isColor(initiativeIconColor)) {
+            this.actor.update({ [`system.details.initiativeiconcolor`]: initiativeIconColor });
+          }
+          this.actor.update({ [`system.details.initiativeicon`]: initiativeIcon });
         }
       }
     }, { classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }).render(true);
@@ -994,35 +1002,67 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     let li = $(event.currentTarget).parents(".item");
     let item = this.actor.items.get(li.data("item-id"));
 
-    if (item.type === 'charm') {
-      if (actorData.system.details.exalt === 'getimian') {
-        if (actorData.system.settings.charmspendpool === 'still') {
-          actorData.system.still.value = Math.max(0, actorData.system.still.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
+    let updateActive = null;
+
+    if (item.system.active) {
+      actorData.system.active = false;
+      updateActive = false;
+      if (item.type === 'charm') {
+        if (actorData.system.details.exalt === 'getimian') {
+          actorData.system[actorData.system.settings.charmspendpool].value += item.system.cost.committed;
         }
-        if (actorData.system.settings.charmspendpool === 'flowing') {
-          actorData.system.flowing.value = Math.max(0, actorData.system.flowing.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
+        actorData.system.motes.committed -= item.system.cost.committed;
+      }
+    } else {
+      if (item.type === 'charm') {
+        if (actorData.system.details.exalt === 'getimian') {
+          if (actorData.system.settings.charmspendpool === 'still') {
+            actorData.system.still.value = Math.max(0, actorData.system.still.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
+          }
+          if (actorData.system.settings.charmspendpool === 'flowing') {
+            actorData.system.flowing.value = Math.max(0, actorData.system.flowing.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
+          }
+        }
+        else {
+          actorData.system.motes.value = Math.max(0, actorData.system.motes.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
+        }
+        actorData.system.motes.committed += item.system.cost.committed;
+        actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - item.system.cost.stunt);
+        actorData.system.power.value = Math.max(0, actorData.system.power.value - item.system.cost.power + item.system.gain.power);
+        actorData.system.anima.value = Math.max(0, actorData.system.anima.value - item.system.cost.anima + item.system.gain.anima);
+        let totalHealth = 0;
+        for (let [key, health_level] of Object.entries(actorData.system.health.levels)) {
+          totalHealth += health_level.value;
+        }
+        actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.system.health.lethal + item.system.cost.health);
+        if (actorData.system.health.lethal > 0) {
+          actorData.system.health.lethal = Math.max(0, actorData.system.health.lethal - item.system.gain.health);
         }
       }
-      else {
-        actorData.system.motes.value = Math.max(0, actorData.system.motes.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
+      if (item.type === 'spell') {
+        actorData.system.will.value = Math.max(0, actorData.system.will.value - item.system.cost);
       }
-      actorData.system.motes.committed += item.system.cost.committed;
-      actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - item.system.cost.stunt);
-      actorData.system.power.value = Math.max(0, actorData.system.power.value - item.system.cost.power + item.system.gain.power);
-      actorData.system.anima.value = Math.max(0, actorData.system.anima.value - item.system.cost.anima + item.system.gain.anima);
-      let totalHealth = 0;
-      for (let [key, health_level] of Object.entries(actorData.system.health.levels)) {
-        totalHealth += health_level.value;
+
+      if (item.system.activatable) {
+        actorData.system.active = true;
+        updateActive = true;
       }
-      actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.system.health.lethal + item.system.cost.health);
-      if (actorData.system.health.lethal > 0) {
-        actorData.system.health.lethal = Math.max(0, actorData.system.health.lethal - item.system.gain.health);
-      }
-    }
-    if (item.type === 'spell') {
-      actorData.system.will.value = Math.max(0, actorData.system.will.value - item.system.cost);
     }
     this.actor.update(actorData);
+
+    if (updateActive !== null) {
+      item.update({
+        [`system.active`]: updateActive,
+      });
+      for (const effect of this.actor.allApplicableEffects()) {
+        if (effect._sourceName === item.name) {
+          effect.update({ disabled: !updateActive });
+        }
+      }
+      for (const effect of item.effects) {
+        effect.update({ disabled: !updateActive });
+      }
+    }
   }
 }
 

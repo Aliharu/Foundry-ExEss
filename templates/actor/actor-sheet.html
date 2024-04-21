@@ -312,47 +312,44 @@
           </div>
         </li>
         <li>
-          <div class="d-flex flex-between collapsable cursor-pointer list-section-header mb-1"
-              data-type="passive">
-              <div class="resource-label">
-                  {{localize "ExEss.Passive"}} <a class="item-control data-chat" title="Chat"
-                      data-type="passive"><i class="fas fa-comment"></i></a> </div>
-              <div>
-                  <i class="fas fa-caret-down"></i>
-              </div>
+          <div class="d-flex flex-between collapsable cursor-pointer list-section-header mb-1" data-type="passive">
+            <div class="resource-label">
+              {{localize "ExEss.Passive"}} <a class="item-control data-chat" title="Chat" data-type="passive"><i
+                  class="fas fa-comment"></i></a> </div>
+            <div>
+              <i class="fas fa-caret-down"></i>
+            </div>
           </div>
           <div {{#if system.collapse.passive }} style="display:none;" {{/if}}>
-              <textarea type="text" name="system.anima.passive" rows="8">{{system.anima.passive}}</textarea>
+            <textarea type="text" name="system.anima.passive" rows="8">{{system.anima.passive}}</textarea>
           </div>
-      </li>
-      <li>
-          <div class="d-flex flex-between collapsable cursor-pointer list-section-header mb-1"
-              data-type="active">
-              <div class="resource-label">
-                  {{localize "ExEss.Active"}} <a class="item-control data-chat" title="Chat"
-                      data-type="active"><i class="fas fa-comment"></i></a> </div>
-              <div>
-                  <i class="fas fa-caret-down"></i>
-              </div>
+        </li>
+        <li>
+          <div class="d-flex flex-between collapsable cursor-pointer list-section-header mb-1" data-type="active">
+            <div class="resource-label">
+              {{localize "ExEss.Active"}} <a class="item-control data-chat" title="Chat" data-type="active"><i
+                  class="fas fa-comment"></i></a> </div>
+            <div>
+              <i class="fas fa-caret-down"></i>
+            </div>
           </div>
           <div {{#if system.collapse.active }} style="display:none;" {{/if}}>
-              <textarea type="text" name="system.anima.active" rows="8">{{system.anima.active}}</textarea>
+            <textarea type="text" name="system.anima.active" rows="8">{{system.anima.active}}</textarea>
           </div>
-      </li>
-      <li>
-          <div class="d-flex flex-between collapsable cursor-pointer list-section-header mb-1"
-              data-type="iconic">
-              <div class="resource-label">
-                  {{localize "ExEss.Iconic"}} <a class="item-control data-chat" title="Chat"
-                      data-type="iconic"><i class="fas fa-comment"></i></a> </div>
-              <div>
-                  <i class="fas fa-caret-down"></i>
-              </div>
+        </li>
+        <li>
+          <div class="d-flex flex-between collapsable cursor-pointer list-section-header mb-1" data-type="iconic">
+            <div class="resource-label">
+              {{localize "ExEss.Iconic"}} <a class="item-control data-chat" title="Chat" data-type="iconic"><i
+                  class="fas fa-comment"></i></a> </div>
+            <div>
+              <i class="fas fa-caret-down"></i>
+            </div>
           </div>
           <div {{#if system.collapse.iconic }} style="display:none;" {{/if}}>
-              <textarea type="text" name="system.anima.iconic" rows="8">{{system.anima.iconic}}</textarea>
+            <textarea type="text" name="system.anima.iconic" rows="8">{{system.anima.iconic}}</textarea>
           </div>
-      </li>
+        </li>
         {{> systems/exaltedessence/templates/actor/charm-list.html}}
       </ol>
     </div>
@@ -370,11 +367,13 @@
     <div class="tab advantages" data-group="primary" data-tab="advantages">
       <ol class="items-list">
         <li>
-          <label class="resource-label">{{localize "ExEss.Advantage"}} <a class="item-control data-chat" title="Chat" data-type="advantage1"><i class="fas fa-comment"></i></a></label>
+          <label class="resource-label">{{localize "ExEss.Advantage"}} <a class="item-control data-chat" title="Chat"
+              data-type="advantage1"><i class="fas fa-comment"></i></a></label>
           <textarea type="text" name="system.advantages.one" rows="4">{{system.advantages.one}}</textarea>
         </li>
         <li>
-          <label class="resource-label">{{localize "ExEss.Advantage"}} <a class="item-control data-chat" title="Chat" data-type="advantage2"><i class="fas fa-comment"></i></a></label>
+          <label class="resource-label">{{localize "ExEss.Advantage"}} <a class="item-control data-chat" title="Chat"
+              data-type="advantage2"><i class="fas fa-comment"></i></a></label>
           <textarea type="text" name="system.advantages.two" rows="4">{{system.advantages.two}}</textarea>
         </li>
         {{#ifEquals system.details.exalt 'infernal'}}
@@ -411,6 +410,13 @@
               height="24" /></div>
           <h4 class="item-name">{{item.name}}</h4>
           <div class="item-controls">
+            {{#if item.system.activatable}}
+            {{#if item.system.active}}
+            <a class="item-control item-spend" title="Deactivate"><i class="fas fa-lightbulb-on"></i></a>
+            {{else}}
+            <a class="item-control item-spend" title="Activate"><i class="fas fa-lightbulb"></i></a>
+            {{/if}}
+            {{/if}}
             <a class="item-control item-chat" title="Chat Item"><i class="fas fa-comment"></i></a>
             <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
             <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
@@ -440,6 +446,13 @@
             {{/numLoop}}
           </div>
           <div class="item-controls">
+            {{#if item.system.activatable}}
+            {{#if item.system.active}}
+            <a class="item-control item-spend" title="Deactivate"><i class="fas fa-lightbulb-on"></i></a>
+            {{else}}
+            <a class="item-control item-spend" title="Activate"><i class="fas fa-lightbulb"></i></a>
+            {{/if}}
+            {{/if}}
             <a class="item-control item-chat" title="Chat Item"><i class="fas fa-comment"></i></a>
             <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
             <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
@@ -528,7 +541,7 @@
 
     {{!-- Biography Tab --}}
     <div class="tab biography" data-group="primary" data-tab="description">
-      {{editor biographyHTML target="system.biography" button=true editable=editable engine="prosemirror"}} 
+      {{editor biographyHTML target="system.biography" button=true editable=editable engine="prosemirror"}}
     </div>
 
   </section>

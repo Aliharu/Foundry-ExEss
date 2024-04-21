@@ -25,6 +25,9 @@
     "ExEss.DotColors": "Dot Colors",
     "ExEss.AnimaColor": "Anima Color",
 
+    "ExEss.InitiativeIcon": "Initiative Icon",
+    "ExEss.InitiativeIconColor": "Initiative Icon Color",
+
     "ExEss.Flowing": "Flowing",
     "ExEss.Still": "Still",
 
@@ -379,7 +382,7 @@
     "ExEss.Tree": "Tree",
     "ExEss.Leaves": "Leaves",
 
-
+    "ExEss.Activatable": "Activatable",
     "ExEss.SheetStyle": "Sheet Style",
     "ExEss.SheetStyleDescription": "The background image used on exalted sheets"
 }
