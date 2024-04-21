@@ -39,7 +39,7 @@ class CommonActorData extends foundry.abstract.TypeDataModel {
       }),
       essence: resourceField(1, 10),
       power: resourceField(0, 10),
-      will: resourceField(0, 10),
+      will: statField(0),
       defense: statField(0),
       shieldinitiative: statField(0),
       soak: statField(0),

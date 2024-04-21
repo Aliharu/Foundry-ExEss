@@ -1042,6 +1042,9 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       if (item.type === 'spell') {
         actorData.system.will.value = Math.max(0, actorData.system.will.value - item.system.cost);
       }
+      if(item.type === 'ritual') {
+        actorData.system.will.value += item.system.will;
+      }
 
       if (item.system.activatable) {
         actorData.system.active = true;

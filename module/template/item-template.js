@@ -84,6 +84,7 @@ export class ItemRitualData extends CommonItemData {
         return {
             ...commonData,
             ...activatableData(),
+            will: new fields.NumberField({ initial: 0 }),
         }
     }
 }
