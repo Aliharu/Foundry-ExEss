@@ -209,6 +209,15 @@
   cursor: pointer;
 }
 
+.borderless-image {
+  border: none;
+  border-radius: 0px;
+}
+
+.black-icon {
+  filter: invert(1);
+}
+
 .dice-tooltip {
   display: block !important;
 }

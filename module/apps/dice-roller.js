@@ -139,8 +139,8 @@ export class RollForm extends FormApplication {
                 this.object.damage.damageSuccessModifier = data.weapon.damage || 0;
                 this.object.overwhelming = data.weapon.overwhelming || 0;
                 this.object.weaponType = data.weapon.weapontype || "melee";
-                if(this.actor.type === 'character') {
-                    if(this.object.weaponType === 'melee') {
+                if (this.actor.type === 'character') {
+                    if (this.object.weaponType === 'melee') {
                         this.object.ability = 'close';
                     }
                     else {
@@ -148,23 +148,23 @@ export class RollForm extends FormApplication {
                     }
                 }
                 if (this.object.weaponTags) {
-                    if(this.object.rollType === 'decisive') {
-                        if(this.object.weaponTags['aggravated']) {
+                    if (this.object.rollType === 'decisive') {
+                        if (this.object.weaponTags['aggravated']) {
                             this.object.damage.type = 'aggravated';
                         }
-                        if(this.object.weaponTags['twohanded']) {
+                        if (this.object.weaponTags['twohanded']) {
                             this.object.damage.damageSuccessModifier++;
                         }
                     }
-                    if(this.object.rollType === 'withering') {
-                        if(this.object.weaponTags['balanced']) {
+                    if (this.object.rollType === 'withering') {
+                        if (this.object.weaponTags['balanced']) {
                             this.object.overwhelming++;
                         }
-                        if(this.object.weaponTags['paired']) {
+                        if (this.object.weaponTags['paired']) {
                             this.object.bonusPower++;
                         }
                     }
-                    if(this.object.weaponTags['improvised']) {
+                    if (this.object.weaponTags['improvised']) {
                         weaponAccuracy -= Math.min(weaponAccuracy - 2, 0);
                     }
                 }
@@ -1009,10 +1009,6 @@ export class RollForm extends FormApplication {
             }
         }
         let theContent = `
-  <div class="chat-card">
-      <div class="card-content">Dice Roll</div>
-      <div class="card-buttons">
-          <div class="flexrow 1">
               <div>Dice Roller - Number of Successes<div class="dice-roll">
                       <div class="dice-result">
                           <h4 class="dice-formula">${this.object.dice} Dice + ${this.object.successModifier} successes</h4>
@@ -1025,11 +1021,8 @@ export class RollForm extends FormApplication {
                           ${resourceResult}
                       </div>
                   </div>
-              </div>
-          </div>
-      </div>
-  </div>
-  `
+              </div>`
+        theContent = await this._createChatMessageContent(theContent, 'Dice Roll');
         ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: theContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: this.object.roll });
     }
 
@@ -1105,10 +1098,6 @@ export class RollForm extends FormApplication {
     async _attackRoll() {
         await this._baseAbilityDieRoll();
         var messageContent = `
-  <div class="chat-card">
-      <div class="card-content">${this.object.title}</div>
-      <div class="card-buttons">
-          <div class="flexrow 1">
               <div>
                   <div class="dice-roll">
                       <div class="dice-result">
@@ -1121,11 +1110,8 @@ export class RollForm extends FormApplication {
                           <h4 class="dice-total">${this.object.total} Successes</h4>
                       </div>
                   </div>
-              </div>
-          </div>
-      </div>
-  </div>
-`;
+              </div>`;
+        messageContent = await this._createChatMessageContent(messageContent, 'Dice Roll');
         ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: this.object.roll });
         this.object.showDamage = true;
         this.object.accuracyResult = this.object.total;
@@ -1173,10 +1159,6 @@ export class RollForm extends FormApplication {
             }
             this.actor.update(actorData);
             messageContent = `
-      <div class="chat-card">
-          <div class="card-content">${title}</div>
-          <div class="card-buttons">
-              <div class="flexrow 1">
                   <div>
                       <div class="dice-roll">
                           <div class="dice-result">
@@ -1188,11 +1170,8 @@ export class RollForm extends FormApplication {
                               ${extraPowerMessage}
                           </div>
                       </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-    `;
+                  </div>`;
+            messageContent = await this._createChatMessageContent(messageContent, 'Dice Roll');
             ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
         }
         else {
@@ -1230,10 +1209,6 @@ export class RollForm extends FormApplication {
                 }
 
                 messageContent = `
-        <div class="chat-card">
-            <div class="card-content">Decisive Damage</div>
-            <div class="card-buttons">
-                <div class="flexrow 1">
                     <div>
                         <div class="dice-roll">
                             <div class="dice-result">
@@ -1249,11 +1224,8 @@ export class RollForm extends FormApplication {
                                 <h4 class="dice-total">${damageTotal} Total Damage</h4>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-      `
+                    </div>`
+                messageContent = await this._createChatMessageContent(messageContent, 'Decisive Damage');
                 ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: diceRollResults.roll });
             }
             else if (this.object.rollType === 'withering') {
@@ -1269,10 +1241,6 @@ export class RollForm extends FormApplication {
                 actorData.system.power.value = Math.min(10, powerGained + actorData.system.power.value);
                 this.actor.update(actorData);
                 messageContent = `
-          <div class="chat-card">
-              <div class="card-content">Withering Power</div>
-              <div class="card-buttons">
-                  <div class="flexrow 1">
                       <div>
                           <div class="dice-roll">
                               <div class="dice-result">
@@ -1284,21 +1252,14 @@ export class RollForm extends FormApplication {
                                   ${extraPowerMessage}
                               </div>
                           </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-        `
+                      </div>`
+                messageContent = await this._createChatMessageContent(messageContent, 'Decisive Damage');
                 ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
             }
             else if (this.object.rollType === 'gambit') {
                 actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.powerSpent);
                 this.actor.update(actorData);
                 messageContent = `
-          <div class="chat-card">
-              <div class="card-content">Withering Power</div>
-              <div class="card-buttons">
-                  <div class="flexrow 1">
                       <div>
                           <div class="dice-roll">
                               <div class="dice-result">
@@ -1307,11 +1268,8 @@ export class RollForm extends FormApplication {
                                   <h4 class="dice-total">Gambit Successful!</h4>
                               </div>
                           </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-        `
+                      </div>`
+                messageContent = await this._createChatMessageContent(messageContent, 'Withering Power');
                 ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
             }
         }
@@ -1409,6 +1367,18 @@ export class RollForm extends FormApplication {
                 ]
             });
         }
+    }
+
+    async _createChatMessageContent(content, cardName = 'Roll') {
+        const messageData = {
+            name: cardName,
+            rollTypeImgUrl: CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.rollType] || CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.ability] || "systems/exaltedessence/assets/icons/d10.svg",
+            rollTypeLabel: CONFIG.EXALTEDESSENCE.rollTypeTargetLabels[this.object.rollType] || CONFIG.EXALTEDESSENCE.rollTypeTargetLabels[this.object.ability] || "ExEss.Roll",
+            messageContent: content,
+            rollData: this.object,
+            rollingActor: this.actor,
+        }
+        return await renderTemplate("systems/exaltedessence/templates/chat/roll-card.html", messageData);
     }
 
     _removeOnslaught() {

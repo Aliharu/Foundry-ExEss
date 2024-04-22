@@ -137,5 +137,56 @@ EXALTEDESSENCE.statusEffects = [
         id: 'incapacitated',
         label: 'ExEss.Incapacitated',
     },
-
 ]
+
+EXALTEDESSENCE.rollTypeTargetLabels = {
+    readIntentions: "ExEss.ReadIntentions",
+    social: "ExEss.Social",
+    command: "ExEss.Command",
+    withering: "ExEss.Withering",
+    decisive: "ExEss.Decisive",
+    gambit: "ExEss.Gambit",
+    buildPower: "ExEss.BuildPower",
+    focusWill: 'ExEss.FocusWill',
+    joinBattle: 'ExEss.JoinBattle',
+    'athletics': 'ExEss.Athletics',
+    'awareness': 'ExEss.Awareness',
+    'close': 'ExEss.CloseCombat',
+    'craft': 'ExEss.Craft',
+    'embassy': 'ExEss.Embassy',
+    'integrity': 'ExEss.Integrity',
+    'performance': 'ExEss.Performance',
+    'navigate': 'ExEss.Navigate',
+    'physique': 'ExEss.Physique',
+    'presence': 'ExEss.Presence',
+    'ranged': 'ExEss.RangedCombat',
+    'sagacity': 'ExEss.Sagacity',
+    'stealth': 'ExEss.Stealth',
+    'war': 'ExEss.War',
+  }
+  
+  EXALTEDESSENCE.rollTypeTargetImages = {
+    social: "systems/exaltedessence/assets/icons/heartburn.svg",
+    withering: "systems/exaltedessence/assets/icons/sword-clash.svg",
+    decisive: "systems/exaltedessence/assets/icons/bloody-sword.svg",
+    gambit: "systems/exaltedessence/assets/icons/punch-blast.svg",
+    focusWill: 'systems/exaltedessence/assets/icons/magic-swirl.svg',
+    buildPower: 'systems/exaltedessence/assets/icons/power-lightning.svg',
+    joinBattle: 'icons/svg/combat.svg',
+  
+    //Abilities
+    'athletics': 'systems/exaltedessence/assets/icons/sprint.svg',
+    'awareness': 'systems/exaltedessence/assets/icons/semi-closed-eye.svg',
+    'close': 'icons/svg/sword.svg',
+    'craft': 'systems/exaltedessence/assets/icons/anvil-impact.svg',
+    'embassy': 'systems/exaltedessence/assets/icons/heartburn.svg',
+    'integrity': 'systems/exaltedessence/assets/icons/meditation.svg',
+    'performance': 'systems/exaltedessence/assets/icons/musical-notes.svg',
+    'navigate': 'systems/exaltedessence/assets/icons/mountain-road.svg',
+    'physique': 'systems/exaltedessence/assets/icons/biceps.svg',
+    'presence': 'systems/exaltedessence/assets/icons/deadly-strike.svg',
+    'ranged': 'systems/exaltedessence/assets/icons/striking-arrows.svg',
+    'sagacity': "systems/exaltedessence/assets/icons/spell-book.svg",
+    'stealth': 'systems/exaltedessence/assets/icons/hidden.svg',
+    'war': "systems/exaltedessence/assets/icons/rally-the-troops.svg",
+  }
