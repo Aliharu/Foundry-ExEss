@@ -320,6 +320,7 @@ export class RollForm extends FormApplication {
                     this.object.defense = 0;
                 }
             }
+            this._preChatMessage();
         }
 
     }
@@ -333,6 +334,65 @@ export class RollForm extends FormApplication {
             template = "systems/exaltedessence/templates/dialogues/attack-roll.html";
         }
         return template;
+    }
+
+    async _preChatMessage() {
+        if (game.user.targets && game.user.targets.size > 0) {
+            for (const target of Array.from(game.user.targets)) {
+                const messageContent = await renderTemplate("systems/exaltedessence/templates/chat/targeting-card.html", {
+                    actor: this.actor,
+                    targetActor: target.actor,
+                    imgUrl: CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.rollType] || CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.ability] || "systems/exaltedessence/assets/icons/d10.svg",
+                    rollType: CONFIG.EXALTEDESSENCE.rollTypeTargetLabels[this.object.rollType] || CONFIG.EXALTEDESSENCE.rollTypeTargetLabels[this.object.ability] || "ExEss.Roll",
+                });
+                ChatMessage.create({
+                    user: game.user.id,
+                    content: messageContent,
+                    type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+                    flags: {
+                        "exaltedessence": {
+                            targetActorId: target.actor.id,
+                            targetTokenId: target.id,
+                        }
+                    },
+                });
+            }
+        } else if (CONFIG.EXALTEDESSENCE.targetableRollTypes.includes(this.object.rollType)) {
+            const messageContent = await renderTemplate("systems/exaltedessence/templates/chat/targeting-card.html", {
+                actor: this.actor,
+                targetActor: null,
+                imgUrl: CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.rollType] || CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.ability] || "systems/exaltedessence/assets/icons/d10.svg",
+                rollType: CONFIG.EXALTEDESSENCE.rollTypeTargetLabels[this.object.rollType] || CONFIG.EXALTEDESSENCE.rollTypeTargetLabels[this.object.ability] || "ExEss.Roll",
+            });
+            ChatMessage.create({
+                user: game.user.id,
+                content: messageContent,
+                type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+                flags: {
+                    "exaltedessence": {
+                        targetActorId: null,
+                        targetTokenId: null,
+                    }
+                },
+            });
+        } else if (game.settings.get("exaltedessence", "nonTargetRollCards")) {
+            const messageContent = await renderTemplate("systems/exaltedessence/templates/chat/pre-roll-card.html", {
+                actor: this.actor,
+                imgUrl: CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.rollType] || CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.ability] || "systems/exaltedessence/assets/icons/d10.svg",
+                rollType: CONFIG.EXALTEDESSENCE.rollTypeTargetLabels[this.object.rollType] || CONFIG.EXALTEDESSENCE.rollTypeTargetLabels[this.object.ability] || "ExEss.Roll",
+            });
+            ChatMessage.create({
+                user: game.user.id,
+                content: messageContent,
+                type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+                flags: {
+                    "exaltedessence": {
+                        targetActorId: null,
+                        targetTokenId: null,
+                    }
+                },
+            });
+        }
     }
 
     _getHeaderButtons() {

@@ -173,7 +173,6 @@ EXALTEDESSENCE.rollTypeTargetLabels = {
     focusWill: 'systems/exaltedessence/assets/icons/magic-swirl.svg',
     buildPower: 'systems/exaltedessence/assets/icons/power-lightning.svg',
     joinBattle: 'icons/svg/combat.svg',
-  
     //Abilities
     'athletics': 'systems/exaltedessence/assets/icons/sprint.svg',
     'awareness': 'systems/exaltedessence/assets/icons/semi-closed-eye.svg',
@@ -190,3 +189,16 @@ EXALTEDESSENCE.rollTypeTargetLabels = {
     'stealth': 'systems/exaltedessence/assets/icons/hidden.svg',
     'war': "systems/exaltedessence/assets/icons/rally-the-troops.svg",
   }
+
+  EXALTEDESSENCE.targetableRollTypes = [
+    'readIntentions',
+    'social',
+    'command',
+    'accuracy',
+    'damage',
+    'withering',
+    'gambit',
+    'withering-split',
+    'decisive-split',
+    'gambit-split',
+  ]

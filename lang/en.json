@@ -382,7 +382,12 @@
     "ExEss.Tree": "Tree",
     "ExEss.Leaves": "Leaves",
 
+    "ExEss.NoTargets": "No Targets",
+
     "ExEss.Activatable": "Activatable",
     "ExEss.SheetStyle": "Sheet Style",
-    "ExEss.SheetStyleDescription": "The background image used on exalted sheets"
+    "ExEss.SheetStyleDescription": "The background image used on exalted sheets",
+
+    "ExEss.NonTargetRollCards": "Non-Target Roll Cards",
+    "ExEss.NonTargetRollCardsDescription": "Cards will display every time a character makes a roll.  Not just for targeted rolls."
 }

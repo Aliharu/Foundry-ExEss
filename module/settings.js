@@ -45,6 +45,15 @@ export function registerSettings() {
         config: true,
     });
 
+    game.settings.register('exaltedessence', 'nonTargetRollCards', {
+        name: game.i18n.localize('ExEss.NonTargetRollCards'),
+        hint: game.i18n.localize('ExEss.NonTargetRollCardsDescription'),
+        default: false,
+        scope: 'world',
+        type: Boolean,
+        config: true,
+    });
+
     game.settings.register('exaltedessence', 'animaTokenMagic', {
         name: game.i18n.localize('ExEss.AnimaTokenEffects'),
         hint: game.i18n.localize('ExEss.AnimaTokenEffectsDescription'),
