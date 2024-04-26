@@ -36,6 +36,13 @@
       "flags": {}
     }
   ],
+  "media": [
+    {
+      "type": "setup",
+      "url": "systems/exaltedessence/assets/logo.png",
+      "thumbnail": "systems/exaltedessence/assets/logo.png"
+    }
+  ],
   "relationships": [],
   "manifest": "https://raw.githubusercontent.com/Aliharu/Foundry-ExEss/master/system.json",
   "download": "https://github.com/Aliharu/Foundry-ExEss/releases/download/v1.4.0/release1.4.0.zip",
