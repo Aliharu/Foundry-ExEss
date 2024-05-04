@@ -22,7 +22,7 @@ export function traitField() {
     });
 }
 
-export function attributeField(type) {
+export function attributeField(name) {
     return new fields.SchemaField({
         value: new fields.NumberField({ initial: 1 }),
         name: new fields.StringField({ initial: name }),

@@ -143,6 +143,19 @@ export class CharacterData extends CommonActorData {
       }),
     }
   }
+
+  static migrateData(source) {
+    if(source.attributes?.force?.name === '') {
+      source.attributes.force.name = 'ExEss.Force';
+    }
+    if(source.attributes?.finesse?.name === '') {
+      source.attributes.finesse.name = 'ExEss.Finesse';
+    }
+    if(source.attributes?.fortitude?.name === '') {
+      source.attributes.fortitude.name = 'ExEss.Fortitude';
+    }
+    return super.migrateData(source);
+  }
 }
 
 export class NpcData extends CommonActorData {
