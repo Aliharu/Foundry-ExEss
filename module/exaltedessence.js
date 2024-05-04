@@ -145,8 +145,7 @@ Hooks.once('init', async function () {
         for (const status of addStatuses) {
           const effectExists = targetedActor.effects.find(e => e.statuses.has(status));
           if (!effectExists) {
-            const effect = CONFIG.statusEffects.find(e => e.id === status);
-            await game.canvas.tokens.get(id).toggleEffect(effect);
+            await game.canvas.tokens.get(id).toggleStatusEffect(status);
           }
         }
       }
@@ -237,7 +236,7 @@ Hooks.on('updateCombat', (async (combat, update) => {
 
   if (update && update.round) {
     for (var combatant of combat.combatants) {
-      const actorData = duplicate(combatant.actor);
+      const actorData = foundry.utils.foundry.utils.duplicate(combatant.actor);
       if (actorData.system.details.exalt === 'getimian') {
         if (actorData.system.settings.charmspendpool === 'still') {
           if(actorData.system.still.value < actorData.system.still.total) {
@@ -280,7 +279,7 @@ Hooks.once("ready", async function () {
     li.toggle("fast");
   });
 
-  if (isNewerVersion("1.0.0", game.settings.get("exaltedessence", "systemMigrationVersion"))) {
+  if (foundry.utils.isNewerVersion("1.0.0", game.settings.get("exaltedessence", "systemMigrationVersion"))) {
     for (let actor of game.actors) {
       try {
         let updateData = foundry.utils.deepClone(actor.toObject());

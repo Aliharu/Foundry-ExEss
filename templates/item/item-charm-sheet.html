@@ -6,73 +6,18 @@
             <div>
                 <label class="resource-label">{{localize "ExEss.CharmType"}}:</label>
                 <select name="system.charmtype" data-type="String">
-                    {{#select system.charmtype}}
-                    <option value="abyssal">{{localize "ExEss.Abyssal"}}</option>
-                    <option value="alchemical">{{localize "ExEss.Alchemical"}}</option>
-                    <option value="architect">{{localize "ExEss.Architect"}}</option>
-                    <option value="dragonblooded">{{localize "ExEss.Dragonblooded"}}</option>
-                    <option value="dreamsouled">{{localize "ExEss.DreamSouled"}}</option>
-                    <option value="evocation">{{localize "ExEss.Evocation"}}</option>
-                    <option value="exigent">{{localize "ExEss.Exigent"}}</option>
-                    <option value="getimian">{{localize "ExEss.Getimian"}}</option>
-                    <option value="hearteater">{{localize "ExEss.Hearteater"}}</option>
-                    <option value="infernal">{{localize "ExEss.Infernal"}}</option>
-                    <option value="janest">{{localize "ExEss.Janest"}}</option>
-                    <option value="liminal">{{localize "ExEss.Liminal"}}</option>
-                    <option value="lunar">{{localize "ExEss.Lunar"}}</option>
-                    <option value="martialarts">{{localize "ExEss.MartialArts"}}</option>
-                    <option value="sidereal">{{localize "ExEss.Sidereal"}}</option>
-                    <option value="solar">{{localize "ExEss.Solar"}}</option>
-                    <option value="sovereign">{{localize "ExEss.Sovereign"}}</option>
-                    <option value="umbral">{{localize "ExEss.Umbral"}}</option>
-                    <option value="other">{{localize "ExEss.Other"}}</option>
-                    {{/select}}
+                    {{selectOptions selects.exaltCharmTypes selected=system.charmtype localize=true}}
                 </select>
                 <label class="resource-label">{{localize "ExEss.Ability"}}: </label>
                 <select name="system.ability" data-type="String">
-                    {{#select system.ability}}
-                        <option value="force">{{localize "ExEss.Force"}}</option>
-                        <option value="finesse">{{localize "ExEss.Finesse"}}</option>
-                        <option value="fortitude">{{localize "ExEss.Fortitude"}}</option>
-                        <option value="athletics">{{localize "ExEss.Athletics"}}</option>
-                        <option value="awareness">{{localize "ExEss.Awareness"}}</option>
-                        <option value="close">{{localize "ExEss.CloseCombat"}}</option>
-                        <option value="craft">{{localize "ExEss.Craft"}}</option>
-                        <option value="embassy">{{localize "ExEss.Embassy"}}</option>
-                        <option value="integrity">{{localize "ExEss.Integrity"}}</option>
-                        <option value="navigate">{{localize "ExEss.Navigate"}}</option>
-                        <option value="performance">{{localize "ExEss.Performance"}}</option>
-                        <option value="physique">{{localize "ExEss.Physique"}}</option>
-                        <option value="presence">{{localize "ExEss.Presence"}}</option>
-                        <option value="ranged">{{localize "ExEss.RangedCombat"}}</option>
-                        <option value="sagacity">{{localize "ExEss.Sagacity"}}</option>
-                        <option value="stealth">{{localize "ExEss.Stealth"}}</option>
-                        <option value="war">{{localize "ExEss.War"}}</option>
-                        <option value="martial">{{localize "ExEss.MartialArts"}}</option>
-                        <option value="evocation">{{localize "ExEss.Evocation"}}</option>
-                        <option value="other">{{localize "ExEss.Other"}}</option>
-                    {{/select}}
+                    {{selectOptions selects.charmAbilities selected=system.ability localize=true}}
                 </select>
                 <select name="system.requirement" data-type="String">
-                    {{#select system.requirement}}
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                    {{/select}}
+                    {{selectOptions selects.abilityRequirementLevels selected=system.requirement localize=true}}
                 </select>
                 <label class="resource-label">{{localize "ExEss.Essence"}}: </label>
                 <select name="system.essence" data-type="String">
-                    {{#select system.essence}}
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                    {{/select}}
+                    {{selectOptions selects.abilityRequirementLevels selected=system.essence localize=true}}
                 </select>
             </div>
         </div>
@@ -125,10 +70,7 @@
                 <div>
                     <div class="resource-label">{{localize "ExEss.HealthType"}}</div>
                     <select name="system.cost.healthtype" data-type="String">
-                        {{#select system.cost.healthtype}}
-                        <option value="lethal">{{localize "ExEss.Lethal"}}</option>
-                        <option value="aggravated">{{localize "ExEss.Aggravated"}}</option>
-                        {{/select}}
+                        {{selectOptions selects.damageTypes selected=system.cost.healthtype localize=true}}
                     </select>
                 </div>
             </div>
@@ -204,14 +146,7 @@
                     <div>
                         <div class="resource-label">{{localize "ExEss.ActivateAura"}}</div>
                         <select name="system.diceroller.activateaura" data-type="String">
-                            {{#select system.diceroller.activateaura}}
-                            <option value="none">{{localize "ExEss.None"}}</option>
-                            <option value="air">{{localize "ExEss.Air"}}</option>
-                            <option value="earth">{{localize "ExEss.Earth"}}</option>
-                            <option value="fire">{{localize "ExEss.Fire"}}</option>
-                            <option value="water">{{localize "ExEss.Water"}}</option>
-                            <option value="wood">{{localize "ExEss.Wood"}}</option>
-                            {{/select}}
+                            {{selectOptions selects.elements selected=system.diceroller.activateaura localize=true}}
                         </select>
                     </div>
                 </div>

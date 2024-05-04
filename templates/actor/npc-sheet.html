@@ -20,43 +20,17 @@
             </div>
             <div class="grid grid-3col flexrow">
                 <h1 class="charname"> <select name="system.creaturetype" data-type="String">
-                        {{#select system.creaturetype}}
-                        <option value="animal">{{localize "ExEss.Animal"}}</option>
-                        <option value="demon">{{localize "ExEss.Demon"}}</option>
-                        <option value="elemental">{{localize "ExEss.Elemental"}}</option>
-                        <option value="exalt">{{localize "ExEss.Exalt"}}</option>
-                        <option value="fae">{{localize "ExEss.Fae"}}</option>
-                        <option value="god">{{localize "ExEss.God"}}</option>
-                        <option value="mortal">{{localize "ExEss.Mortal"}}</option>
-                        <option value="undead">{{localize "ExEss.Undead"}}</option>
-                        <option value="other">{{localize "ExEss.Other"}}</option>
-                        {{/select}}
+                        {{selectOptions selects.creatureTypes selected=system.creaturetype localize=true}}
                     </select></h1>
                 {{#ifEquals system.creaturetype 'demon'}}
                 <h1 class="charname"> <select name="system.details.exalt" data-type="String">
-                        {{#select system.details.exalt}}
-                        <option value="first">{{localize "ExEss.First"}} {{localize "ExEss.Circle"}}</option>
-                        <option value="second">{{localize "ExEss.Second"}} {{localize "ExEss.Circle"}}</option>
-                        <option value="third">{{localize "ExEss.Third"}} {{localize "ExEss.Circle"}}</option>
-                        {{/select}}
+                        {{selectOptions selects.demons selected=system.details.exalt localize=true}}
                     </select></h1>
                 {{/ifEquals}}
 
                 {{#ifEquals system.creaturetype 'exalt'}}
                 <h1 class="charname"> <select name="system.details.exalt" data-type="String">
-                        {{#select system.details.exalt}}
-                        <option value="abyssal">{{localize "ExEss.Abyssal"}}</option>
-                        <option value="alchemical">{{localize "ExEss.Alchemical"}}</option>
-                        <option value="dragonblooded">{{localize "ExEss.Dragonblooded"}}</option>
-                        <option value="exigent">{{localize "ExEss.Exigent"}}</option>
-                        <option value="getimian">{{localize "ExEss.Getimian"}}</option>
-                        <option value="infernal">{{localize "ExEss.Infernal"}}</option>
-                        <option value="liminal">{{localize "ExEss.Liminal"}}</option>
-                        <option value="lunar">{{localize "ExEss.Lunar"}}</option>
-                        <option value="sidereal">{{localize "ExEss.Sidereal"}}</option>
-                        <option value="solar">{{localize "ExEss.Solar"}}</option>
-                        <option value="other">{{localize "ExEss.Other"}}</option>
-                        {{/select}}
+                    {{selectOptions selects.exaltTypes selected=system.details.exalt localize=true}}
                     </select></h1>
                 <h1 class="charname"><input name="system.details.caste" type="text" value="{{system.details.caste}}"
                         placeholder="{{localize 'ExEss.CasteAspect'}}" /></h1>
@@ -64,10 +38,7 @@
 
                 {{#ifEquals system.creaturetype 'fae'}}
                 <h1 class="charname"> <select name="system.details.exalt" data-type="String">
-                        {{#select system.details.exalt}}
-                        <option value="creature">{{localize "ExEss.Creature"}}</option>
-                        <option value="raksha">{{localize "ExEss.Raksha"}}</option>
-                        {{/select}}
+                        {{selectOptions selects.wyldCreatures selected=system.details.exalt localize=true}}
                     </select></h1>
                 {{/ifEquals}}
             </div>

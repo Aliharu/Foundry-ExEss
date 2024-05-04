@@ -45,6 +45,7 @@ export default class ItemSearch extends Application {
     let context = super.getData();
     context.filters = this.filters;
     context.items = this.items;
+    context.selects = CONFIG.EXALTEDESSENCE.selects;
     return context;
   }
 

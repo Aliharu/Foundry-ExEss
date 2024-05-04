@@ -19,19 +19,7 @@
         <!-- <h1 class="charname"><input name="system.details.exalt" type="text" value="{{system.details.exalt}}"
           placeholder="{{localize 'ExEss.Exalt'}}" /></h1> -->
         <h1 class="charname"> <select name="system.details.exalt" data-type="String">
-            {{#select system.details.exalt}}
-            <option value="abyssal">{{localize "ExEss.Abyssal"}}</option>
-            <option value="alchemical">{{localize "ExEss.Alchemical"}}</option>
-            <option value="dragonblooded">{{localize "ExEss.Dragonblooded"}}</option>
-            <option value="exigent">{{localize "ExEss.Exigent"}}</option>
-            <option value="getimian">{{localize "ExEss.Getimian"}}</option>
-            <option value="infernal">{{localize "ExEss.Infernal"}}</option>
-            <option value="liminal">{{localize "ExEss.Liminal"}}</option>
-            <option value="lunar">{{localize "ExEss.Lunar"}}</option>
-            <option value="sidereal">{{localize "ExEss.Sidereal"}}</option>
-            <option value="solar">{{localize "ExEss.Solar"}}</option>
-            <option value="other">{{localize "ExEss.Other"}}</option>
-            {{/select}}
+            {{selectOptions selects.exaltTypes selected=system.details.exalt localize=true}}
           </select></h1>
         <h1 class="charname"><input name="system.details.caste" type="text" value="{{system.details.caste}}"
             placeholder="{{localize 'ExEss.CasteAspect'}}" /></h1>
@@ -98,14 +86,7 @@
           <div>
             <div class="resource-label">{{localize "ExEss.Aura"}}</div>
             <select name="system.details.aura" data-type="String">
-              {{#select system.details.aura}}
-              <option value="none">{{localize "ExEss.None"}}</option>
-              <option value="air">{{localize "ExEss.Air"}}</option>
-              <option value="earth">{{localize "ExEss.Earth"}}</option>
-              <option value="fire">{{localize "ExEss.Fire"}}</option>
-              <option value="water">{{localize "ExEss.Water"}}</option>
-              <option value="wood">{{localize "ExEss.Wood"}}</option>
-              {{/select}}
+              {{selectOptions selects.elements selected=system.details.aura localize=true}}
             </select>
           </div>
           {{/ifEquals}}

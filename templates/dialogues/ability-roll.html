@@ -15,10 +15,7 @@
         <div class="resource grid grid-2col flex-center">
             <label class="resource-label">{{localize "ExEss.Target"}}: </label>
             <select name="object.buildPowerTarget" value="{{data.buildPowerTarget}}" data-type="String">
-                {{#select data.buildPowerTarget}}
-                <option value="self">{{localize "ExEss.Self"}}</option>
-                <option value="target">{{localize "ExEss.Target"}}</option>
-                {{/select}}
+                {{selectOptions selects.buildPowerTypes selected=data.buildPowerTarget localize=true}}
             </select>
         </div>
         {{/ifEquals}}
@@ -28,41 +25,26 @@
             <div>
                 <label class="resource-label">{{localize "ExEss.SupportingVirtue"}}</label>
                 <select name="object.supportedVirtue" value="{{data.supportedVirtue}}" data-type="String">
-                    {{#select data.supportedVirtue}}
-                    <option value="0">{{localize "ExEss.None"}}</option>
-                    <option value="2">{{localize "ExEss.Minor"}}</option>
-                    <option value="3">{{localize "ExEss.Major"}}</option>
-                    {{/select}}
+                    {{selectOptions selects.intimacyLevels selected=data.supportedVirtue localize=true}}
                 </select>
             </div>
             <div>
                 <label class="resource-label">{{localize "ExEss.OpposedVirtue"}} </label>
                 <select name="object.opposedVirtue" value="{{data.opposedVirtue}}" data-type="String">
-                    {{#select data.opposedVirtue}}
-                    <option value="0">{{localize "ExEss.None"}}</option>
-                    <option value="2">{{localize "ExEss.Minor"}}</option>
-                    <option value="3">{{localize "ExEss.Major"}}</option>
-                    {{/select}}
+                    {{selectOptions selects.intimacyLevels selected=data.opposedVirtue localize=true}}
+
                 </select>
             </div>
             <div>
                 <label class="resource-label">{{localize "ExEss.SupportingIntimacy"}}</label>
                 <select name="object.supportedIntimacy" value="{{data.supportedIntimacy}}" data-type="String">
-                    {{#select data.supportedIntimacy}}
-                    <option value="0">{{localize "ExEss.None"}}</option>
-                    <option value="2">{{localize "ExEss.Minor"}}</option>
-                    <option value="3">{{localize "ExEss.Major"}}</option>
-                    {{/select}}
+                    {{selectOptions selects.intimacyLevels selected=data.supportedIntimacy localize=true}}
                 </select>
             </div>
             <div>
                 <label class="resource-label">{{localize "ExEss.OpposedIntimacy"}} </label>
                 <select name="object.opposedIntimacy" value="{{data.opposedIntimacy}}" data-type="String">
-                    {{#select data.opposedIntimacy}}
-                    <option value="0">{{localize "ExEss.None"}}</option>
-                    <option value="2">{{localize "ExEss.Minor"}}</option>
-                    <option value="3">{{localize "ExEss.Major"}}</option>
-                    {{/select}}
+                    {{selectOptions selects.intimacyLevels selected=data.opposedIntimacy localize=true}}
                 </select>
             </div>
         </div>

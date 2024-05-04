@@ -14,7 +14,7 @@ export class ExaltedessenceItemSheet extends ItemSheet {
 
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["exaltedessence", "sheet", "item"],
       width: 756,
       height: 645,
@@ -44,6 +44,7 @@ export class ExaltedessenceItemSheet extends ItemSheet {
     const context = super.getData();
     const itemData = this.item.toObject(false);
     context.system = itemData.system;
+    context.selects = CONFIG.EXALTEDESSENCE.selects;
 
     context.descriptionHTML = await TextEditor.enrichHTML(context.system.description, {
       secrets: this.document.isOwner,
@@ -88,7 +89,7 @@ export class ExaltedessenceItemSheet extends ItemSheet {
       if (trait.custom) {
         trait.custom.split(";").forEach((c, i) => trait.selected[`custom${i + 1}`] = c.trim());
       }
-      trait.cssClass = !isEmpty(trait.selected) ? "" : "inactive";
+      trait.cssClass = !foundry.utils.isEmpty(trait.selected) ? "" : "inactive";
     }
   }
 

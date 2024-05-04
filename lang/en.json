@@ -53,6 +53,11 @@
     "ExEss.Creature": "Creature",
     "ExEss.Raksha": "Raksha",
 
+    "ExEss.Behemoth": "Behemoth",
+    "ExEss.Construct": "Construct",
+    "ExEss.MagicCreature": "Magic Creature",
+    "ExEss.WyldMonster": "Wyld Monster",
+
     "ExEss.Abyssal": "Abyssal",
     "ExEss.Alchemical": "Alchemical",
     "ExEss.Dragonblooded": "Dragonblooded",
@@ -193,6 +198,10 @@
     "ExEss.First": "First",
     "ExEss.Second": "Second",
     "ExEss.Third": "Third",
+
+    "ExEss.FirstCircle": "First Circle",
+    "ExEss.SecondCircle": "Second Circle",
+    "ExEss.ThirdCircle": "Third Circle",
 
     "ExEss.Universal": "Universal",
     "ExEss.Necromancy": "Necromancy",

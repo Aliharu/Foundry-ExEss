@@ -207,7 +207,7 @@ export class ExaltedessenceActor extends Actor {
 export async function addDefensePenalty(actor, label = "Defense Penalty") {
   const existingPenalty = actor.effects.find(i => i.name === label);
   if (existingPenalty) {
-    let changes = duplicate(existingPenalty.changes);
+    let changes = foundry.utils.duplicate(existingPenalty.changes);
     if (actor.type === 'character') {
       changes[0].value = changes[0].value - 1;
       changes[1].value = changes[1].value - 1;
@@ -241,7 +241,7 @@ export async function addDefensePenalty(actor, label = "Defense Penalty") {
     }
     actor.createEmbeddedDocuments('ActiveEffect', [{
       name: label,
-      icon: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
+      img: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
       origin: actor.uuid,
       disabled: false,
       duration: {

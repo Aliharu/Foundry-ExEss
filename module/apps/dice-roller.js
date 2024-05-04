@@ -250,7 +250,7 @@ export class RollForm extends FormApplication {
             this.object.target = Array.from(game.user.targets)[0] || null;
             this.object.updateTargetActorData = false;
             if (this.object.target) {
-                this.object.newTargetData = duplicate(this.object.target.actor);
+                this.object.newTargetData = foundry.utils.duplicate(this.object.target.actor);
             }
 
             if (this.object.addedCharms === undefined) {
@@ -348,7 +348,7 @@ export class RollForm extends FormApplication {
                 ChatMessage.create({
                     user: game.user.id,
                     content: messageContent,
-                    type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+                    type: CONST.CHAT_MESSAGE_STYLES.OTHER,
                     flags: {
                         "exaltedessence": {
                             targetActorId: target.actor.id,
@@ -367,7 +367,7 @@ export class RollForm extends FormApplication {
             ChatMessage.create({
                 user: game.user.id,
                 content: messageContent,
-                type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+                type: CONST.CHAT_MESSAGE_STYLES.OTHER,
                 flags: {
                     "exaltedessence": {
                         targetActorId: null,
@@ -384,7 +384,7 @@ export class RollForm extends FormApplication {
             ChatMessage.create({
                 user: game.user.id,
                 content: messageContent,
-                type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+                type: CONST.CHAT_MESSAGE_STYLES.OTHER,
                 flags: {
                     "exaltedessence": {
                         targetActorId: null,
@@ -467,7 +467,7 @@ export class RollForm extends FormApplication {
     }
 
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`],
             popOut: true,
             template: "systems/storypath-fvtt/templates/dialogues/skill-roll.html",
@@ -516,6 +516,7 @@ export class RollForm extends FormApplication {
         return {
             actor: this.actor,
             data: this.object,
+            selects: CONFIG.EXALTEDESSENCE.selects,
         };
     }
 
@@ -538,7 +539,7 @@ export class RollForm extends FormApplication {
     }
 
     async _updateObject(event, formData) {
-        mergeObject(this, formData);
+        foundry.utils.mergeObject(this, formData);
     }
 
     async addCharm(item) {
@@ -1083,7 +1084,7 @@ export class RollForm extends FormApplication {
                   </div>
               </div>`
         theContent = await this._createChatMessageContent(theContent, 'Dice Roll');
-        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: theContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: this.object.roll });
+        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: theContent, type: CONST.CHAT_MESSAGE_STYLES.OTHER, roll: this.object.roll });
     }
 
     _buildResource() {
@@ -1107,7 +1108,7 @@ export class RollForm extends FormApplication {
         else {
             let extraPower = ``;
             if (self) {
-                const actorData = duplicate(this.actor);
+                const actorData = foundry.utils.duplicate(this.actor);
                 if (this.object.rollType === 'buildPower') {
                     if (total + actorData.system.power.value > 10) {
                         const extraPowerValue = Math.floor((total + 1 + actorData.system.power.value - 10));
@@ -1172,14 +1173,14 @@ export class RollForm extends FormApplication {
                   </div>
               </div>`;
         messageContent = await this._createChatMessageContent(messageContent, 'Dice Roll');
-        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: this.object.roll });
+        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_STYLES.OTHER, roll: this.object.roll });
         this.object.showDamage = true;
         this.object.accuracyResult = this.object.total;
         this.render();
     }
 
     async _damageRoll() {
-        const actorData = duplicate(this.actor);
+        const actorData = foundry.utils.duplicate(this.actor);
 
         var postDefenseTotal = this.object.accuracyResult - this.object.defense;
         let title = "Decisive Attack";
@@ -1232,7 +1233,7 @@ export class RollForm extends FormApplication {
                       </div>
                   </div>`;
             messageContent = await this._createChatMessageContent(messageContent, 'Dice Roll');
-            ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+            ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_STYLES.OTHER });
         }
         else {
             if (this.object.rollType === 'decisive') {
@@ -1286,7 +1287,7 @@ export class RollForm extends FormApplication {
                         </div>
                     </div>`
                 messageContent = await this._createChatMessageContent(messageContent, 'Decisive Damage');
-                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.ROLL, roll: diceRollResults.roll });
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_STYLES.OTHER, roll: diceRollResults.roll });
             }
             else if (this.object.rollType === 'withering') {
                 var powerGained = postDefenseTotal + this.object.bonusPower + 1;
@@ -1314,7 +1315,7 @@ export class RollForm extends FormApplication {
                           </div>
                       </div>`
                 messageContent = await this._createChatMessageContent(messageContent, 'Decisive Damage');
-                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_STYLES.OTHER });
             }
             else if (this.object.rollType === 'gambit') {
                 actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.powerSpent);
@@ -1330,7 +1331,7 @@ export class RollForm extends FormApplication {
                           </div>
                       </div>`
                 messageContent = await this._createChatMessageContent(messageContent, 'Withering Power');
-                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_STYLES.OTHER });
             }
         }
         if (this.object.rollType === 'withering' && this.object.target && game.settings.get("exaltedessence", "calculateOnslaught")) {
@@ -1348,7 +1349,7 @@ export class RollForm extends FormApplication {
         if (this.object.triggerSelfDefensePenalty > 0) {
             const existingPenalty = this.actor.effects.find(i => i.name === "Defense Penalty");
             if (existingPenalty) {
-                let changes = duplicate(existingPenalty.changes);
+                let changes = foundry.utils.duplicate(existingPenalty.changes);
                 if (this.actor.type === 'character') {
                     changes[0].value = changes[0].value - 1;
                     changes[1].value = changes[1].value - 1;
@@ -1382,7 +1383,7 @@ export class RollForm extends FormApplication {
                 }
                 this.actor.createEmbeddedDocuments('ActiveEffect', [{
                     name: "Defense Penalty",
-                    icon: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
+                    img: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
                     origin: this.actor.uuid,
                     disabled: false,
                     duration: {
@@ -1407,7 +1408,7 @@ export class RollForm extends FormApplication {
         else {
             this.object.newTargetData.effects.push({
                 name: 'Onslaught',
-                icon: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
+                img: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
                 origin: this.object.target.actor.uuid,
                 disabled: false,
                 duration: {
@@ -1474,7 +1475,7 @@ export class RollForm extends FormApplication {
                 let soakReduction = (this.object.newTargetData.system.soak.value >= 6) ? (Math.ceil(this.object.newTargetData.system.soak.value / 2)) : 2;
                 this.object.newTargetData.effects.push({
                     name: 'Reveal Weakness',
-                    icon: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
+                    img: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
                     origin: this.object.target.actor.uuid,
                     disabled: false,
                     duration: {
@@ -1530,7 +1531,7 @@ export class RollForm extends FormApplication {
         }
         this.object.newTargetData.effects.push({
             name: 'Defense Penalty',
-            icon: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
+            img: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
             origin: this.object.target.actor.uuid,
             disabled: false,
             duration: {
@@ -1572,8 +1573,7 @@ export class RollForm extends FormApplication {
             for (const status of this.object.addStatuses) {
                 const effectExists = this.object.target.actor.effects.find(e => e.statuses.has(status));
                 if (!effectExists) {
-                    const effect = CONFIG.statusEffects.find(e => e.id === status);
-                    await this.object.target.toggleEffect(effect);
+                    await this.object.target.toggleStatusEffect(status);
                 }
             }
         }
@@ -1634,7 +1634,7 @@ export class RollForm extends FormApplication {
     }
 
     async _updateCharacterResources() {
-        const actorData = duplicate(this.actor);
+        const actorData = foundry.utils.duplicate(this.actor);
         var newAnimaValue = Math.max(0, actorData.system.anima.value - this.object.cost.anima + this.object.gain.anima);
         if (actorData.system.details.exalt === 'getimian') {
             if (actorData.system.settings.charmspendpool === 'still') {

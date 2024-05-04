@@ -33,7 +33,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["exaltedessence", "sheet", "actor"],
       template: "systems/exaltedessence/templates/actor/actor-sheet.html",
       width: 800,
@@ -56,6 +56,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const actorData = this.actor.toObject(false);
     context.system = actorData.system;
     context.flags = actorData.flags;
+    context.selects = CONFIG.EXALTEDESSENCE.selects;
     context.biographyHTML = await TextEditor.enrichHTML(context.system.biography, {
       secrets: this.document.isOwner,
       async: true
@@ -213,7 +214,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       if (trait.custom) {
         trait.custom.split(";").forEach((c, i) => trait.selected[`custom${i + 1}`] = c.trim());
       }
-      trait.cssClass = !isEmpty(trait.selected) ? "" : "inactive";
+      trait.cssClass = !foundry.utils.isEmpty(trait.selected) ? "" : "inactive";
     }
   }
 
@@ -500,13 +501,13 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   }
 
   async setSpendPool(type) {
-    const actorData = duplicate(this.actor);
+    const actorData = foundry.utils.duplicate(this.actor);
     actorData.system.settings.charmspendpool = type;
     this.actor.update(actorData);
   }
 
   _updateAnima(direction) {
-    const actorData = duplicate(this.actor);
+    const actorData = foundry.utils.duplicate(this.actor);
     if (direction === "up") {
       if (actorData.system.anima.value < 10) {
         actorData.system.anima.value++;
@@ -522,7 +523,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
   async calculateHealth() {
     let confirmed = false;
-    const actorData = duplicate(this.actor);
+    const actorData = foundry.utils.duplicate(this.actor);
     const data = actorData.system;
     let template;
     let html;
@@ -566,7 +567,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   }
 
   async catchBreath() {
-    const actorData = duplicate(this.actor);
+    const actorData = foundry.utils.duplicate(this.actor);
     const data = actorData.system;
     data.anima.value = 0;
     data.motes.max = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
@@ -576,7 +577,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   }
 
   async recoverHealth() {
-    const actorData = duplicate(this.actor);
+    const actorData = foundry.utils.duplicate(this.actor);
     const data = actorData.system;
     data.health.lethal = 0;
     this.actor.update(actorData);
@@ -595,7 +596,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   }
 
   async fullRest() {
-    const actorData = duplicate(this.actor);
+    const actorData = foundry.utils.duplicate(this.actor);
     const data = actorData.system;
     data.anima.value = 0;
     data.motes.max = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
@@ -618,7 +619,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
   async pickColor() {
     let confirmed = false;
-    const actorData = duplicate(this.actor);
+    const actorData = foundry.utils.duplicate(this.actor);
     const data = actorData.system;
     const template = "systems/exaltedessence/templates/dialogues/color-picker.html"
     const html = await renderTemplate(template, { 'color': data.details.color, animaColor: data.details.animacolor, 'initiativeIcon': this.actor.system.details.initiativeicon, 'initiativeIconColor': this.actor.system.details.initiativeiconcolor });
@@ -700,7 +701,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
   _onDotCounterChange(event) {
     event.preventDefault()
-    const actorData = duplicate(this.actor)
+    const actorData = foundry.utils.duplicate(this.actor)
     const element = event.currentTarget
     const dataset = element.dataset
     const index = Number(dataset.index)
@@ -723,7 +724,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   }
 
   _assignToActorField(fields, value) {
-    const actorData = duplicate(this.actor)
+    const actorData = foundry.utils.duplicate(this.actor)
     // update actor owned items
     if (fields.length === 2 && fields[0] === 'items') {
       for (const i of actorData.items) {
@@ -757,7 +758,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   }
 
   _setupDotCounters(html) {
-    const actorData = duplicate(this.actor)
+    const actorData = foundry.utils.duplicate(this.actor)
     html.find('.resource-value').each(function () {
       const value = Number(this.dataset.value);
       $(this).find('.resource-value-step').each(function (i) {
@@ -802,7 +803,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   }
 
   _setupButtons(html) {
-    const actorData = duplicate(this.actor)
+    const actorData = foundry.utils.duplicate(this.actor)
     html.find('.set-pool-flowing').each(function (i) {
       if (actorData.system.settings.charmspendpool === 'flowing') {
         $(this).css("color", '#F9B516');
@@ -819,7 +820,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     event.preventDefault()
     const element = event.currentTarget
     const attribute = element.dataset.name
-    const actorData = duplicate(this.actor)
+    const actorData = foundry.utils.duplicate(this.actor)
     var augStatus = actorData.system.attributes[attribute].aug;
     actorData.system.attributes[attribute].aug = !augStatus;
     this.actor.update(actorData);
@@ -837,7 +838,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     // Get the type of item to create.
     const type = header.dataset.type;
     // Grab any data associated with this control.
-    const data = duplicate(header.dataset);
+    const data = foundry.utils.duplicate(header.dataset);
     // Initialize a default name.
     const name = `New ${type.capitalize()}`;
     // Prepare the item object.
@@ -931,7 +932,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     // Create the ChatMessage data object
     const chatData = {
       user: game.user.id,
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      type: CONST.CHAT_MESSAGE_STYLES.OTHER,
       content: html,
       speaker: ChatMessage.getSpeaker({ actor: this.actor, token }),
     };
@@ -966,7 +967,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     // Create the ChatMessage data object
     const chatData = {
       user: game.user.id,
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      type: CONST.CHAT_MESSAGE_STYLES.OTHER,
       content: html,
       speaker: ChatMessage.getSpeaker({ actor: this.actor, token }),
     };
@@ -997,7 +998,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     event.preventDefault();
     event.stopPropagation();
 
-    const actorData = duplicate(this.actor);
+    const actorData = foundry.utils.duplicate(this.actor);
 
     let li = $(event.currentTarget).parents(".item");
     let item = this.actor.items.get(li.data("item-id"));

@@ -8,19 +8,11 @@
                 <input type="text" name="system.cost" value="{{system.cost}}" style="width:55px;" />
                 <label class="resource-label">{{localize "ExEss.Circle"}}: </label>
                 <select name="system.circle" data-type="String">
-                    {{#select system.circle}}
-                        <option value="first">{{localize "ExEss.First"}} {{localize "ExEss.Circle"}}</option>
-                        <option value="second">{{localize "ExEss.Second"}} {{localize "ExEss.Circle"}}</option>
-                        <option value="third">{{localize "ExEss.Third"}} {{localize "ExEss.Circle"}}</option>
-                    {{/select}}
+                    {{selectOptions selects.sorceryCircles selected=system.circle localize=true}}
                 </select>
                 <label class="resource-label">{{localize "ExEss.Type"}}: </label>
                 <select name="system.spelltype" data-type="String">
-                    {{#select system.spelltype}}
-                        <option value="universal">{{localize "ExEss.Universal"}}</option>
-                        <option value="necromancy">{{localize "ExEss.Necromancy"}}</option>
-                        <option value="sorcery">{{localize "ExEss.Sorcery"}}</option>
-                    {{/select}}
+                    {{selectOptions selects.spellTypes selected=system.spelltype localize=true}}
                 </select>
             </div>
         </div>

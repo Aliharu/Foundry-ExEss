@@ -67,73 +67,73 @@ EXALTEDESSENCE.armortags = {
 
 EXALTEDESSENCE.statusEffects = [
     {
-        icon: 'systems/exaltedessence/assets/icons/drop-weapon.svg',
+        img: 'systems/exaltedessence/assets/icons/drop-weapon.svg',
         id: 'disarmed',
         label: 'ExEss.Disarmed',
         name: 'disarmed'
     },
     {
-        icon: 'systems/exaltedessence/assets/icons/fishing-net.svg',
+        img: 'systems/exaltedessence/assets/icons/fishing-net.svg',
         id: 'ensnared',
         label: 'ExEss.Ensnared',
         name: 'ensnared'
     },
     {
-        icon: 'icons/svg/falling.svg',
+        img: 'icons/svg/falling.svg',
         id: 'prone',
         label: 'ExEss.Prone',
         name: 'prone'
     },
     {
-        icon: 'icons/svg/ruins.svg',
+        img: 'icons/svg/ruins.svg',
         id: 'lightcover',
         label: 'ExEss.LightCover',
         name: 'lightcover'
     },
     {
-        icon: 'icons/svg/castle.svg',
+        img: 'icons/svg/castle.svg',
         id: 'heavycover',
         label: 'ExEss.HeavyCover',
         name: 'heavycover'
     },
     {
-        icon: 'icons/svg/daze.svg',
+        img: 'icons/svg/daze.svg',
         id: 'surprised',
         label: 'ExEss.Surprised',
         name: 'surprised'
     },
     {
-        icon: 'systems/exaltedessence/assets/icons/hooded-figure.svg', 
+        img: 'systems/exaltedessence/assets/icons/hooded-figure.svg',
         id: 'concealment',
         label: 'ExEss.Concealment',
         name: 'concealment'
     },
     {
-        icon: 'icons/svg/blood.svg',
+        img: 'icons/svg/blood.svg',
         id: 'bleeding',
         label: 'EFFECT.StatusBleeding',
         name: 'bleeding'
     },
     {
-        icon: 'icons/svg/poison.svg',
+        img: 'icons/svg/poison.svg',
         id: 'poisoned',
         label: 'EFFECT.StatusPoison',
         name: 'poisoned'
     },
     {
-        icon: 'icons/svg/fire.svg',
+        img: 'icons/svg/fire.svg',
         id: 'burning',
         label: 'EFFECT.StatusBurning',
         name: 'burning'
     },
     {
-        icon: 'icons/svg/invisible.svg',
+        img: 'icons/svg/invisible.svg',
         id: 'dematerialized',
         label: 'ExEss.Dematerialized',
         name: 'dematerialized'
     },
     {
-        icon: 'icons/svg/skull.svg',
+        img: 'icons/svg/skull.svg',
         id: 'incapacitated',
         label: 'ExEss.Incapacitated',
     },
@@ -163,9 +163,9 @@ EXALTEDESSENCE.rollTypeTargetLabels = {
     'sagacity': 'ExEss.Sagacity',
     'stealth': 'ExEss.Stealth',
     'war': 'ExEss.War',
-  }
-  
-  EXALTEDESSENCE.rollTypeTargetImages = {
+}
+
+EXALTEDESSENCE.rollTypeTargetImages = {
     social: "systems/exaltedessence/assets/icons/heartburn.svg",
     withering: "systems/exaltedessence/assets/icons/sword-clash.svg",
     decisive: "systems/exaltedessence/assets/icons/bloody-sword.svg",
@@ -188,9 +188,9 @@ EXALTEDESSENCE.rollTypeTargetLabels = {
     'sagacity': "systems/exaltedessence/assets/icons/spell-book.svg",
     'stealth': 'systems/exaltedessence/assets/icons/hidden.svg',
     'war': "systems/exaltedessence/assets/icons/rally-the-troops.svg",
-  }
+}
 
-  EXALTEDESSENCE.targetableRollTypes = [
+EXALTEDESSENCE.targetableRollTypes = [
     'readIntentions',
     'social',
     'command',
@@ -201,4 +201,206 @@ EXALTEDESSENCE.rollTypeTargetLabels = {
     'withering-split',
     'decisive-split',
     'gambit-split',
-  ]
+]
+
+
+EXALTEDESSENCE.selects = {
+    attributes: {
+        force: "ExEss.Force",
+        finesse: "ExEss.Finesse",
+        fortitude: "ExEss.Fortitude",
+    },
+    abilities: {
+        athletics: "ExEss.Athletics",
+        awareness: "ExEss.Awareness",
+        close: "ExEss.CloseCombat",
+        craft: "ExEss.Craft",
+        embassy: "ExEss.Embassy",
+        integrity: "ExEss.Integrity",
+        navigate: "ExEss.Navigate",
+        performance: "ExEss.Performance",
+        physique: "ExEss.Physique",
+        presence: "ExEss.Presence",
+        ranged: "ExEss.RangedCombat",
+        sagacity: "ExEss.Sagacity",
+        stealth: "ExEss.Stealth",
+        war: "ExEss.War",
+        martial: "ExEss.MartialArts",
+    },
+    pools: {
+        primary: "ExEss.Primary",
+        secondary: "ExEss.Secondary",
+        tertiary: "ExEss.Tertiary",
+    },
+    buildPowerTypes: {
+        self: "ExEss.Self",
+        target: "ExEss.Target",
+    },
+    intimacyLevels: {
+        "0": "ExEss.None",
+        "2": "ExEss.Minor",
+        "3": "ExEss.Major",
+    },
+    gambits: {
+        disarm: "ExEss.Disarm",
+        distract: "ExEss.Distract",
+        ensnare: "ExEss.Ensnare",
+        knockback: "ExEss.Knockback",
+        knockdown: "ExEss.Knockdown",
+        pilfer: "ExEss.Pilfer",
+        pull: "ExEss.Pull",
+        reveal_weakness: "ExEss.RevealWeakness",
+        unhorse: "ExEss.Unhorse",
+        none: "ExEss.None",
+    },
+    exaltTypes: {
+        abyssal: "ExEss.Abyssal",
+        alchemical: "ExEss.Alchemical",
+        dragonblooded: "ExEss.Dragonblooded",
+        dreamsouled: "ExEss.DreamSouled",
+        exigent: "ExEss.Exigent",
+        getimian: "ExEss.Getimian",
+        hearteater: "ExEss.Hearteater",
+        infernal: "ExEss.Infernal",
+        liminal: "ExEss.Liminal",
+        lunar: "ExEss.Lunar",
+        sidereal: "ExEss.Sidereal",
+        solar: "ExEss.Solar",
+        umbral: "ExEss.Umbral",
+        other: "ExEss.Other"
+    },
+    elements: {
+        none: 'ExEss.None',
+        air: 'ExEss.Air',
+        earth: 'ExEss.Earth',
+        fire: 'ExEss.Fire',
+        water: 'ExEss.Water',
+        wood: 'ExEss.Wood',
+    },
+    creatureTypes: {
+        animal: 'ExEss.Animal',
+        behemoth: 'ExEss.Behemoth',
+        construct: 'ExEss.Construct',
+        demon: 'ExEss.Demon',
+        elemental: 'ExEss.Elemental',
+        exalt: 'ExEss.Exalt',
+        fae: 'ExEss.Fae',
+        god: 'ExEss.God',
+        magiccreature: 'ExEss.MagicCreature',
+        mortal: 'ExEss.Mortal',
+        undead: 'ExEss.Undead',
+        wyldmonster: 'ExEss.WyldMonster',
+        other: 'ExEss.Other',
+    },
+    demons: {
+        first: 'ExEss.FirstCircle',
+        second: 'ExEss.SecondCircle',
+        third: 'ExEss.ThirdCircle',
+        other: 'ExEss.Other',
+    },
+    wyldCreatures: {
+        creature: 'ExEss.Creature',
+        raksha: 'ExEss.Raksha',
+        other: 'ExEss.Other',
+    },
+    weaponTypes: {
+        'melee': "ExEss.Melee",
+        'ranged': "ExEss.Ranged",
+        'thrown': "ExEss.Thrown",
+    },
+    attackEffectPresets: {
+        'arrow': "ExEss.Arrow",
+        'bite': "ExEss.Bite",
+        'brawl': "ExEss.Brawl",
+        'claws': "ExEss.Claws",
+        'fireball': "ExEss.Fireball",
+        'firebreath': "ExEss.Firebreath",
+        'flamepiece': "ExEss.Flamepiece",
+        'glaive': "ExEss.Glaive",
+        'goremaul': "ExEss.Goremaul",
+        'greatsaxe': "ExEss.Greataxe",
+        'greatsword': "ExEss.Greatsword",
+        'handaxe': "ExEss.Handaxe",
+        'lightning': "ExEss.Lightning",
+        'quarterstaff': "ExEss.Quarterstaff",
+        'rapier': "ExEss.Rapier",
+        'scimitar': "ExEss.Scimitar",
+        'shortsword': "ExEss.Shortsword",
+        'spear': "ExEss.Spear",
+        'throwdagger': "ExEss.ThrownDagger",
+        'none': "ExEss.None",
+    },
+    sorceryCircles: {
+        first: "ExEss.FirstCircle",
+        second: "ExEss.SecondCircle",
+        third: "ExEss.ThirdCircle",
+    },
+    spellTypes: {
+        universal: "ExEss.Universal",
+        necromancy: "ExEss.Necromancy",
+        sorcery: "ExEss.Sorcery",
+    },
+    intimacyStrengths: {
+        minor: "ExEss.Minor",
+        major: "ExEss.Major",
+    },
+    intimacyTypes: {
+        tie: "ExEss.Tie",
+        principle: "ExEss.Principle",
+    },
+    abilityRequirementLevels: {
+        "0": "0",
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+    },
+    exaltCharmTypes: {
+        abyssal: "ExEss.Abyssal",
+        alchemical: "ExEss.Alchemical",
+        architect: "ExEss.Architect",
+        dragonblooded: "ExEss.Dragonblooded",
+        dreamsouled: "ExEss.DreamSouled",
+        evocation: "ExEss.Evocation",
+        exigent: "ExEss.Exigent",
+        getimian: "ExEss.Getimian",
+        hearteater: "ExEss.Hearteater",
+        infernal: "ExEss.Infernal",
+        janest: "ExEss.Janest",
+        liminal: "ExEss.Liminal",
+        lunar: "ExEss.Lunar",
+        martialarts: "ExEss.MartialArts",
+        sidereal: "ExEss.Sidereal",
+        solar: "ExEss.Solar",
+        sovereign: "ExEss.Sovereign",
+        umbral: "ExEss.Umbral",
+        other: "ExEss.Other"
+    },
+    charmAbilities: {
+        force: "ExEss.Force",
+        finesse: "ExEss.Finesse",
+        fortitude: "ExEss.Fortitude",
+        athletics: "ExEss.Athletics",
+        awareness: "ExEss.Awareness",
+        close: "ExEss.CloseCombat",
+        craft: "ExEss.Craft",
+        embassy: "ExEss.Embassy",
+        integrity: "ExEss.Integrity",
+        navigate: "ExEss.Navigate",
+        performance: "ExEss.Performance",
+        physique: "ExEss.Physique",
+        presence: "ExEss.Presence",
+        ranged: "ExEss.RangedCombat",
+        sagacity: "ExEss.Sagacity",
+        stealth: "ExEss.Stealth",
+        war: "ExEss.War",
+        martial: "ExEss.MartialArts",
+        evocation: "ExEss.Evocation",
+        other: "ExEss.Other",
+    },
+    damageTypes: {
+        'lethal': "ExEss.Lethal",
+        'aggravated': "ExEss.Aggravated",
+    },
+}

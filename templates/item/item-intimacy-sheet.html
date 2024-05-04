@@ -6,17 +6,11 @@
             <div class="d-flex flex-center">
                 <label class="resource-label">{{localize "ExEss.Strength"}}: </label>
                 <select name="system.strength" data-type="String">
-                    {{#select system.strength}}
-                    <option value="minor">{{localize "ExEss.Minor"}}</option>
-                    <option value="major">{{localize "ExEss.Major"}}</option>
-                    {{/select}}
+                    {{selectOptions selects.intimacyStrengths selected=system.strength localize=true}}
                 </select>
                 <label class="resource-label">{{localize "ExEss.Type"}}: </label>
                 <select name="system.intimacytype" data-type="String">
-                    {{#select system.intimacytype}}
-                    <option value="tie">{{localize "ExEss.Tie"}}</option>
-                    <option value="principle">{{localize "ExEss.Principle"}}</option>
-                    {{/select}}
+                    {{selectOptions selects.intimacyTypes selected=system.intimacytype localize=true}}
                 </select>
                 <label class="resource-label">{{localize "ExEss.Virtue"}}: </label>
                 <input type="text" name="system.virtue" value="{{system.virtue}}"/>
