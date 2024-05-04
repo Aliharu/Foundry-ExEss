@@ -220,12 +220,12 @@ export async function addDefensePenalty(actor, label = "Defense Penalty") {
   else {
     var changes = [
       {
-        "key": "data.evasion.value",
+        "key": "system.evasion.value",
         "value": -1,
         "mode": 2
       },
       {
-        "key": "data.parry.value",
+        "key": "system.parry.value",
         "value": -1,
         "mode": 2
       }
@@ -233,7 +233,7 @@ export async function addDefensePenalty(actor, label = "Defense Penalty") {
     if (actor.type === 'npc') {
       changes = [
         {
-          "key": "data.defense.value",
+          "key": "system.defense.value",
           "value": -1,
           "mode": 2
         },

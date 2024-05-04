@@ -135,10 +135,10 @@ export class CharacterData extends CommonActorData {
         resonance: new fields.StringField({ initial: "" }),
       }),
       milestones: new fields.SchemaField({
-        personal: new fields.NumberField({ initial: 0 }),
-        minor: new fields.NumberField({ initial: 0 }),
-        exalt: new fields.NumberField({ initial: 0 }),
-        major: new fields.NumberField({ initial: 0 }),
+        personal: new fields.StringField({ initial: "0" }),
+        minor: new fields.StringField({ initial: "0" }),
+        exalt: new fields.StringField({ initial: "0" }),
+        major: new fields.StringField({ initial: "0" }),
         triggers: new fields.StringField({ initial: "" }),
       }),
     }

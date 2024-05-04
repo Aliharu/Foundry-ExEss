@@ -442,7 +442,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     html.find('.delete-saved-roll').click(ev => {
       let li = $(event.currentTarget).parents(".item");
       var key = li.data("item-id");
-      const rollDeleteString = "data.savedRolls.-=" + key;
+      const rollDeleteString = "system.savedRolls.-=" + key;
 
       let deleteConfirm = new Dialog({
         title: "Delete",

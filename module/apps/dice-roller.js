@@ -498,7 +498,7 @@ export class RollForm extends FormApplication {
                         rollData.target = null;
 
                         let updates = {
-                            "data.savedRolls": {
+                            "system.savedRolls": {
                                 [uniqueId]: rollData
                             }
                         };
@@ -1361,12 +1361,12 @@ export class RollForm extends FormApplication {
             else {
                 var changes = [
                     {
-                        "key": "data.evasion.value",
+                        "key": "system.evasion.value",
                         "value": -1,
                         "mode": 2
                     },
                     {
-                        "key": "data.parry.value",
+                        "key": "system.parry.value",
                         "value": -1,
                         "mode": 2
                     }
@@ -1374,7 +1374,7 @@ export class RollForm extends FormApplication {
                 if (this.actor.type === 'npc') {
                     changes = [
                         {
-                            "key": "data.defense.value",
+                            "key": "system.defense.value",
                             "value": -1,
                             "mode": 2
                         },
@@ -1420,7 +1420,7 @@ export class RollForm extends FormApplication {
                 },
                 changes: [
                     {
-                        "key": "data.hardness.value",
+                        "key": "system.hardness.value",
                         "value": number * -1,
                         "mode": 2
                     }
@@ -1487,7 +1487,7 @@ export class RollForm extends FormApplication {
                     },
                     changes: [
                         {
-                            "key": "data.soak.value",
+                            "key": "system.soak.value",
                             "value": soakReduction * -1,
                             "mode": 2
                         }
@@ -1509,12 +1509,12 @@ export class RollForm extends FormApplication {
     _addEndofRoundDefensePenalty(value) {
         var changes = [
             {
-                "key": "data.evasion.value",
+                "key": "system.evasion.value",
                 "value": value * -1,
                 "mode": 2
             },
             {
-                "key": "data.parry.value",
+                "key": "system.parry.value",
                 "value": value * -1,
                 "mode": 2
             }
@@ -1522,7 +1522,7 @@ export class RollForm extends FormApplication {
         if (this.object.target.actor.type === 'npc') {
             changes = [
                 {
-                    "key": "data.defense.value",
+                    "key": "system.defense.value",
                     "value": value * -1,
                     "mode": 2
                 },
