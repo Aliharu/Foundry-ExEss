@@ -32,7 +32,7 @@ export function attributeField(name) {
 
 export function abilityField(name) {
     return new fields.SchemaField({
-        value: new fields.NumberField({ initial: 1 }),
+        value: new fields.NumberField({ initial: 0 }),
         name: new fields.StringField({ initial: name }),
     });
 }
