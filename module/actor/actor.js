@@ -151,33 +151,27 @@ export class ExaltedessenceActor extends Actor {
 
   async _preUpdate(updateData, options, user) {
     await super._preUpdate(updateData, options, user);
-    var oldValue = this.system.anima.value;
-    if (updateData?.system?.anima) {
-      this.system.anima.value = updateData?.system?.anima?.value;
+    if (updateData?.system?.motes?.committed !== undefined && updateData?.system?.motes?.committed !== this.system.motes.committed && this.system.details.exalt !== 'getimian') {
+      const commitChange = updateData.system.motes.committed - this.system.motes.committed;
+      const newMotes = Math.max(0, this.system.motes.value - commitChange);
+      updateData.system.motes.value = newMotes;
     }
-    if (updateData?.system?.motes) {
-      if (updateData?.system?.motes.committed !== undefined && this.system.details.exalt !== 'getimian') {
-        const commitChange = updateData.system.motes.committed - this.system.motes.committed;
-        const newMotes = Math.max(0, this.system.motes.value - commitChange);
-        updateData.system.motes.value = newMotes;
-      }
-      if (updateData?.system?.motes.value !== undefined) {
-        const animaChange = Math.max(0, this.system.motes.value - updateData.system.motes.value);
-        const newAnima = Math.min(10, this.system.anima.value + animaChange);
-        updateData.system.anima = { 'value': newAnima };
-      }
-    }
-    if (updateData?.system?.flowing?.value !== undefined) {
-      const animaChange = Math.max(0, this.system.flowing.value - updateData.system.flowing.value);
+    if (updateData?.system?.motes?.value !== undefined && updateData?.system?.motes?.value !== this.system.motes.value) {
+      const animaChange = Math.max(0, this.system.motes.value - updateData?.system?.motes?.value);
       const newAnima = Math.min(10, this.system.anima.value + animaChange);
       updateData.system.anima = { 'value': newAnima };
     }
-    if (updateData?.system?.still?.value !== undefined) {
-      const animaChange = Math.max(0, this.system.still.value - updateData.system.still.value);
+    if (updateData?.system?.flowing?.value !== undefined && updateData?.system?.flowing?.value !== this.system.flowing.value) {
+      const animaChange = Math.max(0, this.system.flowing.value - updateData?.system?.flowing?.value);
       const newAnima = Math.min(10, this.system.anima.value + animaChange);
       updateData.system.anima = { 'value': newAnima };
     }
-    if (updateData?.system?.anima?.value !== undefined && oldValue !== updateData.system.anima.value) {
+    if (updateData?.system?.still?.value !== undefined && updateData?.system?.still?.value !== this.system.still.value) {
+      const animaChange = Math.max(0, this.system.still.value - updateData?.system?.still?.value);
+      const newAnima = Math.min(10, this.system.anima.value + animaChange);
+      updateData.system.anima = { 'value': newAnima };
+    }
+    if (updateData?.system?.anima?.value !== this.system.anima.value) {
       animaTokenMagic(this, updateData.system.anima.value);
     }
   }
