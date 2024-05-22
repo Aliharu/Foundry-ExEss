@@ -164,6 +164,11 @@ export class RollForm extends FormApplication {
                             this.object.bonusPower++;
                         }
                     }
+                    if (this.object.rollType === 'gambit') {
+                        if (this.object.weaponTags['balanced']) {
+                            this.object.diceModifier += 2;
+                        }
+                    }
                     if (this.object.weaponTags['improvised']) {
                         weaponAccuracy -= Math.min(weaponAccuracy - 2, 0);
                     }
