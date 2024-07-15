@@ -171,7 +171,7 @@ export class ExaltedessenceActor extends Actor {
       const newAnima = Math.min(10, this.system.anima.value + animaChange);
       updateData.system.anima = { 'value': newAnima };
     }
-    if (updateData?.system?.anima?.value !== this.system.anima.value) {
+    if (updateData?.system?.motes?.committed !== undefined && updateData?.system?.anima?.value !== this.system.anima.value) {
       animaTokenMagic(this, updateData.system.anima.value);
     }
   }
