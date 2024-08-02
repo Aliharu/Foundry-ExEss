@@ -5,6 +5,8 @@ import { ExaltedessenceActor } from "./actor/actor.js";
 import { ExaltedessenceActorSheet } from "./actor/actor-sheet.js";
 import { ExaltedessenceItem } from "./item/item.js";
 import { ExaltedessenceItemSheet } from "./item/item-sheet.js";
+import ExaltedActiveEffectConfig from "./active-effect-config.js";
+
 
 import TraitSelector from "./apps/trait-selector.js";
 import { registerSettings } from "./settings.js";
@@ -62,6 +64,9 @@ Hooks.once('init', async function () {
   CONFIG.Combatant.documentClass = ExaltedCombatant;
   CONFIG.ui.combat = ExaltedCombatTracker;
   CONFIG.ActiveEffect.legacyTransferral = false;
+  DocumentSheetConfig.registerSheet(ActiveEffect, "exaltedthird", ExaltedActiveEffectConfig, { makeDefault: true });
+
+  CONFIG.ActiveEffect.sheetClass = ExaltedActiveEffectConfig;
 
   game.socket.on('system.exaltedessence', handleSocket);
 
@@ -105,9 +110,9 @@ Hooks.once('init', async function () {
     return `${initDice}d10cs>=7ds>=10`;
   }
 
-  Die.prototype.constructor.MODIFIERS["ds"] = "doubleSuccess";
+  foundry.dice.terms.Die.prototype.constructor.MODIFIERS["ds"] = "doubleSuccess";
   //add said function to the Die prototype
-  Die.prototype.doubleSuccess = function (modifier) {
+  foundry.dice.terms.Die.prototype.doubleSuccess = function (modifier) {
     const rgx = /(?:ds)([<>=]+)?([0-9]+)?/i;
     const match = modifier.match(rgx);
     if (!match) return false;

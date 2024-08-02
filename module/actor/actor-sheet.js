@@ -231,7 +231,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       };
       buttons = [helpButton, ...buttons];
       const colorButton = {
-        label: game.i18n.localize('ExEss.DotColors'),
+        label: game.i18n.localize('ExEss.Stylings'),
         class: 'set-color',
         icon: 'fas fa-palette',
         onclick: (ev) => this.pickColor(ev),

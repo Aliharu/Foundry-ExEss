@@ -98,6 +98,7 @@
 
     "ExEss.Combat": "Combat",
     "ExEss.Defense": "Defense",
+    "ExEss.DefenseNPC": "Defense (NPC Only)",
     "ExEss.Parry": "Parry",
     "ExEss.Evasion": "Evasion",
     "ExEss.Soak": "Soak",
@@ -252,6 +253,12 @@
     "ExEss.Pool": "Pool",
     "ExEss.Pools": "Pools",
 
+    "ExEss.IconTintColor": "Icon Tint Color",
+
+    "ExEss.PrimaryPool": "Primary Pool",
+    "ExEss.SecondaryPool": "Secondary Pool",
+    "ExEss.TertiaryPool": "Tertiary Pool",
+
     "ExEss.Languages": "Languages",
     "ExEss.LowRealm": "Low Realm",
     "ExEss.HighRealm": "High Realm",
@@ -289,6 +296,9 @@
     "ExEss.ConcentratedAttacks": "Concentrated Attacks",
     "ExEss.ShowOnslaughtDescription": "Targets of withering attacks will suffer a -1 hardness per attack until hit with a decisive",
 
+    "ExEss.UseActiveEffectsDropdown": "Use Active Effects Dropdown",
+    "ExEss.UseActiveEffectsDropdownDescription": "Use a dropdown list for the key in active effects rather than an open input",
+
     "ExEss.Help": "Help",
 
     "ExEss.None": "None",
@@ -297,6 +307,12 @@
     "ExEss.Fire": "Fire",
     "ExEss.Water": "Water",
     "ExEss.Wood": "Wood",
+
+    "ExEss.Blood": "Blood",
+    "ExEss.Breath": "Breath",
+    "ExEss.Flesh": "Flesh",
+    "ExEss.Marrow": "Marrow",
+    "ExEss.Soil": "Soil",
 
     "ExEss.ExcellentStrike": "Excellent Strike",
 
@@ -398,5 +414,8 @@
     "ExEss.SheetStyleDescription": "The background image used on exalted sheets",
 
     "ExEss.NonTargetRollCards": "Non-Target Roll Cards",
-    "ExEss.NonTargetRollCardsDescription": "Cards will display every time a character makes a roll.  Not just for targeted rolls."
+    "ExEss.NonTargetRollCardsDescription": "Cards will display every time a character makes a roll.  Not just for targeted rolls.",
+    
+    "ExEss.Stylings": "Stylings"
+
 }

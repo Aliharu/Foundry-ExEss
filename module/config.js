@@ -15,6 +15,36 @@ export const EXALTEDESSENCE = {};
 //     "localtongue": "ExEss.LocalTongue",
 // };
 
+EXALTEDESSENCE.activeEffectChanges = { 
+    '': 'Ex3.None',
+    'system.attributes.force.value': 'ExEss.Force',
+    'system.attributes.finesse.value': 'ExEss.Finesse',
+    'system.attributes.fortitude.value': 'ExEss.Fortitude',
+    'system.abilities.athletics.value': 'ExEss.Athletics',
+    'system.abilities.awareness.value': 'ExEss.Awareness',
+    'system.abilities.close.value': 'ExEss.CloseCombat',
+    'system.abilities.craft.value': 'ExEss.Craft',
+    'system.abilities.embassy.value': 'ExEss.Embassy',
+    'system.abilities.integrity.value': 'ExEss.Integrity',
+    'system.abilities.navigate.value': 'ExEss.Navigate',
+    'system.abilities.performance.value': 'ExEss.Performance',
+    'system.abilities.physique.value': 'ExEss.Physique',
+    'system.abilities.presence.value': 'ExEss.Presence',
+    'system.abilities.ranged.value': 'ExEss.RangedCombat',
+    'system.abilities.sagacity.value': 'ExEss.Sagacity',
+    'system.abilities.stealth.value': 'ExEss.Stealth',
+    'system.abilities.war.value': 'ExEss.War',
+    'system.pools.primary.value': 'ExEss.PrimaryPool',
+    'system.pools.secondary.value': 'ExEss.SecondaryPool',
+    'system.pools.tertiary.value': 'ExEss.TertiaryPool',
+    'system.evasion.value': 'ExEss.Evasion',
+    'system.parry.value': 'ExEss.Parry',
+    'system.defense.value': 'ExEss.DefenseNPC',
+    'system.soak.value': 'ExEss.Soak',
+    'system.hardness.value': 'ExEss.Hardness',
+    'system.resolve.value': 'ExEss.Resolve',
+}
+
 EXALTEDESSENCE.languages = {
     "lowrealm": "Low Realm",
     "highrealm": "High Realm",
@@ -276,6 +306,13 @@ EXALTEDESSENCE.selects = {
         fire: 'ExEss.Fire',
         water: 'ExEss.Water',
         wood: 'ExEss.Wood',
+    },
+    natures: {
+        blood: 'ExEss.Blood',
+        breath: 'ExEss.Breath',
+        flesh: 'ExEss.Flesh',
+        marrow: 'ExEss.Marrow',
+        soil: 'ExEss.Soil',
     },
     creatureTypes: {
         animal: 'ExEss.Animal',

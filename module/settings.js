@@ -72,6 +72,15 @@ export function registerSettings() {
         config: true,
     });
 
+    game.settings.register('exaltedessence', 'useActiveEffectsDropdown', {
+        name: game.i18n.localize('ExEss.UseActiveEffectsDropdown'),
+        hint: game.i18n.localize('ExEss.UseActiveEffectsDropdownDescription'),
+        default: false,
+        scope: 'world',
+        type: Boolean,
+        config: true,
+    });
+
     game.settings.register("exaltedessence", "systemMigrationVersion", {
         name: "System Migration Version",
         scope: "world",

@@ -19,13 +19,18 @@ export class ExaltedessenceActor extends Actor {
     if (this.type === 'npc') this._prepareNpcData(actorData);
   }
 
+  prepareDerivedData() {
+    const actorData = this;
+    const systemData = actorData.system;
+    this._prepareBaseActorData(systemData);
+  }
+
   /**
    * Prepare Character type specific data
    */
   _prepareCharacterData(actorData) {
     // Make modifications to data here. For example:
     const data = actorData.system;
-    this._prepareBaseActorData(data);
     let totalHealth = 0;
     let currentPenalty = 0;
     data.motes.max = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
@@ -140,7 +145,6 @@ export class ExaltedessenceActor extends Actor {
 
   _prepareNpcData(actorData) {
     const data = actorData.system;
-    this._prepareBaseActorData(data);
     let currentPenalty = 0;
     if (data.health.levels > 1 && ((data.health.lethal + data.health.aggravated) >= Math.floor(data.health.levels / 2))) {
       currentPenalty = 2;
@@ -176,25 +180,25 @@ export class ExaltedessenceActor extends Actor {
     }
   }
 
-  _prepareBaseActorData(data) {
-    data.motes.max = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
+  _prepareBaseActorData(system) {
+    system.motes.max = system.essence.value * 2 + Math.floor((system.essence.value - 1) / 2) + 3;
     let animaLevel = "";
-    if (data.anima.value >= 1) {
+    if (system.anima.value >= 1) {
       animaLevel = "dim";
     }
-    if (data.anima.value >= 3) {
+    if (system.anima.value >= 3) {
       animaLevel = "glowing";
     }
-    if (data.anima.value >= 5) {
+    if (system.anima.value >= 5) {
       animaLevel = "burning";
     }
-    if (data.anima.value >= 7) {
+    if (system.anima.value >= 7) {
       animaLevel = "bonfire";
     }
-    if (data.anima.value === 10) {
+    if (system.anima.value === 10) {
       animaLevel = "iconic";
     }
-    data.anima.level = animaLevel;
+    system.anima.level = animaLevel;
   }
 }
 

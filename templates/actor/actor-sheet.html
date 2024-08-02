@@ -92,8 +92,10 @@
           {{/ifEquals}}
           {{#ifEquals system.details.exalt 'liminal'}}
           <div>
-            <label class="resource-label">{{localize "ExEss.Nature"}}</label>
-            <input type="text" name="system.details.nature" value="{{system.details.nature}}" />
+            <div class="resource-label">{{localize "ExEss.Nature"}}</div>
+            <select name="system.details.nature" data-type="String">
+              {{selectOptions selects.natures selected=system.details.nature blank='' localize=true}}
+            </select>
           </div>
           {{/ifEquals}}
 
@@ -101,11 +103,11 @@
       </div>
       <div class="resources grid grid-2col">
         <div class="resource flex-group-center d-flex">
-          <div style="width:180px;margin-right:20px;">
+          <div>
             <div class="flexrow">
               <label for="system.health" class="resource-label"><a><i class="fas fa-calculator cursor-pointer"
                     id="calculate-health" style="margin-right:3px;" title="Calculate Health"></i></a>{{localize
-                "ExEss.Health"}}<a><i id="recoveryScene" title="Recovery Scene"
+                "ExEss.Health"}}(-{{system.health.penalty}})<a><i id="recoveryScene" title="Recovery Scene"
                     class="fas fa-plus-square cursor-pointer" style="margin-left:3px;"></i></a></label>
             </div>
             <div class="resource-content flexrow flex-center flex-between">
@@ -118,12 +120,6 @@
                 </span>
                 {{/numLoop}}
               </div>
-            </div>
-          </div>
-          <div>
-            <div class="flex-center">
-              <div class="resource-label">{{localize "ExEss.WoundPenalty"}}</div>
-              <div>-{{system.health.penalty}}</div>
             </div>
           </div>
         </div>

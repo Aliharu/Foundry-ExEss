@@ -44,6 +44,7 @@ class CommonActorData extends foundry.abstract.TypeDataModel {
         passive: new fields.StringField({ initial: "" }),
         active: new fields.StringField({ initial: "" }),
         iconic: new fields.StringField({ initial: "" }),
+        level: new fields.StringField({ initial: "" }),
       }),
       essence: resourceField(1, 10),
       power: resourceField(0, 10),
