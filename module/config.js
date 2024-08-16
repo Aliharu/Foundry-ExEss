@@ -15,7 +15,7 @@ export const EXALTEDESSENCE = {};
 //     "localtongue": "ExEss.LocalTongue",
 // };
 
-EXALTEDESSENCE.activeEffectChanges = { 
+EXALTEDESSENCE.activeEffectChanges = {
     '': 'Ex3.None',
     'system.attributes.force.value': 'ExEss.Force',
     'system.attributes.finesse.value': 'ExEss.Finesse',
@@ -161,6 +161,11 @@ EXALTEDESSENCE.statusEffects = [
         id: 'dematerialized',
         label: 'ExEss.Dematerialized',
         name: 'dematerialized'
+    },
+    {
+        img: 'systems/exaltedessence/assets/icons/screaming.svg',
+        id: 'routing',
+        label: 'ExEss.Routing',
     },
     {
         img: 'icons/svg/skull.svg',

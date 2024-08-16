@@ -25,7 +25,7 @@ class CommonActorData extends foundry.abstract.TypeDataModel {
         value: new fields.NumberField({ initial: 0 }),
         min: new fields.NumberField({ initial: 0 }),
         max: new fields.NumberField({ initial: 5 }),
-        committed: new fields.NumberField({ initial: 5 }),
+        committed: new fields.NumberField({ initial: 0 }),
       }),
       flowing: new fields.SchemaField({
         value: new fields.NumberField({ initial: 0 }),
