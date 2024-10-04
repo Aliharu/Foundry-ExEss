@@ -43,6 +43,9 @@ EXALTEDESSENCE.activeEffectChanges = {
     'system.soak.value': 'ExEss.Soak',
     'system.hardness.value': 'ExEss.Hardness',
     'system.resolve.value': 'ExEss.Resolve',
+    'system.health.levels.zero.value': 'ExEss.PenaltyZeroHealth',
+    'system.health.levels.one.value': 'ExEss.PenaltyOneHealth',
+    'system.health.levels.two.value': 'ExEss.PenaltyTwoHealth',
 }
 
 EXALTEDESSENCE.languages = {

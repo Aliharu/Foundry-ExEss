@@ -486,35 +486,41 @@ export class RollForm extends FormApplication {
 
     async _saveRoll(rollData) {
         let html = await renderTemplate("systems/exaltedessence/templates/dialogues/save-roll.html", { 'name': this.object.name || 'New Roll' });
-        new Dialog({
-            title: "Save Roll",
-            content: html,
-            default: 'save',
-            buttons: {
-                save: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: 'Save',
-                    default: true,
-                    callback: html => {
-                        let results = document.getElementById('name').value;
-                        let uniqueId = this.object.id || randomID(16);
-                        rollData.name = results;
-                        rollData.id = uniqueId;
-                        rollData.target = null;
 
-                        let updates = {
-                            "system.savedRolls": {
-                                [uniqueId]: rollData
-                            }
-                        };
-                        this.actor.update(updates);
-                        this.saved = true;
-                        ui.notifications.notify(`Saved Roll`);
-                        return;
-                    },
+        new foundry.applications.api.DialogV2({
+            window: { title: game.i18n.localize("ExEss.SaveRoll"), },
+            content: html,
+            classes: [`${game.settings.get("exaltedessence", "sheetStyle")}-background`],
+            buttons: [{
+                action: "save",
+                label: game.i18n.localize("ExEss.Save"),
+                default: true,
+                callback: (event, button, dialog) => button.form.elements
+            }, {
+                action: "cancel",
+                label: game.i18n.localize("ExEss.Cancel"),
+                callback: (event, button, dialog) => false
+            }],
+            submit: result => {
+                if (result && result.name?.value) {
+                    let results = result.name.value;
+                    let uniqueId = this.object.id || foundry.utils.randomID(16);
+                    rollData.name = results;
+                    rollData.id = uniqueId;
+                    rollData.target = null;
+
+                    let updates = {
+                        "system.savedRolls": {
+                            [uniqueId]: rollData
+                        }
+                    };
+                    this.actor.update(updates);
+                    this.saved = true;
+                    ui.notifications.notify(`Saved Roll`);
+                    return;
                 }
             }
-        }, { classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }).render(true);
+        }).render({ force: true });
     }
 
     getData() {

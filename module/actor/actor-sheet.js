@@ -286,31 +286,18 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     });
 
     // Delete Inventory Item
-    html.find('.item-delete').click(ev => {
-      let applyChanges = false;
-      new Dialog({
-        title: 'Delete?',
-        content: 'Are you sure you want to delete this item?',
-        buttons: {
-          delete: {
-            icon: '<i class="fas fa-check"></i>',
-            label: 'Delete',
-            callback: () => applyChanges = true
-          },
-          cancel: {
-            icon: '<i class="fas fa-times"></i>',
-            label: 'Cancel'
-          },
-        },
-        default: "delete",
-        close: html => {
-          if (applyChanges) {
-            const li = $(ev.currentTarget).parents(".item");
-            this.actor.deleteEmbeddedDocuments("Item", [li.data("itemId")]);
-            li.slideUp(200, () => this.render(false));
-          }
-        }
-      }, { classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }).render(true);
+    html.find('.item-delete').click(async ev => {
+      const deleteItem = await foundry.applications.api.DialogV2.confirm({
+        window: { title: game.i18n.localize("ExEss.Delete") },
+        content: "<p>Are you sure you want to delete this item?</p>",
+        classes: [this.actor.getSheetBackground()],
+        modal: true
+      });
+      if(deleteItem) {
+        const li = $(ev.currentTarget).parents(".item");
+        this.actor.deleteEmbeddedDocuments("Item", [li.data("itemId")]);
+        li.slideUp(200, () => this.render(false));
+      }
     });
 
     html.find('.add-defense-penalty').mousedown(ev => {
@@ -440,31 +427,21 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       new RollForm(this.actor, { event: ev }, {}, { rollId: li.data("item-id") }).render(true);
     });
 
-    html.find('.delete-saved-roll').click(ev => {
+    html.find('.delete-saved-roll').click(async ev => {
       let li = $(event.currentTarget).parents(".item");
       var key = li.data("item-id");
       const rollDeleteString = "system.savedRolls.-=" + key;
 
-      let deleteConfirm = new Dialog({
-        title: "Delete",
-        content: "Delete Saved Roll?",
-        buttons: {
-          Yes: {
-            icon: '<i class="fa fa-check"></i>',
-            label: "Delete",
-            callback: dlg => {
-              this.actor.update({ [rollDeleteString]: null });
-              ui.notifications.notify(`Saved Roll Deleted`);
-            }
-          },
-          cancel: {
-            icon: '<i class="fas fa-times"></i>',
-            label: "Cancel"
-          },
-        },
-        default: 'Yes'
+      const deleteConfirm = await foundry.applications.api.DialogV2.confirm({
+        window: { title: game.i18n.localize('ExEss.Delete') },
+        content: `<p>Delete Saved Roll?</p>`,
+        classes: [this.actor.getSheetBackground()],
+        modal: true
       });
-      deleteConfirm.render(true);
+      if (deleteConfirm) {
+        this.actor.update({ [rollDeleteString]: null });
+        ui.notifications.notify(`Saved Roll Deleted`);
+      }
     });
 
     $(document.getElementById('chat-log')).on('click', '.chat-card', (ev) => {
@@ -536,34 +513,52 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       template = "systems/exaltedessence/templates/dialogues/calculate-health.html";
       html = await renderTemplate(template, { 'zero': data.health.levels.zero.value, 'one': data.health.levels.one.value, 'two': data.health.levels.two.value });
     }
-    new Dialog({
-      title: `Calculate Health`,
+
+    new foundry.applications.api.DialogV2({
+      window: { title: game.i18n.localize("ExEss.CalculateHealth") },
       content: html,
-      buttons: {
-        roll: { label: "Save", callback: () => confirmed = true },
-        cancel: { label: "Cancel", callback: () => confirmed = false }
-      },
-      close: html => {
-        if (confirmed) {
-          data.health.lethal = 0;
-          data.health.aggravated = 0;
-          if (actorData.type === 'npc') {
-            let health = parseInt(html.find('#health').val()) || 0;
-            data.health.levels = health;
-            data.health.max = health;
+      classes: [this.actor.getSheetBackground()],
+      buttons: [{
+        action: "choice",
+        label: game.i18n.localize("ExEss.Save"),
+        default: true,
+        callback: (event, button, dialog) => button.form.elements
+      }, {
+        action: "cancel",
+        label: game.i18n.localize("ExEss.Cancel"),
+        callback: (event, button, dialog) => false
+      }],
+      submit: result => {
+        if (result) {
+          if(actorData.type === 'npc') {
+            let health = result.health.value;
+            this.actor.update({ [`system.health.levels`]: health });
+            this.actor.update({ [`system.health.max`]: health });
+          } else {
+            let zero = result.zero.value;
+            let one = result.one.value;
+            let two = result.two.value;
+            let healthData = {
+              levels: {
+                zero: {
+                  value: zero,
+                },
+                one: {
+                  value: one,
+                },
+                two: {
+                  value: two,
+                },
+              },
+              lethal: 0,
+              aggravated: 0,
+            }
+            this.actor.update({ [`system.health`]: healthData });
           }
-          else {
-            let zero = parseInt(html.find('#zero').val()) || 0;
-            let one = parseInt(html.find('#one').val()) || 0;
-            let two = parseInt(html.find('#two').val()) || 0;
-            data.health.levels.zero.value = zero;
-            data.health.levels.one.value = one;
-            data.health.levels.two.value = two;
-          }
-          this.actor.update(actorData);
+
         }
       }
-    }, { classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }).render(true);
+    }).render({ force: true });
   }
 
   async catchBreath() {
@@ -586,13 +581,16 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   async showTags(type) {
     const template = type === "weapons" ? "systems/exaltedessence/templates/dialogues/weapon-tags.html" : "systems/exaltedessence/templates/dialogues/armor-tags.html";
     const html = await renderTemplate(template);
-    new Dialog({
-      title: `Tags`,
+
+    new foundry.applications.api.DialogV2({
+      window: { title: game.i18n.localize("ExEss.Tags"), resizable: true },
       content: html,
-      buttons: {
-        cancel: { label: "Close" }
-      }
-    }, { classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }).render(true);
+      buttons: [{ action: 'close', label: game.i18n.localize("ExEss.Close") }],
+      classes: ['exaltedessence-dialog', this.actor.getSheetBackground()],
+      position: {
+        width: 500,
+      },
+    }).render(true);
   }
 
   async fullRest() {
@@ -605,38 +603,42 @@ export class ExaltedessenceActorSheet extends ActorSheet {
   }
 
   async helpDialogue(type) {
-    let confirmed = false;
     const template = "systems/exaltedessence/templates/dialogues/help-dialogue.html"
     const html = await renderTemplate(template, { 'type': type });
-    new Dialog({
-      title: `ReadMe`,
+    new foundry.applications.api.DialogV2({
+      window: { title: game.i18n.localize("ExEss.ReadMe"), resizable: true },
       content: html,
-      buttons: {
-        cancel: { label: "Close", callback: () => confirmed = false }
-      }
-    }, { classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }).render(true);
+      buttons: [{ action: 'close', label: game.i18n.localize("ExEss.Close") }],
+      classes: ['exaltedessence-dialog', this.actor.getSheetBackground()],
+    }).render(true);
   }
 
   async pickColor() {
-    let confirmed = false;
     const actorData = foundry.utils.duplicate(this.actor);
     const data = actorData.system;
     const template = "systems/exaltedessence/templates/dialogues/color-picker.html"
     const html = await renderTemplate(template, { 'color': data.details.color, animaColor: data.details.animacolor, 'initiativeIcon': this.actor.system.details.initiativeicon, 'initiativeIconColor': this.actor.system.details.initiativeiconcolor });
-    new Dialog({
-      title: `Pick Color`,
-      content: html,
-      buttons: {
-        roll: { label: "Save", callback: () => confirmed = true },
-        cancel: { label: "Cancel", callback: () => confirmed = false }
-      },
-      close: html => {
-        if (confirmed) {
-          let color = html.find('#color').val();
-          let animaColor = html.find('#animaColor').val();
-          let initiativeIconColor = html.find('#initiativeIconColor').val();
-          let initiativeIcon = html.find('#initiativeIcon').val();
 
+    new foundry.applications.api.DialogV2({
+      window: { title: game.i18n.localize("ExEss.PickColor") },
+      content: html,
+      classes: [this.actor.getSheetBackground()],
+      buttons: [{
+        action: "choice",
+        label: game.i18n.localize("ExEss.Save"),
+        default: true,
+        callback: (event, button, dialog) => button.form.elements
+      }, {
+        action: "cancel",
+        label: game.i18n.localize("ExEss.Cancel"),
+        callback: (event, button, dialog) => false
+      }],
+      submit: result => {
+        if (result) {
+          let color = result.color.value;
+          let animaColor = result.animaColor.value;
+          let initiativeIconColor = result.initiativeIconColor.value;
+          let initiativeIcon = result.initiativeIcon.value;
           if (isColor(color)) {
             this.actor.update({ [`system.details.color`]: color });
           }
@@ -649,7 +651,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
           this.actor.update({ [`system.details.initiativeicon`]: initiativeIcon });
         }
       }
-    }, { classes: ["dialog", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }).render(true);
+    }).render({ force: true });
   }
 
   _onSquareCounterChange(event) {

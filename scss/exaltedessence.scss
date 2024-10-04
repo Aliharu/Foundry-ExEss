@@ -43,6 +43,7 @@
   .window-content {
     background: url('../assets/backgrounds/solar-background.jpg');
     background-size: cover;
+    color: var(--color-text-dark-primary);
   }
 }
 
@@ -50,6 +51,7 @@
   .window-content {
     background: url('../assets/backgrounds/lunar-background.jpg');
     background-size: cover;
+    color: var(--color-text-dark-primary);
   }
 }
 
@@ -57,6 +59,7 @@
   .window-content {
     background: url('../assets/backgrounds/db-background.jpg');
     background-size: cover;
+    color: var(--color-text-dark-primary);
   }
 }
 
@@ -64,12 +67,14 @@
   .window-content {
     background: url('../assets/backgrounds/tree-background.jpg');
     background-size: cover;
+    color: var(--color-text-dark-primary);
   }
 }
 
 .leaves-background .window-content {
   background: url("../assets/backgrounds/leaves-background.jpg");
   background-size: cover;
+  color: var(--color-text-dark-primary);
 }
 
 .exaltedessence .window-content .abilities,
@@ -369,5 +374,17 @@
 
   .mode-title {
     color: #d90000;
+  }
+}
+
+.exaltedessence-dialog {
+  table {
+    margin: 0px;
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  h4 {
+    color: var(--color-text-dark-primary);
+    text-shadow: none;
   }
 }

@@ -200,6 +200,14 @@ export class ExaltedessenceActor extends Actor {
     }
     system.anima.level = animaLevel;
   }
+
+  getSheetBackground() {
+    return `${game.settings.get("exaltedessence", "sheetStyle")}-background`;
+    // if (this.system.settings.sheetbackground === 'default') {
+    //   return `${game.settings.get("exaltedessence", "sheetStyle")}-background`;
+    // }
+    // return `${this.system.settings.sheetbackground}-background`;
+  }
 }
 
 export async function addDefensePenalty(actor, label = "Defense Penalty") {

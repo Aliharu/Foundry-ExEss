@@ -338,6 +338,15 @@
     "ExEss.OpposedIntimacy": "Opposed Intimacy",
     
     "ExEss.Save": "Save",
+    "ExEss.Cancel": "Cancel",
+    "ExEss.Close": "Close",
+    "ExEss.Delete": "Delete",
+    "ExEss.Tags": "Tags",
+    "ExEss.ReadMe": "Read Me",
+    "ExEss.SaveRoll": "Save Roll",
+    "ExEss.PickColor": "Pick Color",
+    "ExEss.CalculateHealth": "Calculate Health",
+
     "ExEss.Update": "Update",
     "ExEss.AddCharm": "Add Charm",
     "ExEss.Done": "Done",
@@ -367,6 +376,11 @@
     "ExEss.OtherModifiers": "Other Modifiers",
     "ExEss.IgnoreSoak": "Ignore Soak",
     "ExEss.HealthType": "Health Type",
+
+    "ExEss.PenaltyZeroHealth": "Penalty Zero Health",
+    "ExEss.PenaltyOneHealth": "Penalty One Health",
+    "ExEss.PenaltyTwoHealth": "Penalty Two Health",
+
     "ExEss.SavedRolls": "Saved Rolls",
     "ExEss.SpecialAttacks": "Special Attacks",
     "ExEss.Preset": "Preset",
