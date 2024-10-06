@@ -1,52 +1,120 @@
-export default class ItemSearch extends Application {
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
+export default class ItemSearch extends HandlebarsApplicationMixin(ApplicationV2) {
   constructor(app) {
     super(app)
 
     this.filters = {
       type: {
-        "charm": { display: "Charm", value: false },
+        "armor": { display: "Armor", value: false },
+        "charm": { display: "Charm", value: true },
+        "ritual": { display: "Ritual", value: false },
+        "merit": { display: "Merit", value: false },
         "spell": { display: "Spell", value: false },
-        "initiation": { display: "Initiation", value: false },
+        "weapon": { display: "Weapon", value: false },
       },
       attribute: {
         name: "",
         description: "",
         worldItems: true,
-        charmFilters: {
-          ability: "",
-          requirement: "",
-          essence: "",
-          charmtype: "",
-        }
+        ability: "",
+        requirement: {
+          min: "0",
+          max: "5",
+        },
+        essence: {
+          min: "0",
+          max: "10",
+        },
+        circle: "",
+        ritualType: "",
+        weaponWeight: "",
+        weaponArtifactType: "",
+        armorArtifactType: "",
       },
     }
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.classes = ["dialog", `solar-background`];
-    options.id = "exess-item-search";
-    options.template = "systems/exaltedessence/templates/dialogues/item-search.html"
-    options.resizable = true;
-    options.height = 900;
-    options.width = 656;
-    options.minimizable = true;
-    options.title = "Item Search"
-    return options;
+  static DEFAULT_OPTIONS = {
+    window: {
+      title: "Item Search", resizable: true,
+    },
+    tag: "form",
+    form: {
+      handler: ItemSearch.myFormHandler,
+      submitOnClose: false,
+      submitOnChange: true,
+      closeOnSubmit: false
+    },
+    classes: ['exaltedessence-dialog', `leaves-background`],
+    position: { width: 850, height: 900 },
+  };
+
+  static PARTS = {
+    form: {
+      template: "systems/exaltedessence/templates/dialogues/item-search.html",
+    },
+  };
+
+  static async myFormHandler(event, form, formData) {
+    // Do things with the returned FormData
+    const formObject = foundry.utils.expandObject(formData.object);
+    if (formObject.filters?.attribute) {
+      this.filters.attribute = formObject.filters.attribute;
+    }
+    if (formObject.filters?.type) {
+      for (let [key, typeValue] of Object.entries(formObject.filters?.type)) {
+        this.filters.type[key].value = typeValue.value;
+      }
+    }
+
+    this.render();
   }
 
-  async _render(force = false, options = {}) {
+  async _prepareContext(_options) {
     await this.loadItems();
-    await super._render(force, options);
-    this.applyFilter(this._element);
+
+    return {
+      filters: this.filters,
+      selects: CONFIG.EXALTEDESSENCE.selects,
+      items: this.items,
+      filteredItems: this.applyFilter(),
+    };
   }
 
-  getData() {
-    let context = super.getData();
-    context.filters = this.filters;
-    context.items = this.items;
-    context.selects = CONFIG.EXALTEDESSENCE.selects;
-    return context;
+  _onRender(context, options) {
+    this.element.querySelectorAll('.item-row').forEach(element => {
+      let dragStarted = false;
+
+      element.addEventListener('mousedown', () => {
+        dragStarted = false; // Reset the flag on mousedown
+      });
+
+      element.addEventListener('click', async (ev) => {
+        if (dragStarted) return; // Prevent click handler if dragging
+        ev.stopPropagation();
+        let itemId = $(ev.currentTarget).attr("data-item-id");
+        this.items.find(i => i.id == itemId).sheet.render(true);
+      });
+
+      element.setAttribute("draggable", true);
+
+      element.addEventListener("dragstart", event => {
+        dragStarted = true; // Set the flag when dragging starts
+        event.stopPropagation();
+        let itemId = $(event.currentTarget).attr("data-item-id");
+        const item = this.items.find(i => i.id == itemId);
+        let transfer = {
+          type: "Item",
+          id: item.id,
+          uuid: item.uuid
+        };
+        if (item.compendium) {
+          transfer.pack = `${item.compendium.metadata.package}.${item.compendium.metadata.name}`;
+        }
+        event.dataTransfer.setData("text/plain", JSON.stringify(transfer));
+      });
+    });
   }
 
   async loadItems() {
@@ -71,8 +139,8 @@ export default class ItemSearch extends Application {
     this.items = this.items.concat(itemList)
   }
 
-  applyFilter(html) {
-    let items = this.items
+  applyFilter() {
+    let items = this.items;
     let noItemFilter = true;
     let filteredItems = [];
     for (let filter in this.filters.type) {
@@ -92,89 +160,80 @@ export default class ItemSearch extends Application {
             filteredItems = filteredItems.filter(i => i.name.toLowerCase().includes(this.filters.attribute.name.toLowerCase()))
             break;
           case "description":
-            filteredItems = filteredItems.filter(i => i.data.data.description.value && i.data.data.description.value.toLowerCase().includes(this.filters.attribute.description.toLowerCase()))
+            filteredItems = filteredItems.filter(i => i.system.description.value && i.system.description.value.toLowerCase().includes(this.filters.attribute.description.toLowerCase()))
             break;
           case "worldItems":
             filteredItems = filteredItems.filter(i => this.filters.attribute[filter] || !!i.compendium)
             break;
-          case "charmFilters":
-            if(this.filters.attribute[filter].ability) {
-              filteredItems = filteredItems.filter((i) => i.type !== 'charm' || i.data.data.ability === this.filters.attribute[filter].ability)
+          case "essence":
+            filteredItems = filteredItems.filter((i) => i.type !== 'charm' || (i.system.essence >= parseInt(this.filters.attribute.essence.min) && i.system.essence <= parseInt(this.filters.attribute.essence.max)))
+            break;
+          case "requirement":
+            filteredItems = filteredItems.filter((i) => i.type !== 'charm' || (i.system.requirement >= parseInt(this.filters.attribute.requirement.min) && i.system.requirement <= parseInt(this.filters.attribute.requirement.max)))
+            break;
+          case "ability":
+            if (this.filters.attribute.ability) {
+              filteredItems = filteredItems.filter((i) => i.type !== 'charm' || i.system.ability === this.filters.attribute.ability)
             }
-            if(this.filters.attribute[filter].requirement) {
-              filteredItems = filteredItems.filter((i) => i.type !== 'charm' || (i.data.data.requirement || '').toString() === this.filters.attribute[filter].requirement)
+            break;
+          case 'charmType':
+            if (this.filters.attribute.charmType) {
+              filteredItems = filteredItems.filter((i) => i.type !== 'charm' || i.system.charmtype === this.filters.attribute.charmType)
             }
-            if(this.filters.attribute[filter].essence) {
-              filteredItems = filteredItems.filter((i) => i.type !== 'charm' || (i.data.data.essence || '').toString() === this.filters.attribute[filter].essence)
+            break;
+          case 'circle':
+            if (this.filters.attribute.circle) {
+              filteredItems = filteredItems.filter((i) => i.type !== 'spell' || i.system.circle === this.filters.attribute.circle)
             }
-            if(this.filters.attribute[filter].charmtype) {
-              filteredItems = filteredItems.filter((i) => i.type !== 'charm' || i.data.data.charmtype === this.filters.attribute[filter].charmtype)
+            break;
+          case 'itemType':
+            if (this.filters.attribute.itemType) {
+              filteredItems = filteredItems.filter((i) => i.type !== 'item' || i.system.itemtype === this.filters.attribute.itemType)
+            }
+            break;
+          case 'ritualType':
+            if (this.filters.attribute.ritualType) {
+              filteredItems = filteredItems.filter((i) => i.type !== 'ritual' || i.system.ritualtype === this.filters.attribute.ritualType)
+            }
+            break;
+          case 'weaponWeight':
+            if (this.filters.attribute.weaponWeight) {
+              filteredItems = filteredItems.filter((i) => i.type !== 'weapon' || i.system.weight === this.filters.attribute.weaponWeight)
+            }
+            break;
+          case 'armorWeight':
+            if (this.filters.attribute.armorWeight) {
+              filteredItems = filteredItems.filter((i) => i.type !== 'armor' || i.system.weight === this.filters.attribute.armorWeight)
+            }
+            break;
+          case 'weaponArtifactType':
+            if (this.filters.attribute.weaponArtifactType) {
+              if (this.filters.attribute.weaponArtifactType === "artifact") {
+                filteredItems = filteredItems.filter((i) => i.type !== 'weapon' || i.system.traits.weapontags.value.includes('artifact'))
+              } else {
+                filteredItems = filteredItems.filter((i) => i.type !== 'weapon' || !i.system.traits.weapontags.value.includes('artifact'))
+              }
+            }
+            break;
+          case 'armorArtifactType':
+            if (this.filters.attribute.armorArtifactType) {
+              if (this.filters.attribute.armorArtifactType === "artifact") {
+                filteredItems = filteredItems.filter((i) => i.type !== 'armor' || i.system.traits.armortags.value.includes('artifact'))
+              } else {
+                filteredItems = filteredItems.filter((i) => i.type !== 'armor' || !i.system.traits.armortags.value.includes('artifact'))
+              }
             }
             break;
         }
       }
     }
-    
-    this.filterIds = filteredItems.map(i => i.filterId);
-    let list = html.find(".item-row")
-    for (let element of list) {
-      if (this.filterIds.includes(Number(element.getAttribute('data-filter-id'))))
-        $(element).show();
-      else
-        $(element).hide();
-    }
+
     return filteredItems;
-  }
-
-
-  activateListeners(html) {
-
-    html.find(".item-row").each((i, li) => {
-      let item = this.items.find(i => i.id == $(li).attr("data-item-id"))
-
-      li.setAttribute("draggable", true);
-      li.addEventListener("dragstart", event => {
-        let transfer = {
-          type: "Item",
-          id: item.id
-        }
-        if (item.compendium)
-          transfer.pack = `${item.compendium.metadata.package}.${item.compendium.metadata.name}`;
-        event.dataTransfer.setData("text/plain", JSON.stringify(transfer))
-    })
-  })
-
-    html.on("click", ".item-name", ev => {
-      let itemId = $(ev.currentTarget).parents(".item-row").attr("data-item-id")
-      this.items.find(i => i.id == itemId).sheet.render(true);
-    });
-
-    html.on("click", ".filter", ev => {
-      this.filters.type[$(ev.currentTarget).attr("data-filter")].value = $(ev.currentTarget).is(":checked");
-      this.applyFilter(html);
-    });
-
-    html.on("keyup", ".name", ev => {
-      this.filters.attribute.name = ev.target.value;
-      this.applyFilter(html);
-    });
-    html.on("keyup", ".description", ev => {
-      this.filters.attribute.description = ev.target.value;
-      this.applyFilter(html);
-    });
-    html.on("click", ".world-filter", ev => {
-      this.filters.attribute.worldItems = $(ev.currentTarget).is(":checked");
-      this.applyFilter(html);
-    });
-    html.on("change", ".charm-filter", ev => {
-      this.filters.attribute.charmFilters[$(ev.currentTarget).attr("data-filter")] = $(ev.currentTarget).val();
-      this.applyFilter(html);
-    })
   }
 }
 
 Hooks.on("renderCompendiumDirectory", (app, html, data) => {
-  const button = $(`<button class="item-search"><i class="fas fa-suitcase"></i>${game.i18n.localize("ExEss.ItemSearch")}</button>`);
+  const button = $(`<button class="item-search-button"><i class="fas fa-suitcase"> </i><b>${game.i18n.localize("ExEss.ItemSearch")}</b></button>`);
   html.find(".directory-footer").append(button);
 
   button.click(ev => {

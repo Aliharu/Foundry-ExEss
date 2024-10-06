@@ -324,6 +324,18 @@
     "ExEss.Conditions": "Conditions",
     "ExEss.Disarmed": "Disarmed",
     "ExEss.Prone": "Prone",
+    "ExEss.Light": "Light",
+    "ExEss.Medium": "Medium",
+    "ExEss.Heavy": "Heavy",
+
+    "ExEss.Mundane": "Mundane",
+    "ExEss.Artifact": "Artifact",
+
+    "ExEss.ArmorFilters": "Armor Filters",
+    "ExEss.WeaponFilters": "Weapon Filters",
+    "ExEss.SpellFilters": "Spell Filters",
+
+
     "ExEss.LightCover": "Light Cover",
     "ExEss.HeavyCover": "Heavy Cover",
     "ExEss.Surprised": "Surprised",
@@ -442,5 +454,7 @@
     "ExEss.RerollAllFailedOnce": "Reroll All Failed Once",
     "ExEss.Resources": "Resources",
     "ExEss.Modifiers": "Modifiers",
+    "ExEss.Weight": "Weight",
+    "ExEss.ItemTypes": "Item Types",
     "ExEss.BuildingPowerFor": "Building Power For"
 }

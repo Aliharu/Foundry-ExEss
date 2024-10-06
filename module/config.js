@@ -375,6 +375,15 @@ EXALTEDESSENCE.selects = {
         'throwdagger': "ExEss.ThrownDagger",
         'none': "ExEss.None",
     },
+    itemWeights: {
+        'light': "ExEss.Light",
+        'medium': "ExEss.Medium",
+        'heavy': "ExEss.Heavy",
+    },
+    artifactTypes: {
+        mundane: "ExEss.Mundane",
+        artifact: "ExEss.Artifact",
+    },
     sorceryCircles: {
         first: "ExEss.FirstCircle",
         second: "ExEss.SecondCircle",

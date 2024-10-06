@@ -39,6 +39,7 @@ export class ItemWeaponData extends CommonItemData {
             weapontype: new fields.StringField({ initial: "melee" }),
             attackeffectpreset: new fields.StringField({ initial: "none" }),
             attackeffect: new fields.StringField({ initial: "" }),
+            weight: new fields.StringField({ initial: "" }),
             traits: new fields.SchemaField({
                 weapontags: traitField(),
             }),
@@ -57,6 +58,7 @@ export class ItemArmorData extends CommonItemData {
             hardness: new fields.NumberField({ initial: 0 }),
             tags: new fields.StringField({ initial: "" }),
             equipped: new fields.BooleanField({ initial: true }),
+            weight: new fields.StringField({ initial: "" }),
             traits: new fields.SchemaField({
                 armortags: traitField(),
             }),

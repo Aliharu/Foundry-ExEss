@@ -1,57 +1,119 @@
-<div class="exaltedessence" style="overflow:hidden">
+<div class="exaltedessence item-search">
   <div class="item-filter">
     <div class="check-button">
       <label class="resource-label">{{localize "ExEss.IncludeWorldItems"}}: </label>
-      <input class="world-filter" type="checkbox" data-filter="worldItems" {{checked filters.attribute.worldItems}} />
+      <input class="world-filter" name="filters.attribute.worldItems" type="checkbox" data-filter="worldItems" {{checked
+        filters.attribute.worldItems}} />
     </div>
-    <h2>{{localize "ExEss.Types"}}</h2>
-    <div class="check-button">
-      {{#each filters.type as |value filter|}}
-      <label class="resource-label">{{localize value.display}}:</label>
-      <input class="filter" type="checkbox" data-filter="{{filter}}" {{checked value.value}} />
-      {{/each}}
-    </div>
-
-    <h2>{{localize "ExEss.Filter"}}</h2>
-
+    <!-- <div class="check-button">
+      <label class="resource-label">{{localize "ExEss.UseLessThen"}}: </label>
+      <input class="less-then" name="filters.attribute.lessThen" type="checkbox" {{checked
+        filters.attribute.lessThen}} />
+    </div> -->
     <div class="name filter-top">
       <label class="resource-label">{{localize "Name"}}</label>
-      <input class="name-filter" type="text" data-filter="name" value="{{filters.attribute.name}}" />
+      <input class="name-filter" name="filters.attribute.name" type="text" data-filter="name"
+        value="{{filters.attribute.name}}" />
     </div>
     <div class="description filter-top">
       <label class="resource-label">{{localize "Description"}}</label>
-      <input class="description-filter" type="text" data-filter="description"
+      <input class="description-filter" name="filters.attribute.description" type="text" data-filter="description"
         value="{{filters.attribute.description}}" />
     </div>
-    <h2>{{localize "ExEss.CharmFilters"}}</h2>
-    <div>
-      <label class="resource-label">{{localize "ExEss.Ability"}}: </label>
-      <select class="charm-filter" name="filters.attribute.charmFilters.ability" data-type="String"
-        data-filter="ability">
-        {{selectOptions selects.charmAbilities selected=filters.attribute.charmFilters.ability localize=true blank=""}}
-      </select>
-      <label class="resource-label">{{localize "ExEss.Requirement"}}: </label>
-      <select class="charm-filter" name="filters.attribute.charmFilters.requirement" data-type="String"
-        data-filter="requirement">
-        {{selectOptions selects.abilityRequirementLevels selected=filters.attribute.charmFilters.requirement localize=true blank=""}}
-      </select>
-      <label class="resource-label">{{localize "ExEss.Essence"}}: </label>
-      <select class="charm-filter" name="filters.attribute.charmFilters.essence" data-type="String"
-        data-filter="essence">
-        {{selectOptions selects.abilityRequirementLevels selected=filters.attribute.charmFilters.essence localize=true blank=""}}
-      </select>
-      <label class="resource-label">{{localize "ExEss.CharmType"}}:</label>
-      <select class="charm-filter" name="filters.attribute.charmFilters.charmtype" data-type="String"
-        data-filter="charmtype">
-        {{selectOptions selects.exaltCharmTypes selected=filters.attribute.charmFilters.charmtype localize=true blank=""}}
-      </select>
+    <h2 class="mb-1">{{localize "ExEss.ItemTypes"}}</h2>
+    {{#each filters.type as |value filter|}}
+    <div class="check-button">
+      <label class="resource-label" style="flex-basis: 20%;">{{localize value.display}}</label>
+      <input name="filters.type.{{filter}}.value" class="filter" type="checkbox" data-filter="{{filter}}" {{checked
+        value.value}} />
     </div>
+    {{/each}}
+    {{#if filters.type.charm.value}}
+    <h2 class="mb-1">{{localize "ExEss.CharmFilters"}}</h2>
+    <div class="resource">
+      <div>
+        <label class="resource-label">{{localize "ExEss.Requirement"}}</label>
+        <div class="d-flex flex-center">
+          <input name="filters.attribute.requirement.min" data-filter="requirementMin" type="text"
+            value="{{filters.attribute.requirement.min}}" />
+          <i class="fa-solid fa-arrows-left-right"></i>
+          <input name="filters.attribute.requirement.max" data-filter="requirementMax" type="text"
+            value="{{filters.attribute.requirement.max}}" />
+        </div>
+      </div>
+      <div>
+        <label class="resource-label">{{localize "ExEss.Essence"}}</label>
+        <div class="d-flex flex-center">
+          <input name="filters.attribute.essence.min" data-filter="essenceMin" type="text"
+            value="{{filters.attribute.essence.min}}" />
+          <i class="fa-solid fa-arrows-left-right"></i>
+          <input name="filters.attribute.essence.max" data-filter="essenceMax" type="text"
+            value="{{filters.attribute.essence.max}}" />
+        </div>
+      </div>
+      <div>
+        <label class="resource-label">{{localize "ExEss.Ability"}}</label>
+        <select class="charm-filter" name="filters.attribute.ability" data-type="String" data-filter="ability">
+          {{selectOptions selects.abilities selected=filters.attribute.ability localize=true blank=""}}
+        </select>
+      </div>
+    </div>
+    {{/if}}
+    {{#if filters.type.spell.value}}
+    <h2 class="mb-1">{{localize "ExEss.SpellFilters"}}</h2>
+    <div class="resource">
+      <div>
+        <label class="resource-label">{{localize "ExEss.Circle"}}</label>
+        <select class="charm-filter" name="filters.attribute.circle" data-type="String" data-filter="circle">
+          {{selectOptions selects.sorceryCircles selected=filters.attribute.circle localize=true blank=""}}
+        </select>
+      </div>
+    </div>
+    {{/if}}
+    {{#if filters.type.weapon.value}}
+    <h2 class="mb-1">{{localize "ExEss.WeaponFilters"}}</h2>
+    <div class="resource">
+      <div>
+        <label class="resource-label">{{localize "ExEss.Weight"}}</label>
+        <select class="charm-filter" name="filters.attribute.weaponWeight" data-type="String"
+          data-filter="weaponWeight">
+          {{selectOptions selects.itemWeights selected=filters.attribute.weaponWeight localize=true blank=""}}
+        </select>
+      </div>
+      <div>
+        <label class="resource-label">{{localize "ExEss.Artifact"}}</label>
+        <select class="charm-filter" name="filters.attribute.weaponArtifactType" data-type="String"
+          data-filter="weaponArtifactType">
+          {{selectOptions selects.artifactTypes selected=filters.attribute.weaponArtifactType localize=true blank=""}}
+        </select>
+      </div>
+    </div>
+    {{/if}}
+    {{#if filters.type.armor.value}}
+    <h2 class="mb-1">{{localize "ExEss.ArmorFilters"}}</h2>
+    <div class="resource">
+      <div>
+        <label class="resource-label">{{localize "ExEss.Weight"}}</label>
+        <select class="charm-filter" name="filters.attribute.armorWeight" data-type="String" data-filter="armorWeight">
+          {{selectOptions selects.itemWeights selected=filters.attribute.armorWeight localize=true blank=""}}
+        </select>
+      </div>
+      <div>
+        <label class="resource-label">{{localize "ExEss.Artifact"}}</label>
+        <select class="charm-filter" name="filters.attribute.armorArtifactType" data-type="String"
+          data-filter="armorArtifactType">
+          {{selectOptions selects.artifactTypes selected=filters.attribute.armorArtifactType localize=true blank=""}}
+        </select>
+      </div>
+    </div>
+    {{/if}}
   </div>
-  <h2 class="mb-1">{{localize "ExEss.ItemList"}}</h2>
   <div class="query-results">
-    {{#each items as |item|}}
-    <div class="search-item-row item-row cursor-pointer" data-item-id={{item.id}} data-filter-id={{item.filterId}}>
-      <div class="item-image mr-1"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+    {{#each filteredItems as |item|}}
+    <div class="search-item-row item-row cursor-pointer" data-drag="true" data-item-id={{item.id}}
+      data-filter-id={{item.filterId}}>
+      <div class="item-image mr-1"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
+          height="24" /></div>
       <div class="item-name">{{item.name}}</div>
     </div>
     {{/each}}

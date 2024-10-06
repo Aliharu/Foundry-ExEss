@@ -112,17 +112,18 @@
 }
 
 .exaltedessence .query-results {
-  height: 66%;
+  width: 65%;
   overflow: scroll;
+  overflow-x: hidden;
 
   .search-item-row {
     display: flex;
     margin-bottom: 10px;
     padding-bottom: 10px;
     border-bottom: 1px solid black;
-    align-items:center;
+    align-items: center;
   }
-  
+
   .list-item-image {
     background: black;
   }
@@ -150,6 +151,19 @@
       black 55%,
       transparent 57%,
       transparent 100%);
+}
+
+.item-search {
+  display: flex;
+  height: 100%;
+
+  .item-filter {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    width: 35%;
+    padding-right: 25px;
+  }
 }
 
 .exaltedessence .resource-counter .resource-counter-step {
@@ -209,6 +223,7 @@
   margin-top: 20px;
   border-bottom: 1px solid black;
 }
+
 .exaltedessence .cursor-pointer {
   cursor: pointer;
 }
@@ -353,7 +368,10 @@
 }
 
 .charm-card-table {
-  table, th, td {
+
+  table,
+  th,
+  td {
     border: 1px solid black;
     border-collapse: collapse;
   }
