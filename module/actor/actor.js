@@ -1,3 +1,5 @@
+import RollForm2 from "../apps/dice-roller-2.js";
+import { RollForm } from "../apps/dice-roller.js";
 import { prepareItemTraits } from "../item/item.js";
 
 /**
@@ -208,6 +210,11 @@ export class ExaltedessenceActor extends Actor {
     // }
     // return `${this.system.settings.sheetbackground}-background`;
   }
+
+  async actionRoll(data) {
+    game.rollForm = await new RollForm2(this, {classes: [" exaltedessence exaltedessence-dialog dice-roller", this.getSheetBackground()]}, {}, data).render(true);
+  }
+
 }
 
 export async function addDefensePenalty(actor, label = "Defense Penalty") {

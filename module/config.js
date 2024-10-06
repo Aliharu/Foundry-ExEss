@@ -16,7 +16,7 @@ export const EXALTEDESSENCE = {};
 // };
 
 EXALTEDESSENCE.activeEffectChanges = {
-    '': 'Ex3.None',
+    '': 'ExEss.None',
     'system.attributes.force.value': 'ExEss.Force',
     'system.attributes.finesse.value': 'ExEss.Finesse',
     'system.attributes.fortitude.value': 'ExEss.Fortitude',

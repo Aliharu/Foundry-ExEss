@@ -1,0 +1,69 @@
+<section class="tab flex-center {{tab.cssClass}} {{hideElement}}" data-group="primary" data-tab="cost">
+    <div class="resource grid grid-3col flex-center">
+        <div class="resource separator">
+            <label class="resource-label">{{localize "ExEss.Motes"}}</label>
+        </div>
+        <div class="resource separator">
+            <label class="resource-label">{{localize "ExEss.Resources"}}</label>
+        </div>
+        <div class="resource separator">
+            <label class="resource-label">{{localize "ExEss.Health"}}</label>
+        </div>
+        <div class="cost-field">
+            <label class="resource-label">{{localize "ExEss.Motes"}}</label>
+            <input class="update-motes" type="number" name="object.cost.motes" value="{{data.cost.motes}}">
+        </div>
+        <div class="cost-field">
+            <label class="resource-label">{{localize "ExEss.Power"}} </label>
+            <input type="number" name="object.cost.power" value="{{data.cost.power}}">
+        </div>
+        <div class="cost-field">
+            <div class="resource-label">{{localize "ExEss.Lethal"}}</div>
+            <input type="number" name="object.cost.healthLethal" value="{{data.cost.healthLethal}}" data-dtype="Number" />
+
+        </div>
+        <div class="cost-field">
+            <label class="resource-label">{{localize "ExEss.Committed"}} </label>
+            <input type="number" name="object.cost.committed" value="{{data.cost.committed}}">
+        </div>
+        <div class="cost-field">
+            <label class="resource-label">{{localize "ExEss.Anima"}} </label>
+            <input type="number" name="object.cost.anima" value="{{data.cost.anima}}">
+        </div>
+        <div class="cost-field">
+            <div class="resource-label">{{localize "ExEss.Aggravated"}}</div>
+            <input type="number" name="object.cost.healthAggravated" value="{{data.cost.healthAggravated}}" data-dtype="Number" />
+        </div>
+        <div></div>
+        <div class="cost-field">
+            <label class="resource-label">{{localize "ExEss.Stunt"}} </label>
+            <input type="number" name="object.cost.stunt" value="{{data.cost.stunt}}">
+        </div>
+    </div>
+    <div>
+        <div class="resource separator">
+            <label class="resource-label">{{localize "ExEss.Gain"}}</label>
+        </div>
+        <div class="resource grid grid-4col flex-center">
+            <div>
+                <div class="resource-label">{{localize "ExEss.Motes"}}</div>
+                <input type="number" name="object.gain.motes" value="{{data.gain.motes}}"
+                    data-dtype="Number" />
+            </div>
+            <div>
+                <div class="resource-label">{{localize "ExEss.Anima"}}</div>
+                <input type="number" name="object.gain.anima" value="{{data.gain.anima}}" data-dtype="Number" />
+            </div>
+            <div>
+                <div class="resource-label">{{localize "ExEss.Health"}}</div>
+                <input type="number" name="object.gain.health" value="{{data.gain.health}}"
+                    data-dtype="Number" />
+            </div>
+            <div>
+                <div class="resource-label">{{localize "ExEss.Power"}}</div>
+                <input type="number" name="object.gain.power" value="{{data.gain.power}}"
+                    data-dtype="Number" />
+            </div>
+        </div>
+    </div>
+</section>

@@ -20,7 +20,8 @@
     "module/exaltedessence.js"
   ],
   "styles": [
-    "css/exaltedessence.css"
+    "css/exaltedessence.css",
+    "css/dice-roller.css"
   ],
   "languages": [
     {

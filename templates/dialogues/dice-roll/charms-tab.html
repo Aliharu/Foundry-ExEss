@@ -1,0 +1,146 @@
+<section class="tab flex-center {{tab.cssClass}} {{hideElement}}" data-group="primary" data-tab="charms">
+    <div class="button-header">
+        <button data-tooltip="Add Charm" aria-label="Add Charm" type="button" data-action="enableAddCharms"><i
+                class="fas fa-square-plus"></i>{{#if data.addingCharms}}{{localize "ExEss.Done"}}{{else}}{{localize
+            "ExEss.AddCharm"}}{{/if}}</button>
+    </div>
+    {{#if data.addingCharms}}
+    <div class="roller-item-list">
+        {{#if data.showSpecialAttacks}}
+        <div class="item d-flex flex-between mb-1 collapsable cursor-pointer roller-item-header">
+            <li class="flexrow">
+                <div class="item-name resource-label">{{localize "ExEss.SpecialAttacks"}}</div>
+            </li>
+            <div>
+                <i class="fas fa-caret-down"></i>
+            </div>
+        </div>
+        <div id="specialAttackList" {{#if data.specialAttackList}} {{else}} style="display:none;" {{/if}}>
+            {{#each data.specialAttacksList as |attack id|}}
+            {{#if attack.show}}
+            <div class="item roller-item collapsable" data-item-id="{{attack.id}}">
+                <div class="item-text gap">
+                    <div class="item-image"><img class="list-item-image" src="{{attack.img}}" title="{{attack.name}}"
+                            width="35" height="35" /></div>
+                    <span class="item-name">{{attack.name}}</span>
+                </div>
+                <div class="item-controls">
+                    {{#if attack.added}} <a class="item-control" data-action="removeSpecialAttack"
+                        title="Remove Attack"><i class="fas fa-trash"></i></a> {{else}} <a class="item-control"
+                        data-action="addSpecialAttack" title="Add Attack"><i class="fas fa-plus"></i></a> {{/if}}
+                </div>
+            </div>
+            <div class="item-description">
+                {{attack.description}}
+            </div>
+            {{/if}}
+            {{/each}}
+        </div>
+        {{/if}}
+        {{#each data.charmList as |charm ability|}}
+        {{#if charm.visible}}
+        <div class="item d-flex flex-between mb-1 charm-list-collapsable cursor-pointer roller-item-header">
+            <li class="flexrow item-header">
+                <div class="item-name resource-label">{{localize charm.name}}</div>
+            </li>
+            <div>
+                <i class="fas fa-caret-down"></i>
+            </div>
+        </div>
+        <div id="{{ability}}" {{#if charm.collapse }} style="display:none;" {{/if}}>
+            {{#each charm.list as |item id|}}
+            <div class="item roller-item collapsable" data-item-id="{{item._id}}">
+                <div class="item-text gap">
+                    <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}"
+                            width="34" height="34" /></div>
+                    <span class="item-name">{{item.name}}</span>
+                    <!-- <span class="text-summary">{{item.system.summary}}</span> -->
+                </div>
+                <div class="item-controls">
+                    {{#if item.charmAdded}}
+                    <a class="item-control" title="Remove Charm" data-action="triggerRemoveCharm"><i
+                            class="fas fa-trash"></i></a>
+                    {{else}}
+                    <a class="item-control" title="Add Charm" data-action="triggerAddCharm"><i
+                            class="fas fa-plus"></i></a>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="item-description">
+                <div>
+                    <b>Cost</b>: {{#ifGreater item.system.cost.motes 0}}{{ item.system.cost.motes }}m, {{/ifGreater}}{{#ifGreater item.system.cost.committed 0}}{{ item.system.cost.committed }}cm, {{/ifGreater}}
+                     {{#ifGreater item.system.cost.anima 0}}{{ item.system.cost.anima }}a, {{/ifGreater}}{{#ifGreater item.system.cost.health 0}}{{ item.system.cost.health }}hl, {{/ifGreater}}
+                     {{#ifGreater item.system.cost.stunt 0}}{{ item.system.cost.stunt }}s, {{/ifGreater}}{{#ifGreater item.system.cost.power 0}}{{ item.system.cost.power }}p{{/ifGreater}}
+                </div>
+                <div>
+                    {{{item.enritchedHTML}}}
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        {{/if}}
+        {{/each}}
+        {{else}}
+        <div class="roller-item-list">
+            <div>
+                {{#each data.addedCharms as |item id|}}
+                <div class="item roller-item collapsable" data-item-id="{{item._id}}">
+                    <div class="item-text gap">
+                        <span class="item-name">{{item.name}}</span>
+                        <span class="text-summary">{{item.system.summary}}</span>
+                    </div>
+                    <div class="item-controls">
+                        <a class="item-control" title="Remove Charm" data-action="triggerRemoveCharm"><i
+                                class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+                <div class="item-description">
+                    <div>
+                        <b>Cost</b>: {{#ifGreater item.system.cost.motes 0}}{{ item.system.cost.motes }}m, {{/ifGreater}}{{#ifGreater item.system.cost.committed 0}}{{ item.system.cost.committed }}cm, {{/ifGreater}}
+                         {{#ifGreater item.system.cost.anima 0}}{{ item.system.cost.anima }}a, {{/ifGreater}}{{#ifGreater item.system.cost.health 0}}{{ item.system.cost.health }}hl, {{/ifGreater}}
+                         {{#ifGreater item.system.cost.stunt 0}}{{ item.system.cost.stunt }}s, {{/ifGreater}}{{#ifGreater item.system.cost.power 0}}{{ item.system.cost.power }}p{{/ifGreater}}
+                    </div>
+                    <div>
+                        {{{item.enritchedHTML}}}
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            {{#ifGreater data.opposingCharms.length 0}}
+            <div class="resource-label list-section-header">
+                <div class="resource-label">
+                    {{localize "ExEss.OpposingCharms"}}
+                </div>
+            </div>
+            <div>
+                {{#each data.opposingCharms as |item id|}}
+                <div class="item roller-item collapsable" data-item-id="{{item._id}}">
+                    <div class="item-text gap">
+                        <span class="item-name">{{item.name}}</span>
+                        <span class="text-summary">{{item.system.summary}}</span>
+                    </div>
+                    <div class="item-controls">
+                        <div>
+                            {{#if item.timesAdded}}x{{item.timesAdded}}{{/if}}
+                        </div>
+                        <a class="item-control" title="Remove Opposing Charm" data-action="removeOpposingCharm"><i
+                                class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+                <div class="item-description">
+                    <div>
+                        <b>Cost</b>: {{#ifGreater item.system.cost.motes 0}}{{ item.system.cost.motes }}m, {{/ifGreater}}{{#ifGreater item.system.cost.committed 0}}{{ item.system.cost.committed }}cm, {{/ifGreater}}
+                         {{#ifGreater item.system.cost.anima 0}}{{ item.system.cost.anima }}a, {{/ifGreater}}{{#ifGreater item.system.cost.health 0}}{{ item.system.cost.health }}hl, {{/ifGreater}}
+                         {{#ifGreater item.system.cost.stunt 0}}{{ item.system.cost.stunt }}s, {{/ifGreater}}{{#ifGreater item.system.cost.power 0}}{{ item.system.cost.power }}p{{/ifGreater}}
+                    </div>
+                    <div>
+                        {{{item.enritchedHTML}}}
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            {{/ifGreater}}
+        </div>
+        {{/if}}
+    </div>
+</section>

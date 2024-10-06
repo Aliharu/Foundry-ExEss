@@ -431,6 +431,16 @@
     "ExEss.NonTargetRollCards": "Non-Target Roll Cards",
     "ExEss.NonTargetRollCardsDescription": "Cards will display every time a character makes a roll.  Not just for targeted rolls.",
     
-    "ExEss.Stylings": "Stylings"
+    "ExEss.Stylings": "Stylings",
 
+    "ExEss.AttributeExcellency": "Attribute Excellency",
+    "ExEss.AbilityExcellency": "Ability Excellency",
+    "ExEss.Rerolls": "Rerolls",
+    "ExEss.Wound": "Wound",
+    "ExEss.Penalties": "Penalties",
+    "ExEss.RerollFailedDice": "Reroll Failed Dice",
+    "ExEss.RerollAllFailedOnce": "Reroll All Failed Once",
+    "ExEss.Resources": "Resources",
+    "ExEss.Modifiers": "Modifiers",
+    "ExEss.BuildingPowerFor": "Building Power For"
 }

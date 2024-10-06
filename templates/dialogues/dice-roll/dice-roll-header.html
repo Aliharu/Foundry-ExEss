@@ -1,0 +1,29 @@
+<section class="tab flex-center {{tab.cssClass}} {{hideElement}}">
+    <div class="dice-header-row">
+        {{#ifEquals data.characterType 'character'}}
+        <label class="resource-label">{{localize "ExEss.Attribute"}}</label>
+        <select name="object.attribute" value="{{data.attribute}}" data-type="String">
+            {{selectOptions selects.attributes selected=data.attribute localize=true}}
+        </select>
+        <label class="resource-label">{{localize "ExEss.Ability"}}</label>
+        <select name="object.ability" value="{{data.ability}}" data-type="String">
+            {{selectOptions selects.abilities selected=data.ability localize=true}}
+        </select>
+        {{else}}
+        <label class="resource-label">{{localize "ExEss.Pool"}}</label>
+        <select name="object.pool" value="{{data.pool}}" data-type="String">
+            {{selectOptions selects.pools selected=data.pool localize=true}}
+        </select>
+        {{/ifEquals}}
+    </div>
+    {{#ifEquals data.rollType 'buildPower'}}
+    <div class="dice-header-row">
+        <div class="resource-label">
+            {{localize "ExEss.BuildingPowerFor"}}:
+        </div>
+        <select name="object.buildPowerTarget" value="{{data.buildPowerTarget}}" data-type="String">
+            {{selectOptions selects.buildPowerTypes selected=data.buildPowerTarget localize=true}}
+        </select>
+    </div>
+    {{/ifEquals}}
+</section>

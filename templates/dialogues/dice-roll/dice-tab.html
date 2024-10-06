@@ -1,0 +1,116 @@
+<section class="tab flex-center {{tab.cssClass}} {{hideElement}}" data-group="primary" data-tab="dice">
+    <div class="resource grid grid-4col">
+        {{#ifEquals data.rollType 'base'}}
+        <div>
+            <label class="resource-label">{{localize "ExEss.Dice"}}</label>
+            <input name="object.dice" value="{{data.dice}}" type="number">
+        </div>
+        {{/ifEquals}}
+        <div>
+            <label class="resource-label">{{localize "ExEss.TargetNumber"}}</label>
+            <input name="object.targetNumber" value="{{data.targetNumber}}" type="number">
+        </div>
+        <div>
+            <label class="resource-label">{{localize "ExEss.DoubleSuccess"}}</label>
+            <input name="object.doubleSuccess" value="{{data.doubleSuccess}}" type="number">
+        </div>
+        <div>
+            <label class="resource-label">{{localize "ExEss.SuccessModifier"}} </label>
+            <input name="object.successModifier" value="{{data.successModifier}}" type="number">
+        </div>
+        {{#ifNotEquals data.rollType 'base'}}
+        <div>
+            <label class="resource-label">{{localize "ExEss.Dice"}}</label>
+            <input name="object.diceModifier" value="{{data.diceModifier}}" type="number">
+        </div>
+        {{/ifNotEquals}}
+        {{#ifNotEquals data.rollType 'base'}}
+        <div>
+            <div class="resource-label">{{localize "ExEss.Stunt"}}</div>
+            <input type="checkbox" name="object.stunt" {{checked data.stunt}}>
+        </div>
+        <div>
+            <div class="resource-label">{{localize "ExEss.AttributeExcellency"}}</div>
+            <input class="excellency-check" type="checkbox" name="object.attributeExcellency" {{checked
+                data.attributeExcellency}}>
+        </div>
+        <div>
+            <div class="resource-label">{{localize "ExEss.AbilityExcellency"}}</div>
+            <input class="excellency-check" type="checkbox" name="object.abilityExcellency" {{checked
+                data.abilityExcellency}}>
+        </div>
+        <div></div>
+        {{#ifEquals actor.system.details.exalt 'dragonblooded'}}
+        <div>
+            <div class="resource-label">{{localize "ExEss.ActivateAura"}}</div>
+            <select name="object.activateAura" data-type="String">
+                {{selectOptions selects.elements selected=data.activateAura localize=true}}
+            </select>
+        </div>
+        {{/ifEquals}}
+        {{/ifNotEquals}}
+    </div>
+    <div class="resource grid grid-2col">
+        <div>
+            <div class="resource separator">
+                <label class="resource-label">{{localize "ExEss.Rerolls"}}</label>
+            </div>
+            <div class="resource d-flex flex-center">
+                {{#each data.reroll as |reroll key|}}
+                <div>
+                    <div>{{reroll.number}}</div>
+                    <input name="object.reroll.{{key}}.status" type="checkbox" {{checked reroll.status}}>
+                </div>
+                {{/each}}
+            </div>
+            <div class="resource grid grid-2col">
+                <div>
+                    <label class="resource-label">{{localize "ExEss.RerollFailedDice"}}</label>
+                    <input name="object.rerollNumber" value="{{data.rerollNumber}}" type="number">
+                </div>
+                <div>
+                    <label class="resource-label">{{localize "ExEss.DicetoSuccesses"}} </label>
+                    <input type="number" name="object.diceToSuccesses" value="{{data.diceToSuccesses}}">
+                </div>
+                <div>
+                    <div class="resource-label">{{localize "ExEss.RerollAllFailedOnce"}}</div>
+                    <input type="checkbox" name="object.rerollFailed" {{checked data.rerollFailed}}>
+                </div>
+                <div>
+                    <div class="resource-label">{{localize "ExEss.RollTwiceKeepHighest"}}</div>
+                    <input type="checkbox" name="object.rollTwice" {{checked data.rollTwice}}>
+                </div>
+            </div>
+        </div>
+        {{#ifNotEquals data.rollType 'base'}}
+        <div>
+            <div class="resource separator">
+                <label class="resource-label">{{localize "ExEss.Penalties"}}</label>
+            </div>
+            <div class="resource grid grid-3col">
+                <div class="d-flex flex-center gap">
+                    <label class="resource-label">{{localize "ExEss.Wound"}}</label>
+                    <input type="checkbox" name="object.woundPenalty" {{checked data.woundPenalty}}>
+                </div>
+                <div class="d-flex flex-center gap">
+                    <label class="resource-label">{{localize "ExEss.Flurry"}}</label>
+                    <input type="checkbox" name="object.isFlurry" {{checked data.isFlurry}}>
+                </div>
+                <div class="d-flex flex-center gap">
+                    <div class="resource-label">{{localize "ExEss.Armor"}}</div>
+                    <input type="checkbox" name="object.armorPenalty" {{checked data.armorPenalty}}>
+                </div>
+            </div>
+            <div class="roller-item-list">
+                {{#each penalties as |item id|}}
+                <div class="item roller-item">
+                    <div class="item-text">
+                        <div class="bonus-name">{{localize item.name}}</div> {{item.summary}}
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        {{/ifNotEquals}}
+    </div>
+</section>

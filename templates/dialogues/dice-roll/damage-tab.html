@@ -1,0 +1,108 @@
+<section class="tab flex-center {{tab.cssClass}} {{hideElement}}" data-group="primary" data-tab="damage">
+    <div>
+        <div class="resource grid grid-4col flex-center">
+        {{#ifEquals data.rollType 'decisive'}}
+            <div>
+                <label class="resource-label">{{localize "ExEss.TargetNumber"}} </label>
+                <input name="object.damage.targetNumber" value="{{data.damage.targetNumber}}" type="number">
+            </div>
+            <div>
+                <label class="resource-label">{{localize "ExEss.DoubleSuccess"}} </label>
+                <input name="object.damage.doubleSuccess" value="{{data.damage.doubleSuccess}}" type="number">
+            </div>
+            <div>
+                <label class="resource-label">{{localize "ExEss.DamageDice"}}</label>
+                <input name="object.damage.damageDice" value="{{data.damage.damageDice}}" type="number">
+            </div>
+            <div>
+                <label class="resource-label">{{localize "ExEss.DamageSuccesses"}} </label>
+                <input name="object.damage.damageSuccessModifier" value="{{data.damage.damageSuccessModifier}}"
+                    type="number">
+            </div>
+        {{/ifEquals}}
+        </div>
+        <div class="resource grid grid-2col">
+            <div>
+                <div class="resource separator">
+                    <label class="resource-label">{{localize "ExEss.Target"}}</label>
+                </div>
+                <div class="resource grid grid-2col">
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Successes"}}</label>
+                        <input name="object.accuracyResult" value="{{data.accuracyResult}}" type="number">
+                    </div>
+                    {{#ifEquals data.rollType 'gambit'}}
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.PowerSpent"}}</label>
+                        <input name="object.powerSpent" value="{{data.powerSpent}}" type="number">
+                    </div>
+                    {{/ifEquals}}
+                    {{#ifEquals data.rollType 'decisive'}}
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Power"}}</label>
+                        <input name="object.power" value="{{data.power}}" type="number">
+                    </div>
+                    {{/ifEquals}}
+                    {{#ifEquals data.rollType 'withering'}}
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Overwhelming"}}</label>
+                        <input name="object.overwhelming" value="{{data.overwhelming}}" type="number">
+                    </div>
+                    <div class="resource flex-center mb-2">
+                        <label class="resource-label">{{localize "ExEss.BonusPower"}}</label>
+                        <input name="object.bonusPower" value="{{data.bonusPower}}" type="number">
+                    </div>
+                    {{/ifEquals}}
+                    <div>
+                        <div class="flex-center resource-label">
+                            {{localize "ExEss.Defense"}}
+                        </div>
+                        <input name="object.defense" value="{{data.defense}}" type="number">
+                    </div>
+                    {{#ifEquals data.rollType 'decisive'}}
+                    <div>
+                        <div class="flex-center resource-label">
+                            {{localize "ExEss.Soak"}}
+                        </div>
+                        <input name="object.soak" value="{{data.soak}}" type="number">
+                    </div>
+                    {{/ifEquals}}
+                </div>
+            </div>
+            <div>
+                <div class="resource separator">
+                    <label class="resource-label">{{localize "ExEss.OtherModifiers"}}</label>
+                </div>
+                <div class="resource grid grid-2col">
+                    {{#ifEquals data.rollType 'gambit'}}
+                    <div class="resource grid grid-2col flex-center">
+                        <div class="resource-label">{{localize "ExEss.Gambit"}}</div>
+                        <select id="gambit" name="object.gambit" data-type="String">
+                            {{selectOptions selects.gambits selected=data.gambit localize=true}}
+                        </select>
+                    </div>
+                    {{/ifEquals}}
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.DoubleExtraSuccesses"}}</label>
+                        <input name="object.damage.doubleExtraSuccess" type="checkbox" {{checked
+                            data.damage.doubleExtraSuccess}}>
+                    </div>
+                    {{#ifEquals data.rollType 'decisive'}}
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.DamageType"}}</label>
+                        <select name="object.damage.type" value="{{data.damage.type}}" data-type="String">
+                            {{selectOptions selects.damageTypes selected=data.damage.type localize=true}}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="flex-center resource-label">
+                            {{localize "ExEss.IgnoreSoak"}}
+                        </label>
+                        <input name="object.damage.ignoreSoak" value="{{data.damage.ignoreSoak}}" type="number">
+                    </div>
+                    {{/ifEquals}}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

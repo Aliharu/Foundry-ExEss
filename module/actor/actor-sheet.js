@@ -241,7 +241,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         label: game.i18n.localize('ExEss.Roll'),
         class: 'roll-dice',
         icon: 'fas fa-dice-d10',
-        onclick: () => new RollForm(this.actor, {}, {}, { rollType: 'base' }).render(true),
+        onclick: () => this.actor.actionRoll({ rollType: 'base' }),
       };
       buttons = [rollButton, ...buttons];
     }
@@ -333,36 +333,38 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     });
 
     html.find('#rollDice').mousedown(ev => {
-      new RollForm(this.actor, { event: ev }, {}, { rollType: 'base' }).render(true);
+      this.actor.actionRoll({ rollType: 'base' });
     });
 
     html.find('.rollAbility').mousedown(ev => {
-      new RollForm(this.actor, { event: ev }, {}, { rollType: 'ability' }).render(true);
+      this.actor.actionRoll({ rollType: 'ability' });
     });
 
     html.find('.roll-ability').mousedown(ev => {
       var ability = $(ev.target).attr("data-ability");
-      new RollForm(this.actor, { event: ev }, {}, { rollType: 'ability', ability: ability }).render(true);
+      this.actor.actionRoll({ rollType: 'ability', ability: ability });
     });
 
     html.find('.roll-pool').mousedown(ev => {
       var pool = $(ev.target).attr("data-pool");
-      new RollForm(this.actor, { event: ev }, {}, { rollType: 'ability', pool: pool }).render(true);
+      this.actor.actionRoll({ rollType: 'ability', pool: pool });
     });
 
     html.find('#buildPower').mousedown(ev => {
       // buildResource(this.actor, 'power');
-      new RollForm(this.actor, { event: ev }, {}, { rollType: 'buildPower' }).render(true);
+      this.actor.actionRoll({ rollType: 'buildPower' });
     });
 
     html.find('#focusWill').mousedown(ev => {
       // buildResource(this.actor, 'will');
-      new RollForm(this.actor, { event: ev }, {}, { rollType: 'focusWill', 'ability': 'sagacity' }).render(true);
+
+      this.actor.actionRoll({ rollType: 'focusWill', 'ability': 'sagacity' });
+
     });
 
     html.find('#socialInfluence').mousedown(ev => {
       // socialInfluence(this.actor);
-      game.rollForm = new RollForm(this.actor, { event: ev }, {}, { rollType: 'social', 'ability': 'embassy' }).render(true);
+      this.actor.actionRoll({ rollType: 'social', 'ability': 'embassy' });
     });
 
     html.find('.set-pool-flowing').mousedown(ev => {
@@ -378,14 +380,17 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     html.find('.weapon-roll').click(ev => {
       let item = this.actor.items.get($(ev.target).attr("data-item-id"));
       let rollType = $(ev.target).attr("data-roll-type");
-      game.rollForm = new RollForm(this.actor, { event: ev }, {}, { rollType: rollType, weapon: item.system }).render(true);
+      this.actor.actionRoll({ rollType: rollType, weapon: item.system });
+
     });
 
     html.find('.weapon-icon').click(ev => {
       ev.stopPropagation();
       let item = this.actor.items.get($(ev.target.parentElement).attr("data-item-id"));
       let rollType = $(ev.target.parentElement).attr("data-roll-type");
-      game.rollForm = new RollForm(this.actor, { event: ev }, {}, { rollType: rollType, weapon: item.system }).render(true);
+
+      this.actor.actionRoll({ rollType: rollType, weapon: item.system });
+
     });
 
     html.find('.collapsable').click(ev => {
@@ -424,7 +429,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     html.find('.saved-roll').click(ev => {
       let li = $(event.currentTarget).parents(".item");
-      new RollForm(this.actor, { event: ev }, {}, { rollId: li.data("item-id") }).render(true);
+      this.actor.actionRoll({ rollId: li.data("item-id") });
     });
 
     html.find('.delete-saved-roll').click(async ev => {
