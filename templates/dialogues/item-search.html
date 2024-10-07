@@ -68,6 +68,12 @@
           {{selectOptions selects.sorceryCircles selected=filters.attribute.circle localize=true blank=""}}
         </select>
       </div>
+      <div>
+        <label class="resource-label">{{localize "ExEss.Type"}}</label>
+        <select class="charm-filter" name="filters.attribute.spellType" data-type="String" data-filter="spellType">
+          {{selectOptions selects.spellTypes selected=filters.attribute.spellType localize=true blank=""}}
+        </select>
+      </div>
     </div>
     {{/if}}
     {{#if filters.type.weapon.value}}

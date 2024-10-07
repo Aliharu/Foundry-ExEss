@@ -8,15 +8,16 @@ export default class ItemSearch extends HandlebarsApplicationMixin(ApplicationV2
       type: {
         "armor": { display: "Armor", value: false },
         "charm": { display: "Charm", value: true },
-        "ritual": { display: "Ritual", value: false },
+        "item": { display: "Item", value: false },
         "merit": { display: "Merit", value: false },
+        "ritual": { display: "Ritual", value: false },
         "spell": { display: "Spell", value: false },
         "weapon": { display: "Weapon", value: false },
       },
       attribute: {
         name: "",
         description: "",
-        worldItems: true,
+        worldItems: false,
         ability: "",
         requirement: {
           min: "0",
@@ -27,6 +28,7 @@ export default class ItemSearch extends HandlebarsApplicationMixin(ApplicationV2
           max: "10",
         },
         circle: "",
+        spellType: "",
         ritualType: "",
         weaponWeight: "",
         weaponArtifactType: "",
@@ -184,6 +186,11 @@ export default class ItemSearch extends HandlebarsApplicationMixin(ApplicationV2
           case 'circle':
             if (this.filters.attribute.circle) {
               filteredItems = filteredItems.filter((i) => i.type !== 'spell' || i.system.circle === this.filters.attribute.circle)
+            }
+            break;
+          case 'spellType':
+            if (this.filters.attribute.spellType) {
+              filteredItems = filteredItems.filter((i) => i.type !== 'spell' || i.system.spelltype === this.filters.attribute.spellType)
             }
             break;
           case 'itemType':
