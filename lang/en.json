@@ -354,6 +354,12 @@
     "ExEss.Close": "Close",
     "ExEss.Delete": "Delete",
     "ExEss.Tags": "Tags",
+
+    "ExEss.Balanced": "Balanced",
+    "ExEss.Paired": "Paired",
+    "ExEss.Improvised": "Improvised",
+    "ExEss.TwoHanded": "Two-Handed",
+
     "ExEss.ReadMe": "Read Me",
     "ExEss.SaveRoll": "Save Roll",
     "ExEss.PickColor": "Pick Color",
@@ -366,6 +372,9 @@
     "ExEss.EffectTriggers": "Effect Triggers",
     "ExEss.DefensePenalty": "Defense Penalty",
     "ExEss.OnslaughtPenalty": "Onslaught Penalty",
+    "ExEss.Onslaught": "Onslaught",
+
+    "ExEss.WeaponTags": "Weapon Tags",
 
     "ExEss.DamageType": "Damage Type",
     "ExEss.AutoDecisiveDamage": "Auto Decisive Damage",

@@ -17,8 +17,7 @@ export class ExaltedessenceActor extends Actor {
     const actorData = this;
     // Make separate methods for each Actor type (character, npc, etc.) to keep
     // things organized.
-    if (this.type === 'character') this._prepareCharacterData(actorData);
-    if (this.type === 'npc') this._prepareNpcData(actorData);
+    this._prepareCharacterData(actorData);
   }
 
   prepareDerivedData() {
@@ -33,25 +32,37 @@ export class ExaltedessenceActor extends Actor {
   _prepareCharacterData(actorData) {
     // Make modifications to data here. For example:
     const data = actorData.system;
-    let totalHealth = 0;
-    let currentPenalty = 0;
-    data.motes.max = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
-    for (let [key, health_level] of Object.entries(data.health.levels)) {
-      if ((data.health.lethal + data.health.aggravated) > totalHealth) {
-        currentPenalty = health_level.penalty;
+
+    if (this.type === 'npc') {
+      let currentPenalty = 0;
+      if (data.health.levels > 1 && ((data.health.lethal + data.health.aggravated) >= Math.floor(data.health.levels / 2))) {
+        currentPenalty = 2;
       }
-      totalHealth += health_level.value;
+      data.health.value = data.health.max - data.health.aggravated - data.health.lethal;
+      data.health.penalty = currentPenalty;
     }
-    data.health.max = totalHealth;
-    if (data.health.aggravated + data.health.lethal > data.health.max) {
-      data.health.aggravated = data.health.max - data.health.lethal
-      if (data.health.aggravated <= 0) {
-        data.health.aggravated = 0
-        data.health.lethal = data.health.max
+    if(this.type === 'character') {
+      let totalHealth = 0;
+      let currentPenalty = 0;
+      data.motes.max = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
+      for (let [key, health_level] of Object.entries(data.health.levels)) {
+        if ((data.health.lethal + data.health.aggravated) > totalHealth) {
+          currentPenalty = health_level.penalty;
+        }
+        totalHealth += health_level.value;
       }
+      data.health.max = totalHealth;
+      if (data.health.aggravated + data.health.lethal > data.health.max) {
+        data.health.aggravated = data.health.max - data.health.lethal
+        if (data.health.aggravated <= 0) {
+          data.health.aggravated = 0
+          data.health.lethal = data.health.max
+        }
+      }
+      data.health.value = data.health.max - data.health.aggravated - data.health.lethal;
+      data.health.penalty = currentPenalty;
     }
-    data.health.value = data.health.max - data.health.aggravated - data.health.lethal;
-    data.health.penalty = currentPenalty;
+
 
     const gear = [];
     const weapons = [];
@@ -145,16 +156,6 @@ export class ExaltedessenceActor extends Actor {
     actorData.spells = spells;
   }
 
-  _prepareNpcData(actorData) {
-    const data = actorData.system;
-    let currentPenalty = 0;
-    if (data.health.levels > 1 && ((data.health.lethal + data.health.aggravated) >= Math.floor(data.health.levels / 2))) {
-      currentPenalty = 2;
-    }
-    data.health.value = data.health.max - data.health.aggravated - data.health.lethal;
-    data.health.penalty = currentPenalty;
-  }
-
   async _preUpdate(updateData, options, user) {
     await super._preUpdate(updateData, options, user);
     if (updateData?.system?.motes?.committed !== undefined && updateData?.system?.motes?.committed !== this.system.motes.committed && this.system.details.exalt !== 'getimian') {
@@ -212,7 +213,7 @@ export class ExaltedessenceActor extends Actor {
   }
 
   async actionRoll(data) {
-    game.rollForm = await new RollForm2(this, {classes: [" exaltedessence exaltedessence-dialog dice-roller", this.getSheetBackground()]}, {}, data).render(true);
+    game.rollForm = await new RollForm2(this, { classes: [" exaltedessence exaltedessence-dialog dice-roller", this.getSheetBackground()] }, {}, data).render(true);
   }
 
 }
@@ -269,187 +270,187 @@ async function animaTokenMagic(actor, newAnimaValue) {
   const tokenId = actor.token?.id || actor.getActiveTokens()[0]?.id;
   const actorToken = canvas.tokens.placeables.filter(x => x.id === tokenId)[0];
   if (game.settings.get("exaltedessence", "animaTokenMagic") && actorToken && (actor.type === 'character' || actor.system.creaturetype === 'exalt')) {
-      let effectColor = Number(`0x${actor.system.details.animacolor.replace('#', '')}`);
-      let sovereign =
-          [{
-              filterType: "xfire",
-              filterId: "myChromaticXFire",
-              time: 0,
-              blend: 2,
-              amplitude: 1.1,
-              dispersion: 0,
-              chromatic: true,
-              scaleX: 1,
-              scaleY: 1,
-              inlay: false,
-              animated:
-              {
-                  time:
-                  {
-                      active: true,
-                      speed: -0.0015,
-                      animType: "move"
-                  }
-              }
-          }];
-
-      let glowing =
-          [{
-              filterType: "glow",
-              filterId: "superSpookyGlow",
-              outerStrength: 4,
-              innerStrength: 0,
-              color: effectColor,
-              quality: 0.5,
-              padding: 10,
-              animated:
-              {
-                  color:
-                  {
-                      active: true,
-                      loopDuration: 3000,
-                      animType: "colorOscillation",
-                      val1: 0xFFFFFF,
-                      val2: effectColor
-                  }
-              }
-          }];
-      let burning =
-          [
-              {
-                  filterType: "zapshadow",
-                  filterId: "myPureFireShadow",
-                  alphaTolerance: 0.50
-              },
-              {
-                  filterType: "xglow",
-                  filterId: "myPureFireAura",
-                  auraType: 2,
-                  color: effectColor,
-                  thickness: 9.8,
-                  scale: 4.,
-                  time: 0,
-                  auraIntensity: 2,
-                  subAuraIntensity: 1.5,
-                  threshold: 0.40,
-                  discard: true,
-                  animated:
-                  {
-                      time:
-                      {
-                          active: true,
-                          speed: 0.0027,
-                          animType: "move"
-                      },
-                      thickness:
-                      {
-                          active: true,
-                          loopDuration: 3000,
-                          animType: "cosOscillation",
-                          val1: 2,
-                          val2: 5
-                      }
-                  }
-              }];
-
-      let bonfire =
-          [{
-              filterType: "zapshadow",
-              filterId: "myZap",
-              alphaTolerance: 0.45
-          }, {
-              filterType: "field",
-              filterId: "myLavaRing",
-              shieldType: 6,
-              gridPadding: 1.25,
-              color: effectColor,
-              time: 0,
-              blend: 14,
-              intensity: 1,
-              lightAlpha: 0,
-              lightSize: 0.7,
-              scale: 1,
-              radius: 1,
-              chromatic: false,
-              discardThreshold: 0.30,
-              hideRadius: 0.95,
-              alphaDiscard: true,
-              animated:
-              {
-                  time:
-                  {
-                      active: true,
-                      speed: 0.0015,
-                      animType: "move"
-                  },
-                  radius:
-                  {
-                      active: true,
-                      loopDuration: 6000,
-                      animType: "cosOscillation",
-                      val1: 1,
-                      val2: 0.8
-                  },
-                  hideRadius:
-                  {
-                      active: true,
-                      loopDuration: 3000,
-                      animType: "cosOscillation",
-                      val1: 0.75,
-                      val2: 0.4
-                  }
-              }
-          }, {
-              filterType: "xglow",
-              filterId: "myBurningAura",
-              auraType: 2,
-              color: effectColor,
-              thickness: 9.8,
-              scale: 1.,
-              time: 0,
-              auraIntensity: 2,
-              subAuraIntensity: 1,
-              threshold: 0.30,
-              discard: true,
-              zOrder: 3000,
-              animated:
-              {
-                  time:
-                  {
-                      active: true,
-                      speed: 0.0027,
-                      animType: "move"
-                  },
-                  thickness:
-                  {
-                      active: true,
-                      loopDuration: 600,
-                      animType: "cosOscillation",
-                      val1: 4,
-                      val2: 8
-                  }
-              }
-          }];
-
-      if (actorToken) {
-          await TokenMagic.deleteFilters(actorToken);
-          if (newAnimaValue > 2) {
-              if (newAnimaValue >= 7) {
-                  await TokenMagic.addUpdateFilters(actorToken, bonfire);
-                  if (actorToken.actor.system.details.caste.toLowerCase() === "sovereign") {
-                      await TokenMagic.addUpdateFilters(actorToken, sovereign);
-                  }
-              }
-              else if (newAnimaValue >= 5) {
-                  await TokenMagic.addUpdateFilters(actorToken, burning);
-                  if (actorToken.actor.system.details.caste.toLowerCase() === "sovereign") {
-                      await TokenMagic.addUpdateFilters(actorToken, sovereign);
-                  }
-              }
-              else {
-                await TokenMagic.addUpdateFilters(actorToken, glowing);
-              }
+    let effectColor = Number(`0x${actor.system.details.animacolor.replace('#', '')}`);
+    let sovereign =
+      [{
+        filterType: "xfire",
+        filterId: "myChromaticXFire",
+        time: 0,
+        blend: 2,
+        amplitude: 1.1,
+        dispersion: 0,
+        chromatic: true,
+        scaleX: 1,
+        scaleY: 1,
+        inlay: false,
+        animated:
+        {
+          time:
+          {
+            active: true,
+            speed: -0.0015,
+            animType: "move"
           }
+        }
+      }];
+
+    let glowing =
+      [{
+        filterType: "glow",
+        filterId: "superSpookyGlow",
+        outerStrength: 4,
+        innerStrength: 0,
+        color: effectColor,
+        quality: 0.5,
+        padding: 10,
+        animated:
+        {
+          color:
+          {
+            active: true,
+            loopDuration: 3000,
+            animType: "colorOscillation",
+            val1: 0xFFFFFF,
+            val2: effectColor
+          }
+        }
+      }];
+    let burning =
+      [
+        {
+          filterType: "zapshadow",
+          filterId: "myPureFireShadow",
+          alphaTolerance: 0.50
+        },
+        {
+          filterType: "xglow",
+          filterId: "myPureFireAura",
+          auraType: 2,
+          color: effectColor,
+          thickness: 9.8,
+          scale: 4.,
+          time: 0,
+          auraIntensity: 2,
+          subAuraIntensity: 1.5,
+          threshold: 0.40,
+          discard: true,
+          animated:
+          {
+            time:
+            {
+              active: true,
+              speed: 0.0027,
+              animType: "move"
+            },
+            thickness:
+            {
+              active: true,
+              loopDuration: 3000,
+              animType: "cosOscillation",
+              val1: 2,
+              val2: 5
+            }
+          }
+        }];
+
+    let bonfire =
+      [{
+        filterType: "zapshadow",
+        filterId: "myZap",
+        alphaTolerance: 0.45
+      }, {
+        filterType: "field",
+        filterId: "myLavaRing",
+        shieldType: 6,
+        gridPadding: 1.25,
+        color: effectColor,
+        time: 0,
+        blend: 14,
+        intensity: 1,
+        lightAlpha: 0,
+        lightSize: 0.7,
+        scale: 1,
+        radius: 1,
+        chromatic: false,
+        discardThreshold: 0.30,
+        hideRadius: 0.95,
+        alphaDiscard: true,
+        animated:
+        {
+          time:
+          {
+            active: true,
+            speed: 0.0015,
+            animType: "move"
+          },
+          radius:
+          {
+            active: true,
+            loopDuration: 6000,
+            animType: "cosOscillation",
+            val1: 1,
+            val2: 0.8
+          },
+          hideRadius:
+          {
+            active: true,
+            loopDuration: 3000,
+            animType: "cosOscillation",
+            val1: 0.75,
+            val2: 0.4
+          }
+        }
+      }, {
+        filterType: "xglow",
+        filterId: "myBurningAura",
+        auraType: 2,
+        color: effectColor,
+        thickness: 9.8,
+        scale: 1.,
+        time: 0,
+        auraIntensity: 2,
+        subAuraIntensity: 1,
+        threshold: 0.30,
+        discard: true,
+        zOrder: 3000,
+        animated:
+        {
+          time:
+          {
+            active: true,
+            speed: 0.0027,
+            animType: "move"
+          },
+          thickness:
+          {
+            active: true,
+            loopDuration: 600,
+            animType: "cosOscillation",
+            val1: 4,
+            val2: 8
+          }
+        }
+      }];
+
+    if (actorToken) {
+      await TokenMagic.deleteFilters(actorToken);
+      if (newAnimaValue > 2) {
+        if (newAnimaValue >= 7) {
+          await TokenMagic.addUpdateFilters(actorToken, bonfire);
+          if (actorToken.actor.system.details.caste.toLowerCase() === "sovereign") {
+            await TokenMagic.addUpdateFilters(actorToken, sovereign);
+          }
+        }
+        else if (newAnimaValue >= 5) {
+          await TokenMagic.addUpdateFilters(actorToken, burning);
+          if (actorToken.actor.system.details.caste.toLowerCase() === "sovereign") {
+            await TokenMagic.addUpdateFilters(actorToken, sovereign);
+          }
+        }
+        else {
+          await TokenMagic.addUpdateFilters(actorToken, glowing);
+        }
       }
+    }
   }
 }

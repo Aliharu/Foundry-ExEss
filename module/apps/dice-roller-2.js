@@ -31,7 +31,7 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
                 this.object.buildPowerTarget = 'self';
 
                 this.object.gain = {
-                    motes: 0, 
+                    motes: 0,
                     anima: 0,
                     health: 0,
                     power: 0
@@ -137,7 +137,7 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
             this.object.addstatuses = [];
 
             if (data.weapon) {
-                this.object.weaponTags = data.weapon.traits.weapontags.selected;
+                this.object.weaponTags = data.weapon.traits?.weapontags?.selected || {};
                 var weaponAccuracy = data.weapon.accuracy || 0;
                 this.object.damage.damageSuccessModifier = data.weapon.damage || 0;
                 this.object.overwhelming = data.weapon.overwhelming || 0;
@@ -243,7 +243,7 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
             this.object.opposingCharms = [];
             if (this.object.charmList === undefined) {
                 this.object.charmList = this.actor.charms;
-                if(this.object.charmList) {
+                if (this.object.charmList) {
                     for (var charmlist of Object.values(this.object.charmList)) {
                         for (const charm of charmlist.list) {
                             this.getEnritchedHTML(charm);
@@ -434,18 +434,18 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
             this._checkAttributeBonuses();
             this._checkExcellencyBonuses();
 
-            if(excellencyTrue) {
+            if (excellencyTrue) {
                 this.object.cost.motes++;
             }
 
-            if(excellencyFalse) {
+            if (excellencyFalse) {
                 this.object.cost.motes--;
             }
         }
 
         if (event.type === 'submit') {
-            if(this._isAttackRoll()) {
-                if(this.object.showDamage) {
+            if (this._isAttackRoll()) {
+                if (this.object.showDamage) {
                     await this._damageRoll();
                     this.close();
                 } else {
@@ -560,7 +560,7 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
                 cssClass: this.tabGroups['primary'] === 'damage' ? 'active' : '',
             });
         }
-        if(this.object.rollType === 'social') {
+        if (this.object.rollType === 'social') {
             tabs.push({
                 id: "targets",
                 group: "primary",
@@ -582,47 +582,186 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
         });
 
         const penalties = [];
-        const triggers = [];
-        const effectsAndTags = [];
+        const effects = [];
+        const weaponTags = [];
 
-        // if(this.actor) {
-        //     for (const condition of this.actor.allApplicableEffects()) {
-        //     if (condition.statuses.has('prone')) {
-        //         penalties.push(
-        //             {
-        //                 img: "icons/svg/falling.svg",
-        //                 name: "ExEss.Prone",
-        //                 summary: "-3 dice on attacks"
-        //             },
-        //         );
-        //     }
-        //     else if (condition.statuses.has('grappled')) {
-        //         penalties.push(
-        //             {
-        //                 img: "systems/exaltedthird/assets/icons/grab.svg",
-        //                 name: "ExEss.Grappled",
-        //                 summary: "-1 dice on attacks"
-        //             },
-        //         );
-        //     } else {
-        //         effectsAndTags.push(
-        //             {
-        //                 img: condition.img,
-        //                 name: condition.name,
-        //             },
-        //         );
-        //     }
-        //     }
-        // }
+        if (this.actor) {
+            for (const condition of this.actor.allApplicableEffects()) {
+                if (condition.statuses.has('prone')) {
+                    penalties.push(
+                        {
+                            img: "icons/svg/falling.svg",
+                            name: "ExEss.Prone",
+                            summary: "-3 dice on attacks"
+                        },
+                    );
+                } else {
+                    effects.push(
+                        {
+                            img: condition.img,
+                            name: condition.name,
+                        },
+                    );
+                }
+            }
+            if (this.object.target?.actor.effects) {
+                if (this.object.target.actor.effects.some(e => e.name === 'concealment')) {
+                    penalties.push(
+                        {
+                            name: "Target has Concealment",
+                            summary: "-2 dice on attack"
+                        },
+                    );
+                }
+                if (this.object.target.actor.effects.some(e => e.name === 'prone')) {
+                    effects.push(
+                        {
+                            name: "Target is prone",
+                            summary: "-2 Defense"
+                        },
+                    );
+                }
+                if (this.object.target.actor.effects.some(e => e.name === 'surprised')) {
+                    effects.push(
+                        {
+                            name: "Target is Surprised",
+                            summary: "-1 Defense"
+                        },
+                    );
+                }
+                if (this.object.target.actor.effects.some(e => e.name === 'lightcover')) {
+                    if (this.object.weaponType !== 'melee') {
+                        penalties.push(
+                            {
+                                name: "Target has light cover",
+                                summary: "+1 Defense"
+                            },
+                        );
+                    }
+                }
+                if (this.object.target.actor.effects.some(e => e.name === 'heavycover')) {
+                    if (this.object.weaponType !== 'melee') {
+                        penalties.push(
+                            {
+                                name: "Target has heavy cover",
+                                summary: "+2 Defense"
+                            },
+                        );
+                    }
+                }
+            }
+        }
 
-        // if (this.object.isFlurry) {
-        //     penalties.push(
-        //         {
-        //             name: "ExEss.Flurry",
-        //             summary: "-3 Dice"
-        //         },
-        //     )
-        // }
+        if(this.object.rollType !== 'base') {
+            if (this.object.isFlurry) {
+                penalties.push(
+                    {
+                        name: "ExEss.Flurry",
+                        summary: "-3 Dice"
+                    },
+                );
+            }
+    
+            if (this.object.woundPenalty) {
+                penalties.push(
+                    {
+                        name: "ExEss.WoundPenalty",
+                        summary: `${this.actor.system.health.penalty * -1} Dice`
+                    },
+                );
+            }
+            if (this.object.getimianflow) {
+                effects.push(
+                    {
+                        name: "Getimian Flow Bonus",
+                        summary: "+1 Success"
+                    },
+                );
+            }
+    
+            if (this.actor?.type === 'character' && this.object.augmentattribute) {
+                if (this.actor.system.attributes[this.object.attribute].value < 5) {
+                    effects.push(
+                        {
+                            name: "Augment Attribute",
+                            summary: "+ 1 Dice"
+                        },
+                    );
+                }
+                if (this.actor.system.essence.value > 1) {
+                    effects.push(
+                        {
+                            name: "Augment Attribute",
+                            summary: "Double 9s"
+                        },
+                    );
+                }
+            }
+    
+            if (this.object.armorPenalty) {
+                let armorPenaltyDice = 0
+                for (let armor of this.actor.armor) {
+                    if (armor.system.equipped) {
+                        armorPenaltyDice -= Math.abs(armor.system.penalty);
+                    }
+                }
+                penalties.push(
+                    {
+                        name: "ExEss.ArmorPenalty",
+                        summary: `${armorPenaltyDice} Dice`
+                    },
+                );
+            }
+    
+            if (this.object.weaponTags) {
+                if (this.object.rollType === 'decisive') {
+                    if (this.object.weaponTags['twohanded']) {
+                        weaponTags.push(
+                            {
+                                name: "ExEss.TwoHanded",
+                                summary: `+1 Damage`
+                            },
+                        );
+                    }
+                }
+                if (this.object.rollType === 'withering') {
+                    if (this.object.weaponTags['balanced']) {
+                        weaponTags.push(
+                            {
+                                name: "ExEss.Balanced",
+                                summary: `+1 Overwhelming `
+                            },
+                        );
+                    }
+                    if (this.object.weaponTags['paired']) {
+                        weaponTags.push(
+                            {
+                                name: "ExEss.Paired",
+                                summary: `+1 Power Gained`
+                            },
+                        );
+                    }
+                }
+                if (this.object.rollType === 'gambit') {
+                    if (this.object.weaponTags['balanced']) {
+                        weaponTags.push(
+                            {
+                                name: "ExEss.Balanced",
+                                summary: `+1 Dice`
+                            },
+                        );
+                    }
+                }
+                if (this.object.weaponTags['improvised']) {
+                    weaponTags.push(
+                        {
+                            name: "ExEss.Improvised",
+                            summary: `-2 Weapon Accuracy`
+                        },
+                    );
+                }
+            }
+        }
 
         return {
             actor: this.actor,
@@ -632,8 +771,8 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
             tabs: tabs,
             isAttackRoll: this._isAttackRoll(),
             penalties: penalties,
-            triggers: triggers,
-            effectsAndTags: effectsAndTags,
+            effects: effects,
+            weaponTags: weaponTags,
             buttons: [
                 { type: "submit", icon: "fa-solid fa-dice-d10", label: "ExEss.Roll" },
                 { action: "close", type: "button", icon: "fa-solid fa-xmark", label: "ExEss.Cancel" },
@@ -1445,8 +1584,8 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
             }
             if (this.object.armorPenalty) {
                 for (let armor of this.actor.armor) {
-                    if (armor.data.equipped) {
-                        dice = dice - Math.abs(armor.data.penalty);
+                    if (armor.system.equipped) {
+                        dice = dice - Math.abs(armor.system.penalty);
                     }
                 }
             }
@@ -1808,6 +1947,7 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
                 else {
                     changes[0].value = changes[0].value - 1;
                 }
+                changes.name = `${game.i18n.localize("ExEss.DefensePenalty")} (${changes[1].value - 1})`;
                 existingPenalty.update({ changes });
             }
             else {
@@ -1833,7 +1973,7 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
                     ];
                 }
                 this.actor.createEmbeddedDocuments('ActiveEffect', [{
-                    name: "Defense Penalty",
+                    name: `${game.i18n.localize("ExEss.DefensePenalty")} (-1)`,
                     img: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
                     origin: this.actor.uuid,
                     disabled: false,
@@ -1855,10 +1995,11 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
         const onslaught = this.object.newTargetData.effects.find(i => i.flags.exaltedessence?.statusId == "onslaught");
         if (onslaught) {
             onslaught.changes[0].value = onslaught.changes[0].value - number;
+            onslaught.name = `${game.i18n.localize("ExEss.Onslaught")} (${onslaught.changes[0].value - number})`;
         }
         else {
             this.object.newTargetData.effects.push({
-                name: 'Onslaught',
+                name: 'Onslaught (-1)',
                 img: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
                 origin: this.object.target.actor.uuid,
                 disabled: false,
@@ -1981,7 +2122,7 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
             ];
         }
         this.object.newTargetData.effects.push({
-            name: 'Defense Penalty',
+            name: `Defense Penalty (${value * -1})`,
             img: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
             origin: this.object.target.actor.uuid,
             disabled: false,

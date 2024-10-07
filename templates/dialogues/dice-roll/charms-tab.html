@@ -140,6 +140,36 @@
                 {{/each}}
             </div>
             {{/ifGreater}}
+            <div class="resource grid grid-2col">
+                <div>
+                    <div class="resource separator">
+                        <label class="resource-label">{{localize "ExEss.WeaponTags"}}</label>
+                    </div>
+                    <div class="roller-item-list">
+                        {{#each weaponTags as |tag id|}}
+                        <div class="item roller-item">
+                            <div class="item-text">
+                                <div class="bonus-name">{{localize tag.name}}</div> {{tag.summary}}
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+                <div>
+                    <div class="resource separator">
+                        <label class="resource-label">{{localize "ExEss.Effects"}}</label>
+                    </div>
+                    <div class="roller-item-list">
+                        {{#each effects as |bonus id|}}
+                        <div class="item roller-item">
+                            <div class="item-text">
+                                <div class="bonus-name">{{localize bonus.name}}</div> {{bonus.summary}}
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
         </div>
         {{/if}}
     </div>
