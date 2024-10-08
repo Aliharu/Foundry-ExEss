@@ -413,7 +413,7 @@ EXALTEDESSENCE.selects = {
     autoAddToRollOptions: {
         '': "ExEss.None",
         'action': "ExEss.CharacterRolls",
-        'opposedRolls': "ExEss.OpposedRolls",
+        // 'opposedRolls': "ExEss.OpposedRolls",
         'sameAbility': "ExEss.SameAbilityAttribute",
         'attacks': "ExEss.Attacks",
         'social': "ExEss.Social",
