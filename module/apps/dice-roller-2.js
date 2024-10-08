@@ -330,6 +330,12 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
                     this.object.defense = 0;
                 }
             }
+            for (var [ability, charmlist] of Object.entries(this.object.charmList)) {
+                for (const charm of charmlist.list.filter(charm => (charm.system.active && this._autoAddCharm(charm)) || (charm.type === 'weapon' && data.weapon?.parent?.id === charm.id))) {
+                    this.addCharm(charm);
+                }
+            }
+
             this._preChatMessage();
         }
 
@@ -962,7 +968,9 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
             this.object.gain.power += item.system.gain.power;
 
             this.object.cost.motes += item.system.cost.motes;
-            this.object.cost.committed += item.system.cost.committed;
+            if(!item.system.active) {
+                this.object.cost.committed += item.system.cost.committed;
+            }
             this.object.cost.anima += item.system.cost.anima;
             this.object.cost.health += item.system.cost.health;
             if (item.system.cost.health > 0) {
@@ -1150,7 +1158,9 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
             this.object.gain.power -= item.system.gain.power;
 
             this.object.cost.motes -= item.system.cost.motes;
-            this.object.cost.committed -= item.system.cost.committed;
+            if(!item.system.active) {
+                this.object.cost.committed -= item.system.cost.committed;
+            }
             this.object.cost.anima -= item.system.cost.anima;
             if (item.system.cost.health > 0) {
                 if (item.system.cost.healthtype === 'lethal') {
@@ -1732,6 +1742,26 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
             }
         }
         return message;
+    }
+
+    _autoAddCharm(charm) {
+        if (!charm.system.autoaddtorolls) {
+            return false;
+        }
+        switch (charm.system.autoaddtorolls) {
+            case 'action':
+                return (this.object.rollType !== 'useOpposingCharms');
+            case 'attacks':
+                return this._isAttackRoll();
+            case 'opposedRolls':
+                return (this.object.rollType === 'useOpposingCharms');
+            case 'sameAbility':
+                return (charm.type === 'charm' || charm.type === 'merit') && (charm.system.ability === this.object.ability || charm.system.ability === this.object.attribute);
+        }
+        if (this.object.rollType === charm.system.autoaddtorolls) {
+            return true;
+        }
+        return false;
     }
 
     _socialInfluence() {

@@ -41,6 +41,7 @@ export function activatableData() {
     return {
         activatable: new fields.BooleanField({ initial: false }),
         active: new fields.BooleanField({ initial: false }),
+        autoaddtorolls: new fields.StringField({ initial: "" }),
         endtrigger: new fields.StringField({ initial: "none" }),
     };
 }

@@ -465,5 +465,11 @@
     "ExEss.Modifiers": "Modifiers",
     "ExEss.Weight": "Weight",
     "ExEss.ItemTypes": "Item Types",
-    "ExEss.BuildingPowerFor": "Building Power For"
+    "ExEss.BuildingPowerFor": "Building Power For",
+
+    "ExEss.AutoAddToRolls": "Auto Add To Rolls (If Active)",
+    "ExEss.CharacterRolls": "Character Rolls",
+    "ExEss.OpposedRolls": "Opposed Rolls",
+    "ExEss.SameAbilityAttribute": "Same Ability/Attribute",
+    "ExEss.Attacks": "Attacks"
 }

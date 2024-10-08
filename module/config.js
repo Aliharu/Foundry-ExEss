@@ -410,6 +410,16 @@ EXALTEDESSENCE.selects = {
         "4": "4",
         "5": "5",
     },
+    autoAddToRollOptions: {
+        '': "ExEss.None",
+        'action': "ExEss.CharacterRolls",
+        'opposedRolls': "ExEss.OpposedRolls",
+        'sameAbility': "ExEss.SameAbilityAttribute",
+        'attacks': "ExEss.Attacks",
+        'social': "ExEss.Social",
+        'buildPower': "ExEss.BuildPower",
+        'focusWill': "ExEss.FocusWill",
+    },
     exaltCharmTypes: {
         abyssal: "ExEss.Abyssal",
         alchemical: "ExEss.Alchemical",

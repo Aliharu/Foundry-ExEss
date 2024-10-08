@@ -219,6 +219,12 @@
                         <input name="system.activatable" type="checkbox" {{checked system.activatable}}>
                     </div>
                 </div>
+                <div>
+                    <div class="resource-label">{{localize "ExEss.AutoAddToRolls"}}</div>
+                    <select name="system.autoaddtorolls" data-type="String">
+                        {{selectOptions selects.autoAddToRollOptions selected=system.autoaddtorolls localize=true}}
+                    </select>
+                </div>
             </div>
             {{> systems/exaltedessence/templates/actor/active-effects.html}}
         </div>
