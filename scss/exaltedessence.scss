@@ -395,6 +395,13 @@
   }
 }
 
+.overflow-scroll {
+  .dialog-form {
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+}
+
 .exaltedessence-dialog {
   table {
     margin: 0px;

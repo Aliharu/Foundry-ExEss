@@ -625,9 +625,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const html = await renderTemplate(template, { 'color': data.details.color, animaColor: data.details.animacolor, 'initiativeIcon': this.actor.system.details.initiativeicon, 'initiativeIconColor': this.actor.system.details.initiativeiconcolor });
 
     new foundry.applications.api.DialogV2({
-      window: { title: game.i18n.localize("ExEss.PickColor") },
+      window: { title: game.i18n.localize("ExEss.PickColor"), resizable: true },
+      position: { height: 1000, width: 406 },
       content: html,
-      classes: [this.actor.getSheetBackground()],
+      classes: [this.actor.getSheetBackground(), 'overflow-scroll'],
       buttons: [{
         action: "choice",
         label: game.i18n.localize("ExEss.Save"),

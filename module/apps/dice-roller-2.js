@@ -141,6 +141,11 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
                 var weaponAccuracy = data.weapon.accuracy || 0;
                 this.object.damage.damageSuccessModifier = data.weapon.damage || 0;
                 this.object.overwhelming = data.weapon.overwhelming || 0;
+                if (this.actor.type === 'npc') {
+                    if (this.actor.system.battlegroup) {
+                        this.object.overwhelming = Math.min(this.actor.system.size.value + 1, 5);
+                    }
+                }
                 this.object.weaponType = data.weapon.weapontype || "melee";
                 if (this.actor.type === 'character') {
                     if (this.object.weaponType === 'melee') {
@@ -658,8 +663,8 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
             }
         }
 
-        if(this.object.rollType !== 'base') {
-            if (this.object.isFlurry) {
+        if (this.object.rollType !== 'base') {
+            if (this.object.flurry) {
                 penalties.push(
                     {
                         name: "ExEss.Flurry",
@@ -667,7 +672,7 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
                     },
                 );
             }
-    
+
             if (this.object.woundPenalty) {
                 penalties.push(
                     {
@@ -684,7 +689,7 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
                     },
                 );
             }
-    
+
             if (this.actor?.type === 'character' && this.object.augmentattribute) {
                 if (this.actor.system.attributes[this.object.attribute].value < 5) {
                     effects.push(
@@ -703,7 +708,43 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
                     );
                 }
             }
-    
+
+            if (this.actor?.type === 'npc' && this.actor.system.battlegroup) {
+                if (this._isAttackRoll()) {
+                    effects.push(
+                        {
+                            name: "Drill Bonus",
+                            summary: `${this.actor.system.drill.value} Dice`,
+                        },
+                    );
+                }
+                if (this.object.rollType === 'withering') {
+                    effects.push(
+                        {
+                            name: "Overwhelming from Size",
+                            summary: Math.min(this.actor.system.size.value + 1, 5),
+                        },
+                    );
+                }
+                if (this.object.rollType === 'decisive') {
+                    effects.push(
+                        {
+                            name: "Drill Damage Bonus",
+                            summary: `${this.actor.system.drill.value} Dice`,
+                        },
+                    );
+                }
+                if (this.object.rollType === 'buildPower') {
+                    effects.push(
+                        {
+                            name: "Drill Build Power Bonus",
+                            summary: `${this.actor.system.drill.value} Successes`,
+                        },
+                    );
+                }
+
+            }
+
             if (this.object.armorPenalty) {
                 let armorPenaltyDice = 0
                 for (let armor of this.actor.armor) {
@@ -718,7 +759,7 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
                     },
                 );
             }
-    
+
             if (this.object.weaponTags) {
                 if (this.object.rollType === 'decisive') {
                     if (this.object.weaponTags['twohanded']) {
@@ -968,7 +1009,7 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
             this.object.gain.power += item.system.gain.power;
 
             this.object.cost.motes += item.system.cost.motes;
-            if(!item.system.active) {
+            if (!item.system.active) {
                 this.object.cost.committed += item.system.cost.committed;
             }
             this.object.cost.anima += item.system.cost.anima;
@@ -1158,7 +1199,7 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
             this.object.gain.power -= item.system.gain.power;
 
             this.object.cost.motes -= item.system.cost.motes;
-            if(!item.system.active) {
+            if (!item.system.active) {
                 this.object.cost.committed -= item.system.cost.committed;
             }
             this.object.cost.anima -= item.system.cost.anima;
@@ -1585,7 +1626,7 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
                     }
                 }
 
-                if (this.actor.system.battlegroup && this.object.rollType == 'attack') {
+                if (this.actor.system.battlegroup && this._isAttackRoll()) {
                     dice += this.actor.system.drill.value;
                 }
             }
@@ -1617,6 +1658,10 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
             dice = 0;
         }
         this.object.dice = dice;
+
+        if (this.object.rollType === 'buildPower' && this.actor.type === 'npc' && this.actor.system.battlegroup) {
+            this.object.successModifier += this.actor.system.drill.value;
+        }
 
         var rollModifiers = {
             successModifier: this.object.successModifier,
@@ -1672,7 +1717,7 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
         let theContent = `
               <div><div class="dice-roll">
                       <div class="dice-result">
-                          <h4 class="dice-formula">${this.object.dice} Dice + ${this.object.successModifier} successes</h4>
+                          <h4 class="dice-formula">${this.object.dice} Dice + ${this.object.successModifier} ${this.object.successModifier === 1 ? "success" : "successes"}</h4>
                           <div class="dice-tooltip">
                               <div class="dice">
                                   <ol class="dice-rolls">${this.object.displayDice}</ol>
@@ -1691,11 +1736,6 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
         var total = this.object.total - 3;
         let self = (this.object.buildPowerTarget || 'self') === 'self';
 
-        if (this.actor.type === 'npc' && this.object.rollType === 'buildPower') {
-            if (this.actor.system.battlegroup) {
-                this.object.successModifier += this.actor.system.drill.value;
-            }
-        }
         var message = '';
         if (total < 0) {
             if (this.object.rollType === 'buildPower') {
@@ -1818,12 +1858,6 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
         }
         var messageContent = '';
 
-        if (this.actor.type === 'npc') {
-            if (actorData.system.battlegroup) {
-                this.object.overwhelming = Math.min(actorData.system.size.value + 1, 5);
-            }
-        }
-
         if (postDefenseTotal < 0) {
             var overwhlemingMessage = '';
             let extraPowerMessage = ``;
@@ -1859,10 +1893,8 @@ export default class RollForm2 extends HandlebarsApplicationMixin(ApplicationV2)
             if (this.object.rollType === 'decisive') {
                 // Deal Damage
                 let damage = postDefenseTotal + this.object.power + this.object.damage.damageDice;
-                if (this.actor.type === 'npc') {
-                    if (actorData.system.battlegroup) {
-                        damage += actorData.system.drill.value;
-                    }
+                if (this.actor.type === 'npc' && actorData.system.battlegroup) {
+                    damage += actorData.system.drill.value;
                 }
                 var rollModifiers = {
                     successModifier: this.object.damage.damageSuccessModifier,
