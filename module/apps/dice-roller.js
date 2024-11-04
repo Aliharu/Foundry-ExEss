@@ -1,6 +1,9 @@
-export class RollForm extends FormApplication {
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
+export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) {
     constructor(actor, options, object, data) {
-        super(object, options);
+        super(options);
+        this.object = {};
         this.actor = actor;
 
         if (data.rollId) {
@@ -134,10 +137,15 @@ export class RollForm extends FormApplication {
             this.object.addstatuses = [];
 
             if (data.weapon) {
-                this.object.weaponTags = data.weapon.traits.weapontags.selected;
+                this.object.weaponTags = data.weapon.traits?.weapontags?.selected || {};
                 var weaponAccuracy = data.weapon.accuracy || 0;
                 this.object.damage.damageSuccessModifier = data.weapon.damage || 0;
                 this.object.overwhelming = data.weapon.overwhelming || 0;
+                if (this.actor.type === 'npc') {
+                    if (this.actor.system.battlegroup) {
+                        this.object.overwhelming = Math.min(this.actor.system.size.value + 1, 5);
+                    }
+                }
                 this.object.weaponType = data.weapon.weapontype || "melee";
                 if (this.actor.type === 'character') {
                     if (this.object.weaponType === 'melee') {
@@ -240,9 +248,11 @@ export class RollForm extends FormApplication {
             this.object.opposingCharms = [];
             if (this.object.charmList === undefined) {
                 this.object.charmList = this.actor.charms;
-                for (var charmlist of Object.values(this.object.charmList)) {
-                    for (const charm of charmlist.list) {
-                        this.getEnritchedHTML(charm);
+                if (this.object.charmList) {
+                    for (var charmlist of Object.values(this.object.charmList)) {
+                        for (const charm of charmlist.list) {
+                            this.getEnritchedHTML(charm);
+                        }
                     }
                 }
             }
@@ -325,20 +335,162 @@ export class RollForm extends FormApplication {
                     this.object.defense = 0;
                 }
             }
+            for (var [ability, charmlist] of Object.entries(this.object.charmList)) {
+                for (const charm of charmlist.list.filter(charm => (charm.system.active && this._autoAddCharm(charm)) || (charm.type === 'weapon' && data.weapon?.parent?.id === charm.id))) {
+                    this.addCharm(charm);
+                }
+            }
+
             this._preChatMessage();
         }
 
     }
 
-    get template() {
-        var template = "systems/exaltedessence/templates/dialogues/ability-roll.html";
+    static DEFAULT_OPTIONS = {
+        window: {
+            title: "Dice Roller",
+            resizable: true,
+            controls: [
+                {
+                    icon: 'fa-solid fa-dice-d6',
+                    label: "Save Roll",
+                    action: "saveRoll",
+                }
+            ]
+        },
+        position: { width: 730 },
+        tag: "form",
+        form: {
+            handler: RollForm.myFormHandler,
+            submitOnClose: false,
+            submitOnChange: true,
+            closeOnSubmit: false
+        },
+        classes: [`leaves-background`],
+        actions: {
+            saveRoll: RollForm.saveRoll,
+            enableAddCharms: RollForm.enableAddCharms,
+            triggerRemoveCharm: RollForm.triggerRemoveCharm,
+            showGambitDialog: RollForm.showGambitDialog,
+            triggerAddCharm: RollForm.triggerAddCharm,
+            addSpecialAttack: RollForm.addSpecialAttack,
+            removeSpecialAttack: RollForm.removeSpecialAttack,
+            removeOpposingCharm: RollForm.removeOpposingCharm,
+        },
+    };
+
+    static PARTS = {
+        header: {
+            template: "systems/exaltedessence/templates/dialogues/dice-roll/dice-roll-header.html",
+        },
+        tabs: { template: 'systems/exaltedessence/templates/dialogues/dice-roll/tabs.html' },
+        dice: {
+            template: "systems/exaltedessence/templates/dialogues/dice-roll/dice-tab.html",
+        },
+        damage: {
+            template: "systems/exaltedessence/templates/dialogues/dice-roll/damage-tab.html",
+        },
+        social: {
+            template: "systems/exaltedessence/templates/dialogues/dice-roll/social-tab.html",
+        },
+        cost: {
+            template: "systems/exaltedessence/templates/dialogues/dice-roll/cost-tab.html",
+        },
+        charms: {
+            template: "systems/exaltedessence/templates/dialogues/dice-roll/charms-tab.html",
+        },
+        footer: {
+            template: "systems/exaltedessence/templates/dialogues/dice-roll/dice-roll-footer.html",
+        },
+    };
+
+    _configureRenderOptions(options) {
+        super._configureRenderOptions(options);
         if (this.object.rollType === 'base') {
-            template = "systems/exaltedessence/templates/dialogues/dice-roll.html";
+            options.parts = ['dice', 'footer'];
         }
-        if (this.object.rollType === 'withering' || this.object.rollType === 'decisive' || this.object.rollType === 'gambit') {
-            template = "systems/exaltedessence/templates/dialogues/attack-roll.html";
+    }
+
+    static async myFormHandler(event, form, formData) {
+        // Do things with the returned FormData
+        const formObject = foundry.utils.expandObject(formData.object);
+        const gambitChange = formObject.object.gambit !== undefined && this.object.gambit !== formObject.object.gambit;
+        const excellencyTrue = (formObject.object.abilityExcellency === true && this.object.abilityExcellency === false) || (formObject.object.attributeExcellency === true && this.object.attributeExcellency === false);
+        const excellencyFalse = (formObject.object.abilityExcellency === false && this.object.abilityExcellency === true) || (formObject.object.attributeExcellency === false && this.object.attributeExcellency === true);
+
+
+        foundry.utils.mergeObject(this, formData.object);
+        if (this.object.rollType !== "base") {
+            if (gambitChange) {
+                const gambitCosts = {
+                    'none': 0,
+                    'disarm': this.object.defense,
+                    'distract': 2,
+                    'ensnare': 3,
+                    'knockback': 4,
+                    'knockdown': 4,
+                    'pilfer': 3,
+                    'pull': 4,
+                    'reveal_weakness': 3,
+                    'unhorse': 5,
+                }
+                this.object.powerSpent = gambitCosts[this.object.gambit];
+                if ((this.object.gambit === 'knockback' || this.object.gambit === 'knockdown') && this.object.weaponTags['smashing']) {
+                    this.object.powerSpent--;
+                }
+                if (this.object.gambit === 'ensnare' && this.object.weaponTags['flexible']) {
+                    this.object.powerSpent--;
+                }
+            }
+            this._checkAttributeBonuses();
+            this._checkExcellencyBonuses();
+
+            if (excellencyTrue) {
+                this.object.cost.motes++;
+            }
+
+            if (excellencyFalse) {
+                this.object.cost.motes--;
+            }
         }
-        return template;
+
+        if (event.type === 'submit') {
+            if (this._isAttackRoll()) {
+                if (this.object.showDamage) {
+                    await this._damageRoll();
+                    this.close();
+                } else {
+                    await this._attackRoll();
+                    this.tabGroups['primary'] = 'damage';
+                }
+            } else {
+                await this._roll();
+                this.close(false);
+            }
+        }
+        this.render();
+    }
+
+    _onRender(context, options) {
+        this.element.querySelectorAll('.collapsable').forEach(element => {
+            element.addEventListener('click', (ev) => {
+                const li = $(ev.currentTarget).next();
+                if (li.attr('id')) {
+                    this.object[li.attr('id')] = li.is(":hidden");
+                }
+                li.toggle("fast");
+            });
+        });
+
+        this.element.querySelectorAll('.charm-list-collapsable').forEach(element => {
+            element.addEventListener('click', (ev) => {
+                const li = $(ev.currentTarget).next();
+                if (li.attr('id')) {
+                    this.object.charmList[li.attr('id')].collapse = !li.is(":hidden");
+                }
+                li.toggle("fast");
+            });
+        });
     }
 
     async _preChatMessage() {
@@ -400,6 +552,291 @@ export class RollForm extends FormApplication {
         }
     }
 
+    async _prepareContext(_options) {
+        if (!this.tabGroups['primary']) this.tabGroups['primary'] = 'dice';
+        this.selects = CONFIG.EXALTEDESSENCE.selects;
+        const tabs = [
+            {
+                id: "dice",
+                group: "primary",
+                label: this._isAttackRoll() ? "ExEss.Accuracy" : "ExEss.Dice",
+                cssClass: this.tabGroups['primary'] === 'dice' ? 'active' : '',
+            },
+        ];
+        if (this._isAttackRoll()) {
+            tabs.push({
+                id: "damage",
+                group: "primary",
+                label: "ExEss.Damage",
+                cssClass: this.tabGroups['primary'] === 'damage' ? 'active' : '',
+            });
+        }
+        if (this.object.rollType === 'social') {
+            tabs.push({
+                id: "social",
+                group: "primary",
+                label: "ExEss.Social",
+                cssClass: this.tabGroups['primary'] === 'social' ? 'active' : '',
+            });
+        }
+        tabs.push({
+            id: "cost",
+            group: "primary",
+            label: "ExEss.Cost",
+            cssClass: this.tabGroups['primary'] === 'cost' ? 'active' : '',
+        });
+        tabs.push({
+            id: "charms",
+            group: "primary",
+            label: "ExEss.Charms",
+            cssClass: this.tabGroups['primary'] === 'charms' ? 'active' : '',
+        });
+
+        const penalties = [];
+        const effects = [];
+        const weaponTags = [];
+
+        if (this.actor) {
+            for (const condition of this.actor.allApplicableEffects()) {
+                if (condition.statuses.has('prone')) {
+                    penalties.push(
+                        {
+                            img: "icons/svg/falling.svg",
+                            name: "ExEss.Prone",
+                            summary: "-3 dice on attacks"
+                        },
+                    );
+                } else {
+                    effects.push(
+                        {
+                            img: condition.img,
+                            name: condition.name,
+                        },
+                    );
+                }
+            }
+            if (this.object.target?.actor.effects) {
+                if (this.object.target.actor.effects.some(e => e.name === 'concealment')) {
+                    penalties.push(
+                        {
+                            name: "Target has Concealment",
+                            summary: "-2 dice on attack"
+                        },
+                    );
+                }
+                if (this.object.target.actor.effects.some(e => e.name === 'prone')) {
+                    effects.push(
+                        {
+                            name: "Target is prone",
+                            summary: "-2 Defense"
+                        },
+                    );
+                }
+                if (this.object.target.actor.effects.some(e => e.name === 'surprised')) {
+                    effects.push(
+                        {
+                            name: "Target is Surprised",
+                            summary: "-1 Defense"
+                        },
+                    );
+                }
+                if (this.object.target.actor.effects.some(e => e.name === 'lightcover')) {
+                    if (this.object.weaponType !== 'melee') {
+                        penalties.push(
+                            {
+                                name: "Target has light cover",
+                                summary: "+1 Defense"
+                            },
+                        );
+                    }
+                }
+                if (this.object.target.actor.effects.some(e => e.name === 'heavycover')) {
+                    if (this.object.weaponType !== 'melee') {
+                        penalties.push(
+                            {
+                                name: "Target has heavy cover",
+                                summary: "+2 Defense"
+                            },
+                        );
+                    }
+                }
+            }
+        }
+
+        if (this.object.rollType !== 'base') {
+            if (this.object.flurry) {
+                penalties.push(
+                    {
+                        name: "ExEss.Flurry",
+                        summary: "-3 Dice"
+                    },
+                );
+            }
+
+            if (this.object.woundPenalty) {
+                penalties.push(
+                    {
+                        name: "ExEss.WoundPenalty",
+                        summary: `${this.actor.system.health.penalty * -1} Dice`
+                    },
+                );
+            }
+            if (this.object.getimianflow) {
+                effects.push(
+                    {
+                        name: "Getimian Flow Bonus",
+                        summary: "+1 Success"
+                    },
+                );
+            }
+
+            if (this.actor?.type === 'character' && this.object.augmentattribute) {
+                if (this.actor.system.attributes[this.object.attribute].value < 5) {
+                    effects.push(
+                        {
+                            name: "Augment Attribute",
+                            summary: "+ 1 Dice"
+                        },
+                    );
+                }
+                if (this.actor.system.essence.value > 1) {
+                    effects.push(
+                        {
+                            name: "Augment Attribute",
+                            summary: "Double 9s"
+                        },
+                    );
+                }
+            }
+
+            if (this.actor?.type === 'npc' && this.actor.system.battlegroup) {
+                if (this._isAttackRoll()) {
+                    effects.push(
+                        {
+                            name: "Drill Bonus",
+                            summary: `${this.actor.system.drill.value} Dice`,
+                        },
+                    );
+                }
+                if (this.object.rollType === 'withering') {
+                    effects.push(
+                        {
+                            name: "Overwhelming from Size",
+                            summary: Math.min(this.actor.system.size.value + 1, 5),
+                        },
+                    );
+                }
+                if (this.object.rollType === 'decisive') {
+                    effects.push(
+                        {
+                            name: "Drill Damage Bonus",
+                            summary: `${this.actor.system.drill.value} Dice`,
+                        },
+                    );
+                }
+                if (this.object.rollType === 'buildPower') {
+                    effects.push(
+                        {
+                            name: "Drill Build Power Bonus",
+                            summary: `${this.actor.system.drill.value} Successes`,
+                        },
+                    );
+                }
+
+            }
+
+            if (this.object.armorPenalty) {
+                let armorPenaltyDice = 0
+                for (let armor of this.actor.armor) {
+                    if (armor.system.equipped) {
+                        armorPenaltyDice -= Math.abs(armor.system.penalty);
+                    }
+                }
+                penalties.push(
+                    {
+                        name: "ExEss.ArmorPenalty",
+                        summary: `${armorPenaltyDice} Dice`
+                    },
+                );
+            }
+
+            if (this.object.weaponTags) {
+                if (this.object.rollType === 'decisive') {
+                    if (this.object.weaponTags['twohanded']) {
+                        weaponTags.push(
+                            {
+                                name: "ExEss.TwoHanded",
+                                summary: `+1 Damage`
+                            },
+                        );
+                    }
+                }
+                if (this.object.rollType === 'withering') {
+                    if (this.object.weaponTags['balanced']) {
+                        weaponTags.push(
+                            {
+                                name: "ExEss.Balanced",
+                                summary: `+1 Overwhelming `
+                            },
+                        );
+                    }
+                    if (this.object.weaponTags['paired']) {
+                        weaponTags.push(
+                            {
+                                name: "ExEss.Paired",
+                                summary: `+1 Power Gained`
+                            },
+                        );
+                    }
+                }
+                if (this.object.rollType === 'gambit') {
+                    if (this.object.weaponTags['balanced']) {
+                        weaponTags.push(
+                            {
+                                name: "ExEss.Balanced",
+                                summary: `+1 Dice`
+                            },
+                        );
+                    }
+                }
+                if (this.object.weaponTags['improvised']) {
+                    weaponTags.push(
+                        {
+                            name: "ExEss.Improvised",
+                            summary: `-2 Weapon Accuracy`
+                        },
+                    );
+                }
+            }
+        }
+
+        return {
+            actor: this.actor,
+            selects: this.selects,
+            data: this.object,
+            tab: this.tabGroups['primary'],
+            tabs: tabs,
+            isAttackRoll: this._isAttackRoll(),
+            penalties: penalties,
+            effects: effects,
+            weaponTags: weaponTags,
+            buttons: [
+                { type: "submit", icon: "fa-solid fa-dice-d10", label: "ExEss.Roll" },
+                { action: "close", type: "button", icon: "fa-solid fa-xmark", label: "ExEss.Cancel" },
+            ],
+        };
+    }
+
+    async _preparePartContext(partId, context) {
+        context.tab = context.tabs.find(item => item.id === partId);
+        // if (this.object.addingCharms) {
+        //     context.hideElement = (partId !== 'addCharms' ? 'hide-element' : '')
+        // } else {
+        //     context.hideElement = (partId === 'addCharms' ? 'hide-element' : '')
+        // }
+        return context;
+    }
+
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         // Token Configuration
@@ -458,7 +895,7 @@ export class RollForm extends FormApplication {
                 class: 'roll-dice',
                 icon: 'fas fa-dice-d6',
                 onclick: (ev) => {
-                    this._saveRoll(this.object);
+                    this.saveRoll(this.object);
                 },
             };
             buttons = [rollButton, ...buttons];
@@ -484,7 +921,9 @@ export class RollForm extends FormApplication {
         });
     }
 
-    async _saveRoll(rollData) {
+    static async saveRoll() {
+        const rollData = { ...this.object };
+
         let html = await renderTemplate("systems/exaltedessence/templates/dialogues/save-roll.html", { 'name': this.object.name || 'New Roll' });
 
         new foundry.applications.api.DialogV2({
@@ -572,7 +1011,9 @@ export class RollForm extends FormApplication {
             this.object.gain.power += item.system.gain.power;
 
             this.object.cost.motes += item.system.cost.motes;
-            this.object.cost.committed += item.system.cost.committed;
+            if (!item.system.active) {
+                this.object.cost.committed += item.system.cost.committed;
+            }
             this.object.cost.anima += item.system.cost.anima;
             this.object.cost.health += item.system.cost.health;
             if (item.system.cost.health > 0) {
@@ -630,6 +1071,197 @@ export class RollForm extends FormApplication {
             }
             this.render();
         }
+    }
+
+    static addSpecialAttack(event, target) {
+        event.stopPropagation();
+        let li = $(target).parents(".item");
+        let id = li.data("item-id");
+        for (var specialAttack of this.object.specialAttacksList) {
+            if (specialAttack.id === id) {
+                specialAttack.added = true;
+            }
+        }
+        if (id === 'rush' || id === 'aim') {
+            this.object.diceModifier += 3;
+        }
+        else {
+            if (id === 'chopping' && this.object.rollType === 'withering') {
+                this.object.diceModifier += 2;
+            }
+            else if (id === 'piercing' && this.object.rollType === 'decisive') {
+                this.object.damage.ignoreSoak += 2;
+            }
+            this.object.triggerSelfDefensePenalty += 1;
+        }
+        this.render();
+    }
+
+    static removeSpecialAttack(event, target) {
+        event.stopPropagation();
+        let li = $(target).parents(".item");
+        let id = li.data("item-id");
+        if (id === 'rush' || id === 'aim') {
+            this.object.diceModifier -= 3;
+        }
+        else {
+            for (var specialAttack of this.object.specialAttacksList) {
+                if (specialAttack.id === id) {
+                    specialAttack.added = false;
+                }
+            }
+            if (id === 'chopping') {
+                this.object.diceModifier -= 2;
+            }
+            else if (id === 'piercing') {
+                this.object.damage.ignoreSoak -= 2;
+            }
+            this.object.triggerSelfDefensePenalty = Math.max(0, this.object.triggerSelfDefensePenalty - 1);
+        }
+        this.render();
+    }
+
+    static enableAddCharms() {
+        this.object.charmList = this.actor.charms;
+        for (var charmlist of Object.values(this.object.charmList)) {
+            for (const charm of charmlist.list) {
+                if (this.object.addedCharms.some((addedCharm) => addedCharm.id === charm._id)) {
+                    charm.charmAdded = true;
+                }
+                else {
+                    charm.charmAdded = false;
+                }
+                this.getEnritchedHTML(charm);
+            }
+        }
+        if (this._isAttackRoll()) {
+            this.object.showSpecialAttacks = true;
+            if (this.object.rollType !== 'gambit') {
+                for (var specialAttack of this.object.specialAttacksList) {
+                    if (specialAttack.id === 'chopping' && this.object.rollType === 'withering') {
+                        specialAttack.show = true;
+                    }
+                    else if (specialAttack.id === 'piercing' && this.object.rollType === 'decisive') {
+                        specialAttack.show = true;
+                    }
+                    else if (specialAttack.id === 'aim' || specialAttack.id === 'rush') {
+                        specialAttack.show = true;
+                    }
+                    else {
+                        specialAttack.added = false;
+                        specialAttack.show = false;
+                    }
+                }
+            }
+        }
+        this.object.addingCharms = !this.object.addingCharms;
+        this.render();
+    }
+
+    static async showGambitDialog(event, target) {
+        const html = await renderTemplate("systems/exaltedessence/templates/dialogues/gambits.html");
+
+        new foundry.applications.api.DialogV2({
+            window: { title: game.i18n.localize("ExEss.Gambits"), resizable: true },
+            content: html,
+            position: {
+                width: 650,
+                height: 600
+            },
+            buttons: [{ action: 'close', label: game.i18n.localize("ExEss.Close") }],
+            classes: ['exaltedessence-dialog', this.actor.getSheetBackground()],
+        }).render(true);
+    }
+
+    static triggerAddCharm(event, target) {
+        event.stopPropagation();
+        let li = $(target).parents(".item");
+        let item = this.actor.items.get(li.data("item-id"));
+        this.addCharm(item);
+    }
+
+    static triggerRemoveCharm(event, target) {
+        event.stopPropagation();
+        let li = $(target).parents(".item");
+        let item = this.actor.items.get(li.data("item-id"));
+        const index = this.object.addedCharms.findIndex(addedItem => item.id === addedItem.id);
+        if (index > -1) {
+            for (var charmlist of Object.values(this.object.charmList)) {
+                for (const charm of charmlist.list) {
+                    if (charm._id === item.id) {
+                        charm.charmAdded = false;
+                    }
+                }
+            }
+            this.object.addedCharms.splice(index, 1);
+
+            this.object.gain.motes -= item.system.gain.motes;
+            this.object.gain.anima -= item.system.gain.anima;
+            this.object.gain.health -= item.system.gain.health;
+            this.object.gain.power -= item.system.gain.power;
+
+            this.object.cost.motes -= item.system.cost.motes;
+            if (!item.system.active) {
+                this.object.cost.committed -= item.system.cost.committed;
+            }
+            this.object.cost.anima -= item.system.cost.anima;
+            if (item.system.cost.health > 0) {
+                if (item.system.cost.healthtype === 'lethal') {
+                    this.object.cost.healthLethal -= item.system.cost.health;
+                }
+                else {
+                    this.object.cost.healthAggravated -= item.system.cost.health;
+                }
+            }
+            this.object.cost.stunt -= item.system.cost.stunt;
+            this.object.cost.power -= item.system.cost.power;
+
+            this.object.diceModifier -= item.system.diceroller.bonusdice;
+            this.object.successModifier -= item.system.diceroller.bonussuccesses;
+            if (item.system.diceroller.rerollfailed) {
+                this.object.rerollFailed = false;
+            }
+            if (item.system.diceroller.rolltwice) {
+                this.object.rollTwice = false;
+            }
+            this.object.rerollNumber -= item.system.diceroller.rerolldice;
+            this.object.diceToSuccesses -= item.system.diceroller.dicetosuccesses;
+
+            this.object.damage.damageDice -= item.system.diceroller.damage.bonusdice;
+            this.object.damage.damageSuccessModifier -= item.system.diceroller.damage.bonussuccesses;
+            this.object.overwhelming -= item.system.diceroller.damage.overwhelming;
+            this.object.damage.postSoakDamage -= item.system.diceroller.damage.postsoakdamage;
+            if (item.system.diceroller.damage.doubleextrasuccess) {
+                this.object.damage.doubleExtraSuccess = false;
+            }
+            if (item.system.diceroller.damage.ignoresoak > 0) {
+                this.object.damage.ignoreSoak -= item.system.diceroller.damage.ignoresoak;
+            }
+            if (item.system.diceroller.activateaura === this.object.activateAura) {
+                this.object.activateAura = 'none';
+            }
+        }
+        this.render();
+    }
+
+    static async removeOpposingCharm(event, target) {
+        event.stopPropagation();
+        let li = $(target).parents(".item");
+        let id = li.data("item-id");
+        const charm = this.object.opposingCharms.find(opposedCharm => id === opposedCharm._id);
+        const index = this.object.opposingCharms.findIndex(opposedCharm => id === opposedCharm._id);
+        if (index > -1) {
+            this.object.opposingCharms.splice(index, 1);
+            if (this._isAttackRoll()) {
+                this.object.defense -= charm.system.diceroller.opposedbonuses.defense;
+                this.object.soak -= charm.system.diceroller.opposedbonuses.soak;
+            }
+            if (this.object.rollType === 'social') {
+                this.object.resolve -= charm.system.diceroller.opposedbonuses.resolve;
+            }
+            this.render();
+        }
+        this.render();
     }
 
     activateListeners(html) {
@@ -996,7 +1628,7 @@ export class RollForm extends FormApplication {
                     }
                 }
 
-                if (this.actor.system.battlegroup && this.object.rollType == 'attack') {
+                if (this.actor.system.battlegroup && this._isAttackRoll()) {
                     dice += this.actor.system.drill.value;
                 }
             }
@@ -1005,8 +1637,8 @@ export class RollForm extends FormApplication {
             }
             if (this.object.armorPenalty) {
                 for (let armor of this.actor.armor) {
-                    if (armor.data.equipped) {
-                        dice = dice - Math.abs(armor.data.penalty);
+                    if (armor.system.equipped) {
+                        dice = dice - Math.abs(armor.system.penalty);
                     }
                 }
             }
@@ -1028,6 +1660,10 @@ export class RollForm extends FormApplication {
             dice = 0;
         }
         this.object.dice = dice;
+
+        if (this.object.rollType === 'buildPower' && this.actor.type === 'npc' && this.actor.system.battlegroup) {
+            this.object.successModifier += this.actor.system.drill.value;
+        }
 
         var rollModifiers = {
             successModifier: this.object.successModifier,
@@ -1083,7 +1719,7 @@ export class RollForm extends FormApplication {
         let theContent = `
               <div><div class="dice-roll">
                       <div class="dice-result">
-                          <h4 class="dice-formula">${this.object.dice} Dice + ${this.object.successModifier} successes</h4>
+                          <h4 class="dice-formula">${this.object.dice} Dice + ${this.object.successModifier} ${this.object.successModifier === 1 ? "success" : "successes"}</h4>
                           <div class="dice-tooltip">
                               <div class="dice">
                                   <ol class="dice-rolls">${this.object.displayDice}</ol>
@@ -1102,11 +1738,6 @@ export class RollForm extends FormApplication {
         var total = this.object.total - 3;
         let self = (this.object.buildPowerTarget || 'self') === 'self';
 
-        if (this.actor.type === 'npc' && this.object.rollType === 'buildPower') {
-            if (this.actor.system.battlegroup) {
-                this.object.successModifier += this.actor.system.drill.value;
-            }
-        }
         var message = '';
         if (total < 0) {
             if (this.object.rollType === 'buildPower') {
@@ -1153,6 +1784,26 @@ export class RollForm extends FormApplication {
             }
         }
         return message;
+    }
+
+    _autoAddCharm(charm) {
+        if (!charm.system.autoaddtorolls) {
+            return false;
+        }
+        switch (charm.system.autoaddtorolls) {
+            case 'action':
+                return (this.object.rollType !== 'useOpposingCharms');
+            case 'attacks':
+                return this._isAttackRoll();
+            case 'opposedRolls':
+                return (this.object.rollType === 'useOpposingCharms');
+            case 'sameAbility':
+                return (charm.type === 'charm' || charm.type === 'merit') && (charm.system.ability === this.object.ability || charm.system.ability === this.object.attribute);
+        }
+        if (this.object.rollType === charm.system.autoaddtorolls) {
+            return true;
+        }
+        return false;
     }
 
     _socialInfluence() {
@@ -1209,12 +1860,6 @@ export class RollForm extends FormApplication {
         }
         var messageContent = '';
 
-        if (this.actor.type === 'npc') {
-            if (actorData.system.battlegroup) {
-                this.object.overwhelming = Math.min(actorData.system.size.value + 1, 5);
-            }
-        }
-
         if (postDefenseTotal < 0) {
             var overwhlemingMessage = '';
             let extraPowerMessage = ``;
@@ -1250,10 +1895,8 @@ export class RollForm extends FormApplication {
             if (this.object.rollType === 'decisive') {
                 // Deal Damage
                 let damage = postDefenseTotal + this.object.power + this.object.damage.damageDice;
-                if (this.actor.type === 'npc') {
-                    if (actorData.system.battlegroup) {
-                        damage += actorData.system.drill.value;
-                    }
+                if (this.actor.type === 'npc' && actorData.system.battlegroup) {
+                    damage += actorData.system.drill.value;
                 }
                 var rollModifiers = {
                     successModifier: this.object.damage.damageSuccessModifier,
@@ -1368,6 +2011,7 @@ export class RollForm extends FormApplication {
                 else {
                     changes[0].value = changes[0].value - 1;
                 }
+                changes.name = `${game.i18n.localize("ExEss.DefensePenalty")} (${changes[1].value - 1})`;
                 existingPenalty.update({ changes });
             }
             else {
@@ -1393,7 +2037,7 @@ export class RollForm extends FormApplication {
                     ];
                 }
                 this.actor.createEmbeddedDocuments('ActiveEffect', [{
-                    name: "Defense Penalty",
+                    name: `${game.i18n.localize("ExEss.DefensePenalty")} (-1)`,
                     img: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
                     origin: this.actor.uuid,
                     disabled: false,
@@ -1415,10 +2059,11 @@ export class RollForm extends FormApplication {
         const onslaught = this.object.newTargetData.effects.find(i => i.flags.exaltedessence?.statusId == "onslaught");
         if (onslaught) {
             onslaught.changes[0].value = onslaught.changes[0].value - number;
+            onslaught.name = `${game.i18n.localize("ExEss.Onslaught")} (${onslaught.changes[0].value - number})`;
         }
         else {
             this.object.newTargetData.effects.push({
-                name: 'Onslaught',
+                name: 'Onslaught (-1)',
                 img: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
                 origin: this.object.target.actor.uuid,
                 disabled: false,
@@ -1541,7 +2186,7 @@ export class RollForm extends FormApplication {
             ];
         }
         this.object.newTargetData.effects.push({
-            name: 'Defense Penalty',
+            name: `Defense Penalty (${value * -1})`,
             img: 'systems/exaltedessence/assets/icons/slashed-shield.svg',
             origin: this.object.target.actor.uuid,
             disabled: false,

@@ -10,13 +10,12 @@ import ExaltedActiveEffectConfig from "./active-effect-config.js";
 
 import TraitSelector from "./apps/trait-selector.js";
 import { registerSettings } from "./settings.js";
-import { RollForm } from "./apps/dice-roller.js";
 import ItemSearch from "./apps/item-search.js";
 import { ExaltedCombatant } from "./combat/combat.js";
 import { ExaltedCombatTracker } from "./combat/combat-tracker.js";
 import { CharacterData, NpcData } from "./template/actor-template.js";
 import { ItemArmorData, ItemCharmData, ItemData, ItemIntimacyData, ItemMeritData, ItemQualityData, ItemRitualData, ItemSpellData, ItemWeaponData } from "./template/item-template.js";
-import RollForm2 from "./apps/dice-roller-2.js";
+import RollForm from "./apps/dice-roller.js";
 
 Hooks.once('init', async function () {
 
@@ -228,7 +227,7 @@ $(document).ready(() => {
 
   $(document).on('click', diceIconSelector, ev => {
     ev.preventDefault();
-    new RollForm2(null, {classes: [" exaltedessence exaltedessence-dialog dice-roller"]}, {}, { rollType: 'base' }).render(true);
+    new RollForm(null, {classes: [" exaltedessence exaltedessence-dialog dice-roller"]}, {}, { rollType: 'base' }).render(true);
   });
 });
 
@@ -342,7 +341,7 @@ async function createItemMacro(data, slot) {
   }
   else {
     const command = `const formActor = await fromUuid("${data.actorId}");
-        game.rollForm = new game.exaltedessence.RollForm2(${data.actorId.includes('Token') ? 'formActor.actor' : 'formActor'}, {classes: [" exaltedessence exaltedessence-dialog dice-roller"]}, {}, { rollId: "${data.id}" }).render(true); `;
+        game.rollForm = new game.exaltedessence.RollForm(${data.actorId.includes('Token') ? 'formActor.actor' : 'formActor'}, {classes: [" exaltedessence exaltedessence-dialog dice-roller"]}, {}, { rollId: "${data.id}" }).render(true); `;
     const macro = await Macro.create({
       name: data.name,
       img: 'systems/exaltedessence/assets/icons/d10.svg',
@@ -367,7 +366,7 @@ function weaponAttack(itemUuid, attackType='withering') {
       const itemName = item?.name ?? itemUuid;
       return ui.notifications.warn(`Could not find item ${itemName}. You may need to delete and recreate this macro.`);
     }
-    game.rollForm = new RollForm2(item.parent, {classes: [" exaltedessence exaltedessence-dialog dice-roller"]}, {}, { rollType: attackType, weapon: item.system }).render(true);
+    game.rollForm = new RollForm(item.parent, {classes: [" exaltedessence exaltedessence-dialog dice-roller"]}, {}, { rollType: attackType, weapon: item.system }).render(true);
   });
 }
 
@@ -473,10 +472,10 @@ export class ExaltedCombat extends Combat {
     const combatant = this.combatants.get(ids[0]);
     if (combatant.token.actor) {
       if (combatant.token.actor.type === "npc") {
-        game.rollForm = await new RollForm2(combatant.token.actor, {classes: [" exaltedessence exaltedessence-dialog dice-roller"]}, {}, { rollType: 'joinBattle', pool: 'primary' }).render(true);
+        game.rollForm = await new RollForm(combatant.token.actor, {classes: [" exaltedessence exaltedessence-dialog dice-roller"]}, {}, { rollType: 'joinBattle', pool: 'primary' }).render(true);
       }
       else {
-        game.rollForm = await new RollForm2(combatant.token.actor, {classes: [" exaltedessence exaltedessence-dialog dice-roller"]}, {}, { rollType: 'joinBattle', ability: 'close'}).render(true);
+        game.rollForm = await new RollForm(combatant.token.actor, {classes: [" exaltedessence exaltedessence-dialog dice-roller"]}, {}, { rollType: 'joinBattle', ability: 'close'}).render(true);
       }
     }
     else {

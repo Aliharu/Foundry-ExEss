@@ -2,7 +2,6 @@
 //   DiceRollerDialogue
 // } from "./dialogue-diceRoller.js";
 import TraitSelector from "../apps/trait-selector.js";
-import { RollForm } from "../apps/dice-roller.js";
 import { onManageActiveEffect, prepareActiveEffectCategories } from "../effects.js";
 import { prepareItemTraits } from "../item/item.js";
 import { addDefensePenalty } from "./actor.js";

@@ -1,5 +1,4 @@
-import RollForm2 from "../apps/dice-roller-2.js";
-import { RollForm } from "../apps/dice-roller.js";
+import RollForm from "../apps/dice-roller.js";
 import { prepareItemTraits } from "../item/item.js";
 
 /**
@@ -213,7 +212,7 @@ export class ExaltedessenceActor extends Actor {
   }
 
   async actionRoll(data) {
-    game.rollForm = await new RollForm2(this, { classes: [" exaltedessence exaltedessence-dialog dice-roller", this.getSheetBackground()] }, {}, data).render(true);
+    game.rollForm = await new RollForm(this, { classes: [" exaltedessence exaltedessence-dialog dice-roller", this.getSheetBackground()] }, {}, data).render(true);
   }
 
 }
