@@ -29,6 +29,12 @@
             <div class="resource-label">{{localize "ExEss.Stunt"}}</div>
             <input type="checkbox" name="object.stunt" {{checked data.stunt}}>
         </div>
+        {{#ifEquals data.characterType 'npc'}}
+        <div>
+            <div class="resource-label">{{localize "ExEss.Excellency"}}</div>
+            <input class="excellency-check" type="checkbox" name="object.poolExcellency" {{checked data.poolExcellency}}>
+        </div>
+        {{else}}
         <div>
             <div class="resource-label">{{localize "ExEss.AttributeExcellency"}}</div>
             <input class="excellency-check" type="checkbox" name="object.attributeExcellency" {{checked
@@ -39,6 +45,8 @@
             <input class="excellency-check" type="checkbox" name="object.abilityExcellency" {{checked
                 data.abilityExcellency}}>
         </div>
+        {{/ifEquals}}
+
         <div></div>
         {{#ifEquals actor.system.details.exalt 'dragonblooded'}}
         <div>
