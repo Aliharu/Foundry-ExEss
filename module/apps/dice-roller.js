@@ -1574,7 +1574,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             roll: rollResults.roll,
             diceDisplay: diceDisplay,
             total: total,
-            preSuccessBonus: preBonusSuccesses,
+            preBonusSuccesses: preBonusSuccesses,
             diceRoll: diceRoll,
         };
     }
