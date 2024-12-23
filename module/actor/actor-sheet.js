@@ -669,33 +669,85 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     const states = parseCounterStates(data.states)
     const fields = data.name.split('.')
     const steps = parent.find('.resource-counter-step')
-    const fulls = Number(data[states['-']]) || 0
-    const halfs = Number(data[states['/']]) || 0
+    // const fulls = Number(data[states['-']]) || 0
+    // const halfs = Number(data[states['/']]) || 0
 
-    if (index < 0 || index > steps.length) {
-      return
+    // if (index < 0 || index > steps.length) {
+    //   return
+    // }
+
+    // const allStates = ['', ...Object.keys(states)]
+    // const currentState = allStates.indexOf(oldState)
+    // if (currentState < 0) {
+    //   return
+    // }
+
+    // const newState = allStates[(currentState + 1) % allStates.length]
+    // steps[index].dataset.state = newState
+
+    // if ((oldState !== '' && oldState !== '-') || (oldState !== '')) {
+    //   data[states[oldState]] = Number(data[states[oldState]]) - 1
+    // }
+
+    // // If the step was removed we also need to subtract from the maximum.
+    // if (oldState !== '' && newState === '') {
+    //   data[states['-']] = Number(data[states['-']]) - 1
+    // }
+
+    // if (newState !== '') {
+    //   data[states[newState]] = Number(data[states[newState]]) + Math.max(index + 1 - fulls - halfs, 1)
+    // }
+
+    const currentState = steps[index].dataset.state;
+    if (steps[index].dataset.type) {
+      if (currentState === '') {
+        for (const step of steps) {
+          if (step.dataset.state === '') {
+            step.dataset.state = 'x';
+            data['value'] = Number(data['value']) + 1;
+            break;
+          }
+        }
+      }
+      else {
+        for (const step of steps) {
+          if (step.dataset.state === 'x') {
+            step.dataset.state = '';
+            data['value'] = Number(data['value']) - 1;
+            break;
+          }
+        }
+      }
     }
-
-    const allStates = ['', ...Object.keys(states)]
-    const currentState = allStates.indexOf(oldState)
-    if (currentState < 0) {
-      return
-    }
-
-    const newState = allStates[(currentState + 1) % allStates.length]
-    steps[index].dataset.state = newState
-
-    if ((oldState !== '' && oldState !== '-') || (oldState !== '')) {
-      data[states[oldState]] = Number(data[states[oldState]]) - 1
-    }
-
-    // If the step was removed we also need to subtract from the maximum.
-    if (oldState !== '' && newState === '') {
-      data[states['-']] = Number(data[states['-']]) - 1
-    }
-
-    if (newState !== '') {
-      data[states[newState]] = Number(data[states[newState]]) + Math.max(index + 1 - fulls - halfs, 1)
+    else {
+      if (currentState === '') {
+        for (const step of steps) {
+          if (step.dataset.state === '') {
+            step.dataset.state = '/';
+            data['lethal'] = Number(data['lethal']) + 1;
+            break;
+          }
+        }
+      }
+      if (currentState === '/') {
+        for (const step of steps) {
+          if (step.dataset.state === '/') {
+            step.dataset.state = '*';
+            data['aggravated'] = Number(data['aggravated']) + 1;
+            data['lethal'] = Number(data['lethal']) - 1;
+            break;
+          }
+        }
+      }
+      if (currentState === 'x') {
+        for (const step of steps) {
+          if (step.dataset.state === 'x') {
+            step.dataset.state = '';
+            data['aggravated'] = Number(data['aggravated']) - 1;
+            break;
+          }
+        }
+      }
     }
 
     const newValue = Object.values(states).reduce(function (obj, k) {
