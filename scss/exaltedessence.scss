@@ -39,42 +39,70 @@
 //   background-size: cover;
 // }
 
-.solar-background {
-  .window-content {
-    background: url('../assets/backgrounds/solar-background.jpg');
-    background-size: cover;
-    color: var(--color-text-dark-primary);
-  }
+.solar-background .window-content {
+  background: url("../assets/backgrounds/solar-background.jpg");
+  background-size: cover;
+  color: #222;
 }
 
-.lunar-background {
-  .window-content {
-    background: url('../assets/backgrounds/lunar-background.jpg');
-    background-size: cover;
-    color: var(--color-text-dark-primary);
-  }
+.lunar-background .window-content {
+  background: url("../assets/backgrounds/lunar-background.jpg");
+  background-size: cover;
+  color: #222;
 }
 
-.db-background {
-  .window-content {
-    background: url('../assets/backgrounds/db-background.jpg');
-    background-size: cover;
-    color: var(--color-text-dark-primary);
-  }
+.db-background .window-content {
+  background: url("../assets/backgrounds/db-background.jpg");
+  background-size: cover;
+  color: #222;
 }
 
-.tree-background {
-  .window-content {
-    background: url('../assets/backgrounds/tree-background.jpg');
-    background-size: cover;
-    color: var(--color-text-dark-primary);
-  }
+.mountain-background .window-content {
+  background: url("../assets/backgrounds/mountain-background.jpg");
+  background-size: cover;
+  color: #222;
+}
+
+.sidereal-background .window-content {
+  background: url("../assets/backgrounds/sidereal-background.jpg");
+  background-size: cover;
+  color: #222;
+}
+
+.janest-background .window-content {
+  background: url("../assets/backgrounds/janest-background.jpg");
+  background-size: cover;
+  color: #222;
+}
+
+.exigent-background .window-content {
+  background: url("../assets/backgrounds/exigent-background.jpg");
+  background-size: cover;
+  color: #222;
+}
+
+.puppeteer-background .window-content {
+  background: url("../assets/backgrounds/puppeteer-background.jpg");
+  background-size: cover;
+  color: #222;
+}
+
+.sovereign-background .window-content {
+  background: url("../assets/backgrounds/sovereign-background.jpg");
+  background-size: cover;
+  color: #222;
+}
+
+.tree-background .window-content {
+  background: url("../assets/backgrounds/tree-background.jpg");
+  background-size: cover;
+  color: #222;
 }
 
 .leaves-background .window-content {
   background: url("../assets/backgrounds/leaves-background.jpg");
   background-size: cover;
-  color: var(--color-text-dark-primary);
+  color: #222;
 }
 
 .exaltedessence .window-content .abilities,
@@ -347,16 +375,6 @@
       }
     }
   }
-}
-
-//-----------
-//---pause
-//-----------
-#pause img {
-  content: url(../assets/pause.png);
-  height: 130px;
-  width: 130px;
-  opacity: 0.7;
 }
 
 .chat-control-icon .fa-dice-d20:before {

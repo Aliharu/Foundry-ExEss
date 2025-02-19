@@ -7,11 +7,43 @@ export function registerSettings() {
         default: "solar",
         type: String,
         choices: {
-            "solar": "ExEss.Solar",
-            "lunar": "ExEss.Lunar",
             "db": "ExEss.Dragonblooded",
-            "tree": "ExEss.Tree",
+            "exigent": "ExEss.Exigent",
+            "janest": "ExEss.Janest",
             "leaves": "ExEss.Leaves",
+            "lunar": "ExEss.Lunar",
+            "mountain": "ExEss.Mountain",
+            "puppeteer": "ExEss.Puppeteer",
+            "sidereal": "ExEss.Sidereal",
+            "solar": "ExEss.Solar",
+            "sovereign": "ExEss.Sovereign",
+            "tree": "ExEss.Tree",
+        },
+        onChange: (choice) => {
+            window.location.reload();
+        },
+    });
+
+    game.settings.register("exaltedessence", "pauseIcon", {
+        name: "ExEss.PauseIcon",
+        hint: "ExEss.PauseIconDescription",
+        scope: "world",
+        config: true,
+        default: "main",
+        type: String,
+        choices: {
+            "abyssal": "ExEss.Abyssal",
+            "alchemical": "ExEss.Alchemical",
+            "db": "ExEss.Dragonblooded",
+            "exigent": "ExEss.Exigent",
+            "getimian": "ExEss.Getimian",
+            "infernal": "ExEss.Infernal",
+            "liminal": "ExEss.Liminal",
+            "lunar": "ExEss.Lunar",
+            "main": "ExEss.Main",
+            "sidereal": "ExEss.Sidereal",
+            "solar": "ExEss.Solar",
+            "terrestrial": "ExEss.Terrestrial",
         },
         onChange: (choice) => {
             window.location.reload();
@@ -88,4 +120,5 @@ export function registerSettings() {
         type: String,
         default: ""
     });
+
 }

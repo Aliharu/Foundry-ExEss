@@ -1935,7 +1935,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                                       <ol class="dice-rolls">${diceRollResults.diceDisplay}</ol>
                                   </div>
                                 </div>
-                                <h4 class="dice-formula">${diceRollResults.total} Damage - ${this.object.soak} soak (Ignore ${this.object.damage.ignoreSoak})</h4>
+                                <h4 class="dice-formula">${diceRollResults.total} Damage - ${this.object.soak} soak ${this.object.damage.ignoreSoak ? `(Ignore ${this.object.damage.ignoreSoak})` : ''}</h4>
                                 <h4 class="dice-total">${damageTotal} Total Damage</h4>
                             </div>
                         </div>
@@ -2058,12 +2058,12 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         this.object.updateTargetActorData = true;
         const onslaught = this.object.newTargetData.effects.find(i => i.flags.exaltedessence?.statusId == "onslaught");
         if (onslaught) {
-            onslaught.changes[0].value = onslaught.changes[0].value - number;
             onslaught.name = `${game.i18n.localize("ExEss.Onslaught")} (${onslaught.changes[0].value - number})`;
+            onslaught.changes[0].value = onslaught.changes[0].value - number;
         }
         else {
             this.object.newTargetData.effects.push({
-                name: 'Onslaught (-1)',
+                name: 'Onslaught',
                 img: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
                 origin: this.object.target.actor.uuid,
                 disabled: false,
@@ -2078,7 +2078,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 changes: [
                     {
                         "key": "system.hardness.value",
-                        "value": number * -1,
+                        "value": 0,
                         "mode": 2
                     }
                 ]

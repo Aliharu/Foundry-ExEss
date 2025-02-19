@@ -70,6 +70,12 @@
     "ExEss.Solar": "Solar",
     "ExEss.Other": "Other",
 
+    "ExEss.Mountain": "Mountain",
+    "ExEss.Puppeteer": "Puppeteer",
+
+    "ExEss.Terrestrial": "Terrestrial",
+    "ExEss.Main": "Main",
+
     "ExEss.Sovereign": "Sovereign",
     "ExEss.Janest": "Janest",
     "ExEss.Umbral": "Umbral",
@@ -354,6 +360,9 @@
     "ExEss.Close": "Close",
     "ExEss.Delete": "Delete",
     "ExEss.Tags": "Tags",
+
+    "ExEss.PauseIcon": "Pause Icon",
+    "ExEss.PauseIconDescription": "What the pause icon will look like",
 
     "ExEss.Balanced": "Balanced",
     "ExEss.Paired": "Paired",

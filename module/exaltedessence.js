@@ -270,6 +270,20 @@ Hooks.on('updateCombat', (async (combat, update) => {
   }
 }));
 
+Hooks.on("renderPause", function () {
+  const iconSrc = game.settings.get("exaltedessence", "pauseIcon");
+  document.querySelectorAll(".paused img").forEach(img => {
+    img.src = `systems/exaltedessence/assets/pause/${iconSrc}.png`;
+  });
+});
+
+Hooks.on("renderGamePause", function () {
+  const iconSrc = game.settings.get("exaltedessence", "pauseIcon");
+  document.querySelectorAll(".paused img").forEach(img => {
+    img.src = `systems/exaltedessence/assets/pause/${iconSrc}.png`;
+  });
+});
+
 Hooks.once("ready", async function () {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
   Hooks.on("hotbarDrop", (bar, data, slot) => {
