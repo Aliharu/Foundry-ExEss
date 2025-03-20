@@ -43,7 +43,7 @@ export class ExaltedessenceActor extends Actor {
     if(this.type === 'character') {
       let totalHealth = 0;
       let currentPenalty = 0;
-      data.motes.max = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
+      data.motes.max = Math.min(15, data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3);
       for (let [key, health_level] of Object.entries(data.health.levels)) {
         if ((data.health.lethal + data.health.aggravated) > totalHealth) {
           currentPenalty = health_level.penalty;
@@ -183,7 +183,7 @@ export class ExaltedessenceActor extends Actor {
   }
 
   _prepareBaseActorData(system) {
-    system.motes.max = system.essence.value * 2 + Math.floor((system.essence.value - 1) / 2) + 3;
+    system.motes.max = Math.min(15, system.essence.value * 2 + Math.floor((system.essence.value - 1) / 2) + 3);
     let animaLevel = "";
     if (system.anima.value >= 1) {
       animaLevel = "dim";

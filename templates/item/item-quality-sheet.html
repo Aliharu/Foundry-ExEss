@@ -8,6 +8,7 @@
 
     <nav class="sheet-tabs tabs" data-group="primary">
         <a class="item" data-tab="description">{{localize "ExEss.Description"}}</a>
+        <a class="item" data-tab="costs">{{localize "ExEss.Costs"}}</a>
         <a class="item" data-tab="effects">{{localize "ExEss.Effects"}}</a>
     </nav>
 
@@ -17,6 +18,10 @@
         {{!-- Description Tab --}}
         <div class="tab" data-group="primary" data-tab="description">
             {{editor descriptionHTML target="system.description" button=true editable=editable engine="prosemirror"}}
+        </div>
+
+        <div class="tab" data-group="primary" data-tab="costs">
+            {{> systems/exaltedessence/templates/item/item-cost.html}}
         </div>
 
         <div class="tab" data-group="primary" data-tab="effects">

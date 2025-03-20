@@ -70,6 +70,14 @@
     "ExEss.Solar": "Solar",
     "ExEss.Other": "Other",
 
+    "ExEss.GodBlooded": "God-Blooded",
+    "ExEss.DragonKing": "Dragon King",
+
+    "ExEss.Import": "Import",
+    "ExEss.Folder": "Folder",
+    "ExEss.Template": "Template",
+    "ExEss.ImporterHint": "Template Hint",
+
     "ExEss.Mountain": "Mountain",
     "ExEss.Puppeteer": "Puppeteer",
 

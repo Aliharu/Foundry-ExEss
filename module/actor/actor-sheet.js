@@ -567,10 +567,9 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
   async catchBreath() {
     const actorData = foundry.utils.duplicate(this.actor);
-    const data = actorData.system;
-    data.anima.value = 0;
-    data.motes.max = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
-    data.motes.value = Math.min(data.motes.value + Math.ceil(data.motes.max / 2), data.motes.max);
+    actorData.system.anima.value = 0;
+    actorData.system.motes.max = Math.min(15, actorData.system.essence.value * 2 + Math.floor((actorData.system.essence.value - 1) / 2) + 3);
+    actorData.system.motes.value = Math.min(actorData.system.motes.value + Math.ceil(actorData.system.motes.max / 2), actorData.system.motes.max);
     this.actor.update(actorData);
     this._updateAnima("down");
   }
@@ -1067,14 +1066,14 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     if (item.system.active) {
       actorData.system.active = false;
       updateActive = false;
-      if (item.type === 'charm') {
+      if (item.system.cost?.motes) {
         if (actorData.system.details.exalt === 'getimian') {
           actorData.system[actorData.system.settings.charmspendpool].value += item.system.cost.committed;
         }
         actorData.system.motes.committed -= item.system.cost.committed;
       }
     } else {
-      if (item.type === 'charm') {
+      if (item.system.cost?.motes) {
         if (actorData.system.details.exalt === 'getimian') {
           if (actorData.system.settings.charmspendpool === 'still') {
             actorData.system.still.value = Math.max(0, actorData.system.still.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
@@ -1090,9 +1089,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - item.system.cost.stunt);
         actorData.system.power.value = Math.max(0, actorData.system.power.value - item.system.cost.power + item.system.gain.power);
         actorData.system.anima.value = Math.max(0, actorData.system.anima.value - item.system.cost.anima + item.system.gain.anima);
-        let totalHealth = 0;
-        for (let [key, health_level] of Object.entries(actorData.system.health.levels)) {
-          totalHealth += health_level.value;
+        let totalHealth = actorData.type === 'character' ? 0 : actorData.system.health.levels;
+        if(actorData.type === 'character') {
+          for (let [key, healthLevel] of Object.entries(actorData.system.health.levels)) {
+            totalHealth += healthLevel.value;
+          }
         }
         actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.system.health.lethal + item.system.cost.health);
         if (actorData.system.health.lethal > 0) {

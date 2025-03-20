@@ -45,3 +45,23 @@ export function activatableData() {
         endtrigger: new fields.StringField({ initial: "none" }),
     };
 }
+
+export function costData() {
+    return {
+        cost: new fields.SchemaField({
+            motes: new fields.NumberField({ initial: 0 }),
+            committed: new fields.NumberField({ initial: 0 }),
+            anima: new fields.NumberField({ initial: 0 }),
+            health: new fields.NumberField({ initial: 0 }),
+            healthtype: new fields.StringField({ initial: "bashing" }),
+            stunt: new fields.NumberField({ initial: 0 }),
+            power: new fields.NumberField({ initial: 0 }),
+        }),
+        gain: new fields.SchemaField({
+            motes: new fields.NumberField({ initial: 0 }),
+            anima: new fields.NumberField({ initial: 0 }),
+            health: new fields.NumberField({ initial: 0 }),
+            power: new fields.NumberField({ initial: 0 }),
+        }),
+    };
+}

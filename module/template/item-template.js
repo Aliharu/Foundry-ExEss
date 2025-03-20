@@ -1,4 +1,4 @@
-import { activatableData, traitField } from "./common-template.js";
+import { activatableData, costData, traitField } from "./common-template.js";
 
 const fields = foundry.data.fields;
 
@@ -112,6 +112,7 @@ export class ItemQualityData extends CommonItemData {
         return {
             ...commonData,
             ...activatableData(),
+            ...costData(),
         }
     }
 }
@@ -137,25 +138,11 @@ export class ItemCharmData extends CommonItemData {
         return {
             ...commonData,
             ...activatableData(),
+            ...costData(),
             charmtype: new fields.StringField({ initial: "other" }),
             ability: new fields.StringField({ initial: "athletics" }),
             requirement: new fields.NumberField({ initial: 0 }),
             essence: new fields.NumberField({ initial: 0 }),
-            cost: new fields.SchemaField({
-                motes: new fields.NumberField({ initial: 0 }),
-                committed: new fields.NumberField({ initial: 0 }),
-                anima: new fields.NumberField({ initial: 0 }),
-                health: new fields.NumberField({ initial: 0 }),
-                healthtype: new fields.StringField({ initial: "bashing" }),
-                stunt: new fields.NumberField({ initial: 0 }),
-                power: new fields.NumberField({ initial: 0 }),
-            }),
-            gain: new fields.SchemaField({
-                motes: new fields.NumberField({ initial: 0 }),
-                anima: new fields.NumberField({ initial: 0 }),
-                health: new fields.NumberField({ initial: 0 }),
-                power: new fields.NumberField({ initial: 0 }),
-            }),
             diceroller: new fields.SchemaField({
                 bonusdice: new fields.NumberField({ initial: 0 }),
                 bonussuccesses: new fields.NumberField({ initial: 0 }),

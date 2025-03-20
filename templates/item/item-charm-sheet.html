@@ -39,65 +39,7 @@
         </div>
 
         <div class="tab" data-group="primary" data-tab="costs">
-            <div class="flex-center">
-                <div class="resource-label">{{localize "ExEss.Cost"}}</div>
-            </div>
-            <div class="d-flex flex-center resources">
-                <div>
-                    <div class="resource-label">{{localize "ExEss.Motes"}}</div>
-                    <input type="number" name="system.cost.motes" value="{{system.cost.motes}}" data-dtype="Number" />
-                </div>
-                <div>
-                    <div class="resource-label">{{localize "ExEss.Committed"}}</div>
-                    <input type="number" name="system.cost.committed" value="{{system.cost.committed}}" data-dtype="Number" />
-                </div>
-                <div>
-                    <div class="resource-label">{{localize "ExEss.Anima"}}</div>
-                    <input type="number" name="system.cost.anima" value="{{system.cost.anima}}" data-dtype="Number" />
-                </div>
-                <div>
-                    <div class="resource-label">{{localize "ExEss.Stunt"}}</div>
-                    <input type="number" name="system.cost.stunt" value="{{system.cost.stunt}}" data-dtype="Number" />
-                </div>
-                <div>
-                    <div class="resource-label">{{localize "ExEss.Power"}}</div>
-                    <input type="number" name="system.cost.power" value="{{system.cost.power}}" data-dtype="Number" />
-                </div>
-                <div>
-                    <div class="resource-label">{{localize "ExEss.Health"}}</div>
-                    <input type="number" name="system.cost.health" value="{{system.cost.health}}" data-dtype="Number" />
-                </div>
-                <div>
-                    <div class="resource-label">{{localize "ExEss.HealthType"}}</div>
-                    <select name="system.cost.healthtype" data-type="String">
-                        {{selectOptions selects.damageTypes selected=system.cost.healthtype localize=true}}
-                    </select>
-                </div>
-            </div>
-            <div class="flex-center">
-                <div class="resource-label mt-2">{{localize "ExEss.Gain"}}</div>
-            </div>
-            <div class="grid grid-3col flex-group-center">
-                <div>
-                    <div class="resource-label">{{localize "ExEss.Motes"}}</div>
-                    <input type="number" name="system.gain.motes" value="{{system.gain.motes}}"
-                        data-dtype="Number" />
-                </div>
-                <div>
-                    <div class="resource-label">{{localize "ExEss.Anima"}}</div>
-                    <input type="number" name="system.gain.anima" value="{{system.gain.anima}}" data-dtype="Number" />
-                </div>
-                <div>
-                    <div class="resource-label">{{localize "ExEss.Health"}}</div>
-                    <input type="number" name="system.gain.health" value="{{system.gain.health}}"
-                        data-dtype="Number" />
-                </div>
-                <div>
-                    <div class="resource-label">{{localize "ExEss.Power"}}</div>
-                    <input type="number" name="system.gain.power" value="{{system.gain.power}}"
-                        data-dtype="Number" />
-                </div>
-            </div>
+            {{> systems/exaltedessence/templates/item/item-cost.html}}
         </div>
 
         <div class="tab" data-group="primary" data-tab="rollbonuses">

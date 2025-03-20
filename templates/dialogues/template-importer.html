@@ -1,0 +1,22 @@
+<div class="exaltedthird">
+    <div>
+      Copy and paste statblocks from the Pillars of Creation, this will not work on generic statblocks from the corebook
+    </div>
+    {{#if showError}}
+    <div class="mb-2" style="color:red;">
+      Failed on section: {{errorSection}} 
+    </div>
+    {{/if}}
+
+    <div class="resource grid grid-2col flex-center">
+      <div>
+        <div class="resource-label">{{localize "ExEss.Folder"}}</div>
+        <select id="folder" name="folder" value="{{folder}}" data-type="String">
+            {{selectOptions folders selected=folder localize=true}}
+        </select>
+      </div>
+    </div>
+
+    <label class="resource-label">{{ localize "ExEss.Template"}}</label>
+    <textarea name="textBox" type="text" id="template-text" rows="40" placeholder='{{templateHint}}'>{{textBox}}</textarea>
+</div>

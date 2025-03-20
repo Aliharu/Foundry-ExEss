@@ -86,6 +86,7 @@ EXALTEDESSENCE.weapontags = {
     "powerful": "Powerful",
     "ranged": "Ranged",
     "reaching": "Reaching",
+    "returning": "Returning",
     "shield": "Shield",
     "smashing": "Smashing",
     "thrown": "Thrown",
@@ -95,7 +96,9 @@ EXALTEDESSENCE.weapontags = {
 EXALTEDESSENCE.armortags = {
     "artifact": "Artifact",
     "buoyant": "Buoyant",
+    "concealable": "Concealable",
     "silent": "Silent",
+    "towering": "Towering",
 };
 
 EXALTEDESSENCE.statusEffects = [
@@ -295,9 +298,11 @@ EXALTEDESSENCE.selects = {
         abyssal: "ExEss.Abyssal",
         alchemical: "ExEss.Alchemical",
         dragonblooded: "ExEss.Dragonblooded",
+        dragonking: "ExEss.DragonKing",
         dreamsouled: "ExEss.DreamSouled",
         exigent: "ExEss.Exigent",
         getimian: "ExEss.Getimian",
+        godblooded: "ExEss.GodBlooded",
         hearteater: "ExEss.Hearteater",
         infernal: "ExEss.Infernal",
         liminal: "ExEss.Liminal",
@@ -425,6 +430,7 @@ EXALTEDESSENCE.selects = {
         alchemical: "ExEss.Alchemical",
         architect: "ExEss.Architect",
         dragonblooded: "ExEss.Dragonblooded",
+        dragonking: "ExEss.DragonKing",
         dreamsouled: "ExEss.DreamSouled",
         evocation: "ExEss.Evocation",
         exigent: "ExEss.Exigent",

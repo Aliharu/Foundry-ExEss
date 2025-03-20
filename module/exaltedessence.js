@@ -16,6 +16,7 @@ import { ExaltedCombatTracker } from "./combat/combat-tracker.js";
 import { CharacterData, NpcData } from "./template/actor-template.js";
 import { ItemArmorData, ItemCharmData, ItemData, ItemIntimacyData, ItemMeritData, ItemQualityData, ItemRitualData, ItemSpellData, ItemWeaponData } from "./template/item-template.js";
 import RollForm from "./apps/dice-roller.js";
+import TemplateImporter from "./apps/template-importer.js";
 
 Hooks.once('init', async function () {
 
@@ -25,6 +26,7 @@ Hooks.once('init', async function () {
     applications: {
       TraitSelector,
       ItemSearch,
+      TemplateImporter,
     },
     entities: {
       ExaltedessenceActor,
@@ -88,6 +90,7 @@ Hooks.once('init', async function () {
     "systems/exaltedessence/templates/actor/intimacies-list.html",
     "systems/exaltedessence/templates/dialogues/accuracy-roll.html",
     "systems/exaltedessence/templates/dialogues/damage-roll.html",
+    "systems/exaltedessence/templates/item/item-cost.html",
   ]);
 
   Combatant.prototype._getInitiativeFormula = function () {
@@ -283,6 +286,21 @@ Hooks.on("renderGamePause", function () {
     img.src = `systems/exaltedessence/assets/pause/${iconSrc}.png`;
   });
 });
+
+// Hooks.on("renderActorDirectory", (app, html, data) => {
+//   const buttonsText = $(`${game.user.isGM ? `<button class="template-import-button button-text">
+// 		<i class="fas fa-file-import"></i>
+// 			${game.i18n.localize("ExEss.Import")}
+// 	</button>` : ''}
+// </div>`);
+
+//   html.find(".header-actions").append(buttonsText);
+
+//   html.on("click", ".template-import-button", () => {
+//     game.templateImporter = new TemplateImporter().render(true);
+//   });
+
+// });
 
 Hooks.once("ready", async function () {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
