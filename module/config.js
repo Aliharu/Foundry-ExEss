@@ -244,6 +244,12 @@ EXALTEDESSENCE.targetableRollTypes = [
     'gambit-split',
 ]
 
+EXALTEDESSENCE.meritDiceBonuses = {
+    "": 0,
+    "primary": 4,
+    "secondary": 3,
+    "tertiary": 2,
+};
 
 EXALTEDESSENCE.selects = {
     attributes: {
@@ -269,6 +275,11 @@ EXALTEDESSENCE.selects = {
         martial: "ExEss.MartialArts",
     },
     pools: {
+        primary: "ExEss.Primary",
+        secondary: "ExEss.Secondary",
+        tertiary: "ExEss.Tertiary",
+    },
+    meritRatings: {
         primary: "ExEss.Primary",
         secondary: "ExEss.Secondary",
         tertiary: "ExEss.Tertiary",

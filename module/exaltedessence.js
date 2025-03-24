@@ -91,6 +91,7 @@ Hooks.once('init', async function () {
     "systems/exaltedessence/templates/dialogues/accuracy-roll.html",
     "systems/exaltedessence/templates/dialogues/damage-roll.html",
     "systems/exaltedessence/templates/item/item-cost.html",
+    "systems/exaltedessence/templates/item/item-roll-bonuses.html"
   ]);
 
   Combatant.prototype._getInitiativeFormula = function () {

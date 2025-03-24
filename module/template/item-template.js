@@ -74,7 +74,7 @@ export class ItemMeritData extends CommonItemData {
             ...commonData,
             ...activatableData(),
             merittype: new fields.StringField({ initial: "story" }),
-            points: new fields.NumberField({ initial: 0 }),
+            rating: new fields.StringField({ initial: "" }),
         }
     }
 }

@@ -248,6 +248,22 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             this.object.opposingCharms = [];
             if (this.object.charmList === undefined) {
                 this.object.charmList = this.actor.charms;
+                if(this.actor.qualities) {
+                    this.object.charmList['qualities'] = {
+                        name: game.i18n.localize("ExEss.Qualities"),
+                        list: this.actor.items.filter(quality => quality.type === 'quality'),
+                        visible: true,
+                        collapse: true,
+                    }
+                }
+                if(this.actor.merits) {
+                    this.object.charmList['merits'] = {
+                        name: game.i18n.localize("ExEss.Merits"),
+                        list: this.actor.items.filter(quality => quality.type === 'merit'),
+                        visible: true,
+                        collapse: true,
+                    }
+                }
                 if (this.object.charmList) {
                     for (var charmlist of Object.values(this.object.charmList)) {
                         for (const charm of charmlist.list) {
@@ -1004,55 +1020,62 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     }
                 }
             }
-
-            this.object.gain.motes += item.system.gain.motes;
-            this.object.gain.anima += item.system.gain.anima;
-            this.object.gain.health += item.system.gain.health;
-            this.object.gain.power += item.system.gain.power;
-
-            this.object.cost.motes += item.system.cost.motes;
-            if (!item.system.active) {
-                this.object.cost.committed += item.system.cost.committed;
+            if(item.type === 'merit') {
+                this.object.diceModifier += CONFIG.EXALTEDESSENCE.meritDiceBonuses[item.system.rating];
             }
-            this.object.cost.anima += item.system.cost.anima;
-            this.object.cost.health += item.system.cost.health;
-            if (item.system.cost.health > 0) {
-                if (item.system.cost.healthtype === 'lethal') {
-                    this.object.cost.healthLethal += item.system.cost.health;
+            if(item.system.gain) {
+                this.object.gain.motes += item.system.gain.motes;
+                this.object.gain.anima += item.system.gain.anima;
+                this.object.gain.health += item.system.gain.health;
+                this.object.gain.power += item.system.gain.power;
+            }
+            if(item.system.cost) {
+                this.object.cost.motes += item.system.cost.motes;
+                if (!item.system.active) {
+                    this.object.cost.committed += item.system.cost.committed;
                 }
-                else {
-                    this.object.cost.healthAggravated += item.system.cost.health;
+                this.object.cost.anima += item.system.cost.anima;
+                this.object.cost.health += item.system.cost.health;
+                if (item.system.cost.health > 0) {
+                    if (item.system.cost.healthtype === 'lethal') {
+                        this.object.cost.healthLethal += item.system.cost.health;
+                    }
+                    else {
+                        this.object.cost.healthAggravated += item.system.cost.health;
+                    }
                 }
+                this.object.cost.stunt += item.system.cost.stunt;
+                this.object.cost.power += item.system.cost.power;
             }
-            this.object.cost.stunt += item.system.cost.stunt;
-            this.object.cost.power += item.system.cost.power;
 
-            this.object.diceModifier += item.system.diceroller.bonusdice;
-            this.object.successModifier += item.system.diceroller.bonussuccesses;
-            if (item.system.diceroller.doublesuccess < this.object.doubleSuccess) {
-                this.object.doubleSuccess = item.system.diceroller.doublesuccess;
-            }
-            if (item.system.diceroller.rerollfailed) {
-                this.object.rerollFailed = item.system.diceroller.rerollfailed;
-            }
-            if (item.system.diceroller.rolltwice) {
-                this.object.rollTwice = item.system.diceroller.rolltwice;
-            }
-            this.object.rerollNumber += item.system.diceroller.rerolldice;
-            this.object.diceToSuccesses += item.system.diceroller.dicetosuccesses;
-
-            this.object.damage.damageDice += item.system.diceroller.damage.bonusdice;
-            this.object.damage.damageSuccessModifier += item.system.diceroller.damage.bonussuccesses;
-            this.object.overwhelming += item.system.diceroller.damage.overwhelming;
-            this.object.damage.postSoakDamage += item.system.diceroller.damage.postsoakdamage;
-            if (item.system.diceroller.damage.doubleextrasuccess) {
-                this.object.damage.doubleExtraSuccess = item.system.diceroller.damage.doubleextrasuccess;
-            }
-            if (item.system.diceroller.damage.ignoresoak > 0) {
-                this.object.damage.ignoreSoak += item.system.diceroller.damage.ignoresoak;
-            }
-            if (item.system.diceroller.activateaura !== 'none') {
-                this.object.activateAura = item.system.diceroller.activateaura;
+            if(item.system.diceroller) {
+                this.object.diceModifier += item.system.diceroller.bonusdice;
+                this.object.successModifier += item.system.diceroller.bonussuccesses;
+                if (item.system.diceroller.doublesuccess < this.object.doubleSuccess) {
+                    this.object.doubleSuccess = item.system.diceroller.doublesuccess;
+                }
+                if (item.system.diceroller.rerollfailed) {
+                    this.object.rerollFailed = item.system.diceroller.rerollfailed;
+                }
+                if (item.system.diceroller.rolltwice) {
+                    this.object.rollTwice = item.system.diceroller.rolltwice;
+                }
+                this.object.rerollNumber += item.system.diceroller.rerolldice;
+                this.object.diceToSuccesses += item.system.diceroller.dicetosuccesses;
+    
+                this.object.damage.damageDice += item.system.diceroller.damage.bonusdice;
+                this.object.damage.damageSuccessModifier += item.system.diceroller.damage.bonussuccesses;
+                this.object.overwhelming += item.system.diceroller.damage.overwhelming;
+                this.object.damage.postSoakDamage += item.system.diceroller.damage.postsoakdamage;
+                if (item.system.diceroller.damage.doubleextrasuccess) {
+                    this.object.damage.doubleExtraSuccess = item.system.diceroller.damage.doubleextrasuccess;
+                }
+                if (item.system.diceroller.damage.ignoresoak > 0) {
+                    this.object.damage.ignoreSoak += item.system.diceroller.damage.ignoresoak;
+                }
+                if (item.system.diceroller.activateaura !== 'none') {
+                    this.object.activateAura = item.system.diceroller.activateaura;
+                }
             }
             this.render();
         }
@@ -1194,51 +1217,60 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 }
             }
             this.object.addedCharms.splice(index, 1);
-
-            this.object.gain.motes -= item.system.gain.motes;
-            this.object.gain.anima -= item.system.gain.anima;
-            this.object.gain.health -= item.system.gain.health;
-            this.object.gain.power -= item.system.gain.power;
-
-            this.object.cost.motes -= item.system.cost.motes;
-            if (!item.system.active) {
-                this.object.cost.committed -= item.system.cost.committed;
+            
+            if(item.type === 'merit') {
+                this.object.diceModifier -= CONFIG.EXALTEDESSENCE.meritDiceBonuses[item.system.rating];
             }
-            this.object.cost.anima -= item.system.cost.anima;
-            if (item.system.cost.health > 0) {
-                if (item.system.cost.healthtype === 'lethal') {
-                    this.object.cost.healthLethal -= item.system.cost.health;
+            if(item.system.gain) {
+                this.object.gain.motes -= item.system.gain.motes;
+                this.object.gain.anima -= item.system.gain.anima;
+                this.object.gain.health -= item.system.gain.health;
+                this.object.gain.power -= item.system.gain.power;
+            }
+
+            if(item.system.cost) {
+                this.object.cost.motes -= item.system.cost.motes;
+                if (!item.system.active) {
+                    this.object.cost.committed -= item.system.cost.committed;
                 }
-                else {
-                    this.object.cost.healthAggravated -= item.system.cost.health;
+                this.object.cost.anima -= item.system.cost.anima;
+                if (item.system.cost.health > 0) {
+                    if (item.system.cost.healthtype === 'lethal') {
+                        this.object.cost.healthLethal -= item.system.cost.health;
+                    }
+                    else {
+                        this.object.cost.healthAggravated -= item.system.cost.health;
+                    }
                 }
+                this.object.cost.stunt -= item.system.cost.stunt;
+                this.object.cost.power -= item.system.cost.power;
             }
-            this.object.cost.stunt -= item.system.cost.stunt;
-            this.object.cost.power -= item.system.cost.power;
 
-            this.object.diceModifier -= item.system.diceroller.bonusdice;
-            this.object.successModifier -= item.system.diceroller.bonussuccesses;
-            if (item.system.diceroller.rerollfailed) {
-                this.object.rerollFailed = false;
-            }
-            if (item.system.diceroller.rolltwice) {
-                this.object.rollTwice = false;
-            }
-            this.object.rerollNumber -= item.system.diceroller.rerolldice;
-            this.object.diceToSuccesses -= item.system.diceroller.dicetosuccesses;
-
-            this.object.damage.damageDice -= item.system.diceroller.damage.bonusdice;
-            this.object.damage.damageSuccessModifier -= item.system.diceroller.damage.bonussuccesses;
-            this.object.overwhelming -= item.system.diceroller.damage.overwhelming;
-            this.object.damage.postSoakDamage -= item.system.diceroller.damage.postsoakdamage;
-            if (item.system.diceroller.damage.doubleextrasuccess) {
-                this.object.damage.doubleExtraSuccess = false;
-            }
-            if (item.system.diceroller.damage.ignoresoak > 0) {
-                this.object.damage.ignoreSoak -= item.system.diceroller.damage.ignoresoak;
-            }
-            if (item.system.diceroller.activateaura === this.object.activateAura) {
-                this.object.activateAura = 'none';
+            if(item.system.diceroller) {
+                this.object.diceModifier -= item.system.diceroller.bonusdice;
+                this.object.successModifier -= item.system.diceroller.bonussuccesses;
+                if (item.system.diceroller.rerollfailed) {
+                    this.object.rerollFailed = false;
+                }
+                if (item.system.diceroller.rolltwice) {
+                    this.object.rollTwice = false;
+                }
+                this.object.rerollNumber -= item.system.diceroller.rerolldice;
+                this.object.diceToSuccesses -= item.system.diceroller.dicetosuccesses;
+    
+                this.object.damage.damageDice -= item.system.diceroller.damage.bonusdice;
+                this.object.damage.damageSuccessModifier -= item.system.diceroller.damage.bonussuccesses;
+                this.object.overwhelming -= item.system.diceroller.damage.overwhelming;
+                this.object.damage.postSoakDamage -= item.system.diceroller.damage.postsoakdamage;
+                if (item.system.diceroller.damage.doubleextrasuccess) {
+                    this.object.damage.doubleExtraSuccess = false;
+                }
+                if (item.system.diceroller.damage.ignoresoak > 0) {
+                    this.object.damage.ignoreSoak -= item.system.diceroller.damage.ignoresoak;
+                }
+                if (item.system.diceroller.activateaura === this.object.activateAura) {
+                    this.object.activateAura = 'none';
+                }
             }
         }
         this.render();
@@ -1960,7 +1992,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                           <div class="dice-roll">
                               <div class="dice-result">
                                   <h4 class="dice-formula">${this.object.accuracyResult} Successes vs ${this.object.defense} defense</h4>
-                                  <h4 class="dice-formula">${this.object.bonusPower} Bonus Power</h4>
+                                  ${this.object.bonusPower ? `<h4 class="dice-formula">${this.object.bonusPower} Bonus Power</h4>` : ''}
                                   <h4 class="dice-formula">1 Base + ${postDefenseTotal} Extra Successes</h4>
                                   <h4 class="dice-formula">${this.object.overwhelming} Overwhelming</h4>
                                   <h4 class="dice-total">${powerGained} Power Built!</h4>

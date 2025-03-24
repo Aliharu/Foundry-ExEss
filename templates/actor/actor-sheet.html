@@ -418,12 +418,7 @@
         <li class="item flexrow item-row" data-item-id="{{item._id}}">
           <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
               height="24" /></div>
-          <h4 class="item-name">{{item.name}}</h4>
-          <div class="resource-value-static" data-value="{{item.system.points}}" data-name="items.{{item._id}}">
-            {{#numLoop 5}}
-            <span class="resource-value-static-step" data-index="{{this}}"></span>
-            {{/numLoop}}
-          </div>
+          <h4 class="item-name">{{item.name}} ({{item.system.rating}})</h4>
           <div class="item-controls">
             {{#if item.system.activatable}}
             {{#if item.system.active}}

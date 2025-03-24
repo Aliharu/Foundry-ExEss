@@ -3,8 +3,10 @@
         <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
         <div class="header-fields">
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
-            <label class="resource-label">{{localize "ExEss.Points"}}: </label>
-            <input type="number" name="system.points" value="{{system.points}}" />
+            <label class="resource-label">{{localize "ExEss.Rating"}}</label>
+            <select name="system.rating" data-dtype="String">
+                {{selectOptions selects.meritRatings selected=system.rating localize=true blank="ExEss.None"}}
+            </select>
         </div>
     </header>
 
