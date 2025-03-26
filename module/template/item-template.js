@@ -1,4 +1,4 @@
-import { activatableData, costData, traitField } from "./common-template.js";
+import { activatableData, charmPrerequisite, costData, traitField } from "./common-template.js";
 
 const fields = foundry.data.fields;
 
@@ -143,6 +143,12 @@ export class ItemCharmData extends CommonItemData {
             ability: new fields.StringField({ initial: "athletics" }),
             requirement: new fields.NumberField({ initial: 0 }),
             essence: new fields.NumberField({ initial: 0 }),
+            prerequisites: new fields.StringField({ initial: "" }),
+            charmprerequisites: new fields.ArrayField(
+                new fields.SchemaField({
+                    ...charmPrerequisite()
+                }),
+            ),
             diceroller: new fields.SchemaField({
                 bonusdice: new fields.NumberField({ initial: 0 }),
                 bonussuccesses: new fields.NumberField({ initial: 0 }),

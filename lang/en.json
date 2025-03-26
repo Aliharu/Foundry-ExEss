@@ -199,6 +199,10 @@
     "ExEss.Items": "Items",
     "ExEss.Templates": "Templates",
 
+    "ExEss.CharmPrerequisites": "Charm Prerequisites",
+    "ExEss.OtherPrerequisites": "Other Prerequisites",
+
+
     "ExEss.MilestonesExplain": "With milestones you may purchase the following advancements",
     "ExEss.PersonalMilestoneExplain": "Repurchase charm, add charm mode (including personal), add tertiary merit, aquire first dot in an ability",
     "ExEss.MinorMilestoneExplain": "Any Charm, Increase Ability by +1.",

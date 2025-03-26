@@ -46,6 +46,13 @@ export function activatableData() {
     };
 }
 
+export function charmPrerequisite() {
+    return {
+        id: new fields.StringField({ initial: "" }),
+        name: new fields.StringField({ initial: "" }),
+    };
+}
+
 export function costData() {
     return {
         cost: new fields.SchemaField({
