@@ -5,6 +5,7 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
     super(type);
 
     this.data = {
+      type: type,
       test: '',
       folder: '',
       folders: [],
@@ -14,7 +15,13 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
       textBox: ''
     };
 
-    let collection = game.collections.get("Actor");
+    let collection;
+    if (this.data.type === 'qc') {
+      collection = game.collections.get("Actor");
+    }
+    else {
+      collection = game.collections.get("Item");
+    }
 
     this.data.folders = collection?._formatFolderSelectOptions()
       .reduce((acc, folder) => {
@@ -52,7 +59,13 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
     // Do things with the returned FormData
     const formObject = foundry.utils.expandObject(formData.object);
     if (formObject.type) {
-      let collection = game.collections.get("Actor");
+      let collection;
+      if (formObject.type === 'qc') {
+        collection = game.collections.get("Actor");
+      }
+      else {
+        collection = game.collections.get("Item");
+      }
       this.data.folders = collection?._formatFolderSelectOptions()
         .reduce((acc, folder) => {
           acc[folder.id] = folder.name;
@@ -69,7 +82,9 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
 
     if (event.type === 'submit') {
       this.data.showError = false;
-      await this.createCharacter();
+      // await this.createCharacter();
+      await this.importTemplate(event);
+
       if (!this.data.showError) {
         ui.notifications.notify(`Import Complete`);
       }
@@ -96,6 +111,21 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
     return this.data;
   }
 
+  async importTemplate(event) {
+    if (!this.data.textBox) {
+      ui.notifications.notify(`No Text Found`);
+      return;
+    }
+    switch (this.data.type) {
+      case 'charm':
+        await this.createCharms();
+        break;
+      case 'qc':
+        await this.createQuickCharacter();
+        break;
+    }
+  }
+
   async _getFolder() {
     let folderId = this.data.folder;
     let folder = null;
@@ -106,7 +136,10 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
     return folder;
   }
 
-  async createCharacter() {
+  async createCharms() {
+  }
+
+  async createQuickCharacter() {
     let actorData = this._getStatBlock(false);
     let folder = await this._getFolder();
     const itemData = [
