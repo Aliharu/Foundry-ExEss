@@ -8,6 +8,7 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
       type: type,
       test: '',
       folder: '',
+      charmType: 'other',
       folders: [],
       errorText: '',
       errorSection: '',
@@ -137,6 +138,132 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
   }
 
   async createCharms() {
+    let folder = await this._getFolder();
+    const charmsList = [];
+
+
+    let charmBlocks = this._getCharmBlocks(this.data.textBox); // Assuming this method splits the text into charm sections
+
+    for (let charmText of charmBlocks) {
+      let lines = charmText.split('\n').map(line => line.trim()).filter(line => line);
+        
+      // Combine name if the second line is also all caps
+      let charmName = lines[0];
+      if (lines[1] && lines[1] === lines[1].toUpperCase()) {
+          charmName += " " + lines[1];
+          lines.splice(1, 1); // Remove the second line since it's now part of the name
+      }
+      
+      charmName = this._formatTitleCase(charmName);
+      let prerequisitesLine = lines.find(line => line.startsWith("Prerequisites:") || line.startsWith("Prerequisite:"));
+      const charmAbilities = Object.keys(CONFIG.EXALTEDESSENCE.selects.charmAbilities);
+
+      let charmData = new Item.implementation({
+        name: charmName,
+        type: 'charm',
+        folder: folder ?? undefined,
+      }).toObject();
+
+      charmData.system.description = lines.slice(1).join(" \n");
+      charmData.system.charmtype = this.data.charmType;
+      charmData.system.essence = 1;
+
+      if (prerequisitesLine) {
+        let prereqs = prerequisitesLine.replace(/Prerequisites?:/, "").split(",").map(p => p.trim());
+
+        for (let prereq of prereqs) {
+          let essenceMatch = prereq.match(/Essence (\d+)/i);
+          let abilityMatch = prereq.match(/(\w+) (\d+)/i);
+
+          if (essenceMatch) {
+            charmData.system.essence = parseInt(essenceMatch[1]);
+          } else if (abilityMatch) {
+            let abilityName = abilityMatch[1].toLowerCase();
+            let abilityValue = parseInt(abilityMatch[2]);
+
+            if (charmAbilities.includes(abilityName)) {
+              charmData.system.ability = abilityName;
+              charmData.system.requirement = abilityValue;
+            } else {
+              charmData.system.prerequisites += (charmData.system.prerequisites ? ", " : "") + prereq;
+            }
+          } else {
+            charmData.system.prerequisites += (charmData.system.prerequisites ? ", " : "") + prereq;
+          }
+        }
+      }
+      let moteCostMatch = charmText.match(/Spend (\d+) motes?/i);
+      if (moteCostMatch) {
+        charmData.system.cost.motes = parseInt(moteCostMatch[1]);
+      }
+      let committedCostMatch = charmText.match(/Commit (\d+) mote/i);
+      if (committedCostMatch) {
+        charmData.system.cost.committed = parseInt(committedCostMatch[1]);
+      }
+      charmsList.push(await Item.create(charmData));
+      console.log(charmData);
+    }
+
+    if (charmsList) {
+      this.updatePrereqs(charmsList);
+    }
+  }
+
+  _formatTitleCase(str) {
+    return str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  _getCharmBlocks(text) {
+    let blocks = [];
+    let currentBlock = [];
+    let lines = text.split('\n');
+
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i].trim();
+      let previousLine = (lines[i - 1] ?? "first line").trim();
+
+      if (line && line === line.toUpperCase() && (!previousLine || previousLine !== previousLine.toUpperCase())) {
+        if (currentBlock.length) {
+          blocks.push(currentBlock.join('\n'));
+          currentBlock = [];
+        }
+      }
+
+      currentBlock.push(line);
+    }
+
+    if (currentBlock.length) {
+      blocks.push(currentBlock.join('\n'));
+    }
+
+    return blocks;
+  }
+
+  async updatePrereqs(charmsList) {
+    const filteredCharms = charmsList.filter(charm => charm.system.prerequisites && charm.system.prerequisites !== 'None');
+    for (const charm of filteredCharms) {
+      const charmData = foundry.utils.duplicate(charm);
+      const splitPrereqs = charm.system.prerequisites.split(',');
+      const newPrereqs = [];
+      for (const prereq of splitPrereqs) {
+        const existingCharm = game.items.filter(item => item.type === 'charm' && item.system.charmtype === charm.system.charmtype && item.name.trim() === prereq.trim())[0];
+        if (existingCharm) {
+          charmData.system.charmprerequisites.push(
+            {
+              id: existingCharm.id,
+              name: existingCharm.name
+            }
+          );
+        }
+        else {
+          newPrereqs.push(prereq);
+        }
+      }
+      if (charm.system.charmprerequisites) {
+        charmData.system.prerequisites = newPrereqs.join(", ");
+        await charm.update(charmData);
+      }
+    }
   }
 
   async createQuickCharacter() {

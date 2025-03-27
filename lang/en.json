@@ -76,7 +76,6 @@
     "ExEss.Import": "Import",
     "ExEss.Folder": "Folder",
     "ExEss.Template": "Template",
-    "ExEss.ImporterHint": "Template Hint",
 
     "ExEss.Mountain": "Mountain",
     "ExEss.Puppeteer": "Puppeteer",
@@ -202,6 +201,7 @@
     "ExEss.CharmPrerequisites": "Charm Prerequisites",
     "ExEss.OtherPrerequisites": "Other Prerequisites",
 
+    "ExEss.ImporterHint": "CHARM NAME\nPrerequisites: Essence X, Ability X, Other Requirements\nDescription and mechanics of the charm.\nSECOND CHARM\nPrerequisites: Essence X, Ability X, Other Requirements\nSecond Charm Description",
 
     "ExEss.MilestonesExplain": "With milestones you may purchase the following advancements",
     "ExEss.PersonalMilestoneExplain": "Repurchase charm, add charm mode (including personal), add tertiary merit, aquire first dot in an ability",

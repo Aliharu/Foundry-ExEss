@@ -23,6 +23,15 @@
             {{selectOptions folders selected=folder localize=true}}
         </select>
       </div>
+      {{#ifEquals type 'charm'}}
+      <div>
+        <div class="resource-label">{{localize "ExEss.CharmType"}}</div>
+        <select id="charmType" name="charmType" value="{{charmType}}" data-type="String">
+            {{selectOptions selects.exaltCharmTypes selected=charmType localize=true}}
+        </select>
+      </div>
+      {{/ifEquals}}
+  
     </div>
 
     <label class="resource-label">{{ localize "ExEss.Template"}}</label>
