@@ -50,6 +50,9 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 this.object.diceModifier = 0;
                 this.object.triggerSelfDefensePenalty = 0;
 
+                this.object.unusedDiceRoll = null;
+                this.object.unusedDiceRollDisplay = null;
+                this.object.unusedDiceRollTotal = null;
 
                 if (data.rollType === 'withering' || data.rollType === 'gambit' || data.rollType === 'decisive') {
                     if (this.object.conditions.some(e => e.name === 'prone')) {
@@ -248,7 +251,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             this.object.opposingCharms = [];
             if (this.object.charmList === undefined) {
                 this.object.charmList = this.actor.charms;
-                if(this.actor.qualities) {
+                if (this.actor.qualities) {
                     this.object.charmList['qualities'] = {
                         name: game.i18n.localize("ExEss.Qualities"),
                         list: this.actor.items.filter(quality => quality.type === 'quality'),
@@ -256,7 +259,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                         collapse: true,
                     }
                 }
-                if(this.actor.merits) {
+                if (this.actor.merits) {
                     this.object.charmList['merits'] = {
                         name: game.i18n.localize("ExEss.Merits"),
                         list: this.actor.items.filter(quality => quality.type === 'merit'),
@@ -1020,16 +1023,16 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     }
                 }
             }
-            if(item.type === 'merit') {
+            if (item.type === 'merit') {
                 this.object.diceModifier += CONFIG.EXALTEDESSENCE.meritDiceBonuses[item.system.rating];
             }
-            if(item.system.gain) {
+            if (item.system.gain) {
                 this.object.gain.motes += item.system.gain.motes;
                 this.object.gain.anima += item.system.gain.anima;
                 this.object.gain.health += item.system.gain.health;
                 this.object.gain.power += item.system.gain.power;
             }
-            if(item.system.cost) {
+            if (item.system.cost) {
                 this.object.cost.motes += item.system.cost.motes;
                 if (!item.system.active) {
                     this.object.cost.committed += item.system.cost.committed;
@@ -1048,7 +1051,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 this.object.cost.power += item.system.cost.power;
             }
 
-            if(item.system.diceroller) {
+            if (item.system.diceroller) {
                 this.object.diceModifier += item.system.diceroller.bonusdice;
                 this.object.successModifier += item.system.diceroller.bonussuccesses;
                 if (item.system.diceroller.doublesuccess < this.object.doubleSuccess) {
@@ -1062,7 +1065,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 }
                 this.object.rerollNumber += item.system.diceroller.rerolldice;
                 this.object.diceToSuccesses += item.system.diceroller.dicetosuccesses;
-    
+
                 this.object.damage.damageDice += item.system.diceroller.damage.bonusdice;
                 this.object.damage.damageSuccessModifier += item.system.diceroller.damage.bonussuccesses;
                 this.object.overwhelming += item.system.diceroller.damage.overwhelming;
@@ -1217,18 +1220,18 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 }
             }
             this.object.addedCharms.splice(index, 1);
-            
-            if(item.type === 'merit') {
+
+            if (item.type === 'merit') {
                 this.object.diceModifier -= CONFIG.EXALTEDESSENCE.meritDiceBonuses[item.system.rating];
             }
-            if(item.system.gain) {
+            if (item.system.gain) {
                 this.object.gain.motes -= item.system.gain.motes;
                 this.object.gain.anima -= item.system.gain.anima;
                 this.object.gain.health -= item.system.gain.health;
                 this.object.gain.power -= item.system.gain.power;
             }
 
-            if(item.system.cost) {
+            if (item.system.cost) {
                 this.object.cost.motes -= item.system.cost.motes;
                 if (!item.system.active) {
                     this.object.cost.committed -= item.system.cost.committed;
@@ -1246,7 +1249,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 this.object.cost.power -= item.system.cost.power;
             }
 
-            if(item.system.diceroller) {
+            if (item.system.diceroller) {
                 this.object.diceModifier -= item.system.diceroller.bonusdice;
                 this.object.successModifier -= item.system.diceroller.bonussuccesses;
                 if (item.system.diceroller.rerollfailed) {
@@ -1257,7 +1260,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 }
                 this.object.rerollNumber -= item.system.diceroller.rerolldice;
                 this.object.diceToSuccesses -= item.system.diceroller.dicetosuccesses;
-    
+
                 this.object.damage.damageDice -= item.system.diceroller.damage.bonusdice;
                 this.object.damage.damageSuccessModifier -= item.system.diceroller.damage.bonussuccesses;
                 this.object.overwhelming -= item.system.diceroller.damage.overwhelming;
@@ -1708,17 +1711,44 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
 
         const diceRollResults = await this._calculateRoll(dice, rollModifiers);
         this.object.roll = diceRollResults.roll;
-        this.object.displayDice = diceRollResults.diceDisplay;
-        this.object.total = diceRollResults.total;
+        this.object.diceDisplay = diceRollResults.diceDisplay;
+        this.object.diceRollTotal = diceRollResults.total;
         this.object.preBonusSuccesses = diceRollResults.preBonusSuccesses;
+        let diceRoll = diceRollResults.diceRoll;
 
-        if (this.object.rollTwice) {
-            const secondRoll = await this._calculateRoll(dice, rollModifiers);
-            if (secondRoll.total > diceRollResults.total) {
-                this.object.roll = secondRoll.roll;
-                this.object.displayDice = secondRoll.diceDisplay;
-                this.object.total = secondRoll.total;
-                this.object.preBonusSuccesses = secondRoll.preBonusSuccesses;
+        if (this.object.rollTwice || this.object.rollTwiceLowest) {
+            if (this.object.rollTwice && !this.object.rollTwiceLowest) {
+                const secondRoll = await this._calculateRoll(dice, rollModifiers);
+                if (secondRoll.total > diceRollResults.total) {
+                    this.object.roll = secondRoll.roll;
+                    this.object.diceDisplay = secondRoll.diceDisplay;
+                    this.object.diceRollTotal = secondRoll.total;
+
+                    this.object.unusedDiceRoll = diceRollResults.roll;
+                    this.object.unusedDiceRollDisplay = diceRollResults.diceDisplay;
+                    this.object.unusedDiceRollTotal = diceRollResults.total;
+                    diceRoll = secondRoll.diceRoll;
+                } else {
+                    this.object.unusedDiceRoll = secondRoll.roll;
+                    this.object.unusedDiceRollDisplay = secondRoll.diceDisplay;
+                    this.object.unusedDiceRollTotal = secondRoll.total;
+                }
+            } else if (this.object.rollTwiceLowest && !this.object.rollTwice) {
+                const secondRoll = await this._calculateRoll(dice, rollModifiers);
+                if (secondRoll.total < diceRollResults.total) {
+                    this.object.roll = secondRoll.roll;
+                    this.object.diceDisplay = secondRoll.diceDisplay;
+                    this.object.diceRollTotal = secondRoll.total;
+
+                    this.object.unusedDiceRoll = diceRollResults.roll;
+                    this.object.unusedDiceRollDisplay = diceRollResults.diceDisplay;
+                    this.object.unusedDiceRollTotal = diceRollResults.total;
+                    diceRoll = secondRoll.diceRoll;
+                } else {
+                    this.object.unusedDiceRoll = secondRoll.roll;
+                    this.object.unusedDiceRollDisplay = secondRoll.diceDisplay;
+                    this.object.unusedDiceRollTotal = secondRoll.total;
+                }
             }
         }
         this.object.roll.dice[0].options.rollOrder = 1;
@@ -1744,7 +1774,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             if (combat) {
                 let combatant = this._getActorCombatant();
                 if (combatant) {
-                    combat.setInitiative(combatant.id, this.object.total);
+                    combat.setInitiative(combatant.id, this.object.diceRollTotal);
                 }
             }
         }
@@ -1753,11 +1783,9 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                       <div class="dice-result">
                           <h4 class="dice-formula">${this.object.dice} Dice + ${this.object.successModifier} ${this.object.successModifier === 1 ? "success" : "successes"}</h4>
                           <div class="dice-tooltip">
-                              <div class="dice">
-                                  <ol class="dice-rolls">${this.object.displayDice}</ol>
-                              </div>
+                            ${this._getDiceDisplay()}
                           </div>
-                          <h4 class="dice-total">${this.object.total} Successes</h4>
+                          <h4 class="dice-total">${this.object.diceRollTotal} Successes</h4>
                           ${resourceResult}
                       </div>
                   </div>
@@ -1767,7 +1795,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
     }
 
     _buildResource() {
-        var total = this.object.total - 3;
+        var total = this.object.diceRollTotal - 3;
         let self = (this.object.buildPowerTarget || 'self') === 'self';
 
         var message = '';
@@ -1840,12 +1868,12 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
 
     _socialInfluence() {
         var message = '';
-        if (this.object.total < this.object.resolve) {
-            message = `<h4 class="dice-formula">${this.object.total} Successes vs ${this.object.resolve} Resolve</h4><h4 class="dice-total">Influence Failed</h4>`;
+        if (this.object.diceRollTotal < this.object.resolve) {
+            message = `<h4 class="dice-formula">${this.object.diceRollTotal} Successes vs ${this.object.resolve} Resolve</h4><h4 class="dice-total">Influence Failed</h4>`;
         }
         else {
-            var total = this.object.total - this.object.resolve;
-            message = `<h4 class="dice-formula">${this.object.total} Successes vs ${this.object.resolve} Resolve</h4> <h4 class="dice-total">${total} Extra Successes!</h4>`;
+            var total = this.object.diceRollTotal - this.object.resolve;
+            message = `<h4 class="dice-formula">${this.object.diceRollTotal} Successes vs ${this.object.resolve} Resolve</h4> <h4 class="dice-total">${total} Extra Successes!</h4>`;
         }
         return message;
     }
@@ -1858,18 +1886,16 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                       <div class="dice-result">
                           <h4 class="dice-formula">${this.object.dice} Dice + ${this.object.successModifier} successes</h4>
                           <div class="dice-tooltip">
-                              <div class="dice">
-                                  <ol class="dice-rolls">${this.object.displayDice}</ol>
-                              </div>
+                            ${this._getDiceDisplay()}
                           </div>
-                          <h4 class="dice-total">${this.object.total} Successes</h4>
+                          <h4 class="dice-total">${this.object.diceRollTotal} Successes</h4>
                       </div>
                   </div>
               </div>`;
         messageContent = await this._createChatMessageContent(messageContent, 'Dice Roll');
         ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_STYLES.OTHER, rolls: [this.object.roll] });
         this.object.showDamage = true;
-        this.object.accuracyResult = this.object.total;
+        this.object.accuracyResult = this.object.diceRollTotal;
         this.render();
     }
 
@@ -2319,6 +2345,16 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             }
         }
         return highestAttribute;
+    }
+
+    _getDiceDisplay() {
+        return `
+            <div class="dice">
+                <ol class="dice-rolls">${this.object.diceDisplay}</ol>
+            </div>
+            ${this.object.unusedDiceRollDisplay ? `<div class="flex-center resource-label">Unused Roll</div><div class="dice">
+                <ol class="dice-rolls">${this.object.unusedDiceRollDisplay}</ol>
+            </div>` : ''}`
     }
 
     async _updateCharacterResources() {

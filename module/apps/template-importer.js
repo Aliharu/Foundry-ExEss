@@ -201,7 +201,6 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
         charmData.system.cost.committed = parseInt(committedCostMatch[1]);
       }
       charmsList.push(await Item.create(charmData));
-      console.log(charmData);
     }
 
     if (charmsList) {
