@@ -46,7 +46,7 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
 
   async close(options = {}) {
     const applyChanges = await foundry.applications.api.DialogV2.confirm({
-      window: { title: `${game.i18n.localize("ExEss.Close")}?` },
+      window: { title: `${game.i18n.localize("ExEss.Close")}?`, resizable: true },
       content: "<p>Any unsaved changed will be lost</p>",
       classes: [`${game.settings.get("exaltedessence", "sheetStyle")}-background`],
       modal: true
@@ -105,7 +105,8 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
 
   async _prepareContext(_options) {
     this.data.selects = CONFIG.EXALTEDESSENCE.selects;
-    this.data.templateHint = game.i18n.localize(`ExEss.ImporterHint`);
+    const hintMap = { 'charm': 'CharmImportHint', 'spell': 'SpellImportHint', 'qc': 'QCImportHint' }
+    this.data.templateHint = game.i18n.localize(`ExEss.${hintMap[this.data.type]}`);
     this.data.buttons = [
       { type: "submit", icon: "fa-solid fa-save", label: "ExEss.Import" }
     ]
@@ -279,6 +280,7 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
     let genericQualities = "";
 
     actorData.items = [];
+    actorData.name = lines[0];
     lines.forEach(line => {
       if (line.match(/ATTACKS AND QUALITIES/)) {
         isItemSection = true;
@@ -293,19 +295,25 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
 
         if (primaryMatch) {
           currentPool = 'primary';
-          actorData.system.primary = { value: parseInt(primaryMatch[1], 10), actions: primaryMatch[2] };
+          actorData.system.pools.primary = { value: parseInt(primaryMatch[1], 10), actions: primaryMatch[2] };
         } else if (secondaryMatch) {
           currentPool = 'secondary';
-          actorData.system.secondary = { value: parseInt(secondaryMatch[1], 10), actions: secondaryMatch[2] };
+          actorData.system.pools.secondary = { value: parseInt(secondaryMatch[1], 10), actions: secondaryMatch[2] };
         } else if (tertiaryMatch) {
           currentPool = null;
-          actorData.system.tertiary = { value: parseInt(tertiaryMatch[1], 10) };
+          actorData.system.pools.tertiary = { value: parseInt(tertiaryMatch[1], 10), actions: "" };
         } else if (statMatch) {
           currentPool = null;
           const stat = statMatch[1].toLowerCase().replace(' ', '_');
-          actorData.system[stat] = parseInt(statMatch[2], 10);
+          if(stat === 'health_levels') {
+            actorData.system.health.levels = parseInt(statMatch[2], 10);
+          } else {
+            actorData.system[stat].value = parseInt(statMatch[2], 10);
+          }
         } else if (currentPool && line.trim()) {
           actorData.system[currentPool].actions += ` ${line}`;
+        } else {
+          actorData.system.biography += ` ${line}`;
         }
       } else {
         if (line.trim() === "") {
@@ -334,7 +342,12 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
     if (currentItem) actorData.items.push(currentItem);
     if (genericQualities) {
       genericQualities.split(', ').forEach(quality => {
-        actorData.items.push({ name: quality.trim(), system: { description: '' } });
+        const existingQuality = game.items.find(item => item.name.trim().toLowerCase() === quality.trim().toLowerCase() && item.type === 'quality');
+        if(existingQuality) {
+          actorData.items.push(foundry.utils.duplicate(existingQuality));
+        } else {
+          actorData.items.push({ name: quality.trim(), type: 'quality', system: { description: '' } });
+        }
       });
     }
     const moteCostRegex = /Spend\s+(\d+)\s+motes?/;
@@ -363,8 +376,8 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
           const value = parseInt(weaponMatch[1] || weaponMatch[4], 10);  // Capture the correct value
           const label = (weaponMatch[2] || weaponMatch[3]).toLowerCase(); // Capture the correct label
 
-          currentItem.system[label] = value;
-          currentItem.type = 'weapon';
+          item.system[label] = value;
+          item.type = 'weapon';
         }
       }
     });
@@ -373,7 +386,7 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
     }
     console.log(actorData.system);
     console.log(actorData.items);
-    // await Actor.create(actorData);
+    await Actor.create(actorData);
   }
 
   _getItemData(textArray, index, actorData) {
