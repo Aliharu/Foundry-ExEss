@@ -289,19 +289,36 @@ Hooks.on("renderGamePause", function () {
 });
 
 // Hooks.on("renderActorDirectory", (app, html, data) => {
-//   const buttonsText = $(`${game.user.isGM ? `<button class="template-import-button button-text">
-// 		<i class="fas fa-file-import"></i>
-// 			${game.i18n.localize("ExEss.Import")}
-// 	</button>` : ''}
-// </div>`);
+//   if (html instanceof jQuery) {
+//     html = $(html)[0];
+//   }
+//   const button = document.createElement("button");
+//   button.classList.add("template-import-button");
+//   button.innerHTML = `<i class="fas fa-suitcase"></i> ${game.i18n.localize("ExEss.Import")}`;
+//   html.querySelector(".header-actions").append(button);
 
-//   html.find(".header-actions").append(buttonsText);
-
-//   html.on("click", ".template-import-button", () => {
-//     game.templateImporter = new TemplateImporter().render(true);
+//   html.querySelectorAll('.template-import-button').forEach(element => {
+//     element.addEventListener('click', async (ev) => {
+//       game.templateImporter = new TemplateImporter("qc").render(true);
+//     });
 //   });
-
 // });
+
+Hooks.on("renderItemDirectory", (app, html, data) => {
+  if (html instanceof jQuery) {
+    html = $(html)[0];
+  }
+  const button = document.createElement("button");
+  button.classList.add("template-import-button");
+  button.innerHTML = `<i class="fas fa-suitcase"></i> ${game.i18n.localize("ExEss.Import")}`;
+  html.querySelector(".header-actions").append(button);
+
+  html.querySelectorAll('.template-import-button').forEach(element => {
+    element.addEventListener('click', async (ev) => {
+      game.templateImporter = new TemplateImporter("charm").render(true);
+    });
+  });
+});
 
 Hooks.once("ready", async function () {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
