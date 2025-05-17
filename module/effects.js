@@ -3,14 +3,14 @@
  * @param {MouseEvent} event      The left-click event on the effect control
  * @param {Actor|Item} owner      The owning entity which manages this effect
  */
-export function onManageActiveEffect(event, owner) {
-  event.preventDefault();
-  const a = event.currentTarget;
+export function onManageActiveEffect(target, owner) {
+  const a = target;
   const li = a.closest("li");
   const effect = li.dataset.effectId ? owner.effects.get(li.dataset.effectId) : null;
-  switch ( a.dataset.action ) {
+  switch ( a.dataset.actiontype ) {
     case "create":
       return owner.createEmbeddedDocuments("ActiveEffect", [{
+        name: "New Active Effect",
         label: game.i18n.localize("ExEss.EffectNew"),
         img: "icons/svg/aura.svg",
         origin: owner.uuid,
@@ -35,7 +35,7 @@ export function prepareActiveEffectCategories(effects) {
 
     // Define effect header categories
     const categories = {
-      temporary: {
+      temporary: { 
         type: "temporary",
         label: game.i18n.localize("ExEss.EffectTemporary"),
         effects: []

@@ -1,0 +1,173 @@
+<div class="tab flex-center {{tab.cssClass}}" data-group="primary" data-tab="stats">
+    {{#if isNPC}}
+    <div class="flex-group-center">
+        <div class="flex-group-left pool">
+            <label class="resource-label roll-pool" data-rolltype="ability" data-roll="{{pool.primary.value}}"
+                data-pool="primary">
+                {{localize "ExEss.Primary"}} {{localize "ExEss.Pool"}}
+            </label>
+            <div class="d-flex">
+                <input class="pool-value-input" type="number" name="system.pools.primary.value"
+                    value="{{system.pools.primary.value}}" data-dtype="Number" />
+                <input type="text" name="system.pools.primary.actions" value="{{system.pools.primary.actions}}"
+                    placeholder="Input what actions this pool covers" />
+            </div>
+        </div>
+        <div class="flex-group-left pool">
+            <label class="resource-label roll-pool" data-rolltype="ability" data-roll="{{pool.secondary.value}}"
+                data-pool="secondary">
+                {{localize "ExEss.Secondary"}} {{localize "ExEss.Pool"}}
+            </label>
+            <div class="d-flex">
+                <input class="pool-value-input" type="number" name="system.pools.secondary.value"
+                    value="{{system.pools.secondary.value}}" data-dtype="Number" />
+                <input type="text" name="system.pools.secondary.actions" value="{{system.pools.secondary.actions}}"
+                    placeholder="Input what actions this pool covers" />
+            </div>
+        </div>
+        <div class="flex-group-left pool">
+            <label class="resource-label roll-pool" data-rolltype="ability" data-roll="{{pool.tertiary.value}}"
+                data-pool="tertiary">
+                {{localize "ExEss.Tertiary"}} {{localize "ExEss.Pool"}}
+            </label>
+            <div class="d-flex">
+                <input class="pool-value-input" type="number" name="system.pools.tertiary.value"
+                    value="{{system.pools.tertiary.value}}" data-dtype="Number" />
+                <input type="text" name="system.pools.tertiary.actions" value="{{system.pools.tertiary.actions}}"
+                    placeholder="Input what actions this pool covers" />
+            </div>
+        </div>
+    </div>
+    {{else}}
+    <div style="padding-top:10px;">
+        <label class="resource-label">{{localize "ExEss.Attributes"}}</label>
+    </div>
+    <div class="attributes grid grid-3col flex-group-center">
+        {{#each system.attributes as |attribute key|}}
+        <div class="attribute flexrow flex-center">
+            <label for="system.attributes.{{key}}.value" class="resource-label resource-value"
+                data-roll="{{attribute.value}}" data-label="{{attribute.name}}">{{localize attribute.name}}{{#ifEquals
+                ../system.details.exalt 'alchemical'}}<i title="Toggle Augmented Attribute" data-action="toggleAugment"
+                    data-name="{{key}}"
+                    class="augment-attribute fas fa-cog {{#if attribute.aug}}augment-attribute-active{{/if}}"></i>{{/ifEquals}}</label>
+            <div class="resource-value" data-value="{{attribute.value}}" data-name="system.attributes.{{key}}.value">
+                {{#numLoop 5}}
+                <span class="resource-value-step" data-action="dotCounterChange" data-index="{{this}}"></span>
+                {{/numLoop}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    <label class="resource-label">{{localize "ExEss.Abilities"}}<a><i data-action="makeActionRoll"
+                data-rolltype="ability" class="fas fa-dice-d10 cursor-pointer" style="margin-left:5px;"></i></a></label>
+    <div class="attributes grid grid-3col flex-group-center">
+        {{#each system.abilities as |ability key|}}
+        <div class="ability flexrow flex-center">
+            <label for="system.abilities.{{key}}.value" class="resource-label vrollable roll-ability"
+                data-action="makeActionRoll" data-rolltype="ability" data-roll="{{ability.value}}"
+                data-ability="{{key}}" data-label="{{ability.name}}">{{localize
+                ability.name}}</label>
+            <div class="resource-value" data-value="{{ability.value}}" data-name="system.abilities.{{key}}.value">
+                {{#numLoop 5}}
+                <span class="resource-value-step" data-action="dotCounterChange" data-index="{{this}}"></span>
+                {{/numLoop}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
+    <div>
+        <div id="character-combat-tab">
+            <div class="grid grid-2col flex-group-center">
+                <div class="resource-content flexrow flex-center flex-between">
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Power"}}</label>
+                        <input type="number" name="system.power.value" value="{{system.power.value}}"
+                            data-dtype="Number" />
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Will"}}</label>
+                        <input type="number" name="system.will.value" value="{{system.will.value}}"
+                            data-dtype="Number" />
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Stunt"}} {{localize "ExEss.Dice"}}</label>
+                        <input type="number" name="system.stunt.value" value="{{system.stunt.value}}"
+                            data-dtype="Number" />
+                    </div>
+                </div>
+                <div class="resource-content flexrow flex-center flex-between">
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.BuildPower"}}</label>
+                        <button data-action="makeActionRoll" data-rolltype="buildPower" class="roll-button"><i
+                                class="fas fa-bolt"></i>{{localize
+                            "ExEss.Roll"}}</button>
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.FocusWill"}}</label>
+                        <button data-action="makeActionRoll" data-rolltype="focusWill" class="roll-button"><i
+                                class="fas fa-hat-wizard"></i>{{localize
+                            "ExEss.Roll"}}</button>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-4col flex-group-center">
+                {{#if isNPC}}
+                <div class="resource-content flexrow flex-center flex-between">
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Defense"}}</label>
+                        <input type="number" name="system.defense.value" value="{{system.defense.value}}"
+                            data-dtype="Number" />
+                    </div>
+                </div>
+                {{else}}
+                <div class="resource-content flexrow flex-center flex-between">
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Parry"}}</label>
+                        <input type="number" name="system.parry.value" value="{{system.parry.value}}"
+                            data-dtype="Number" />
+                    </div>
+                </div>
+                <div class="resource-content flexrow flex-center flex-between">
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Evasion"}}</label>
+                        <input type="number" name="system.evasion.value" value="{{system.evasion.value}}"
+                            data-dtype="Number" />
+                    </div>
+                </div>
+                {{/if}}
+                <div class="resource-content flexrow flex-center flex-between">
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Soak"}}</label>
+                        <input type="number" name="system.soak.value" value="{{system.soak.value}}"
+                            data-dtype="Number" />
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Hardness"}}</label>
+                        <input type="number" name="system.hardness.value" value="{{system.hardness.value}}"
+                            data-dtype="Number" />
+                    </div>
+                </div>
+                <div class="resource-content flexrow flex-center flex-between">
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Resolve"}}</label>
+                        <input type="number" name="system.resolve.value" value="{{system.resolve.value}}"
+                            data-dtype="Number" />
+                    </div>
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Social"}}</label>
+                        <button data-action="makeActionRoll" data-rolltype="social" class="roll-button"><i
+                                class="fas fa-heart"></i>{{localize
+                            "ExEss.Roll"}}</button>
+                    </div>
+                </div>
+            </div>
+            {{#if isNPC}}
+            <div>
+                <textarea type="text" name="system.qualities" rows="6">{{system.qualities}}</textarea>
+            </div>
+            {{/if}}
+            {{> systems/exaltedessence/templates/actor/equipment-list.html}}
+        </div>
+    </div>
+</div>

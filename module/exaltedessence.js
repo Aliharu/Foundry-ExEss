@@ -2,7 +2,7 @@
 import { EXALTEDESSENCE } from "./config.js";
 
 import { ExaltedessenceActor } from "./actor/actor.js";
-import { ExaltedessenceActorSheet } from "./actor/actor-sheet.js";
+import { ExaltedEssenceActorSheet } from "./actor/actor-sheet.js";
 import { ExaltedessenceItem } from "./item/item.js";
 import { ExaltedessenceItemSheet } from "./item/item-sheet.js";
 import ExaltedActiveEffectConfig from "./active-effect-config.js";
@@ -66,25 +66,24 @@ Hooks.once('init', async function () {
   CONFIG.Combatant.documentClass = ExaltedCombatant;
   CONFIG.ui.combat = ExaltedCombatTracker;
   CONFIG.ActiveEffect.legacyTransferral = false;
-  DocumentSheetConfig.registerSheet(ActiveEffect, "exaltedthird", ExaltedActiveEffectConfig, { makeDefault: true });
+  foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, "exaltedessence", ExaltedActiveEffectConfig, { makeDefault: true });
 
   CONFIG.ActiveEffect.sheetClass = ExaltedActiveEffectConfig;
 
   game.socket.on('system.exaltedessence', handleSocket);
 
   // Register sheet application classes
-  Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet("exaltedessence", ExaltedessenceActorSheet, { makeDefault: true });
-  Items.unregisterSheet("core", ItemSheet);
-  Items.registerSheet("exaltedessence", ExaltedessenceItemSheet, { makeDefault: true });
+  foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
+  foundry.documents.collections.Actors.registerSheet("exaltedessence", ExaltedEssenceActorSheet, { makeDefault: true });
+  foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
+  foundry.documents.collections.Items.registerSheet("exaltedessence", ExaltedessenceItemSheet, { makeDefault: true });
 
   // Pre-load templates
-  loadTemplates([
+  foundry.applications.handlebars.loadTemplates([
     "systems/exaltedessence/templates/dialogues/ability-base.html",
     "systems/exaltedessence/templates/dialogues/add-roll-charm.html",
     "systems/exaltedessence/templates/dialogues/added-charm-list.html",
     "systems/exaltedessence/templates/actor/active-effects.html",
-    "systems/exaltedessence/templates/actor/effects-tab.html",
     "systems/exaltedessence/templates/actor/equipment-list.html",
     "systems/exaltedessence/templates/actor/charm-list.html",
     "systems/exaltedessence/templates/actor/intimacies-list.html",
@@ -319,6 +318,23 @@ Hooks.on("renderItemDirectory", (app, html, data) => {
     });
   });
 });
+
+Hooks.on("renderCompendiumDirectory", (app, html, data) => {
+  if (html instanceof jQuery) {
+    html = $(html)[0];
+  }
+  const button = document.createElement("button");
+  button.classList.add("item-search-button");
+  button.innerHTML = `<i class="fas fa-suitcase"></i> ${game.i18n.localize("ExEss.ItemSearch")}`;
+  html.querySelector(".header-actions").append(button);
+
+
+  html.querySelectorAll('.item-search-button').forEach(element => {
+    element.addEventListener('click', async (ev) => {
+      game.itemSearch.render(true)
+    });
+  });
+})
 
 Hooks.once("ready", async function () {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to

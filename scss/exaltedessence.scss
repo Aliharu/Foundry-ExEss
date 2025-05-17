@@ -39,6 +39,37 @@
 //   background-size: cover;
 // }
 
+.exaltedessence {
+  h2 {
+    color: #222;
+    text-shadow: none;
+  }
+
+  h4 {
+    color: #222;
+    text-shadow: none;
+  }
+
+  input {
+    text-align: center;
+  }
+
+  label {
+    color: #222;
+  }
+
+  .form-group {
+    label {
+      color: #222;
+    }
+  }
+}
+
+
+.exaltedessence .window-content {
+  overflow-y: auto;
+}
+
 .solar-background .window-content {
   background: url("../assets/backgrounds/solar-background.jpg");
   background-size: cover;

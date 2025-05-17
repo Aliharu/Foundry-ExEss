@@ -402,7 +402,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         header: {
             template: "systems/exaltedessence/templates/dialogues/dice-roll/dice-roll-header.html",
         },
-        tabs: { template: 'systems/exaltedessence/templates/dialogues/dice-roll/tabs.html' },
+        tabs: { template: 'systems/exaltedessence/templates/dialogues/tabs.html' },
         dice: {
             template: "systems/exaltedessence/templates/dialogues/dice-roll/dice-tab.html",
         },
@@ -924,7 +924,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
     }
 
     async getEnritchedHTML(charm) {
-        charm.enritchedHTML = await TextEditor.enrichHTML(charm.system.description, { async: true, secrets: this.actor.isOwner, relativeTo: charm });
+        charm.enritchedHTML = await foundry.applications.ux.TextEditor.enrichHTML(charm.system.description, { async: true, secrets: this.actor.isOwner, relativeTo: charm });
     }
 
     static get defaultOptions() {

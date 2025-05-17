@@ -1,0 +1,51 @@
+<div class="tab advancement {{tab.cssClass}}" data-group="primary" data-tab="advancement">
+    <div class="resource-label flex-center list-section-header">
+        {{localize "ExEss.Milestones"}}
+    </div>
+    <div class="grid grid-4col flex-group-center">
+        <div class="resource-content flexrow flex-center flex-between">
+            <div>
+                <label class="resource-label">{{localize "ExEss.Personal"}}</label>
+                <input name="system.milestones.personal" value="{{system.milestones.personal}}" type="text" />
+            </div>
+        </div>
+        <div class="resource-content flexrow flex-center flex-between">
+            <div>
+                <label class="resource-label">{{localize "ExEss.Minor"}}</label>
+                <input name="system.milestones.minor" value="{{system.milestones.minor}}" type="text" />
+            </div>
+        </div>
+        <div class="resource-content flexrow flex-cent er flex-between">
+            <div>
+                <label class="resource-label">{{localize "ExEss.Major"}}</label>
+                <input name="system.milestones.major" value="{{system.milestones.major}}" type="text" />
+            </div>
+        </div>
+        <div class="resource-content flexrow flex-center flex-between">
+            <div>
+                <label class="resource-label">{{localize "ExEss.Exalt"}}</label>
+                <input name="system.milestones.exalt" value="{{system.milestones.exalt}}" type="text" />
+            </div>
+        </div>
+    </div>
+    <div>
+        <p>{{localize "ExEss.MilestonesExplain"}}</p>
+        <p><b>{{localize "ExEss.Personal"}}:</b> {{localize "ExEss.PersonalMilestoneExplain"}}
+        </p>
+        <p><b>{{localize "ExEss.Minor"}}:</b> {{localize "ExEss.MinorMilestoneExplain"}}</p>
+        <p><b>{{localize "ExEss.Major"}}:</b> {{localize "ExEss.MajorMilstoneExplain"}}</p>
+        <p><b>{{localize "ExEss.Exalt"}}:</b> {{localize "ExEss.ExaltMilestoneExplain"}}</p>
+        <p><b>{{localize "ExEss.EssenceIncrease"}}:</b> {{localize "ExEss.EssanceIncreaseExplain"}}</p>
+    </div>
+    <div class="resource-label flex-center list-section-header">
+        {{localize "ExEss.Milestones"}}, {{localize "ExEss.Ventures"}}, {{localize "ExEss.Equipment"}}, {{localize
+        "ExEss.GreatCurse"}}
+    </div>
+    {{#if editable}}
+    <prose-mirror name="system.milestones.triggers" data-document-u-u-i-d="{{actor.uuid}}"
+        value="{{system.milestones.triggers}}" collaborate="true" toggled="true">
+        {{{enrichedMilestoneTriggers}}}
+    </prose-mirror>
+    {{else}} {{{enrichedMilestoneTriggers}}}
+    {{/if}}
+</div>

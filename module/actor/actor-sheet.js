@@ -4,68 +4,226 @@
 import TraitSelector from "../apps/trait-selector.js";
 import { onManageActiveEffect, prepareActiveEffectCategories } from "../effects.js";
 import { prepareItemTraits } from "../item/item.js";
+import { isColor, parseCounterStates, toggleDisplay } from "../utils/utils.js";
 import { addDefensePenalty } from "./actor.js";
+
+const { HandlebarsApplicationMixin } = foundry.applications.api;
+const { ActorSheetV2 } = foundry.applications.sheets;
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
  */
-export class ExaltedessenceActorSheet extends ActorSheet {
-
-  constructor(...args) {
-    super(...args);
-
-    this._filters = {
-      effects: new Set()
+export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
+  constructor(options = {}) {
+    super(options);
+    this.#dragDrop = this.#createDragDropHandlers();
+    this.collapseStates = {
+      charm: {},
+      spell: {},
     }
-    this.options.classes = [...this.options.classes, this.getTypeSpecificCSSClasses()];
   }
 
-  /**
- * Get the correct HTML template path to use for rendering this particular sheet
- * @type {String}
- */
-  get template() {
-    if (this.actor.type === "npc") return "systems/exaltedessence/templates/actor/npc-sheet.html";
-    return "systems/exaltedessence/templates/actor/actor-sheet.html";
+  static DEFAULT_OPTIONS = {
+    window: {
+      title: "Actor Sheet",
+      resizable: true,
+      controls: [
+        {
+          icon: 'fa-solid fa-question',
+          label: "Help",
+          action: "helpDialogue",
+        },
+        {
+          icon: 'fa-solid fa-palette',
+          label: "ExEss.Stylings",
+          action: "pickColor",
+        },
+        {
+          icon: 'fa-solid fa-dice-d10',
+          label: "ExEss.Roll",
+          action: "baseRoll",
+        },
+      ]
+    },
+    position: { width: 800, height: 1026 },
+    classes: ["exaltedessence", "sheet", "actor"],
+    actions: {
+      onEditImage: this._onEditImage,
+      helpDialogue: this.helpDialogue,
+      pickColor: this.pickColor,
+      baseRoll: this.baseRoll,
+      createItem: this.createItem,
+      itemAction: this.itemAction,
+      savedRollAction: this.savedRollAction,
+      makeActionRoll: this.makeActionRoll,
+      rollAction: this.rollAction,
+      displayDataChat: this._displayDataChat,
+      showDialog: this.showDialog,
+      calculateHealth: this.calculateHealth,
+      recoverHealth: this.recoverHealth,
+      dotCounterChange: this._onDotCounterChange,
+      squareCounterChange: this._onSquareCounterChange,
+      effectControl: this.effectControl,
+      toggleCollapse: this.toggleCollapse,
+      toggleAugment: this._toggleAugment,
+      updateDefensePenalty: this.updateDefensePenalty,
+      setSpendPool: this.setSpendPool,
+      updateAnima: this.updateAnima,
+      editTraits: this.editTraits,
+    },
+    dragDrop: [{ dragSelector: '[data-drag]', dropSelector: null }],
+    form: {
+      submitOnChange: true,
+    },
+  };
+
+  get title() {
+    return `${game.i18n.localize(this.actor.name)}`
   }
 
-  /** @override */
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["exaltedessence", "sheet", "actor"],
-      template: "systems/exaltedessence/templates/actor/actor-sheet.html",
-      width: 800,
-      height: 1026,
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "stats" }]
+  static PARTS = {
+    header: {
+      template: "systems/exaltedessence/templates/actor/actor-header.html",
+    },
+    tabs: { template: 'systems/exaltedessence/templates/dialogues/tabs.html' },
+    stats: {
+      template: "systems/exaltedessence/templates/actor/stats-tab.html",
+    },
+    advancement: {
+      template: "systems/exaltedessence/templates/actor/advancement-tab.html",
+    },
+    charms: {
+      template: "systems/exaltedessence/templates/actor/charms-tab.html",
+    },
+    intimacies: {
+      template: "systems/exaltedessence/templates/actor/intimacies-tab.html",
+    },
+    advantages: {
+      template: "systems/exaltedessence/templates/actor/advantages-tab.html",
+    },
+    effects: {
+      template: "systems/exaltedessence/templates/actor/actor-effects-tab.html",
+    },
+    biography: {
+      template: "systems/exaltedessence/templates/actor/biography-tab.html",
+    },
+  };
+
+  _initializeApplicationOptions(options) {
+    options.classes = [options.document.getSheetBackground(), "exaltedessence", "sheet", "actor"];
+    return super._initializeApplicationOptions(options);
+  }
+
+  _configureRenderOptions(options) {
+    super._configureRenderOptions(options);
+    options.parts = ['header', 'tabs', 'stats', 'charms', 'effects', 'intimacies'];
+    // // Control which parts show based on document subtype
+    switch (this.document.type) {
+      case 'character':
+        options.parts.push('advantages', 'advancement', 'biography');
+        break;
+      case 'npc':
+        options.parts.push('biography');
+        break;
+    }
+  }
+
+  async _prepareContext(_options) {
+    const context = {
+      // Validates both permissions and compendium status
+      editable: this.isEditable,
+      owner: this.document.isOwner,
+      limited: this.document.limited,
+      dtypes: ["String", "Number", "Boolean"],
+      // Add the actor document.
+      actor: this.actor,
+      // Add the actor's data to context.data for easier access, as well as flags.
+      system: this.actor.system,
+      flags: this.actor.flags,
+      config: CONFIG.EXALTEDESSENCE,
+      isNPC: this.actor.type === 'npc',
+      collapseStates: this.collapseStates,
+      selects: CONFIG.EXALTEDESSENCE.selects,
+      isExalt: this.actor.type === 'character' || this.actor.system.creaturetype === 'exalt'
+    };
+
+    if (!this.tabGroups['primary']) this.tabGroups['primary'] = 'stats';
+    const tabs = [{
+      id: 'stats',
+      group: 'primary',
+      label: 'ExEss.Stats',
+      cssClass: this.tabGroups['primary'] === 'stats' ? 'active' : '',
+    },
+    {
+      id: 'charms',
+      group: 'primary',
+      label: 'ExEss.Charms',
+      cssClass: this.tabGroups['primary'] === 'charms' ? 'active' : '',
+    },
+    {
+      id: 'effects',
+      group: 'primary',
+      label: 'ExEss.Effects',
+      cssClass: this.tabGroups['primary'] === 'effects' ? 'active' : '',
+    },
+    {
+      id: 'intimacies',
+      group: 'primary',
+      label: 'ExEss.Intimacies',
+      cssClass: this.tabGroups['primary'] === 'intimacies' ? 'active' : '',
+    },
+    ];
+    if (this.actor.type === 'character') {
+      tabs.push({
+        id: "advantages",
+        group: "primary",
+        label: "ExEss.Advantages",
+        cssClass: this.tabGroups['primary'] === 'advantages' ? 'active' : '',
+      },
+        {
+          id: "advancement",
+          group: "primary",
+          label: "ExEss.Advancement",
+          cssClass: this.tabGroups['primary'] === 'advancement' ? 'active' : '',
+        });
+    }
+    tabs.push({
+      id: "biography",
+      group: "primary",
+      label: "ExEss.Description",
+      cssClass: this.tabGroups['primary'] === 'biography' ? 'active' : '',
     });
-  }
+    context.tabs = tabs;
 
-  getTypeSpecificCSSClasses() {
-    return `${game.settings.get("exaltedessence", "sheetStyle")}-background`;
-  }
-
-  /* -------------------------------------------- */
-
-  /** @override */
-  async getData() {
-    const context = super.getData();
-    context.dtypes = ["String", "Number", "Boolean"];
-
-    const actorData = this.actor.toObject(false);
-    context.system = actorData.system;
-    context.flags = actorData.flags;
-    context.selects = CONFIG.EXALTEDESSENCE.selects;
-    context.biographyHTML = await TextEditor.enrichHTML(context.system.biography, {
-      secrets: this.document.isOwner,
-      async: true
-    });
+    context.enrichedBiography = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
+      this.actor.system.biography,
+      {
+        // Whether to show secret blocks in the finished html
+        secrets: this.document.isOwner,
+        // Data to fill in for inline rolls
+        rollData: this.actor.getRollData(),
+        // Relative UUID resolution
+        relativeTo: this.actor,
+      }
+    );
 
     // Update traits
     this._prepareTraits(context.system.traits);
 
     // Prepare items.
     if (this.actor.type === 'character') {
+      context.enrichedMilestoneTriggers = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
+        this.actor.system.milestones.triggers,
+        {
+          // Whether to show secret blocks in the finished html
+          secrets: this.document.isOwner,
+          // Data to fill in for inline rolls
+          rollData: this.actor.getRollData(),
+          // Relative UUID resolution
+          relativeTo: this.actor,
+        }
+      );
       for (let attr of Object.values(context.system.attributes)) {
         attr.isCheckbox = attr.dtype === "Boolean";
       }
@@ -74,14 +232,29 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     if (this.actor.type === 'npc') {
       this._prepareCharacterItems(context);
     }
-
     context.itemDescriptions = {};
     for (let item of this.actor.items) {
-      context.itemDescriptions[item.id] = await TextEditor.enrichHTML(item.system.description, { async: true, secrets: this.actor.isOwner, relativeTo: item });
+      context.itemDescriptions[item.id] = await foundry.applications.ux.TextEditor.implementation.enrichHTML(item.system.description, { async: true, secrets: this.actor.isOwner, relativeTo: item });
     }
 
     context.effects = prepareActiveEffectCategories(this.document.effects);
+    context.tab = this.tabGroups['primary'];
 
+    return context;
+  }
+
+  _onRender(context, options) {
+    this.#dragDrop.forEach((d) => d.bind(this.element));
+    this._setupDotCounters(this.element);
+    this._setupSquareCounters(this.element);
+    this._setupButtons(this.element);
+
+    if (!this.isEditable) return;
+  }
+
+
+  async _preparePartContext(partId, context) {
+    context.tab = context.tabs.find(item => item.id === partId);
     return context;
   }
 
@@ -93,7 +266,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
    * @return {undefined}
    */
   _prepareCharacterItems(sheetData) {
-    const actorData = sheetData.actor;
+    const actorData = this.actor;
 
     // Initialize containers.
     const gear = [];
@@ -134,7 +307,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }
 
     // Iterate through items, allocating to containers
-    for (let i of sheetData.items) {
+    for (let i of this.document.items) {
       i.img = i.img || DEFAULT_TOKEN;
       // Append to gear.
       if (i.type === 'item') {
@@ -217,292 +390,36 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }
   }
 
-  _getHeaderButtons() {
-    let buttons = super._getHeaderButtons();
-    // Token Configuration
-    const canConfigure = game.user.isGM || this.actor.isOwner;
-    if (this.options.editable && canConfigure) {
-      const helpButton = {
-        label: game.i18n.localize('ExEss.Help'),
-        class: 'help-dialogue',
-        icon: 'fas fa-question',
-        onclick: () => this.helpDialogue(this.actor.type),
-      };
-      buttons = [helpButton, ...buttons];
-      const colorButton = {
-        label: game.i18n.localize('ExEss.Stylings'),
-        class: 'set-color',
-        icon: 'fas fa-palette',
-        onclick: (ev) => this.pickColor(ev),
-      };
-      buttons = [colorButton, ...buttons];
-      const rollButton = {
-        label: game.i18n.localize('ExEss.Roll'),
-        class: 'roll-dice',
-        icon: 'fas fa-dice-d10',
-        onclick: () => this.actor.actionRoll({ rollType: 'base' }),
-      };
-      buttons = [rollButton, ...buttons];
-    }
-    return buttons;
+  static updateDefensePenalty() {
+    addDefensePenalty(this.actor);
   }
 
-  /* -------------------------------------------- */
-
-  /** @override */
-  activateListeners(html) {
-    super.activateListeners(html);
-
-    this._setupDotCounters(html);
-    this._setupSquareCounters(html);
-    this._setupButtons(html);
-
-    html.find('.item-row').click(ev => {
-      const li = $(ev.currentTarget).next();
-      li.toggle("fast");
-    });
-
-    // Everything below here is only needed if the sheet is editable
-    if (!this.options.editable) return;
-
-    html.find('.trait-selector').click(this._onTraitSelector.bind(this));
-
-    // Add Inventory Item
-    html.find('.item-create').click(this._onItemCreate.bind(this));
-
-    html.find('.resource-value > .resource-value-step').click(this._onDotCounterChange.bind(this))
-    html.find('.resource-value > .resource-value-empty').click(this._onDotCounterEmpty.bind(this))
-    html.find('.resource-counter > .resource-counter-step').click(this._onSquareCounterChange.bind(this))
-
-    html.find('.augment-attribute').click(this._toggleAugment.bind(this));
-
-    // Update Inventory Item
-    html.find('.item-edit').click(ev => {
-      ev.stopPropagation();
-      const li = $(ev.currentTarget).parents(".item");
-      const item = this.actor.items.get(li.data("itemId"));
-      item.sheet.render(true);
-    });
-
-    // Delete Inventory Item
-    html.find('.item-delete').click(async ev => {
-      const deleteItem = await foundry.applications.api.DialogV2.confirm({
-        window: { title: game.i18n.localize("ExEss.Delete") },
-        content: "<p>Are you sure you want to delete this item?</p>",
-        classes: [this.actor.getSheetBackground()],
-        modal: true
-      });
-      if(deleteItem) {
-        const li = $(ev.currentTarget).parents(".item");
-        this.actor.deleteEmbeddedDocuments("Item", [li.data("itemId")]);
-        li.slideUp(200, () => this.render(false));
-      }
-    });
-
-    html.find('.add-defense-penalty').mousedown(ev => {
-      addDefensePenalty(this.actor);
-    });
-
-    html.find('.show-weapon-tags').mousedown(ev => {
-      this.showTags('weapons');
-    });
-
-    html.find('.show-armor-tags').mousedown(ev => {
-      this.showTags('armor');
-    });
-
-    html.find('#calculate-health').mousedown(ev => {
-      this.calculateHealth();
-    });
-
-    html.find('#color-picker').mousedown(ev => {
-      this.pickColor();
-    });
-
-    html.find('#recoveryScene').mousedown(ev => {
-      this.recoverHealth();
-    });
-
-    html.find('#catchBreath').mousedown(ev => {
-      this.catchBreath();
-    });
-
-    html.find('#fullRest').mousedown(ev => {
-      this.fullRest();
-    });
-
-    html.find('#rollDice').mousedown(ev => {
-      this.actor.actionRoll({ rollType: 'base' });
-    });
-
-    html.find('.rollAbility').mousedown(ev => {
-      this.actor.actionRoll({ rollType: 'ability' });
-    });
-
-    html.find('.roll-ability').mousedown(ev => {
-      var ability = $(ev.target).attr("data-ability");
-      this.actor.actionRoll({ rollType: 'ability', ability: ability });
-    });
-
-    html.find('.roll-pool').mousedown(ev => {
-      var pool = $(ev.target).attr("data-pool");
-      this.actor.actionRoll({ rollType: 'ability', pool: pool });
-    });
-
-    html.find('#buildPower').mousedown(ev => {
-      // buildResource(this.actor, 'power');
-      this.actor.actionRoll({ rollType: 'buildPower' });
-    });
-
-    html.find('#focusWill').mousedown(ev => {
-      // buildResource(this.actor, 'will');
-
-      this.actor.actionRoll({ rollType: 'focusWill', 'ability': 'sagacity' });
-
-    });
-
-    html.find('#socialInfluence').mousedown(ev => {
-      // socialInfluence(this.actor);
-      this.actor.actionRoll({ rollType: 'social', 'ability': 'embassy' });
-    });
-
-    html.find('.set-pool-flowing').mousedown(ev => {
-      this.setSpendPool('flowing');
-    });
-
-
-    html.find('.set-pool-still').mousedown(ev => {
-      this.setSpendPool('still');
-    });
-
-
-    html.find('.weapon-roll').click(ev => {
-      let item = this.actor.items.get($(ev.target).attr("data-item-id"));
-      let rollType = $(ev.target).attr("data-roll-type");
-      this.actor.actionRoll({ rollType: rollType, weapon: item.system });
-
-    });
-
-    html.find('.weapon-icon').click(ev => {
-      ev.stopPropagation();
-      let item = this.actor.items.get($(ev.target.parentElement).attr("data-item-id"));
-      let rollType = $(ev.target.parentElement).attr("data-roll-type");
-
-      this.actor.actionRoll({ rollType: rollType, weapon: item.system });
-
-    });
-
-    html.find('.collapsable').click(ev => {
-      let type = $(ev.currentTarget).data("type");
-      const li = $(ev.currentTarget).next();
-      if (type) {
-        this.actor.update({ [`system.collapse.${type}`]: !li.is(":hidden") });
-      }
-    });
-
-    html.find('#anima-up').click(ev => {
-      this._updateAnima("up");
-    });
-
-    html.find('#anima-down').click(ev => {
-      this._updateAnima("down");
-    });
-
-    html.find('.data-chat').click(ev => {
-      ev.preventDefault();
-      ev.stopPropagation();
-      this._displayDataChat(ev);
-    });
-
-    html.find('.item-chat').click(ev => {
-      this._displayCard(ev);
-    });
-
-    html.find('.item-spend').click(ev => {
-      this._spendItem(ev);
-    });
-
-    html.find('.add-opposing-charm').click(ev => {
-      this._addOpposingCharm(ev);
-    });
-
-    html.find('.saved-roll').click(ev => {
-      let li = $(event.currentTarget).parents(".item");
-      this.actor.actionRoll({ rollId: li.data("item-id") });
-    });
-
-    html.find('.delete-saved-roll').click(async ev => {
-      let li = $(event.currentTarget).parents(".item");
-      var key = li.data("item-id");
-      const rollDeleteString = "system.savedRolls.-=" + key;
-
-      const deleteConfirm = await foundry.applications.api.DialogV2.confirm({
-        window: { title: game.i18n.localize('ExEss.Delete') },
-        content: `<p>Delete Saved Roll?</p>`,
-        classes: [this.actor.getSheetBackground()],
-        modal: true
-      });
-      if (deleteConfirm) {
-        this.actor.update({ [rollDeleteString]: null });
-        ui.notifications.notify(`Saved Roll Deleted`);
-      }
-    });
-
-    $(document.getElementById('chat-log')).on('click', '.chat-card', (ev) => {
-      const li = $(ev.currentTarget).next();
-      li.toggle("fast");
-    });
-
-    html.find(".effect-control").click(ev => onManageActiveEffect(ev, this.actor));
-
-    html.find('.rollable').click(this._onRoll.bind(this));
-
-    // Drag events for macros.
-    if (this.actor.isOwner) {
-      let handler = ev => this._onDragStart(ev);
-      let savedRollhandler = ev => this._onDragSavedRoll(ev);
-      html.find('li.item').each((i, li) => {
-        if (li.classList.contains("inventory-header")) return;
-        li.setAttribute("draggable", true);
-        if (li.classList.contains("saved-roll-row")) {
-          li.addEventListener("dragstart", savedRollhandler, false);
-        }
-        else {
-          li.addEventListener("dragstart", handler, false);
-        }
-      });
-    }
+  static async setSpendPool(event, target) {
+    this.actor.update({ [`system.settings.charmspendpool`]: target.dataset.pooltype });
   }
 
-  async _onDragSavedRoll(ev) {
-    const li = ev.currentTarget;
-    if (ev.target.classList.contains("content-link")) return;
-    const savedRoll = this.actor.system.savedRolls[li.dataset.itemId];
-    ev.dataTransfer.setData("text/plain", JSON.stringify({ actorId: this.actor.uuid, type: 'savedRoll', id: li.dataset.itemId, name: savedRoll.name }));
-  }
-
-  async setSpendPool(type) {
-    const actorData = foundry.utils.duplicate(this.actor);
-    actorData.system.settings.charmspendpool = type;
-    this.actor.update(actorData);
+  static updateAnima(event, target) {
+    this._updateAnima(target.dataset.direction);
   }
 
   _updateAnima(direction) {
-    const actorData = foundry.utils.duplicate(this.actor);
-    if (direction === "up") {
-      if (actorData.system.anima.value < 10) {
-        actorData.system.anima.value++;
-      }
-    }
-    else {
-      if (actorData.system.anima.value > 0) {
-        actorData.system.anima.value--;
-      }
-    }
-    this.actor.update(actorData);
+    this.actor.update({ [`system.anima.value`]: direction === 'up' ? Math.min(10, this.actor.system.anima.value + 1) : Math.max(0, this.actor.system.anima.value - 1) });
   }
 
-  async calculateHealth() {
+  /**
+* Handle spawning the TraitSelector application which allows a checkbox of multiple trait options
+* @param {Event} event   The click event which originated the selection
+* @private
+*/
+  static editTraits(event, target) {
+    event.preventDefault();
+    const label = target.parentElement.querySelector("label");
+    const choices = CONFIG.EXALTEDESSENCE[target.dataset.options];
+    const options = { name: target.dataset.target, title: label.innerText, choices };
+    return new TraitSelector(this.actor, options).render(true);
+  }
+
+  static async calculateHealth() {
     let confirmed = false;
     const actorData = foundry.utils.duplicate(this.actor);
     const data = actorData.system;
@@ -511,11 +428,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 
     if (actorData.type === 'npc') {
       template = "systems/exaltedessence/templates/dialogues/calculate-npc-health.html";
-      html = await renderTemplate(template, { 'health': data.health.levels });
+      html = await foundry.applications.handlebars.renderTemplate(template, { 'health': data.health.levels });
     }
     else {
       template = "systems/exaltedessence/templates/dialogues/calculate-health.html";
-      html = await renderTemplate(template, { 'zero': data.health.levels.zero.value, 'one': data.health.levels.one.value, 'two': data.health.levels.two.value });
+      html = await foundry.applications.handlebars.renderTemplate(template, { 'zero': data.health.levels.zero.value, 'one': data.health.levels.one.value, 'two': data.health.levels.two.value });
     }
 
     new foundry.applications.api.DialogV2({
@@ -534,7 +451,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       }],
       submit: result => {
         if (result) {
-          if(actorData.type === 'npc') {
+          if (actorData.type === 'npc') {
             let health = result.health.value;
             this.actor.update({ [`system.health.levels`]: health });
             this.actor.update({ [`system.health.max`]: health });
@@ -574,16 +491,33 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     this._updateAnima("down");
   }
 
-  async recoverHealth() {
+  static async recoverHealth(event, target) {
+    const recoveryType = target.dataset.recoverytype;
     const actorData = foundry.utils.duplicate(this.actor);
-    const data = actorData.system;
-    data.health.lethal = 0;
-    this.actor.update(actorData);
+    if (recoveryType === 'catchBreath') {
+      actorData.system.anima.value = 0;
+      actorData.system.motes.max = Math.min(15, actorData.system.essence.value * 2 + Math.floor((actorData.system.essence.value - 1) / 2) + 3);
+      actorData.system.motes.value = Math.min(actorData.system.motes.value + Math.ceil(actorData.system.motes.max / 2), actorData.system.motes.max);
+      this.actor.update(actorData);
+      this._updateAnima("down");
+    }
+    if (recoveryType === 'fullRest') {
+      const data = actorData.system;
+      data.anima.value = 0;
+      data.motes.max = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
+      data.motes.value = data.motes.max;
+      this.actor.update(actorData);
+    }
+    if (recoveryType === 'recoveryScene') {
+      const data = actorData.system;
+      data.health.lethal = 0;
+      this.actor.update(actorData);
+    }
   }
 
   async showTags(type) {
     const template = type === "weapons" ? "systems/exaltedessence/templates/dialogues/weapon-tags.html" : "systems/exaltedessence/templates/dialogues/armor-tags.html";
-    const html = await renderTemplate(template);
+    const html = await foundry.applications.handlebars.renderTemplate(template);
 
     new foundry.applications.api.DialogV2({
       window: { title: game.i18n.localize("ExEss.Tags"), resizable: true },
@@ -605,9 +539,36 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     this.actor.update(actorData);
   }
 
-  async helpDialogue(type) {
+  /**
+ * Handle changing a Document's image.
+ *
+ * @param {PointerEvent} event   The originating click event
+ * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+ * @returns {Promise}
+ * @protected
+ */
+  static async _onEditImage(event, target) {
+    const attr = target.dataset.edit;
+    const current = foundry.utils.getProperty(this.document, attr);
+    const { img } =
+      this.document.constructor.getDefaultArtwork?.(this.document.toObject()) ??
+      {};
+    const fp = new foundry.applications.apps.FilePicker.implementation({
+      current,
+      type: 'image',
+      redirectToRoot: img ? [img] : [],
+      callback: (path) => {
+        this.document.update({ [attr]: path });
+      },
+      top: this.position.top + 40,
+      left: this.position.left + 10,
+    });
+    return fp.browse();
+  }
+
+  static async helpDialogue(type) {
     const template = "systems/exaltedessence/templates/dialogues/help-dialogue.html"
-    const html = await renderTemplate(template, { 'type': type });
+    const html = await foundry.applications.handlebars.renderTemplate(template, { 'type': type });
     new foundry.applications.api.DialogV2({
       window: { title: game.i18n.localize("ExEss.ReadMe"), resizable: true },
       content: html,
@@ -616,11 +577,11 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }).render(true);
   }
 
-  async pickColor() {
+  static async pickColor() {
     const actorData = foundry.utils.duplicate(this.actor);
     const data = actorData.system;
     const template = "systems/exaltedessence/templates/dialogues/color-picker.html"
-    const html = await renderTemplate(template, { 'color': data.details.color, animaColor: data.details.animacolor, 'initiativeIcon': this.actor.system.details.initiativeicon, 'initiativeIconColor': this.actor.system.details.initiativeiconcolor });
+    const html = await foundry.applications.handlebars.renderTemplate(template, { 'color': data.details.color, animaColor: data.details.animacolor, 'initiativeIcon': this.actor.system.details.initiativeicon, 'initiativeIconColor': this.actor.system.details.initiativeiconcolor });
 
     new foundry.applications.api.DialogV2({
       window: { title: game.i18n.localize("ExEss.PickColor"), resizable: true },
@@ -658,44 +619,19 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }).render({ force: true });
   }
 
-  _onSquareCounterChange(event) {
+
+  static async baseRoll() {
+    this.actor.actionRoll({ rollType: 'base' })
+  }
+
+  static _onSquareCounterChange(event, target) {
     event.preventDefault()
-    const element = event.currentTarget
-    const index = Number(element.dataset.index)
-    const oldState = element.dataset.state || ''
-    const parent = $(element.parentNode)
-    const data = parent[0].dataset
-    const states = parseCounterStates(data.states)
-    const fields = data.name.split('.')
-    const steps = parent.find('.resource-counter-step')
-    // const fulls = Number(data[states['-']]) || 0
-    // const halfs = Number(data[states['/']]) || 0
-
-    // if (index < 0 || index > steps.length) {
-    //   return
-    // }
-
-    // const allStates = ['', ...Object.keys(states)]
-    // const currentState = allStates.indexOf(oldState)
-    // if (currentState < 0) {
-    //   return
-    // }
-
-    // const newState = allStates[(currentState + 1) % allStates.length]
-    // steps[index].dataset.state = newState
-
-    // if ((oldState !== '' && oldState !== '-') || (oldState !== '')) {
-    //   data[states[oldState]] = Number(data[states[oldState]]) - 1
-    // }
-
-    // // If the step was removed we also need to subtract from the maximum.
-    // if (oldState !== '' && newState === '') {
-    //   data[states['-']] = Number(data[states['-']]) - 1
-    // }
-
-    // if (newState !== '') {
-    //   data[states[newState]] = Number(data[states[newState]]) + Math.max(index + 1 - fulls - halfs, 1)
-    // }
+    const index = Number(target.dataset.index);
+    const parent = target.parentNode;
+    const data = parent.dataset;
+    const states = parseCounterStates(data.states);
+    const fields = data.name.split('.');
+    const steps = parent.querySelectorAll('.resource-counter-step');
 
     const currentState = steps[index].dataset.state;
     if (steps[index].dataset.type) {
@@ -757,28 +693,74 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     this._assignToActorField(fields, newValue)
   }
 
-  _onDotCounterChange(event) {
-    event.preventDefault()
-    const actorData = foundry.utils.duplicate(this.actor)
-    const element = event.currentTarget
-    const dataset = element.dataset
-    const index = Number(dataset.index)
-    const parent = $(element.parentNode)
-    const fieldStrings = parent[0].dataset.name
-    const fields = fieldStrings.split('.')
-    const steps = parent.find('.resource-value-step')
-    if (index < 0 || index > steps.length) {
-      return
+  static effectControl(event, target) {
+    onManageActiveEffect(target, this.actor);
+  }
+
+  static toggleCollapse(event, target) {
+    const collapseType = target.dataset.collapsetype;
+    const itemType = target.dataset.itemtype;
+    if (collapseType === 'itemSection') {
+      const li = target.nextElementSibling;
+      if (itemType && li.getAttribute('id')) {
+        this.collapseStates[itemType][li.getAttribute('id')] = (li.offsetWidth || li.offsetHeight || li.getClientRects().length);
+      }
+    }
+    if (collapseType === 'anima') {
+      const animaType = target.dataset.type;
+      const li = target.nextElementSibling;
+      this.actor.update({ [`system.collapse.${animaType}`]: (li.offsetWidth || li.offsetHeight || li.getClientRects().length) });
     }
 
-    steps.removeClass('active')
-    steps.each(function (i) {
+    toggleDisplay(target);
+  }
+
+  static _onDotCounterChange(event, target) {
+    const color = this.actor.system.details.color;
+    const index = Number(target.dataset.index);
+    const itemID = target.dataset.id;
+
+    const parent = target.parentNode;
+    const fieldStrings = parent.dataset.name;
+    const fields = fieldStrings.split('.');
+
+    const steps = parent.querySelectorAll('.resource-value-step');
+
+    if (index < 0 || index > steps.length) {
+      return;
+    }
+
+    steps.forEach(step => {
+      step.classList.remove('active');
+      step.style.backgroundColor = ''; // Clear previous color
+    });
+
+    steps.forEach((step, i) => {
       if (i <= index) {
-        // $(this).addClass('active')
-        $(this).css("background-color", actorData.system.details.color);
+        step.classList.add('active');
+        step.style.backgroundColor = color;
       }
-    })
-    this._assignToActorField(fields, index + 1)
+    });
+    if (target.dataset.id) {
+      const item = this.actor.items.get(target.dataset.id);
+      let newVal = index + 1;
+      if (index === 0 && item.system.points === 1) {
+        newVal = 0;
+      }
+      if (item) {
+        this.actor.updateEmbeddedDocuments('Item', [
+          {
+            _id: target.dataset.id,
+            system: {
+              points: newVal,
+            },
+          }
+        ]);
+      }
+    }
+    else {
+      this._assignToActorField(fields, index + 1);
+    }
   }
 
   _assignToActorField(fields, value) {
@@ -787,7 +769,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     if (fields.length === 2 && fields[0] === 'items') {
       for (const i of actorData.items) {
         if (fields[1] === i._id) {
-          i.system.points = value
+          i.data.points = value
           break
         }
       }
@@ -803,43 +785,36 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     this.actor.update(actorData)
   }
 
-  _onDotCounterEmpty(event) {
-    event.preventDefault()
-    const element = event.currentTarget
-    const parent = $(element.parentNode)
-    const fieldStrings = parent[0].dataset.name
-    const fields = fieldStrings.split('.')
-    const steps = parent.find('.resource-value-empty')
-
-    steps.removeClass('active')
-    this._assignToActorField(fields, 0)
-  }
-
-  _setupDotCounters(html) {
+  _setupDotCounters(element) {
     const actorData = foundry.utils.duplicate(this.actor)
-    html.find('.resource-value').each(function () {
-      const value = Number(this.dataset.value);
-      $(this).find('.resource-value-step').each(function (i) {
+    // Handle .resource-value
+    element.querySelectorAll('.resource-value').forEach(resourceEl => {
+      const value = Number(resourceEl.dataset.value);
+      const steps = resourceEl.querySelectorAll('.resource-value-step');
+      steps.forEach((stepEl, i) => {
         if (i + 1 <= value) {
-          $(this).addClass('active')
-          $(this).css("background-color", actorData.system.details.color);
+          stepEl.classList.add('active');
+          stepEl.style.backgroundColor = actorData.system.details.color;
         }
-      })
-    })
-    html.find('.resource-value-static').each(function () {
-      const value = Number(this.dataset.value)
-      $(this).find('.resource-value-static-step').each(function (i) {
+      });
+    });
+
+    // Handle .resource-value-static
+    element.querySelectorAll('.resource-value-static').forEach(resourceEl => {
+      const value = Number(resourceEl.dataset.value);
+      const steps = resourceEl.querySelectorAll('.resource-value-static-step');
+      steps.forEach((stepEl, i) => {
         if (i + 1 <= value) {
-          $(this).addClass('active')
-          $(this).css("background-color", actorData.system.details.color);
+          stepEl.classList.add('active');
+          stepEl.style.backgroundColor = actorData.system.details.color;
         }
-      })
-    })
+      });
+    });
   }
 
-  _setupSquareCounters(html) {
-    html.find('.resource-counter').each(function () {
-      const data = this.dataset
+  _setupSquareCounters(element) {
+    element.querySelectorAll('.resource-counter').forEach(counterEl => {
+      const data = counterEl.dataset
       const states = parseCounterStates(data.states)
 
       const fulls = Number(data[states['-']]) || 0
@@ -851,37 +826,34 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       values.fill('/', 0, halfs)
       values.fill('x', halfs, halfs + crossed)
 
-      $(this).find('.resource-counter-step').each(function () {
-        this.dataset.state = ''
-        if (this.dataset.index < values.length) {
-          this.dataset.state = values[this.dataset.index]
-        }
-      })
+      const steps = counterEl.querySelectorAll('.resource-counter-step');
+      steps.forEach(step => {
+        const index = Number(step.dataset.index);
+        step.dataset.state = index < values.length ? values[index] : '';
+      });
     })
   }
 
-  _setupButtons(html) {
-    const actorData = foundry.utils.duplicate(this.actor)
-    html.find('.set-pool-flowing').each(function (i) {
-      if (actorData.system.settings.charmspendpool === 'flowing') {
-        $(this).css("color", '#F9B516');
+  _setupButtons(element) {
+    element.querySelectorAll('.flowing-pool').forEach(el => {
+      if (this.actor.system.settings.charmspendpool === 'flowing') {
+        el.style.color = '#F9B516';
       }
     });
-    html.find('.set-pool-still').each(function (i) {
-      if (actorData.system.settings.charmspendpool === 'still') {
-        $(this).css("color", '#F9B516');
+
+    element.querySelectorAll('.still-pool').forEach(el => {
+      if (this.actor.system.settings.charmspendpool === 'still') {
+        el.style.color = '#F9B516';
       }
     });
   }
 
-  _toggleAugment(event) {
-    event.preventDefault()
-    const element = event.currentTarget
-    const attribute = element.dataset.name
-    const actorData = foundry.utils.duplicate(this.actor)
-    var augStatus = actorData.system.attributes[attribute].aug;
-    actorData.system.attributes[attribute].aug = !augStatus;
-    this.actor.update(actorData);
+  static _toggleAugment(event, target) {
+    event.preventDefault();
+    const attribute = target.dataset.name;
+    this.actor.update({
+      [`system.attributes.${attribute}.aug`]: !this.actor.system.attributes[attribute].aug,
+    });
   }
 
   /**
@@ -889,14 +861,13 @@ export class ExaltedessenceActorSheet extends ActorSheet {
    * @param {Event} event   The originating click event
    * @private
    */
-  _onItemCreate(event) {
+  static createItem(event, target) {
     event.preventDefault();
     event.stopPropagation();
-    const header = event.currentTarget;
     // Get the type of item to create.
-    const type = header.dataset.type;
+    const type = target.dataset.type;
     // Grab any data associated with this control.
-    const data = foundry.utils.duplicate(header.dataset);
+    const data = foundry.utils.duplicate(target.dataset);
     // Initialize a default name.
     const name = `New ${type.capitalize()}`;
     // Prepare the item object.
@@ -905,26 +876,179 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       type: type,
       system: data
     };
+    // if (type === 'charm') {
+    //   if (Object.keys(CONFIG.EXALTEDESSENCE.exaltcharmtypes).includes(this.actor.system.details.exalt)) {
+    //     itemData.system.charmtype = this.actor.system.details.exalt;
+    //   }
+    // }
     // Remove the type from the dataset since it's in the itemData.type prop.
     delete itemData.system["type"];
 
     // Finally, create the item!
-    return this.actor.createEmbeddedDocuments("Item", [itemData])
+    return this.actor.createEmbeddedDocuments("Item", [itemData]);
   }
 
-  /**
- * Handle spawning the TraitSelector application which allows a checkbox of multiple trait options
- * @param {Event} event   The click event which originated the selection
- * @private
- */
-  _onTraitSelector(event) {
+  static async itemAction(event, target) {
     event.preventDefault();
-    const a = event.currentTarget;
-    const label = a.parentElement.querySelector("label");
-    const choices = CONFIG.EXALTEDESSENCE[a.dataset.options];
-    const options = { name: a.dataset.target, title: label.innerText, choices };
-    return new TraitSelector(this.actor, options).render(true)
+    event.stopPropagation();
+    const doc = this._getEmbeddedDocument(target);
+    const actionType = target.dataset.actiontype;
+    if (!doc) {
+      if (actionType === 'craftSimpleProject') {
+        this.actor.actionRoll(
+          { rollType: 'simpleCraft', ability: "craft" }
+        );
+      }
+      return;
+    }
+    switch (actionType) {
+      case 'editItem':
+        doc.sheet.render(true);
+        break;
+      case 'deleteItem':
+        const applyChanges = await foundry.applications.api.DialogV2.confirm({
+          window: { title: game.i18n.localize("ExEss.Delete") },
+          content: "<p>Are you sure you want to delete this item?</p>",
+          classes: [this.actor.getSheetBackground()],
+          modal: true
+        });
+        if (applyChanges) {
+          await doc.delete();
+        }
+        break;
+      case 'chatItem':
+        this._displayCard(doc);
+        break;
+      case 'switchMode':
+        await doc.switchMode();
+        break;
+      case 'addOpposingCharm':
+        await this._addOpposingCharm(doc);
+        break;
+      case 'spendItem':
+        this._spendItem(doc);
+        break;
+      case 'increaseItemActivations':
+        doc.increaseActivations();
+        break;
+      case 'decreaseItemActivations':
+        doc.decreaseActiations();
+        break;
+      case 'togglePoison':
+        await doc.update({
+          [`system.poison.apply`]: !doc.system.poison.apply,
+        });
+        break;
+      case 'toggleItemValue':
+        const key = target.dataset.key;
+        await doc.update({
+          [`system.${key}`]: !doc.system[key],
+        });
+        break;
+      case 'shapeSpell':
+        this.actor.actionRoll(
+          {
+            rollType: 'sorcery',
+            pool: 'sorcery',
+            spell: doc.id
+          }
+        );
+        break;
+      case 'stopSpellShape':
+        await doc.update({ [`system.shaping`]: false });
+        await this.actor.update({
+          [`system.sorcery.motes.value`]: 0,
+          [`system.sorcery.motes.max`]: 0
+        });
+        break;
+      case 'completeCraft':
+        this._completeCraft(doc);
+        break;
+      case 'craftSimpleProject':
+        this.actor.actionRoll(
+          { rollType: 'simpleCraft', ability: "craft", craftProjectId: doc?.id, difficulty: doc?.system?.difficulty }
+        );
+        break;
+      case 'editShape':
+        const formActor = game.actors.get(doc.system.actorid);
+        if (formActor) {
+          formActor.sheet.render(true);
+        }
+        break;
+    }
   }
+
+  static async savedRollAction(event, target) {
+    const savedRollId = this._getEmbeddedDocument(target);
+    const actionType = target.dataset.actiontype;
+
+    switch (actionType) {
+      case 'savedRoll':
+        this.actor.actionRoll(
+          {
+            rollType: this.actor.system.savedRolls[savedRollId].rollType,
+            rollId: savedRollId
+          }
+        );
+        break;
+      case 'deleteSavedRoll':
+        const rollDeleteString = "system.savedRolls.-=" + savedRollId;
+        const deleteConfirm = await foundry.applications.api.DialogV2.confirm({
+          window: { title: game.i18n.localize('ExEss.Delete') },
+          content: `<p>Delete Saved Roll?</p>`,
+          classes: [this.actor.getSheetBackground()],
+          modal: true
+        });
+        if (deleteConfirm) {
+          this.actor.update({ [rollDeleteString]: null });
+          ui.notifications.notify(`Saved Roll Deleted`);
+        }
+        break;
+    }
+  }
+
+  static makeActionRoll(event, target) {
+    const rollType = target.dataset.rolltype;
+
+    const abilityMap = {
+      focusWill: 'sagacity',
+      social: 'embassy',
+    }
+
+    const data = {
+      rollType: rollType,
+    }
+
+    if (abilityMap[rollType]) {
+      data.ability = abilityMap[rollType];
+    }
+
+    if (rollType === 'ability') {
+      const ability = target.dataset.ability;
+      data.ability = ability;
+    }
+
+    if (rollType === 'ability') {
+      data.pool = target.dataset.pool;
+    }
+    if (rollType === 'withering' || rollType === 'decisive' || rollType === 'gambit') {
+      const doc = this._getEmbeddedDocument(target);
+      data.weapon = doc?.system;
+    }
+
+    this.actor.actionRoll(data);
+  }
+
+  static rollAction(event, target) {
+    const doc = this._getEmbeddedDocument(target);
+    this.actor.actionRoll(
+      {
+        rollType: 'ability',
+        pool: doc.id
+      }
+    );
+  }
+
 
   /**
    * Handle clickable rolls.
@@ -946,8 +1070,10 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     }
   }
 
-  async _displayDataChat(event) {
-    let type = $(event.currentTarget).data("type");
+  static async _displayDataChat(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+    let type = target.dataset.type;
     const token = this.actor.token;
     var content = '';
     var title = 'Advantage';
@@ -985,7 +1111,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       content: content,
       title: title,
     };
-    const html = await renderTemplate("systems/exaltedessence/templates/chat/exalt-ability-card.html", templateData);
+    const html = await foundry.applications.handlebars.renderTemplate("systems/exaltedessence/templates/chat/exalt-ability-card.html", templateData);
 
     // Create the ChatMessage data object
     const chatData = {
@@ -1000,6 +1126,77 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     return ChatMessage.create(chatData);
   }
 
+  static async showDialog(event, target) {
+    const dialogType = target.dataset.dialogtype;
+
+    if (dialogType === 'charmCheatSheet') {
+      const html = await foundry.applications.handlebars.renderTemplate("systems/exaltedessence/templates/dialogues/charms-dialogue.html");
+      new foundry.applications.api.DialogV2({
+        window: { title: game.i18n.localize("ExEss.Keywords"), resizable: true },
+        content: html,
+        position: {
+          width: 1000,
+          height: 1000
+        },
+        buttons: [{ action: 'close', label: game.i18n.localize("ExEss.Close") }],
+        classes: ['exaltedessence-dialog', this.actor.getSheetBackground()],
+      }).render(true);
+    } else {
+      let template = "systems/exaltedessence/templates/dialogues/armor-tags.html";
+
+      switch (dialogType) {
+        case 'experience':
+          template = "systems/exaltedessence/templates/dialogues/experience-points-dialogue.html";
+          break;
+        case 'weapons':
+          template = "systems/exaltedessence/templates/dialogues/weapon-tags.html";
+          break;
+        case 'craft':
+          template = "systems/exaltedessence/templates/dialogues/craft-cheatsheet.html";
+          break;
+        case 'advancement':
+          template = "systems/exaltedessence/templates/dialogues/advancement-dialogue.html";
+          break;
+        case 'combat':
+          template = "systems/exaltedessence/templates/dialogues/combat-dialogue.html";
+          break;
+        case 'social':
+          template = "systems/exaltedessence/templates/dialogues/social-dialogue.html";
+          break;
+        case 'rout':
+          template = "systems/exaltedessence/templates/dialogues/rout-modifiers.html";
+          break;
+        case 'exalt-xp':
+          template = "systems/exaltedessence/templates/dialogues/exalt-xp-dialogue.html";
+          break;
+        case 'featsOfStrength':
+          template = "systems/exaltedessence/templates/dialogues/feats-of-strength-dialogue.html";
+          break;
+        case 'bonusPoints':
+          template = "systems/exaltedessence/templates/dialogues/bonus-points-dialogue.html";
+          break;
+        case 'health':
+          template = "systems/exaltedessence/templates/dialogues/health-dialogue.html";
+          break;
+        case 'workings':
+          template = "systems/exaltedessence/templates/dialogues/workings-dialogue.html";
+          break;
+        default:
+          break;
+      }
+      const html = await foundry.applications.handlebars.renderTemplate(template);
+      new foundry.applications.api.DialogV2({
+        window: { title: game.i18n.localize("ExEss.InfoDialog"), resizable: true },
+        content: html,
+        buttons: [{ action: 'close', label: game.i18n.localize("ExEss.Close") }],
+        classes: ['exaltedessence-dialog', this.actor.getSheetBackground()],
+        position: {
+          width: 500,
+        },
+      }).render(true);
+    }
+  }
+
   /**
 * Display the chat card for an Item as a Chat Message
 * @param {object} options          Options which configure the display of the item chat card
@@ -1007,12 +1204,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
 * @param {boolean} createMessage   Whether to automatically create a ChatMessage entity (if true), or only return
 *                                  the prepared message data (if false)
 */
-  async _displayCard(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    // Render the chat card template
-    let li = $(event.currentTarget).parents(".item");
-    let item = this.actor.items.get(li.data("item-id"));
+  async _displayCard(item) {
     const token = this.actor.token;
     const templateData = {
       actor: this.actor,
@@ -1020,7 +1212,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       item: item,
       labels: this.labels,
     };
-    const html = await renderTemplate("systems/exaltedessence/templates/chat/item-card.html", templateData);
+    const html = await foundry.applications.handlebars.renderTemplate("systems/exaltedessence/templates/chat/item-card.html", templateData);
 
     // Create the ChatMessage data object
     const chatData = {
@@ -1052,14 +1244,8 @@ export class ExaltedessenceActorSheet extends ActorSheet {
     });
   }
 
-  _spendItem(event) {
-    event.preventDefault();
-    event.stopPropagation();
-
+  _spendItem(item) {
     const actorData = foundry.utils.duplicate(this.actor);
-
-    let li = $(event.currentTarget).parents(".item");
-    let item = this.actor.items.get(li.data("item-id"));
 
     let updateActive = null;
 
@@ -1090,7 +1276,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
         actorData.system.power.value = Math.max(0, actorData.system.power.value - item.system.cost.power + item.system.gain.power);
         actorData.system.anima.value = Math.max(0, actorData.system.anima.value - item.system.cost.anima + item.system.gain.anima);
         let totalHealth = actorData.type === 'character' ? 0 : actorData.system.health.levels;
-        if(actorData.type === 'character') {
+        if (actorData.type === 'character') {
           for (let [key, healthLevel] of Object.entries(actorData.system.health.levels)) {
             totalHealth += healthLevel.value;
           }
@@ -1103,7 +1289,7 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       if (item.type === 'spell') {
         actorData.system.will.value = Math.max(0, actorData.system.will.value - item.system.cost);
       }
-      if(item.type === 'ritual') {
+      if (item.type === 'ritual') {
         actorData.system.will.value += item.system.will;
       }
 
@@ -1128,19 +1314,313 @@ export class ExaltedessenceActorSheet extends ActorSheet {
       }
     }
   }
-}
+
+  get dragDrop() {
+    return this.#dragDrop;
+  }
+
+  // This is marked as private because there's no real need
+  // for subclasses or external hooks to mess with it directly
+  #dragDrop;
+
+  #createDragDropHandlers() {
+    return this.options.dragDrop.map((d) => {
+      d.permissions = {
+        dragstart: this._canDragStart.bind(this),
+        drop: this._canDragDrop.bind(this),
+      };
+      d.callbacks = {
+        dragstart: this._onDragStart.bind(this),
+        dragover: this._onDragOver.bind(this),
+        drop: this._onDrop.bind(this),
+      };
+      return new foundry.applications.ux.DragDrop.implementation(d);
+    });
+  }
+
+  /**
+* Define whether a user is able to begin a dragstart workflow for a given drag selector
+* @param {string} selector       The candidate HTML selector for dragging
+* @returns {boolean}             Can the current user drag this selector?
+* @protected
+*/
+  _canDragStart(selector) {
+    // game.user fetches the current user
+    return this.isEditable;
+  }
+
+  /**
+   * Define whether a user is able to conclude a drag-and-drop workflow for a given drop selector
+   * @param {string} selector       The candidate HTML selector for the drop target
+   * @returns {boolean}             Can the current user drop on this selector?
+   * @protected
+   */
+  _canDragDrop(selector) {
+    // game.user fetches the current user
+    return this.isEditable;
+  }
+
+  /**
+ * Callback actions which occur at the beginning of a drag start workflow.
+ * @param {DragEvent} event       The originating DragEvent
+ * @protected
+ */
+  _onDragStart(event) {
+    const docRow = event.currentTarget.closest('li');
+    if ('link' in event.target.dataset) return;
+
+    // Chained operation
+    let dragData = this._getEmbeddedDocument(docRow)?.toDragData();
+
+    if (!dragData) return;
+
+    // Set data transfer
+    event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+  }
+
+  /**
+   * Callback actions which occur when a dragged element is over a drop target.
+   * @param {DragEvent} event       The originating DragEvent
+   * @protected
+   */
+  _onDragOver(event) { }
+
+  /**
+   * Callback actions which occur when a dragged element is dropped on a target.
+   * @param {DragEvent} event       The originating DragEvent
+   * @protected
+   */
+  async _onDrop(event) {
+    const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+    const actor = this.actor;
+    const allowed = Hooks.call('dropActorSheetData', actor, this, data);
+    if (allowed === false) return;
+
+    // Handle different data types
+    switch (data.type) {
+      case 'ActiveEffect':
+        return this._onDropActiveEffect(event, data);
+      case 'Actor':
+        return this._onDropActor(event, data);
+      case 'Item':
+        return this._onDropItem(event, data);
+      case 'Folder':
+        return this._onDropFolder(event, data);
+    }
+  }
+
+  /**
+ * Handle the dropping of ActiveEffect data onto an Actor Sheet
+ * @param {DragEvent} event                  The concluding DragEvent which contains drop data
+ * @param {object} data                      The data transfer extracted from the event
+ * @returns {Promise<ActiveEffect|boolean>}  The created ActiveEffect object or false if it couldn't be created.
+ * @protected
+ */
+  async _onDropActiveEffect(event, data) {
+    const aeCls = getDocumentClass('ActiveEffect');
+    const effect = await aeCls.fromDropData(data);
+    if (!this.actor.isOwner || !effect) return false;
+    if (effect.target === this.actor)
+      return this._onSortActiveEffect(event, effect);
+    return aeCls.create(effect, { parent: this.actor });
+  }
+
+  /**
+   * Handle a drop event for an existing embedded Active Effect to sort that Active Effect relative to its siblings
+   *
+   * @param {DragEvent} event
+   * @param {ActiveEffect} effect
+   */
+  async _onSortActiveEffect(event, effect) {
+    /** @type {HTMLElement} */
+    const dropTarget = event.target.closest('[data-effect-id]');
+    if (!dropTarget) return;
+    const target = this._getEmbeddedDocument(dropTarget);
+
+    // Don't sort on yourself
+    if (effect.uuid === target.uuid) return;
+
+    // Identify sibling items based on adjacent HTML elements
+    const siblings = [];
+    for (const el of dropTarget.parentElement.children) {
+      const siblingId = el.dataset.effectId;
+      const parentId = el.dataset.parentId;
+      if (
+        siblingId &&
+        parentId &&
+        (siblingId !== effect.id || parentId !== effect.parent.id)
+      )
+        siblings.push(this._getEmbeddedDocument(el));
+    }
+
+    // Perform the sort
+    const sortUpdates = SortingHelpers.performIntegerSort(effect, {
+      target,
+      siblings,
+    });
+
+    // Split the updates up by parent document
+    const directUpdates = [];
+
+    const grandchildUpdateData = sortUpdates.reduce((items, u) => {
+      const parentId = u.target.parent.id;
+      const update = { _id: u.target.id, ...u.update };
+      if (parentId === this.actor.id) {
+        directUpdates.push(update);
+        return items;
+      }
+      if (items[parentId]) items[parentId].push(update);
+      else items[parentId] = [update];
+      return items;
+    }, {});
+
+    // Effects-on-items updates
+    for (const [itemId, updates] of Object.entries(grandchildUpdateData)) {
+      await this.actor.items
+        .get(itemId)
+        .updateEmbeddedDocuments('ActiveEffect', updates);
+    }
+
+    // Update on the main actor
+    return this.actor.updateEmbeddedDocuments('ActiveEffect', directUpdates);
+  }
+
+  /**
+   * Handle dropping of an Actor data onto another Actor sheet
+   * @param {DragEvent} event            The concluding DragEvent which contains drop data
+   * @param {object} data                The data transfer extracted from the event
+   * @returns {Promise<object|boolean>}  A data object which describes the result of the drop, or false if the drop was
+   *                                     not permitted.
+   * @protected
+   */
+  async _onDropActor(event, data) {
+    if (!this.actor.isOwner) return false;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Handle dropping of an item reference or item data onto an Actor Sheet
+   * @param {DragEvent} event            The concluding DragEvent which contains drop data
+   * @param {object} data                The data transfer extracted from the event
+   * @returns {Promise<Item[]|boolean>}  The created or updated Item instances, or false if the drop was not permitted.
+   * @protected
+   */
+  async _onDropItem(event, data) {
+    if (!this.actor.isOwner) return false;
+    const item = await Item.implementation.fromDropData(data);
+
+    // Handle item sorting within the same Actor
+    if (this.actor.uuid === item.parent?.uuid)
+      return this._onSortItem(event, item);
+
+    // Create the owned item
+    return this._onDropItemCreate(item, event);
+  }
+
+  /**
+   * Handle dropping of a Folder on an Actor Sheet.
+   * The core sheet currently supports dropping a Folder of Items to create all items as owned items.
+   * @param {DragEvent} event     The concluding DragEvent which contains drop data
+   * @param {object} data         The data transfer extracted from the event
+   * @returns {Promise<Item[]>}
+   * @protected
+   */
+  async _onDropFolder(event, data) {
+    if (!this.actor.isOwner) return [];
+    const folder = await Folder.implementation.fromDropData(data);
+    if (folder.type !== 'Item') return [];
+    const droppedItemData = await Promise.all(
+      folder.contents.map(async (item) => {
+        if (!(document instanceof Item)) item = await fromUuid(item.uuid);
+        return item;
+      })
+    );
+    return this._onDropItemCreate(droppedItemData, event);
+  }
+
+  /**
+   * Handle the final creation of dropped Item data on the Actor.
+   * This method is factored out to allow downstream classes the opportunity to override item creation behavior.
+   * @param {object[]|object} itemData      The item data requested for creation
+   * @param {DragEvent} event               The concluding DragEvent which provided the drop data
+   * @returns {Promise<Item[]>}
+   * @private
+   */
+  async _onDropItemCreate(itemData, event) {
+    itemData = itemData instanceof Array ? itemData : [itemData];
+    return this.actor.createEmbeddedDocuments('Item', itemData);
+  }
+
+  /**
+   * Handle a drop event for an existing embedded Item to sort that Item relative to its siblings
+   * @param {Event} event
+   * @param {Item} item
+   * @private
+   */
+  _onSortItem(event, item) {
+    // Get the drag source and drop target
+    const items = this.actor.items;
+    const dropTarget = event.target.closest('[data-item-id]');
+    if (!dropTarget) return;
+    const target = items.get(dropTarget.dataset.itemId);
+
+    // Don't sort on yourself
+    if (item.id === target.id) return;
+
+    // Identify sibling items based on adjacent HTML elements
+    const siblings = [];
+    for (let el of dropTarget.parentElement.children) {
+      const siblingId = el.dataset.itemId;
+      if (siblingId && siblingId !== item.id)
+        siblings.push(items.get(el.dataset.itemId));
+    }
+
+    // Perform the sort
+    const sortUpdates = SortingHelpers.performIntegerSort(item, {
+      target,
+      siblings,
+    });
+    const updateData = sortUpdates.map((u) => {
+      const update = u.update;
+      update._id = u.target._id;
+      return update;
+    });
+
+    // Perform the update
+    return this.actor.updateEmbeddedDocuments('Item', updateData);
+  }
+
+  /**
+* Fetches the embedded document representing the containing HTML element
+*
+* @param {HTMLElement} target    The element subject to search
+* @returns {Item | ActiveEffect} The embedded Item or ActiveEffect
+*/
+  _getEmbeddedDocument(target) {
+    const docRow = target.closest('li[data-document-class]');
+    if (!docRow?.dataset) {
+      return null;
+    }
+    if (docRow.dataset.documentClass === 'savedRoll') {
+      return docRow.dataset.itemId;
+    }
+    else if (docRow.dataset.documentClass === 'Item') {
+      return this.actor.items.get(docRow.dataset.itemId);
+    } else if (docRow.dataset.documentClass === 'ActiveEffect') {
+      const parent =
+        docRow.dataset.parentId === this.actor.id
+          ? this.actor
+          : this.actor.items.get(docRow?.dataset.parentId);
+      return parent.effects.get(docRow?.dataset.effectId);
+    } else return console.warn('Could not find document class');
+  }
 
 
-function parseCounterStates(states) {
-  return states.split(',').reduce((obj, state) => {
-    const [k, v] = state.split(':')
-    obj[k] = v
-    return obj
-  }, {})
-}
-
-function isColor(strColor) {
-  const s = new Option().style;
-  s.color = strColor;
-  return s.color !== '';
+  async _onDragSavedRoll(ev) {
+    const li = ev.currentTarget;
+    if (ev.target.classList.contains("content-link")) return;
+    const savedRoll = this.actor.system.savedRolls[li.dataset.itemId];
+    ev.dataTransfer.setData("text/plain", JSON.stringify({ actorId: this.actor.uuid, type: 'savedRoll', id: li.dataset.itemId, name: savedRoll.name }));
+  }
 }

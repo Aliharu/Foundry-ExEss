@@ -46,7 +46,7 @@ export class ExaltedessenceItemSheet extends ItemSheet {
     context.system = itemData.system;
     context.selects = CONFIG.EXALTEDESSENCE.selects;
 
-    context.descriptionHTML = await TextEditor.enrichHTML(context.system.description, {
+    context.descriptionHTML = await foundry.applications.ux.TextEditor.enrichHTML(context.system.description, {
       secrets: this.document.isOwner,
       async: true
     });
