@@ -515,7 +515,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
     async _preChatMessage() {
         if (game.user.targets && game.user.targets.size > 0) {
             for (const target of Array.from(game.user.targets)) {
-                const messageContent = await renderTemplate("systems/exaltedessence/templates/chat/targeting-card.html", {
+                const messageContent = await foundry.applications.handlebars.renderTemplate("systems/exaltedessence/templates/chat/targeting-card.html", {
                     actor: this.actor,
                     targetActor: target.actor,
                     imgUrl: CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.rollType] || CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.ability] || "systems/exaltedessence/assets/icons/d10.svg",
@@ -534,7 +534,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 });
             }
         } else if (CONFIG.EXALTEDESSENCE.targetableRollTypes.includes(this.object.rollType)) {
-            const messageContent = await renderTemplate("systems/exaltedessence/templates/chat/targeting-card.html", {
+            const messageContent = await foundry.applications.handlebars.renderTemplate("systems/exaltedessence/templates/chat/targeting-card.html", {
                 actor: this.actor,
                 targetActor: null,
                 imgUrl: CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.rollType] || CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.ability] || "systems/exaltedessence/assets/icons/d10.svg",
@@ -552,7 +552,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 },
             });
         } else if (game.settings.get("exaltedessence", "nonTargetRollCards")) {
-            const messageContent = await renderTemplate("systems/exaltedessence/templates/chat/pre-roll-card.html", {
+            const messageContent = await foundry.applications.handlebars.renderTemplate("systems/exaltedessence/templates/chat/pre-roll-card.html", {
                 actor: this.actor,
                 imgUrl: CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.rollType] || CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.ability] || "systems/exaltedessence/assets/icons/d10.svg",
                 rollType: CONFIG.EXALTEDESSENCE.rollTypeTargetLabels[this.object.rollType] || CONFIG.EXALTEDESSENCE.rollTypeTargetLabels[this.object.ability] || "ExEss.Roll",
@@ -943,7 +943,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
     static async saveRoll() {
         const rollData = { ...this.object };
 
-        let html = await renderTemplate("systems/exaltedessence/templates/dialogues/save-roll.html", { 'name': this.object.name || 'New Roll' });
+        let html = await foundry.applications.handlebars.renderTemplate("systems/exaltedessence/templates/dialogues/save-roll.html", { 'name': this.object.name || 'New Roll' });
 
         new foundry.applications.api.DialogV2({
             window: { title: game.i18n.localize("ExEss.SaveRoll"), },
@@ -1185,7 +1185,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
     }
 
     static async showGambitDialog(event, target) {
-        const html = await renderTemplate("systems/exaltedessence/templates/dialogues/gambits.html");
+        const html = await foundry.applications.handlebars.renderTemplate("systems/exaltedessence/templates/dialogues/gambits.html");
 
         new foundry.applications.api.DialogV2({
             window: { title: game.i18n.localize("ExEss.Gambits"), resizable: true },
@@ -2153,7 +2153,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             rollData: this.object,
             rollingActor: this.actor,
         }
-        return await renderTemplate("systems/exaltedessence/templates/chat/roll-card.html", messageData);
+        return await foundry.applications.handlebars.renderTemplate("systems/exaltedessence/templates/chat/roll-card.html", messageData);
     }
 
     _removeOnslaught() {
