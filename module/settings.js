@@ -4,7 +4,7 @@ export function registerSettings() {
         hint: "ExEss.SheetStyleDescription",
         scope: "world",
         config: true,
-        default: "solar",
+        default: "tree",
         type: String,
         choices: {
             "db": "ExEss.Dragonblooded",

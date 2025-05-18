@@ -1,61 +1,114 @@
 import { onManageActiveEffect, prepareActiveEffectCategories } from "../effects.js";
 import TraitSelector from "../apps/trait-selector.js";
 
+const { HandlebarsApplicationMixin } = foundry.applications.api;
+const { ItemSheetV2 } = foundry.applications.sheets;
+
 /**
  * Extend the basic ItemSheet with some very simple modifications
  * @extends {ItemSheet}
  */
-export class ExaltedessenceItemSheet extends ItemSheet {
+export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 
   constructor(...args) {
     super(...args);
-    this.options.classes = [...this.options.classes, this.getTypeSpecificCSSClasses()];
+    this.#dragDrop = this.#createDragDropHandlers();
   }
 
-  /** @override */
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["exaltedessence", "sheet", "item"],
-      width: 756,
-      height: 645,
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }]
-    });
+  static DEFAULT_OPTIONS = {
+    window: {
+      title: "Item Sheet",
+      resizable: true,
+    },
+    position: { width: 756, height: 645 },
+    classes: ["tree-background", "exaltedessence", "sheet", "item"],
+    actions: {
+      onEditImage: this._onEditImage,
+      showEmbeddedItem: this.showEmbeddedItem,
+      deleteEmbeddedItem: this.deleteEmbeddedItem,
+      editTraits: this.editTraits,
+    },
+    dragDrop: [{ dragSelector: '[data-drag]', dropSelector: null }],
+    form: {
+      submitOnChange: true,
+    },
+  };
+
+  static PARTS = {
+    header: {
+      template: "systems/exaltedessence/templates/item/item-header.html",
+    },
+    tabs: { template: 'systems/exaltedessence/templates/dialogues/tabs.html' },
+    description: { template: 'systems/exaltedessence/templates/item/description-tab.html' },
+    cost: { template: 'systems/exaltedessence/templates/item/costs-tab.html' },
+    bonuses: { template: 'systems/exaltedessence/templates/item/bonuses-tab.html' },
+    effects: { template: 'systems/exaltedessence/templates/item/effects-tab.html' },
+  };
+
+  get title() {
+    return `${game.i18n.localize(this.item.name)}`
   }
 
-  /** @override */
-  get template() {
-    const path = "systems/exaltedessence/templates/item";
-    // Return a single sheet for all item types.
-    // return `${path}/item-sheet.html`;
-
-    // Alternatively, you could use the following return statement to do a
-    // unique item sheet by type, like `weapon-sheet.html`.
-    return `${path}/item-${this.item.type}-sheet.html`;
+  _initializeApplicationOptions(options) {
+    options.classes = [options.document.getSheetBackground(), "exaltedessence", "sheet", "item"];
+    return super._initializeApplicationOptions(options);
   }
 
-  getTypeSpecificCSSClasses() {
-    return `${game.settings.get("exaltedessence", "sheetStyle")}-background`;
+  _configureRenderOptions(options) {
+    super._configureRenderOptions(options);
+
+    options.parts = ['header', 'tabs', 'description'];
+    // // Control which parts show based on document subtype
+    switch (this.document.type) {
+      case 'charm':
+        options.parts.push('cost', 'bonuses');
+        break;
+    }
+    options.parts.push('effects');
   }
 
-  /* -------------------------------------------- */
-
-  /** @override */
-  async getData() {
-    const context = super.getData();
+  async _prepareContext(options) {
     const itemData = this.item.toObject(false);
-    context.system = itemData.system;
-    context.selects = CONFIG.EXALTEDESSENCE.selects;
 
-    context.descriptionHTML = await foundry.applications.ux.TextEditor.enrichHTML(context.system.description, {
-      secrets: this.document.isOwner,
-      async: true
-    });
+    const context = {
+      // Validates both permissions and compendium status
+      editable: this.isEditable,
+      owner: this.document.isOwner,
+      limited: this.document.limited,
+      // Add the item document.
+      item: this.item,
+      // Adding system and flags for easier access
+      system: this.item.system,
+      flags: this.item.flags,
+      type: this.item.type,
+      // Adding a pointer to CONFIG.BOILERPLATE
+      config: CONFIG.EXALTEDESSENCE,
+      // You can factor out context construction to helper functions
+      tabs: this._getTabs(options.parts),
+      selects: CONFIG.EXALTEDESSENCE.selects,
+      traitHeader: itemData.type === 'armor' || itemData.type === 'weapon',
+      isActivatable: ['spell', 'ritual', 'item', 'quality', 'weapon', 'charm'].includes(itemData.type),
+    };
+
+    context.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
+      this.item.system.description,
+      {
+        secrets: this.document.isOwner,
+        relativeTo: this.item,
+      }
+    );
 
     if (itemData.type === 'weapon' || itemData.type === 'armor') {
       this._prepareTraits(itemData.type, context.system.traits);
     }
 
     context.effects = prepareActiveEffectCategories(this.item.effects);
+
+    return context;
+  }
+
+  async _preparePartContext(partId, context) {
+    context.tab = context.tabs.find(item => item.partId === partId);
     return context;
   }
 
@@ -93,15 +146,31 @@ export class ExaltedessenceItemSheet extends ItemSheet {
     }
   }
 
-  /* -------------------------------------------- */
+  static async _onEditImage(event, target) {
+    const attr = target.dataset.edit;
+    const current = foundry.utils.getProperty(this.document, attr);
+    const { img } =
+      this.document.constructor.getDefaultArtwork?.(this.document.toObject()) ??
+      {};
+    const fp = new foundry.applications.apps.FilePicker.implementation({
+      current,
+      type: 'image',
+      redirectToRoot: img ? [img] : [],
+      callback: (path) => {
+        this.document.update({ [attr]: path });
+      },
+      top: this.position.top + 40,
+      left: this.position.left + 10,
+    });
+    return fp.browse();
+  }
 
-  /** @override */
-  setPosition(options = {}) {
-    const position = super.setPosition(options);
-    const sheetBody = this.element.find(".sheet-body");
-    const bodyHeight = position.height - 192;
-    sheetBody.css("height", bodyHeight);
-    return position;
+  static editTraits(event, target) {
+    event.preventDefault();
+    const a = target;
+    const choices = CONFIG.EXALTEDESSENCE[a.dataset.options];
+    const options = { name: a.dataset.target, choices };
+    return new TraitSelector(this.item, options).render(true);
   }
 
   /**
@@ -117,89 +186,211 @@ export class ExaltedessenceItemSheet extends ItemSheet {
     return new TraitSelector(this.item, options).render(true)
   }
 
+  /** @override */
+  _onRender(context, options) {
+    this.#dragDrop.forEach((d) => d.bind(this.element));
+  }
+
+  _getTabs(parts) {
+    // If you have sub-tabs this is necessary to change
+    const tabs = [];
+    const tabGroup = 'primary';
+    // Default tab for first time it's rendered this session
+    if (!this.tabGroups[tabGroup]) this.tabGroups[tabGroup] = 'description';
+    for (const part of parts) {
+      const tab = {
+        cssClass: this.tabGroups['primary'] === 'description' ? 'active' : '',
+        group: tabGroup,
+        // Matches tab property to
+        id: '',
+        // FontAwesome Icon, if you so choose
+        icon: '',
+        // Run through localization
+        label: '',
+      };
+      switch (part) {
+        case 'description':
+          tab.id = 'description';
+          tab.partId = 'description';
+          tab.label += 'Description';
+          tab.cssClass = this.tabGroups['primary'] === 'description' ? 'active' : '';
+          break;
+        case 'cost':
+          tab.id = 'cost';
+          tab.partId = 'cost';
+          tab.label += 'Cost';
+          tab.cssClass = this.tabGroups['primary'] === 'cost' ? 'active' : '';
+          break;
+        case 'bonuses':
+          tab.id = 'bonuses';
+          tab.label += 'Bonuses';
+          tab.cssClass = this.tabGroups['primary'] === 'bonuses' ? 'active' : '';
+          break;
+        case 'effects':
+          tab.id = 'effects';
+          tab.partId = 'effects';
+          tab.label += 'Effects';
+          tab.cssClass = this.tabGroups['primary'] === 'effects' ? 'active' : '';
+          break;
+      }
+      if (tab.id) {
+        tabs.push(tab);
+      }
+    }
+
+    return tabs;
+  }
+
+
   /* -------------------------------------------- */
 
-  /** @override */
-  activateListeners(html) {
-    super.activateListeners(html);
+  // /** @override */
+  // activateListeners(html) {
+  //   super.activateListeners(html);
 
-    // Everything below here is only needed if the sheet is editable
-    if (!this.options.editable) return;
+  //   // Everything below here is only needed if the sheet is editable
+  //   if (!this.options.editable) return;
 
-    let embedItemshandler = this._onDragEmbeddedItem.bind(this);
+  //   let embedItemshandler = this._onDragEmbeddedItem.bind(this);
 
-    html.find('a.embeded-item-pill').each((i, li) => {
-      li.addEventListener("dragstart", embedItemshandler, false);
-    });
+  //   html.find('a.embeded-item-pill').each((i, li) => {
+  //     li.addEventListener("dragstart", embedItemshandler, false);
+  //   });
 
-    html.find('.trait-selector').click(this._onTraitSelector.bind(this));
+  //   html.find('.trait-selector').click(this._onTraitSelector.bind(this));
 
-    html.find(".effect-control").click(ev => {
-      onManageActiveEffect(ev, this.item);
-    });
+  //   html.find(".effect-control").click(ev => {
+  //     onManageActiveEffect(ev, this.item);
+  //   });
 
-    html.on("dragstart", "a.embeded-item-pill", this._onDragEmbeddedItem);
+  //   html.on("dragstart", "a.embeded-item-pill", this._onDragEmbeddedItem);
 
-    html.find(".embeded-item-delete").on("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      let formData = {};
+  //   html.find(".embeded-item-delete").on("click", (event) => {
+  //     event.preventDefault();
+  //     event.stopPropagation();
+  //     let formData = {};
 
-      const li = event.currentTarget;
-      const parent = $(li).parent()[0];
-      const itemIndex = parent.dataset.itemIndex;
-      const items = this.object.system.charmprerequisites;
+  //     const li = event.currentTarget;
+  //     const parent = $(li).parent()[0];
+  //     const itemIndex = parent.dataset.itemIndex;
+  //     const items = this.object.system.charmprerequisites;
+  //     items.splice(itemIndex, 1);
+  //     foundry.utils.setProperty(formData, `system.charmprerequisites`, items);
+  //     this.object.update(formData);
+  //   });
+
+  //   // Embeded Item code taken and modified from the Star Wars FFG FoundryVTT module
+  //   // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  //   // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  //   // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  //   // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  //   // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  //   // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  //   // SOFTWARE.
+
+  //   html.find(".embeded-item-pill").on("click", async (event) => {
+  //     event.preventDefault();
+  //     event.stopPropagation();
+  //     const li = event.currentTarget;
+  //     let itemType = li.dataset.itemName;
+  //     let itemIndex = li.dataset.itemIndex;
+  //     let embededItem = this.object.system.charmprerequisites[itemIndex];
+
+  //     let item;
+
+  //     if (embededItem.pack) {
+  //       // Case 1 - Import from a Compendium pack
+  //       item = await this.importItemFromCollection(embededItem.pack, embededItem.id);
+  //     }
+  //     else {
+  //       // Case 2 - Import from World entity
+  //       if (this.item.pack) {
+  //         item = await this.importItemFromCollection(this.item.pack, embededItem.id);
+  //       }
+  //       if (!item) {
+  //         item = await game.items.get(embededItem.id);
+  //       }
+  //     }
+  //     if (!item) return ui.notifications.error(`Error: Could not find item, it may have been deleted.`);
+
+  //     item.sheet.render(true);
+  //   });
+
+  //   if (this.object.type === 'charm') {
+  //     const itemToItemAssociation = new DragDrop({
+  //       dragSelector: ".item",
+  //       dropSelector: null,
+  //       permissions: { dragstart: true, drop: true },
+  //       callbacks: { drop: this._onDrop.bind(this), dragstart: this._onDrag.bind(this) },
+  //     });
+  //     itemToItemAssociation.bind(html[0]);
+  //   }
+  // }
+
+  static async showEmbeddedItem(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+    const li = target;
+    let itemType = li.dataset.itemName;
+    let itemIndex = li.dataset.itemIndex;
+    let embededItem;
+
+    if (li.dataset.type === 'archetype') {
+      embededItem = this.item.system.archetype.charmprerequisites[itemIndex];
+    }
+    else {
+      embededItem = this.item.system.charmprerequisites[itemIndex];
+    }
+
+    var item;
+
+    if (embededItem.pack) {
+      // Case 1 - Import from a Compendium pack
+      item = await this.importItemFromCollection(embededItem.pack, embededItem.id);
+    }
+    else {
+      // Case 2 - Import from World entity
+      if (this.item.pack) {
+        item = await this.importItemFromCollection(this.item.pack, embededItem.id);
+      }
+      if (!item) {
+        item = await game.items.get(embededItem.id);
+      }
+    }
+    if (!item) return ui.notifications.error(`Error: Could not find item, it may have been deleted.`);
+
+    item.sheet.render(true);
+  }
+
+  static deleteEmbeddedItem(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+    let formData = {};
+
+    const li = target;
+    const parent = li.parentElement;
+    const itemIndex = parent.dataset.itemIndex;
+
+    if (target.dataset?.type === 'archetype') {
+      const items = this.item.system.archetype.charmprerequisites;
+      items.splice(itemIndex, 1);
+      foundry.utils.setProperty(formData, `system.archetype.charmprerequisites`, items);
+      this.item.update(formData);
+    }
+    else {
+      const items = this.item.system.charmprerequisites;
       items.splice(itemIndex, 1);
       foundry.utils.setProperty(formData, `system.charmprerequisites`, items);
-      this.object.update(formData);
-    });
-
-    // Embeded Item code taken and modified from the Star Wars FFG FoundryVTT module
-    // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    // SOFTWARE.
-
-    html.find(".embeded-item-pill").on("click", async (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      const li = event.currentTarget;
-      let itemType = li.dataset.itemName;
-      let itemIndex = li.dataset.itemIndex;
-      let embededItem = this.object.system.charmprerequisites[itemIndex];
-
-      let item;
-
-      if (embededItem.pack) {
-        // Case 1 - Import from a Compendium pack
-        item = await this.importItemFromCollection(embededItem.pack, embededItem.id);
-      }
-      else {
-        // Case 2 - Import from World entity
-        if (this.item.pack) {
-          item = await this.importItemFromCollection(this.item.pack, embededItem.id);
-        }
-        if (!item) {
-          item = await game.items.get(embededItem.id);
-        }
-      }
-      if (!item) return ui.notifications.error(`Error: Could not find item, it may have been deleted.`);
-
-      item.sheet.render(true);
-    });
-
-    if (this.object.type === 'charm') {
-      const itemToItemAssociation = new DragDrop({
-        dragSelector: ".item",
-        dropSelector: null,
-        permissions: { dragstart: true, drop: true },
-        callbacks: { drop: this._onDrop.bind(this), dragstart: this._onDrag.bind(this) },
-      });
-      itemToItemAssociation.bind(html[0]);
+      this.item.update(formData);
     }
+  }
+
+  importItemFromCollection(collection, entryId) {
+    const pack = game.packs.get(collection);
+    if (pack.documentName !== "Item") return;
+    return pack.getDocument(entryId).then((ent) => {
+      return ent;
+    });
   }
 
   _onDragEmbeddedItem(event) {
@@ -225,38 +416,27 @@ export class ExaltedessenceItemSheet extends ItemSheet {
     event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
   }
 
-  async _onDrop(event) {
-    let data;
-    try {
-      data = JSON.parse(event.dataTransfer.getData("text/plain"));
-      if (data.type === "Item") return this._onDropItem(event, data);
-      if (data.type === "ActiveEffect") return this._onDropActiveEffect(event, data);
-    } catch (err) {
-      return false;
-    }
-  }
-
   async _onDrag(event) {
     const li = event.currentTarget;
-    if ( "link" in event.target.dataset ) return;
+    if ("link" in event.target.dataset) return;
 
     // Create drag data
     let dragData;
 
     // Active Effect
-    if ( li.dataset.effectId ) {
+    if (li.dataset.effectId) {
       const effect = this.item.effects.get(li.dataset.effectId);
       dragData = effect.toDragData();
     }
 
-    if ( !dragData ) return;
+    if (!dragData) return;
 
     // Set data transfer
     event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
   }
 
   async _onDropItem(event, data) {
-    const obj = this.object;
+    const obj = this.item;
     const li = event.currentTarget;
 
     data.id = data.uuid.split('.')[1];
@@ -287,23 +467,27 @@ export class ExaltedessenceItemSheet extends ItemSheet {
       id: itemObject.id,
       name: itemObject.name,
       pack: data.pack,
+      count: 1,
     };
 
     if (itemObject.type === "charm") {
+      const detailsTabactive = this.tabGroups.primary === 'details';
       let items = obj?.system.charmprerequisites;
+      if (detailsTabactive) {
+        items = obj?.system.archetype.charmprerequisites;
+      }
       if (!items) {
         items = [];
       }
       if (items.map(item => item.id).includes(newItem.id)) {
-        return;
-        // items.forEach(item => {
-        //   if (item.id === newItem.id) {
-        //     if (!item.count) {
-        //       item.count = 1;
-        //     }
-        //     item.count += 1;
-        //   }
-        // });
+        items.forEach(item => {
+          if (item.id === newItem.id) {
+            if (!item.count) {
+              item.count = 1;
+            }
+            item.count += 1;
+          }
+        });
       } else {
         switch (itemObject.type) {
           case "charm": {
@@ -319,7 +503,7 @@ export class ExaltedessenceItemSheet extends ItemSheet {
 
 
       let formData = {};
-      foundry.utils.setProperty(formData, `system.charmprerequisites`, items);
+      foundry.utils.setProperty(formData, `system${detailsTabactive ? '.archetype' : ''}.charmprerequisites`, items);
 
       obj.update(formData);
     }
@@ -327,12 +511,218 @@ export class ExaltedessenceItemSheet extends ItemSheet {
 
   async _onDropActiveEffect(event, data) {
     const effect = await ActiveEffect.implementation.fromDropData(data);
-    if ( !this.item.isOwner || !effect
+    if (!this.item.isOwner || !effect
       || (this.item.uuid === effect.parent?.uuid)
-      || (this.item.uuid === effect.origin) ) return false;
+      || (this.item.uuid === effect.origin)) return false;
     const effectData = effect.toObject();
     const options = { parent: this.item, keepOrigin: false };
 
     return ActiveEffect.create(effectData, options);
+  }
+
+  /**
+ *
+ * DragDrop
+ *
+ */
+
+  /**
+   * Define whether a user is able to begin a dragstart workflow for a given drag selector
+   * @param {string} selector       The candidate HTML selector for dragging
+   * @returns {boolean}             Can the current user drag this selector?
+   * @protected
+   */
+  _canDragStart(selector) {
+    // game.user fetches the current user
+    return this.isEditable;
+  }
+
+  /**
+   * Define whether a user is able to conclude a drag-and-drop workflow for a given drop selector
+   * @param {string} selector       The candidate HTML selector for the drop target
+   * @returns {boolean}             Can the current user drop on this selector?
+   * @protected
+   */
+  _canDragDrop(selector) {
+    // game.user fetches the current user
+    return this.isEditable;
+  }
+
+  /**
+   * Callback actions which occur at the beginning of a drag start workflow.
+   * @param {DragEvent} event       The originating DragEvent
+   * @protected
+   */
+  _onDragStart(event) {
+    const li = event.currentTarget;
+    if ('link' in event.target.dataset) return;
+
+    let dragData = null;
+
+    // Active Effect
+    if (li.dataset.effectId) {
+      const effect = this.item.effects.get(li.dataset.effectId);
+      dragData = effect.toDragData();
+    }
+
+    if (!dragData) return;
+
+    // Set data transfer
+    event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+  }
+
+  /**
+   * Callback actions which occur when a dragged element is over a drop target.
+   * @param {DragEvent} event       The originating DragEvent
+   * @protected
+   */
+  _onDragOver(event) { }
+
+  /**
+   * Callback actions which occur when a dragged element is dropped on a target.
+   * @param {DragEvent} event       The originating DragEvent
+   * @protected
+   */
+  async _onDrop(event) {
+    const data = foundry.applications.ux.TextEditor.getDragEventData(event);
+    const item = this.item;
+    const allowed = Hooks.call('dropItemSheetData', item, this, data);
+    if (allowed === false) return;
+
+    // Handle different data types
+    switch (data.type) {
+      case 'ActiveEffect':
+        return this._onDropActiveEffect(event, data);
+      case 'Actor':
+        return this._onDropActor(event, data);
+      case 'Item':
+        return this._onDropItem(event, data);
+      case 'Folder':
+        return this._onDropFolder(event, data);
+    }
+  }
+
+  /**
+   * Sorts an Active Effect based on its surrounding attributes
+   *
+   * @param {DragEvent} event
+   * @param {ActiveEffect} effect
+   */
+  _onEffectSort(event, effect) {
+    const effects = this.item.effects;
+    const dropTarget = event.target.closest('[data-effect-id]');
+    if (!dropTarget) return;
+    const target = effects.get(dropTarget.dataset.effectId);
+
+    // Don't sort on yourself
+    if (effect.id === target.id) return;
+
+    // Identify sibling items based on adjacent HTML elements
+    const siblings = [];
+    for (let el of dropTarget.parentElement.children) {
+      const siblingId = el.dataset.effectId;
+      if (siblingId && siblingId !== effect.id)
+        siblings.push(effects.get(el.dataset.effectId));
+    }
+
+    // Perform the sort
+    const sortUpdates = SortingHelpers.performIntegerSort(effect, {
+      target,
+      siblings,
+    });
+    const updateData = sortUpdates.map((u) => {
+      const update = u.update;
+      update._id = u.target._id;
+      return update;
+    });
+
+    // Perform the update
+    return this.item.updateEmbeddedDocuments('ActiveEffect', updateData);
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Handle dropping of an Actor data onto another Actor sheet
+   * @param {DragEvent} event            The concluding DragEvent which contains drop data
+   * @param {object} data                The data transfer extracted from the event
+   * @returns {Promise<object|boolean>}  A data object which describes the result of the drop, or false if the drop was
+   *                                     not permitted.
+   * @protected
+   */
+  async _onDropActor(event, data) {
+    if (!this.item.isOwner) return false;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Handle dropping of a Folder on an Actor Sheet.
+   * The core sheet currently supports dropping a Folder of Items to create all items as owned items.
+   * @param {DragEvent} event     The concluding DragEvent which contains drop data
+   * @param {object} data         The data transfer extracted from the event
+   * @protected
+   */
+  async _onDropFolder(event, data) {
+    if (!this.item.isOwner) return [];
+  }
+
+
+  /* -------------------------------------------- */
+
+  /**
+   * Handle dropping of an Actor data onto another Actor sheet
+   * @param {DragEvent} event            The concluding DragEvent which contains drop data
+   * @param {object} data                The data transfer extracted from the event
+   * @returns {Promise<object|boolean>}  A data object which describes the result of the drop, or false if the drop was
+   *                                     not permitted.
+   * @protected
+   */
+  async _onDropActor(event, data) {
+    if (!this.item.isOwner) return false;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Handle dropping of a Folder on an Actor Sheet.
+   * The core sheet currently supports dropping a Folder of Items to create all items as owned items.
+   * @param {DragEvent} event     The concluding DragEvent which contains drop data
+   * @param {object} data         The data transfer extracted from the event
+   * @protected
+   */
+  async _onDropFolder(event, data) {
+    if (!this.item.isOwner) return [];
+  }
+
+  /** The following pieces set up drag handling and are unlikely to need modification  */
+
+  /**
+   * Returns an array of DragDrop instances
+   */
+  get dragDrop() {
+    return this.#dragDrop;
+  }
+
+  // This is marked as private because there's no real need
+  // for subclasses or external hooks to mess with it directly
+  #dragDrop;
+
+  /**
+   * Create drag-and-drop workflow handlers for this Application
+   */
+  #createDragDropHandlers() {
+    return this.options.dragDrop.map((d) => {
+      d.permissions = {
+        dragstart: this._canDragStart.bind(this),
+        drop: this._canDragDrop.bind(this),
+      };
+      d.callbacks = {
+        dragstart: this._onDragStart.bind(this),
+        dragover: this._onDragOver.bind(this),
+        drop: this._onDrop.bind(this),
+      };
+      return new foundry.applications.ux.DragDrop.implementation(d);
+    });
   }
 }

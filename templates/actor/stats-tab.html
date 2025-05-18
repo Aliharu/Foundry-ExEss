@@ -2,7 +2,7 @@
     {{#if isNPC}}
     <div class="flex-group-center">
         <div class="flex-group-left pool">
-            <label class="resource-label roll-pool" data-rolltype="ability" data-roll="{{pool.primary.value}}"
+            <label class="resource-label roll-pool" data-action="makeActionRoll" data-rolltype="ability" data-roll="{{pool.primary.value}}"
                 data-pool="primary">
                 {{localize "ExEss.Primary"}} {{localize "ExEss.Pool"}}
             </label>
@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="flex-group-left pool">
-            <label class="resource-label roll-pool" data-rolltype="ability" data-roll="{{pool.secondary.value}}"
+            <label class="resource-label roll-pool" data-action="makeActionRoll" data-rolltype="ability" data-roll="{{pool.secondary.value}}"
                 data-pool="secondary">
                 {{localize "ExEss.Secondary"}} {{localize "ExEss.Pool"}}
             </label>
@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="flex-group-left pool">
-            <label class="resource-label roll-pool" data-rolltype="ability" data-roll="{{pool.tertiary.value}}"
+            <label class="resource-label roll-pool" data-action="makeActionRoll" data-rolltype="ability" data-roll="{{pool.tertiary.value}}"
                 data-pool="tertiary">
                 {{localize "ExEss.Tertiary"}} {{localize "ExEss.Pool"}}
             </label>

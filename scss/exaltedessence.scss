@@ -65,6 +65,10 @@
   }
 }
 
+.full-footer-button {
+  width: 100%;
+}
+
 
 .exaltedessence .window-content {
   overflow-y: auto;
@@ -292,6 +296,10 @@
   border-radius: 0px;
 }
 
+.roll-card-icon {
+  display: inline;
+}
+
 .black-icon {
   filter: invert(1);
 }
@@ -339,7 +347,7 @@
 }
 
 .chat-message {
-  background: url('../assets/backgrounds/chat-background.jpg');
+  background: url('../assets/backgrounds/leaves-background-small.jpg');
   background-size: cover;
 }
 

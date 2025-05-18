@@ -5,7 +5,7 @@ export default class ExaltedActiveEffectConfig extends foundry.applications.shee
     /** @override */
     /** @override */
     static PARTS = {
-        header: { template: "templates/sheets/active-effect/header.hbs" },
+        header: { template: "systems/exaltedessence/templates/active-effect/active-effects-header.html" },
         tabs: { template: "systems/exaltedessence/templates/dialogues/tabs.html" },
         details: { template: "templates/sheets/active-effect/details.hbs", scrollable: [""] },
         duration: { template: "templates/sheets/active-effect/duration.hbs" },

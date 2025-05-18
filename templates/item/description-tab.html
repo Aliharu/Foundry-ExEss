@@ -1,0 +1,92 @@
+<div class="tab {{tab.cssClass}}" data-group="primary" data-tab="description">
+    {{#ifEquals type 'armor'}}
+    <div class="grid grid-4col flex-center resources">
+        <div>
+            <div class="resource-label">{{localize "ExEss.Soak"}}</div>
+            <input type="number" name="system.soak" value="{{system.soak}}" data-dtype="Number" />
+        </div>
+        <div>
+            <div class="resource-label">{{localize "ExEss.Penalty"}}</div>
+            <input type="number" name="system.penalty" value="{{system.penalty}}" data-dtype="Number" />
+        </div>
+        <div>
+            <div class="resource-label">{{localize "ExEss.Hardness"}}</div>
+            <input type="number" name="system.hardness" value="{{system.hardness}}" data-dtype="Number" />
+        </div>
+        <div>
+            <div class="resource-label">{{localize "ExEss.Equipped"}}</div>
+            <input name="system.equipped" type="checkbox" {{checked system.equipped}}>
+        </div>
+    </div>
+    {{/ifEquals}}
+    {{#ifEquals type 'charm'}}
+    <div class="flex-center mt-1">
+        <div class="resource-label">{{localize "ExEss.CharmPrerequisites"}}</div>
+    </div>
+    <div class="embeded-item-list-wrapper" {{#if
+        options.editable}}style="border: 1px solid var(--color-border-light-tertiary);" {{/if}}>
+        <div class="flex-group-center embeded-item-list">
+            <ul>
+                {{#if options.editable}}
+                {{#each system.charmprerequisites as |item id|}}
+                <a draggable="true" class="embeded-item-pill" data-id="{{item.id}}" data-item-name="{{item.name}}"
+                    data-item-index="{{id}}">
+                    <li data-item-index="{{id}}">
+                        {{item.name}}
+                        <i class="fas fa-trash embeded-item-delete"></i>
+                    </li>
+                </a>
+                {{/each}}
+                {{else}}
+                {{#each system.charmprerequisites as |item id|}}
+                <li class="embeded-item-pill" data-item-name="{{../name}}" data-item-index="{{id}}">
+                    {{item.name}}
+                </li>
+                {{/each}}
+                {{/if}}
+            </ul>
+        </div>
+    </div>
+    <div class="flex-center mt-1">
+        <div class="resource-label">{{localize "ExEss.OtherPrerequisites"}}</div>
+    </div>
+    <input class="mb-1" type="text" name="system.prerequisites" value="{{system.prerequisites}}" />
+    {{/ifEquals}}
+    {{#ifEquals type 'weapon'}}
+    <div class="d-flex flex-center resources">
+        <div>
+            <div class="resource-label">{{localize "ExEss.Accuracy"}}</div>
+            <input type="number" name="system.accuracy" value="{{system.accuracy}}" data-dtype="Number" />
+        </div>
+        <div>
+            <div class="resource-label">{{localize "ExEss.Damage"}}</div>
+            <input type="number" name="system.damage" value="{{system.damage}}" data-dtype="Number" />
+        </div>
+        <div>
+            <div class="resource-label">{{localize "ExEss.Defense"}}</div>
+            <input type="number" name="system.defense" value="{{system.defense}}" data-dtype="Number" />
+        </div>
+        <div>
+            <div class="resource-label">{{localize "ExEss.Overwhelming"}}</div>
+            <input type="number" name="system.overwhelming" value="{{system.overwhelming}}" data-dtype="Number" />
+        </div>
+    </div>
+    <div class="d-flex flex-center resources mt-1">
+        <div class="check-button">
+            <label class="resource-label">{{localize "ExEss.Equipped"}}: </label>
+            <input name="system.equipped" type="checkbox" {{checked system.equipped}}>
+            <label class="resource-label mr-1">{{localize "ExEss.Type"}}: </label>
+            <select name="system.weapontype" data-type="String">
+                {{selectOptions selects.weaponTypes selected=system.weapontype localize=true}}
+            </select>
+        </div>
+    </div>
+    {{/ifEquals}}
+    {{#if editable}}
+    <prose-mirror name="system.description" data-document-u-u-i-d="{{item.uuid}}" value="{{system.description}}"
+        collaborate="true" toggled="true">
+        {{{enrichedDescription}}}
+    </prose-mirror>
+    {{else}} {{{enrichedDescription}}}
+    {{/if}}
+</div>

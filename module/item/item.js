@@ -45,6 +45,13 @@ export class ExaltedessenceItem extends Item {
     return "icons/svg/item-bag.svg";
   }
 
+  getSheetBackground() {
+    if (this.parent) {
+      return this.parent.getSheetBackground();
+    }
+    return `${game.settings.get("exaltedessence", "sheetStyle")}-background`;
+  }
+
   /**
    * Handle clickable rolls.
    * @param {Event} event   The originating click event

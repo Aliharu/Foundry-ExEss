@@ -108,7 +108,7 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
     const hintMap = { 'charm': 'CharmImportHint', 'spell': 'SpellImportHint', 'qc': 'QCImportHint' }
     this.data.templateHint = game.i18n.localize(`ExEss.${hintMap[this.data.type]}`);
     this.data.buttons = [
-      { type: "submit", icon: "fa-solid fa-save", label: "ExEss.Import" }
+      { type: "submit", icon: "fa-solid fa-save", label: "ExEss.Import", cssClass: "full-footer-button" }
     ]
     return this.data;
   }

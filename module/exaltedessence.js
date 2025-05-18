@@ -4,7 +4,7 @@ import { EXALTEDESSENCE } from "./config.js";
 import { ExaltedessenceActor } from "./actor/actor.js";
 import { ExaltedEssenceActorSheet } from "./actor/actor-sheet.js";
 import { ExaltedessenceItem } from "./item/item.js";
-import { ExaltedessenceItemSheet } from "./item/item-sheet.js";
+import { ExaltedEssenceItemSheet } from "./item/item-sheet.js";
 import ExaltedActiveEffectConfig from "./active-effect-config.js";
 
 
@@ -87,7 +87,7 @@ Hooks.once('init', async function () {
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
   foundry.documents.collections.Actors.registerSheet("exaltedessence", ExaltedEssenceActorSheet, { makeDefault: true });
   foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
-  foundry.documents.collections.Items.registerSheet("exaltedessence", ExaltedessenceItemSheet, { makeDefault: true });
+  foundry.documents.collections.Items.registerSheet("exaltedessence", ExaltedEssenceItemSheet, { makeDefault: true });
 
   // Pre-load templates
   foundry.applications.handlebars.loadTemplates([
@@ -318,10 +318,20 @@ Hooks.on("renderItemDirectory", (app, html, data) => {
   if (html instanceof jQuery) {
     html = $(html)[0];
   }
+
+  const buttonsText = document.createElement("div");
+  buttonsText.classList.add("action-buttons");
+  buttonsText.classList.add("flexrow");
+
   const button = document.createElement("button");
   button.classList.add("template-import-button");
   button.innerHTML = `<i class="fas fa-suitcase"></i> ${game.i18n.localize("ExEss.Import")}`;
-  html.querySelector(".header-actions").append(button);
+  buttonsText.appendChild(button);
+
+  const headerActions = html.querySelector(".header-actions");
+  if (headerActions) {
+    headerActions.after(buttonsText);
+  }
 
   html.querySelectorAll('.template-import-button').forEach(element => {
     element.addEventListener('click', async (ev) => {
@@ -338,7 +348,6 @@ Hooks.on("renderCompendiumDirectory", (app, html, data) => {
   button.classList.add("item-search-button");
   button.innerHTML = `<i class="fas fa-suitcase"></i> ${game.i18n.localize("ExEss.ItemSearch")}`;
   html.querySelector(".header-actions").append(button);
-
 
   html.querySelectorAll('.item-search-button').forEach(element => {
     element.addEventListener('click', async (ev) => {
