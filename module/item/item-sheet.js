@@ -173,19 +173,6 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
     return new TraitSelector(this.item, options).render(true);
   }
 
-  /**
-* Handle spawning the TraitSelector application which allows a checkbox of multiple trait options
-* @param {Event} event   The click event which originated the selection
-* @private
-*/
-  _onTraitSelector(event) {
-    event.preventDefault();
-    const a = event.currentTarget;
-    const choices = CONFIG.EXALTEDESSENCE[a.dataset.options];
-    const options = { name: a.dataset.target, choices };
-    return new TraitSelector(this.item, options).render(true)
-  }
-
   /** @override */
   _onRender(context, options) {
     this.#dragDrop.forEach((d) => d.bind(this.element));
@@ -241,91 +228,6 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
     return tabs;
   }
 
-
-  /* -------------------------------------------- */
-
-  // /** @override */
-  // activateListeners(html) {
-  //   super.activateListeners(html);
-
-  //   // Everything below here is only needed if the sheet is editable
-  //   if (!this.options.editable) return;
-
-  //   let embedItemshandler = this._onDragEmbeddedItem.bind(this);
-
-  //   html.find('a.embeded-item-pill').each((i, li) => {
-  //     li.addEventListener("dragstart", embedItemshandler, false);
-  //   });
-
-  //   html.find('.trait-selector').click(this._onTraitSelector.bind(this));
-
-  //   html.find(".effect-control").click(ev => {
-  //     onManageActiveEffect(ev, this.item);
-  //   });
-
-  //   html.on("dragstart", "a.embeded-item-pill", this._onDragEmbeddedItem);
-
-  //   html.find(".embeded-item-delete").on("click", (event) => {
-  //     event.preventDefault();
-  //     event.stopPropagation();
-  //     let formData = {};
-
-  //     const li = event.currentTarget;
-  //     const parent = $(li).parent()[0];
-  //     const itemIndex = parent.dataset.itemIndex;
-  //     const items = this.object.system.charmprerequisites;
-  //     items.splice(itemIndex, 1);
-  //     foundry.utils.setProperty(formData, `system.charmprerequisites`, items);
-  //     this.object.update(formData);
-  //   });
-
-  //   // Embeded Item code taken and modified from the Star Wars FFG FoundryVTT module
-  //   // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  //   // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  //   // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  //   // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  //   // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  //   // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  //   // SOFTWARE.
-
-  //   html.find(".embeded-item-pill").on("click", async (event) => {
-  //     event.preventDefault();
-  //     event.stopPropagation();
-  //     const li = event.currentTarget;
-  //     let itemType = li.dataset.itemName;
-  //     let itemIndex = li.dataset.itemIndex;
-  //     let embededItem = this.object.system.charmprerequisites[itemIndex];
-
-  //     let item;
-
-  //     if (embededItem.pack) {
-  //       // Case 1 - Import from a Compendium pack
-  //       item = await this.importItemFromCollection(embededItem.pack, embededItem.id);
-  //     }
-  //     else {
-  //       // Case 2 - Import from World entity
-  //       if (this.item.pack) {
-  //         item = await this.importItemFromCollection(this.item.pack, embededItem.id);
-  //       }
-  //       if (!item) {
-  //         item = await game.items.get(embededItem.id);
-  //       }
-  //     }
-  //     if (!item) return ui.notifications.error(`Error: Could not find item, it may have been deleted.`);
-
-  //     item.sheet.render(true);
-  //   });
-
-  //   if (this.object.type === 'charm') {
-  //     const itemToItemAssociation = new DragDrop({
-  //       dragSelector: ".item",
-  //       dropSelector: null,
-  //       permissions: { dragstart: true, drop: true },
-  //       callbacks: { drop: this._onDrop.bind(this), dragstart: this._onDrag.bind(this) },
-  //     });
-  //     itemToItemAssociation.bind(html[0]);
-  //   }
-  // }
 
   static async showEmbeddedItem(event, target) {
     event.preventDefault();
@@ -626,7 +528,7 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
     }
 
     // Perform the sort
-    const sortUpdates = SortingHelpers.performIntegerSort(effect, {
+    const sortUpdates = foundry.utils.SortingHelpers.performIntegerSort(effect, {
       target,
       siblings,
     });

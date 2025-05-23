@@ -11,7 +11,7 @@
     <div class="item-name">{{localize charm.name}}</div>
 </li>
 {{#each charm.list as |item id|}}
-<li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription"
+<li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-drag="true"
     data-item-id="{{item._id}}">
     <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
             height="24" /></div>
@@ -62,7 +62,7 @@
     <div class="item-name">{{localize spell.name}}</div>
 </li>
 {{#each spell.list as |item id|}}
-<li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription"
+<li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-drag="true"
     data-item-id="{{item._id}}">
     <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
             height="24" /></div>
@@ -104,7 +104,7 @@
         data-type="quality"><i class="fas fa-plus"></i>Add</a>
 </div>
 {{#each actor.qualities as |item id|}}
-<li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription"
+<li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-drag="true"
     data-item-id="{{item._id}}">
     <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
             height="24" />

@@ -24,7 +24,7 @@
     </div>
   </li>
   {{#each actor.intimacies as |item id|}}
-  <li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-item-id="{{item._id}}">
+  <li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-item-id="{{item._id}}" data-drag="true">
     <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
     <h4 class="item-name">{{item.name}}</h4>
     <div class="resource-table-value resource-value-static">

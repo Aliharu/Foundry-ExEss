@@ -39,7 +39,7 @@
             <a class="item-control" data-action="createItem" title="Create ritual" data-type="ritual"><i class="fas fa-plus"></i>Add</a>
         </div>
         {{#each actor.rituals as |item id|}}
-        <li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-item-id="{{item._id}}">
+        <li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-item-id="{{item._id}}" data-drag="true">
             <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
                     height="24" /></div>
             <h4 class="item-name">{{item.name}}</h4>
@@ -71,7 +71,7 @@
             <a class="item-control" data-action="createItem" title="Create merit" data-type="merit"><i class="fas fa-plus"></i>Add</a>
         </div>
         {{#each actor.merits as |item id|}}
-        <li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-item-id="{{item._id}}">
+        <li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-item-id="{{item._id}}" data-drag="true">
             <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
                     height="24" /></div>
             <h4 class="item-name">{{item.name}} ({{item.system.rating}})</h4>
@@ -101,7 +101,7 @@
             <a class="item-control" data-action="createItem" title="Create item" data-type="item"><i class="fas fa-plus"></i>Add</a>
         </div>
         {{#each actor.gear as |item id|}}
-        <li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-item-id="{{item._id}}">
+        <li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-item-id="{{item._id}}" data-drag="true">
             <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
                     height="24" /></div>
             <h4 class="item-name">{{item.name}}</h4>

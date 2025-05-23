@@ -349,14 +349,22 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
       }
     }
 
+    for (const s of Object.values(spells)) {
+      s.list.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    }
+
+    for (const c of Object.values(charms)) {
+      c.list.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    }
+
     // Assign and return
-    actorData.gear = gear;
-    actorData.weapons = weapons;
-    actorData.armor = armor;
-    actorData.merits = merits;
-    actorData.qualities = qualities;
-    actorData.rituals = rituals;
-    actorData.intimacies = intimacies;
+    actorData.gear = gear.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    actorData.weapons = weapons.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    actorData.armor = armor.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    actorData.merits = merits.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    actorData.qualities = qualities.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    actorData.rituals = rituals.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    actorData.intimacies = intimacies.sort((a, b) => (a.sort || 0) - (b.sort || 0));
     actorData.charms = charms;
     actorData.spells = spells;
   }
@@ -1454,7 +1462,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
     }
 
     // Perform the sort
-    const sortUpdates = SortingHelpers.performIntegerSort(effect, {
+    const sortUpdates = foundry.utils.SortingHelpers.performIntegerSort(effect, {
       target,
       siblings,
     });
@@ -1577,7 +1585,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
     }
 
     // Perform the sort
-    const sortUpdates = SortingHelpers.performIntegerSort(item, {
+    const sortUpdates = foundry.utils.SortingHelpers.performIntegerSort(item, {
       target,
       siblings,
     });

@@ -16,7 +16,7 @@
       </div>
     </li>
     {{#each actor.weapons as |item id|}}
-    <li class="item item-large flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription"
+    <li class="item item-large flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-drag="true"
       data-item-id="{{item._id}}">
       <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
           height="24" /></div>
@@ -89,7 +89,7 @@
       </div>
     </li>
     {{#each actor.armor as |item id|}}
-    <li class="item item-large flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription"
+    <li class="item item-large flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-drag="true"
       data-item-id="{{item._id}}">
       <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
           height="24" /></div>

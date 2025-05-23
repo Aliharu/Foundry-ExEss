@@ -23,17 +23,17 @@
     <div class="flex-center mt-1">
         <div class="resource-label">{{localize "ExEss.CharmPrerequisites"}}</div>
     </div>
-    <div class="embeded-item-list-wrapper" {{#if
-        options.editable}}style="border: 1px solid var(--color-border-light-tertiary);" {{/if}}>
+    <div class="embeded-item-list-wrapper" {{#if editable}}style="border: 1px solid var(--color-border-light-tertiary);"
+        {{/if}}>
         <div class="flex-group-center embeded-item-list">
             <ul>
-                {{#if options.editable}}
+                {{#if editable}}
                 {{#each system.charmprerequisites as |item id|}}
-                <a draggable="true" class="embeded-item-pill" data-id="{{item.id}}" data-item-name="{{item.name}}"
-                    data-item-index="{{id}}">
+                <a draggable="true" class="embeded-item-pill" data-action="showEmbeddedItem" data-id="{{item.id}}"
+                    data-item-name="{{item.name}}" data-item-index="{{id}}">
                     <li data-item-index="{{id}}">
                         {{item.name}}
-                        <i class="fas fa-trash embeded-item-delete"></i>
+                        <i data-action="deleteEmbeddedItem" class="fas fa-trash embeded-item-delete"></i>
                     </li>
                 </a>
                 {{/each}}
