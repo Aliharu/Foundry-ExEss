@@ -33,6 +33,7 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
   }
 
   static DEFAULT_OPTIONS = {
+    window: { resizable: true },
     tag: "form",
     form: {
       handler: TemplateImporter.myFormHandler,
@@ -40,7 +41,7 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
       submitOnChange: true,
       closeOnSubmit: false
     },
-    classes: [`leaves-background`],
+    classes: [`leaves-background`, 'exaltedessence'],
     position: { width: 860, height: 1047 },
   };
 

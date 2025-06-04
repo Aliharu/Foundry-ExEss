@@ -6,6 +6,7 @@ import { ExaltedEssenceActorSheet } from "./actor/actor-sheet.js";
 import { ExaltedessenceItem } from "./item/item.js";
 import { ExaltedEssenceItemSheet } from "./item/item-sheet.js";
 import ExaltedActiveEffectConfig from "./active-effect-config.js";
+import * as Chat from "./chat.js";
 
 
 import TraitSelector from "./apps/trait-selector.js";
@@ -236,15 +237,6 @@ Handlebars.registerHelper('healthCheck', function (health, type, options) {
   return 'i'
 });
 
-$(document).ready(() => {
-  const diceIconSelector = '#chat-controls .chat-control-icon .fa-dice-d20';
-
-  $(document).on('click', diceIconSelector, ev => {
-    ev.preventDefault();
-    new RollForm(null, { classes: [" exaltedessence exaltedessence-dialog dice-roller"] }, {}, { rollType: 'base' }).render(true);
-  });
-});
-
 Hooks.on('updateCombat', (async (combat, update) => {
   // Handle non-gm users.
   if (!game.user.isGM) return;
@@ -296,6 +288,13 @@ Hooks.on("renderGamePause", function () {
   document.querySelectorAll(".paused img").forEach(img => {
     img.src = `systems/exaltedessence/assets/pause/${iconSrc}.png`;
   });
+});
+
+Hooks.on("renderChatLog", (app, html, data) => {
+  if (html instanceof jQuery) {
+    html = $(html)[0];
+  }
+  Chat.addChatListeners(html);
 });
 
 // Hooks.on("renderActorDirectory", (app, html, data) => {
@@ -363,11 +362,6 @@ Hooks.once("ready", async function () {
       createItemMacro(data, slot);
       return false;
     }
-  });
-
-  $("#chat-log").on("click", " .item-row", ev => {
-    const li = $(ev.currentTarget).next();
-    li.toggle("fast");
   });
 
   if (foundry.utils.isNewerVersion("1.0.0", game.settings.get("exaltedessence", "systemMigrationVersion"))) {
