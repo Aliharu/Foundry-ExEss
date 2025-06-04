@@ -8,10 +8,10 @@ export function sortDice(diceRoll, ignoreSetting = false) {
 
 export function toggleDisplay(target) {
     const li = target.nextElementSibling;
-    if (li.style.display == 'none') {
-        li.style.display = 'block';
+    if ((li.style.display || 'none') == 'none') {
+      li.style.display = 'block';
     } else {
-        li.style.display = 'none';
+      li.style.display = 'none';
     }
 }
 
