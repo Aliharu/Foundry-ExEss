@@ -40,7 +40,7 @@ class CommonActorData extends foundry.abstract.TypeDataModel {
       anima: new fields.SchemaField({
         value: new fields.NumberField({ initial: 0 }),
         min: new fields.NumberField({ initial: 0 }),
-        max: new fields.NumberField({ initial: 3 }),
+        max: new fields.NumberField({ initial: 10 }),
         passive: new fields.StringField({ initial: "" }),
         active: new fields.StringField({ initial: "" }),
         iconic: new fields.StringField({ initial: "" }),

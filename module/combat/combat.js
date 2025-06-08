@@ -1,3 +1,5 @@
+import RollForm from "../apps/dice-roller.js";
+
 export class ExaltedCombat extends Combat {
     async resetTurnsTaken() {
         const updates = this.combatants.map(c => {

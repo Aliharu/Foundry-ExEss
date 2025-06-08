@@ -40,7 +40,7 @@ export class ExaltedessenceActor extends Actor {
       data.health.value = data.health.max - data.health.aggravated - data.health.lethal;
       data.health.penalty = currentPenalty;
     }
-    if(this.type === 'character') {
+    if (this.type === 'character') {
       let totalHealth = 0;
       let currentPenalty = 0;
       data.motes.max = Math.min(15, data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3);
@@ -201,6 +201,96 @@ export class ExaltedessenceActor extends Actor {
       animaLevel = "iconic";
     }
     system.anima.level = animaLevel;
+  }
+
+  spendItem(item) {
+    const actorData = foundry.utils.duplicate(this);
+
+    let updateActive = null;
+
+    if (item.system.active) {
+      actorData.system.active = false;
+      updateActive = false;
+      if (item.system.cost?.motes) {
+        if (actorData.system.details.exalt === 'getimian') {
+          actorData.system[actorData.system.settings.charmspendpool].value += item.system.cost.committed;
+        }
+        actorData.system.motes.committed -= item.system.cost.committed;
+      }
+    } else {
+      if (item.system.cost?.motes) {
+        if (actorData.system.details.exalt === 'getimian') {
+          if (actorData.system.settings.charmspendpool === 'still') {
+            actorData.system.still.value = Math.max(0, actorData.system.still.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
+          }
+          if (actorData.system.settings.charmspendpool === 'flowing') {
+            actorData.system.flowing.value = Math.max(0, actorData.system.flowing.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
+          }
+        }
+        else {
+          actorData.system.motes.value = Math.max(0, actorData.system.motes.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
+        }
+        actorData.system.motes.committed += item.system.cost.committed;
+        actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - item.system.cost.stunt);
+        actorData.system.power.value = Math.max(0, actorData.system.power.value - item.system.cost.power + item.system.gain.power);
+        actorData.system.anima.value = Math.max(0, actorData.system.anima.value - item.system.cost.anima + item.system.gain.anima);
+        let totalHealth = actorData.type === 'character' ? 0 : actorData.system.health.levels;
+        if (actorData.type === 'character') {
+          for (let [key, healthLevel] of Object.entries(actorData.system.health.levels)) {
+            totalHealth += healthLevel.value;
+          }
+        }
+        actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.system.health.lethal + item.system.cost.health);
+        if (actorData.system.health.lethal > 0) {
+          actorData.system.health.lethal = Math.max(0, actorData.system.health.lethal - item.system.gain.health);
+        }
+      }
+      if (item.type === 'spell') {
+        actorData.system.will.value = Math.max(0, actorData.system.will.value - item.system.cost);
+      }
+      if (item.type === 'ritual') {
+        actorData.system.will.value += item.system.will;
+      }
+
+      if (item.system.activatable) {
+        actorData.system.active = true;
+        updateActive = true;
+      }
+    }
+    this.update(actorData);
+
+    if (updateActive !== null) {
+      item.update({
+        [`system.active`]: updateActive,
+      });
+      for (const effect of this.allApplicableEffects()) {
+        if (effect._sourceName === item.name) {
+          effect.update({ disabled: !updateActive });
+        }
+      }
+      for (const effect of item.effects) {
+        effect.update({ disabled: !updateActive });
+      }
+    }
+  }
+
+  catchBreath() {
+    this.update({
+      [`system.anima.value`]: 0,
+      [`system.motes.value`]: Math.min(this.system.motes.value + Math.ceil(this.system.motes.max / 2), (this.system.motes.max - this.system.motes.committed)),
+    });
+    this.updateAnima("down");
+  }
+
+  fullRest() {
+    this.update({
+      [`system.anima.value`]: 0,
+      [`system.motes.value`]: this.system.motes.max - this.system.motes.committed,
+    });
+  }
+
+  updateAnima(direction) {
+    this.update({ [`system.anima.value`]: direction === 'up' ? Math.min(10, this.system.anima.value + 1) : Math.max(0, this.system.anima.value - 1) });
   }
 
   getSheetBackground() {

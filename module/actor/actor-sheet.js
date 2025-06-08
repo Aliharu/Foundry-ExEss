@@ -407,7 +407,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
   }
 
   static updateAnima(event, target) {
-    this._updateAnima(target.dataset.direction);
+    this.actor.updateAnima(target.dataset.direction);
   }
 
   _updateAnima(direction) {
@@ -490,31 +490,14 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
     }).render({ force: true });
   }
 
-  async catchBreath() {
-    const actorData = foundry.utils.duplicate(this.actor);
-    actorData.system.anima.value = 0;
-    actorData.system.motes.max = Math.min(15, actorData.system.essence.value * 2 + Math.floor((actorData.system.essence.value - 1) / 2) + 3);
-    actorData.system.motes.value = Math.min(actorData.system.motes.value + Math.ceil(actorData.system.motes.max / 2), actorData.system.motes.max);
-    this.actor.update(actorData);
-    this._updateAnima("down");
-  }
-
   static async recoverHealth(event, target) {
     const recoveryType = target.dataset.recoverytype;
     const actorData = foundry.utils.duplicate(this.actor);
     if (recoveryType === 'catchBreath') {
-      actorData.system.anima.value = 0;
-      actorData.system.motes.max = Math.min(15, actorData.system.essence.value * 2 + Math.floor((actorData.system.essence.value - 1) / 2) + 3);
-      actorData.system.motes.value = Math.min(actorData.system.motes.value + Math.ceil(actorData.system.motes.max / 2), actorData.system.motes.max);
-      this.actor.update(actorData);
-      this._updateAnima("down");
+      this.actor.catchBreath();
     }
     if (recoveryType === 'fullRest') {
-      const data = actorData.system;
-      data.anima.value = 0;
-      data.motes.max = data.essence.value * 2 + Math.floor((data.essence.value - 1) / 2) + 3;
-      data.motes.value = data.motes.max;
-      this.actor.update(actorData);
+      this.actor.fullRest();
     }
     if (recoveryType === 'recoveryScene') {
       const data = actorData.system;
@@ -1253,74 +1236,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
   }
 
   _spendItem(item) {
-    const actorData = foundry.utils.duplicate(this.actor);
 
-    let updateActive = null;
-
-    if (item.system.active) {
-      actorData.system.active = false;
-      updateActive = false;
-      if (item.system.cost?.motes) {
-        if (actorData.system.details.exalt === 'getimian') {
-          actorData.system[actorData.system.settings.charmspendpool].value += item.system.cost.committed;
-        }
-        actorData.system.motes.committed -= item.system.cost.committed;
-      }
-    } else {
-      if (item.system.cost?.motes) {
-        if (actorData.system.details.exalt === 'getimian') {
-          if (actorData.system.settings.charmspendpool === 'still') {
-            actorData.system.still.value = Math.max(0, actorData.system.still.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
-          }
-          if (actorData.system.settings.charmspendpool === 'flowing') {
-            actorData.system.flowing.value = Math.max(0, actorData.system.flowing.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
-          }
-        }
-        else {
-          actorData.system.motes.value = Math.max(0, actorData.system.motes.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
-        }
-        actorData.system.motes.committed += item.system.cost.committed;
-        actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - item.system.cost.stunt);
-        actorData.system.power.value = Math.max(0, actorData.system.power.value - item.system.cost.power + item.system.gain.power);
-        actorData.system.anima.value = Math.max(0, actorData.system.anima.value - item.system.cost.anima + item.system.gain.anima);
-        let totalHealth = actorData.type === 'character' ? 0 : actorData.system.health.levels;
-        if (actorData.type === 'character') {
-          for (let [key, healthLevel] of Object.entries(actorData.system.health.levels)) {
-            totalHealth += healthLevel.value;
-          }
-        }
-        actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.system.health.lethal + item.system.cost.health);
-        if (actorData.system.health.lethal > 0) {
-          actorData.system.health.lethal = Math.max(0, actorData.system.health.lethal - item.system.gain.health);
-        }
-      }
-      if (item.type === 'spell') {
-        actorData.system.will.value = Math.max(0, actorData.system.will.value - item.system.cost);
-      }
-      if (item.type === 'ritual') {
-        actorData.system.will.value += item.system.will;
-      }
-
-      if (item.system.activatable) {
-        actorData.system.active = true;
-        updateActive = true;
-      }
-    }
-    this.actor.update(actorData);
-
-    if (updateActive !== null) {
-      item.update({
-        [`system.active`]: updateActive,
-      });
-      for (const effect of this.actor.allApplicableEffects()) {
-        if (effect._sourceName === item.name) {
-          effect.update({ disabled: !updateActive });
-        }
-      }
-      for (const effect of item.effects) {
-        effect.update({ disabled: !updateActive });
-      }
-    }
   }
 
   get dragDrop() {

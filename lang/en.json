@@ -198,6 +198,16 @@
     "ExEss.Items": "Items",
     "ExEss.Templates": "Templates",
 
+    "ExEss.FullDefense": "Full Defense",
+    "ExEss.DefendOther": "Defend Other",
+    "ExEss.Rush": "Rush",
+    "ExEss.Aim": "Aim",
+    "ExEss.Misc": "Misc",
+    "ExEss.PowerExchange": "Power Exchange",
+    "ExEss.Sprint": "Sprint",
+    "ExEss.RiseFromProne": "Rise From Prone",
+    "ExEss.Opposed": "Opposed",
+
     "ExEss.CharmPrerequisites": "Charm Prerequisites",
     "ExEss.OtherPrerequisites": "Other Prerequisites",
 
