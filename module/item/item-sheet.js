@@ -27,6 +27,7 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
       showEmbeddedItem: this.showEmbeddedItem,
       deleteEmbeddedItem: this.deleteEmbeddedItem,
       editTraits: this.editTraits,
+      effectControl: this.effectControl,
     },
     dragDrop: [{ dragSelector: '[data-drag]', dropSelector: null }],
     form: {
@@ -171,6 +172,10 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
     const choices = CONFIG.EXALTEDESSENCE[a.dataset.options];
     const options = { name: a.dataset.target, choices };
     return new TraitSelector(this.item, options).render(true);
+  }
+
+  static effectControl(event, target) {
+    onManageActiveEffect(target, this.item);
   }
 
   /** @override */

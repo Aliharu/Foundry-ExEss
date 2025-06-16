@@ -47,6 +47,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 this.object.overwhelming = data.overwhelming || 0;
                 this.object.conditions = (this.actor.token && this.actor.token.actor.effects) ? this.actor.token.actor.effects : [];
                 this.object.weaponType = data.weaponType || 'melee';
+                this.object.weaponWeight = data.weight || 'light';
                 this.object.diceModifier = 0;
                 this.object.triggerSelfDefensePenalty = 0;
 
@@ -169,6 +170,9 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     }
                     if (this.object.rollType === 'withering') {
                         if (this.object.weaponTags['balanced']) {
+                            this.object.overwhelming++;
+                        }
+                        if (this.object.weaponTags['twohanded'] && this.object.weaponWeight === 'heavy') {
                             this.object.overwhelming++;
                         }
                         if (this.object.weaponTags['paired']) {
