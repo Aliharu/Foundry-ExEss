@@ -13,6 +13,7 @@ export function registerSettings() {
             "leaves": "ExEss.Leaves",
             "lunar": "ExEss.Lunar",
             "mountain": "ExEss.Mountain",
+            "none": "ExEss.None",
             "puppeteer": "ExEss.Puppeteer",
             "sidereal": "ExEss.Sidereal",
             "solar": "ExEss.Solar",

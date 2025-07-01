@@ -1,3 +1,5 @@
+import RollForm from "../apps/dice-roller.js";
+
 export async function getEnritchedHTML(item) {
     item.enritchedHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(item.system.description, { async: true, secrets: true, relativeTo: item });
 }
@@ -27,4 +29,8 @@ export function isColor(strColor) {
     const s = new Option().style;
     s.color = strColor;
     return s.color !== '';
+}
+
+export function noActorBaseRoll() {
+    new RollForm(null, { classes: ["exaltedessence exaltedessence-dialog dice-roller", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }, {}, { rollType: 'base' }).render(true);
 }

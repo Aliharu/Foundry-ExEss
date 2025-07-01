@@ -13,12 +13,8 @@
             <div class="key">
                 {{#if ../../useDropdown}}
                 <select name="changes.{{i}}.key" value="{{change.key}}">
-                    {{#each ../../activeEffectChanges as |changesCategory changesCategoryType|}}
-                    <optgroup label="{{localize changesCategory.label}}">
-                        {{selectOptions changesCategory.effectList selected=change.key
-                        localize=true}}
-                    </optgroup>
-                    {{/each}}
+                    {{selectOptions ../../activeEffectChanges selected=change.key
+                    localize=true}}
                 </select>
                 {{else}}
                 {{formInput changeFields.key name=(concat "changes." i ".key") value=change.key}}
