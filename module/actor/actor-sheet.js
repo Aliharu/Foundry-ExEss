@@ -1236,7 +1236,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
   }
 
   _spendItem(item) {
-
+    this.actor.spendItem(item);
   }
 
   get dragDrop() {
