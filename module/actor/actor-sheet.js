@@ -108,6 +108,9 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
     biography: {
       template: "systems/exaltedessence/templates/actor/biography-tab.html",
     },
+    limited: {
+      template: "systems/exaltedessence/templates/actor/limited-tab.html",
+    }
   };
 
   _initializeApplicationOptions(options) {
@@ -117,16 +120,21 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
 
   _configureRenderOptions(options) {
     super._configureRenderOptions(options);
-    options.parts = ['header', 'tabs', 'stats', 'charms', 'effects', 'intimacies'];
-    // // Control which parts show based on document subtype
-    switch (this.document.type) {
-      case 'character':
-        options.parts.push('advantages', 'advancement', 'biography');
-        break;
-      case 'npc':
-        options.parts.push('biography');
-        break;
+    if (this.document.limited) {
+      options.parts = ['header', 'limited'];
+    } else {
+      options.parts = ['header', 'tabs', 'stats', 'charms', 'effects', 'intimacies'];
+      // // Control which parts show based on document subtype
+      switch (this.document.type) {
+        case 'character':
+          options.parts.push('advantages', 'advancement', 'biography');
+          break;
+        case 'npc':
+          options.parts.push('biography');
+          break;
+      }
     }
+
   }
 
   async _prepareContext(_options) {
@@ -147,6 +155,10 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
       selects: CONFIG.EXALTEDESSENCE.selects,
       isExalt: this.actor.type === 'character' || this.actor.system.creaturetype === 'exalt'
     };
+
+    if (this.document.limited) {
+      this.tabGroups['primary'] = 'limited';
+    }
 
     if (!this.tabGroups['primary']) this.tabGroups['primary'] = 'stats';
     const tabs = [{
@@ -194,6 +206,14 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
       label: "ExEss.Description",
       cssClass: this.tabGroups['primary'] === 'biography' ? 'active' : '',
     });
+    if (this.document.limited) {
+      tabs.push({
+        id: "limited",
+        group: "primary",
+        label: "ExEss.Description",
+        cssClass: this.tabGroups['primary'] === 'limited' ? 'active' : '',
+      });
+    }
     context.tabs = tabs;
 
     context.enrichedBiography = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
@@ -274,7 +294,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
     const armor = [];
     const merits = [];
     const qualities = [];
-    const intimacies = [];
+    let intimacies = [];
     const rituals = [];
 
     const charms = {
@@ -347,6 +367,10 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
           spells[i.system.circle].visible = true;
         }
       }
+    }
+
+    if (this.document.limited) {
+      intimacies = intimacies.filter(intimacy => intimacy.system.visible);
     }
 
     for (const s of Object.values(spells)) {
@@ -1218,13 +1242,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
     return ChatMessage.create(chatData);
   }
 
-  _addOpposingCharm(event) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    let li = $(event.currentTarget).parents(".item");
-    let item = this.actor.items.get(li.data("item-id"));
-
+  _addOpposingCharm(item) {
     if (game.rollForm) {
       game.rollForm.addOpposingCharm(item);
     }
