@@ -263,13 +263,27 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
     return context;
   }
 
-  _onRender(context, options) {
+  async _onRender(context, options) {
     this.#dragDrop.forEach((d) => d.bind(this.element));
     this._setupDotCounters(this.element);
     this._setupSquareCounters(this.element);
     this._setupButtons(this.element);
-
+    await super._onRender(context, options);
+    this.#disableOverrides();
     if (!this.isEditable) return;
+  }
+
+  /**
+* Disables inputs subject to active effects.
+*/
+  #disableOverrides() {
+    const flatOverrides = foundry.utils.flattenObject(this.actor.overrides);
+    for (const override of Object.keys(flatOverrides)) {
+      const input = this.element.querySelector(`[name="${override}"]`);
+      if (input) {
+        input.disabled = true;
+      }
+    }
   }
 
 

@@ -296,24 +296,62 @@ Hooks.on("renderChatLog", (app, html, data) => {
     html = $(html)[0];
   }
   Chat.addChatListeners(html);
-  const container = html.querySelector(".control-buttons");
-  if (!container) return;
+  // const container = html.querySelector(".control-buttons");
+  // if (!container) return;
 
-  // Create the new button element
-  const newButton = document.createElement("button");
-  newButton.type = "button";
-  newButton.className = "ui-control icon fa-solid fa-dice-d10"; // Use same classes, with fa-dice-d10
-  newButton.dataset.tooltip = "Base Roll"; // Optional tooltip text
-  newButton.setAttribute("aria-label", "Base Roll"); // Accessibility
+  // // Create the new button element
+  // const newButton = document.createElement("button");
+  // newButton.type = "button";
+  // newButton.className = "ui-control icon fa-solid fa-dice-d10"; // Use same classes, with fa-dice-d10
+  // newButton.dataset.tooltip = "Base Roll"; // Optional tooltip text
+  // newButton.setAttribute("aria-label", "Base Roll"); // Accessibility
 
-  // Add event listener
-  newButton.addEventListener("click", (event) => {
-    event.preventDefault();
-    noActorBaseRoll();
-  });
+  // // Add event listener
+  // newButton.addEventListener("click", (event) => {
+  //   event.preventDefault();
+  //   noActorBaseRoll();
+  // });
 
-  // Insert button at the beginning
-  container.prepend(newButton);
+  // // Insert button at the beginning
+  // container.prepend(newButton);
+});
+
+Hooks.on("renderChatInput", (app, html, data) => {
+  if (html instanceof jQuery) {
+    html = $(html)[0];
+  }
+  if (html["#chat-controls"].querySelector(".control-buttons") && !html["#chat-controls"].querySelector(".base-roll-button")) {
+    let container = html["#chat-controls"].querySelector(".control-buttons");
+    if (!container) {
+      // Create the control-buttons container
+      container = document.createElement("div");
+      container.className = "control-buttons";
+
+      // Find the .chat-controls container
+      const chatControls = html.querySelector(".chat-controls");
+      if (chatControls) {
+        chatControls.appendChild(container);
+      } else {
+        // Fallback: prepend to html root if .chat-controls isn't found
+        html.prepend(container);
+      }
+    }
+    // Create the new button element
+    const newButton = document.createElement("button");
+    newButton.type = "button";
+    newButton.className = "base-roll-button ui-control icon fa-solid fa-dice-d10"; // Use same classes, with fa-dice-d10
+    newButton.dataset.tooltip = "Base Roll"; // Optional tooltip text
+    newButton.setAttribute("aria-label", "Base Roll"); // Accessibility
+
+    // Add event listener
+    newButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      noActorBaseRoll();
+    });
+
+    // Insert button at the beginning
+    container.prepend(newButton);
+  }
 });
 
 // Hooks.on("renderActorDirectory", (app, html, data) => {
