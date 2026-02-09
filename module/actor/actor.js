@@ -177,7 +177,7 @@ export class ExaltedessenceActor extends Actor {
       const newAnima = Math.min(10, this.system.anima.value + animaChange);
       updateData.system.anima = { 'value': newAnima };
     }
-    if (updateData?.system?.motes?.committed !== undefined && updateData?.system?.anima?.value !== this.system.anima.value) {
+    if (updateData?.system?.anima?.value !== undefined && updateData?.system?.anima?.value !== this.system.anima.value) {
       animaTokenMagic(this, updateData.system.anima.value);
     }
   }
@@ -211,14 +211,14 @@ export class ExaltedessenceActor extends Actor {
     if (item.system.active) {
       actorData.system.active = false;
       updateActive = false;
-      if (item.system.cost?.motes) {
+      if (item.system.cost?.committed) {
         if (actorData.system.details.exalt === 'getimian') {
           actorData.system[actorData.system.settings.charmspendpool].value += item.system.cost.committed;
         }
         actorData.system.motes.committed -= item.system.cost.committed;
       }
     } else {
-      if (item.system.cost?.motes) {
+      if (item.type === 'charm') {
         if (actorData.system.details.exalt === 'getimian') {
           if (actorData.system.settings.charmspendpool === 'still') {
             actorData.system.still.value = Math.max(0, actorData.system.still.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
@@ -234,15 +234,17 @@ export class ExaltedessenceActor extends Actor {
         actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - item.system.cost.stunt);
         actorData.system.power.value = Math.max(0, actorData.system.power.value - item.system.cost.power + item.system.gain.power);
         actorData.system.anima.value = Math.max(0, actorData.system.anima.value - item.system.cost.anima + item.system.gain.anima);
-        let totalHealth = actorData.type === 'character' ? 0 : actorData.system.health.levels;
-        if (actorData.type === 'character') {
-          for (let [key, healthLevel] of Object.entries(actorData.system.health.levels)) {
-            totalHealth += healthLevel.value;
+        if (item.system.cost.health) {
+          let totalHealth = actorData.type === 'character' ? 0 : actorData.system.health.levels;
+          if (actorData.type === 'character') {
+            for (let [key, healthLevel] of Object.entries(actorData.system.health.levels)) {
+              totalHealth += healthLevel.value;
+            }
           }
-        }
-        actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.system.health.lethal + item.system.cost.health);
-        if (actorData.system.health.lethal > 0) {
-          actorData.system.health.lethal = Math.max(0, actorData.system.health.lethal - item.system.gain.health);
+          actorData.system.health.lethal = Math.min(totalHealth - actorData.system.health.aggravated, actorData.system.health.lethal + item.system.cost.health);
+          if (actorData.system.health.lethal > 0) {
+            actorData.system.health.lethal = Math.max(0, actorData.system.health.lethal - item.system.gain.health);
+          }
         }
       }
       if (item.type === 'spell') {
