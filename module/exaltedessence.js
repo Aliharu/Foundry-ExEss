@@ -250,29 +250,28 @@ Hooks.on('updateCombat', (async (combat, update) => {
     for (var combatant of combat.combatants) {
       const actorData = foundry.utils.duplicate(combatant.actor);
       if (actorData.system.details.exalt === 'getimian') {
-        if (actorData.system.settings.charmspendpool === 'still') {
-          if (actorData.system.still.value < actorData.system.still.total) {
-            actorData.system.still.value++;
+        if (combatant.actor.system.settings.charmspendpool === 'still') {
+          if (combatant.actor.system.still.value < combatant.actor.system.still.total) {
+            combatant.actor.update({ [`system.still.value`]: (combatant.actor.system.still.value + 1) });
           }
-          else if (actorData.system.flowing.value < actorData.system.flowing.total) {
-            actorData.system.flowing.value++;
+          else if (combatant.actor.system.flowing.value < combatant.actor.system.flowing.total) {
+            combatant.actor.update({ [`system.flowing.value`]: (combatant.actor.system.flowing.value + 1) });
           }
         }
-        if (actorData.system.settings.charmspendpool === 'flowing' && actorData.system.flowing.value < actorData.system.flowing.total) {
-          if (actorData.system.flowing.value < actorData.system.flowing.total) {
-            actorData.system.flowing.value++;
+        if (combatant.actor.system.settings.charmspendpool === 'flowing' && combatant.actor.system.flowing.value < combatant.actor.system.flowing.total) {
+          if (combatant.actor.system.flowing.value < combatant.actor.system.flowing.total) {
+            combatant.actor.update({ [`system.flowing.value`]: (combatant.actor.system.flowing.value + 1) });
           }
-          else if (actorData.system.still.value < actorData.system.still.total) {
-            actorData.system.still.value++;
+          else if (combatant.actor.system.still.value < combatant.actor.system.still.total) {
+            combatant.actor.update({ [`system.still.value`]: (combatant.actor.system.still.value + 1) });
           }
         }
       }
       else {
-        if (actorData.system.motes.value < (actorData.system.motes.max - actorData.system.motes.committed)) {
-          actorData.system.motes.value++;
+        if (combatant.actor.system.motes.value < (combatant.actor.system.motes.max - combatant.actor.system.motes.committed)) {
+          combatant.actor.update({ [`system.motes.value`]: (combatant.actor.system.motes.value + 1) });
         }
       }
-      combatant.actor.update(actorData);
     }
   }
 }));
