@@ -528,7 +528,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 ChatMessage.create({
                     user: game.user.id,
                     content: messageContent,
-                    type: CONST.CHAT_MESSAGE_STYLES.OTHER,
+                    style: CONST.CHAT_MESSAGE_STYLES.OTHER,
                     flags: {
                         "exaltedessence": {
                             targetActorId: target.actor.id,
@@ -547,7 +547,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             ChatMessage.create({
                 user: game.user.id,
                 content: messageContent,
-                type: CONST.CHAT_MESSAGE_STYLES.OTHER,
+                style: CONST.CHAT_MESSAGE_STYLES.OTHER,
                 flags: {
                     "exaltedessence": {
                         targetActorId: null,
@@ -564,7 +564,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             ChatMessage.create({
                 user: game.user.id,
                 content: messageContent,
-                type: CONST.CHAT_MESSAGE_STYLES.OTHER,
+                style: CONST.CHAT_MESSAGE_STYLES.OTHER,
                 flags: {
                     "exaltedessence": {
                         targetActorId: null,
@@ -1795,7 +1795,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                   </div>
               </div>`
         theContent = await this._createChatMessageContent(theContent, 'Dice Roll');
-        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: theContent, type: CONST.CHAT_MESSAGE_STYLES.OTHER, rolls: [this.object.roll] });
+        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: theContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER, rolls: [this.object.roll] });
     }
 
     _buildResource() {
@@ -1897,7 +1897,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                   </div>
               </div>`;
         messageContent = await this._createChatMessageContent(messageContent, 'Dice Roll');
-        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_STYLES.OTHER, rolls: [this.object.roll] });
+        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER, rolls: [this.object.roll] });
         this.object.showDamage = true;
         this.object.accuracyResult = this.object.diceRollTotal;
         this.render();
@@ -1951,7 +1951,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                       </div>
                   </div>`;
             messageContent = await this._createChatMessageContent(messageContent, 'Dice Roll');
-            ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_STYLES.OTHER });
+            ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER });
         }
         else {
             if (this.object.rollType === 'decisive') {
@@ -2003,7 +2003,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                         </div>
                     </div>`
                 messageContent = await this._createChatMessageContent(messageContent, 'Decisive Damage');
-                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_STYLES.OTHER, rolls: [diceRollResults.roll] });
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER, rolls: [diceRollResults.roll] });
             }
             else if (this.object.rollType === 'withering') {
                 var powerGained = postDefenseTotal + this.object.bonusPower + 1;
@@ -2031,7 +2031,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                           </div>
                       </div>`
                 messageContent = await this._createChatMessageContent(messageContent, 'Decisive Damage');
-                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_STYLES.OTHER });
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER });
             }
             else if (this.object.rollType === 'gambit') {
                 actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.powerSpent);
@@ -2047,7 +2047,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                           </div>
                       </div>`
                 messageContent = await this._createChatMessageContent(messageContent, 'Withering Power');
-                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, type: CONST.CHAT_MESSAGE_STYLES.OTHER });
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER });
             }
         }
         if (this.object.rollType === 'withering' && this.object.target && game.settings.get("exaltedessence", "calculateOnslaught")) {

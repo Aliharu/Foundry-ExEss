@@ -1145,7 +1145,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
     // Create the ChatMessage data object
     const chatData = {
       user: game.user.id,
-      type: CONST.CHAT_MESSAGE_STYLES.OTHER,
+      style: CONST.CHAT_MESSAGE_STYLES.OTHER,
       content: html,
       speaker: ChatMessage.getSpeaker({ actor: this.actor, token }),
     };
@@ -1246,7 +1246,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
     // Create the ChatMessage data object
     const chatData = {
       user: game.user.id,
-      type: CONST.CHAT_MESSAGE_STYLES.OTHER,
+      style: CONST.CHAT_MESSAGE_STYLES.OTHER,
       content: html,
       speaker: ChatMessage.getSpeaker({ actor: this.actor, token }),
     };
