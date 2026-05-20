@@ -303,7 +303,6 @@ EXALTEDESSENCE.selects = {
         pull: "ExEss.Pull",
         reveal_weakness: "ExEss.RevealWeakness",
         unhorse: "ExEss.Unhorse",
-        none: "ExEss.None",
     },
     exaltTypes: {
         abyssal: "ExEss.Abyssal",

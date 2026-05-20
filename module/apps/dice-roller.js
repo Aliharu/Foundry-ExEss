@@ -95,7 +95,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             this.object.poolExcellency = false;
             this.object.showDamage = false;
             this.object.powerSpent = 0;
-            this.object.gambit = 'none';
+            this.object.gambit = '';
             this.object.activateAura = 'none';
             this.object.addOppose = {
                 addedBonus: {
@@ -257,7 +257,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 health: 0,
                 power: 0
             };
-            this.object.gambit = 'none';
+            this.object.gambit = '';
         }
         if (this.object.accuracySuccesses) {
             this.object.successModifier += this.object.accuracySuccesses;
@@ -474,7 +474,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         if (this.object.rollType !== "base") {
             if (gambitChange) {
                 const gambitCosts = {
-                    'none': 0,
+                    '': 0,
                     'disarm': this.object.defense,
                     'distract': 2,
                     'ensnare': 3,
@@ -2145,7 +2145,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             if (this.object.rollType === 'decisive' && game.settings.get("exaltedessence", "calculateOnslaught")) {
                 this._removeOnslaught();
             }
-            if (this.object.rollType === 'gambit') {
+            if (this.object.gambit) {
                 this._resolveGambit(postDefenseTotal);
             }
         }

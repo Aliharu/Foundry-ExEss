@@ -100,8 +100,6 @@ Hooks.once('init', async function () {
     "systems/exaltedessence/templates/actor/equipment-list.html",
     "systems/exaltedessence/templates/actor/charm-list.html",
     "systems/exaltedessence/templates/actor/intimacies-list.html",
-    "systems/exaltedessence/templates/dialogues/accuracy-roll.html",
-    "systems/exaltedessence/templates/dialogues/damage-roll.html",
     "systems/exaltedessence/templates/item/item-cost.html",
     "systems/exaltedessence/templates/item/item-roll-bonuses.html"
   ]);
