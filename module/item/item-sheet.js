@@ -215,6 +215,7 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
           break;
         case 'bonuses':
           tab.id = 'bonuses';
+          tab.partId = 'bonuses';
           tab.label += 'Bonuses';
           tab.cssClass = this.tabGroups['primary'] === 'bonuses' ? 'active' : '';
           break;

@@ -145,11 +145,14 @@ Hooks.once('init', async function () {
   }
 
   async function handleSocket({ type, id, data, addStatuses = [] }) {
-    if (type === 'addOpposingCharm') {
-      if (game.rollForm) {
+    if (game.rollForm) {
+      if (type === 'addMultiOpposingCharms') {
+        game.rollForm.addMultiOpposedBonuses(data);
+      } else if (type === 'addOpposingCharm') {
         game.rollForm.addOpposingCharm(data);
       }
     }
+
     if (!game.user.isGM) return;
 
     // if the logged in user is the active GM with the lowest user id
@@ -351,6 +354,51 @@ Hooks.on("renderChatInput", (app, html, data) => {
     // Insert button at the beginning
     container.prepend(newButton);
   }
+});
+
+Hooks.on("renderChatMessageHTML", (message, html, data) => {
+  if (html instanceof jQuery) {
+    html = $(html)[0];
+  }
+  html.querySelectorAll('.add-oppose-charms')
+    .forEach((target) => {
+      target.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        let actor = null;
+
+        if (message.flags?.exaltedessence?.targetActorId) {
+          actor = canvas.tokens.placeables.find(t => t.id === message.flags?.exaltedessence?.targetTokenId)?.actor;
+          if (!actor) {
+            actor = game.actors.get(message.flags?.exaltedessence?.targetActorId);
+          }
+          if (actor.permission < 3 || !game.user.isGM) {
+            actor = null;
+          }
+        }
+
+        if (!actor && game.user.character) {
+          actor = game.user.character;
+        }
+        if (!actor) {
+          ui.notifications.error(`Error: Could not find proper tokens actor and the logged in user has no set character to default to.`);
+        }
+        let attacker = null;
+
+        if (message.flags?.exaltedessence?.rollerUuid) {
+          attacker = await fromUuid(message.flags.exaltedessence.rollerUuid);
+        }
+
+        if (actor) {
+          actor.actionRoll(
+            {
+              rollType: 'useOpposingCharms',
+              attacker: attacker,
+            }
+          );
+        }
+      });
+    });
 });
 
 // Hooks.on("renderActorDirectory", (app, html, data) => {

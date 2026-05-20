@@ -304,7 +304,11 @@ export class ExaltedessenceActor extends Actor {
   }
 
   async actionRoll(data) {
-    game.rollForm = await new RollForm(this, { classes: [" exaltedessence exaltedessence-dialog dice-roller", this.getSheetBackground()] }, {}, data).render(true);
+    if (data.rollType === 'useOpposingCharms') {
+      game.opposingCharmForm = await new RollForm(this, { classes: [" exaltedessence exaltedessence-dialog dice-roller", this.getSheetBackground()], position: { width: 846, height: 642 } }, {}, data).render(true);
+    } else {
+      game.rollForm = await new RollForm(this, { classes: [" exaltedessence exaltedessence-dialog dice-roller", this.getSheetBackground()] }, {}, data).render(true);
+    }
   }
 
 }

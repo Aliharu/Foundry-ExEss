@@ -408,6 +408,8 @@
 
     "ExEss.Update": "Update",
     "ExEss.AddCharm": "Add Charm",
+    "ExEss.AddOpposingCharms": "Add Opposing Charms",
+    "ExEss.AddedOpposingCharms": "Added Opposing Charms",
     "ExEss.Done": "Done",
     "ExEss.EnterNewRollName": "Enter New Roll Name",
     "ExEss.EffectTriggers": "Effect Triggers",

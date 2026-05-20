@@ -1,4 +1,5 @@
 <section class="tab flex-center {{tab.cssClass}} {{hideElement}}">
+    {{#ifNotEquals data.rollType 'useOpposingCharms'}}
     <div class="dice-header-row">
         {{#ifEquals data.characterType 'character'}}
         <label class="resource-label">{{localize "ExEss.Attribute"}}</label>
@@ -26,4 +27,5 @@
         </select>
     </div>
     {{/ifEquals}}
+    {{/ifNotEquals}}
 </section>

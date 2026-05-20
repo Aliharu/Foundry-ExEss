@@ -1,4 +1,58 @@
 <section class="tab flex-center {{tab.cssClass}} {{hideElement}}" data-group="primary" data-tab="dice">
+    {{#ifEquals data.rollType 'useOpposingCharms'}}
+    <div class="resource grid grid-2col" style="text-align:center">
+        <div style="text-align:center">
+            <div class="resource grid grid-2col">
+                <div class="opposed-info-inputs">
+                    <div class="resource-label opposed-bonus-label">{{localize "ExEss.Defense"}}</div>
+                    <div class="mb-1">
+                        <input class="locked-input" type="number" name="object.addOppose.addedBonus.defense"
+                            value="{{data.addOppose.addedBonus.defense}}" disabled>
+                    </div>
+                    <div class="mb-1">
+                        <input type="number" name="object.addOppose.manualBonus.defense"
+                            value="{{data.addOppose.manualBonus.defense}}">
+                    </div>
+                    <div>
+                        <input class="total-input" type="number" value="{{totalOpposedBonuses.defense}}" disabled>
+                    </div>
+                </div>
+                <div class="opposed-info-inputs">
+                    <div class="resource-label opposed-bonus-label">{{localize "ExEss.Soak"}}</div>
+                    <div class="mb-1">
+                        <input class="locked-input" type="number" name="object.addOppose.addedBonus.soak"
+                            value="{{data.addOppose.addedBonus.soak}}" disabled>
+                    </div>
+                    <div class="mb-1">
+                        <input type="number" name="object.addOppose.manualBonus.soak"
+                            value="{{data.addOppose.manualBonus.soak}}">
+                    </div>
+                    <div>
+                        <input class="total-input" type="number" value="{{totalOpposedBonuses.soak}}" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="text-align:center">
+            <div class="resource grid grid-2col">
+                <div class="opposed-info-inputs">
+                    <div class="resource-label opposed-bonus-label">{{localize "ExEss.Resolve"}}</div>
+                    <div class="mb-1">
+                        <input class="locked-input" type="number" name="object.addOppose.addedBonus.resolve"
+                            value="{{data.addOppose.addedBonus.resolve}}" disabled>
+                    </div>
+                    <div class="mb-1">
+                        <input type="number" name="object.addOppose.manualBonus.resolve"
+                            value="{{data.addOppose.manualBonus.resolve}}">
+                    </div>
+                    <div>
+                        <input class="total-input" type="number" value="{{totalOpposedBonuses.resolve}}" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{else}}
     <div class="resource grid grid-4col">
         {{#ifEquals data.rollType 'base'}}
         <div>
@@ -32,7 +86,8 @@
         {{#ifEquals data.characterType 'npc'}}
         <div>
             <div class="resource-label">{{localize "ExEss.Excellency"}}</div>
-            <input class="excellency-check" type="checkbox" name="object.poolExcellency" {{checked data.poolExcellency}}>
+            <input class="excellency-check" type="checkbox" name="object.poolExcellency" {{checked
+                data.poolExcellency}}>
         </div>
         {{else}}
         <div>
@@ -121,4 +176,5 @@
         </div>
         {{/ifNotEquals}}
     </div>
+    {{/ifEquals}}
 </section>

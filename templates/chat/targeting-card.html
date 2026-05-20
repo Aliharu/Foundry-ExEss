@@ -3,7 +3,8 @@
     <div class="grid grid-3col" style="text-align:center;">
         <div>
             <div>
-                <img class="borderless-image roll-card-icon" src="{{actor.img}}" title="{{actor.name}}" width="64" height="64" />
+                <img class="borderless-image roll-card-icon" src="{{actor.img}}" title="{{actor.name}}" width="64"
+                    height="64" />
             </div>
             <div>
                 <b>{{actor.name}}</b>
@@ -18,7 +19,8 @@
         {{#if targetActor}}
         <div>
             <div>
-                <img class="borderless-image roll-card-icon" class="list-item-image" src="{{targetActor.img}}" title="{{targetActor.name}}" width="64" height="64" />
+                <img class="borderless-image roll-card-icon" class="list-item-image" src="{{targetActor.img}}"
+                    title="{{targetActor.name}}" width="64" height="64" />
             </div>
             <div>
                 <b>{{targetActor.name}}</b>
@@ -26,11 +28,18 @@
         </div>
         {{else}}
         <div>
-            <img class="borderless-image black-icon roll-card-icon" src="icons/svg/mystery-man.svg" width="64" height="64" />
+            <img class="borderless-image black-icon roll-card-icon" src="icons/svg/mystery-man.svg" width="64"
+                height="64" />
             <div>
                 <b>{{localize "ExEss.NoTargets"}}</b>
             </div>
         </div>
         {{/if}}
     </div>
+    {{#if targetActor}}
+    <div>
+        <button class="add-oppose-charms full-footer-button"> <i class="fas fa-shield-plus"></i>{{localize
+            "ExEss.AddOpposingCharms"}}</button>
+    </div>
+    {{/if}}
 </div>

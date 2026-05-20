@@ -97,6 +97,26 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             this.object.powerSpent = 0;
             this.object.gambit = 'none';
             this.object.activateAura = 'none';
+            this.object.addOppose = {
+                addedBonus: {
+                    dice: 0,
+                    successes: 0,
+                    defense: 0,
+                    soak: 0,
+                    resolve: 0,
+                    hardness: 0,
+                    damage: 0,
+                },
+                manualBonus: {
+                    dice: 0,
+                    successes: 0,
+                    defense: 0,
+                    soak: 0,
+                    resolve: 0,
+                    hardness: 0,
+                    damage: 0,
+                }
+            };
 
             this.object.supportedIntimacy = 0;
             this.object.opposedIntimacy = 0;
@@ -363,8 +383,9 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     this.addCharm(charm);
                 }
             }
-
-            this._preChatMessage();
+            if (this.object.rollType !== 'useOpposingCharms') {
+                this._preChatMessage();
+            }
         }
 
     }
@@ -432,6 +453,13 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         if (this.object.rollType === 'base') {
             options.parts = ['dice', 'footer'];
         }
+        if (this.object.rollType === 'useOpposingCharms') {
+            options.parts = ['header', 'tabs', 'dice', 'cost', 'charms', 'footer'];
+            if (options.position) {
+                options.position.height = 670;
+            }
+        }
+
     }
 
     static async myFormHandler(event, form, formData) {
@@ -478,18 +506,23 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         }
 
         if (event.type === 'submit') {
-            if (this._isAttackRoll()) {
-                if (this.object.showDamage) {
-                    await this._damageRoll();
-                    this.close();
-                } else {
-                    await this._attackRoll();
-                    this.tabGroups['primary'] = 'damage';
-                }
+            if (this.object.rollType === 'useOpposingCharms') {
+                await this.useOpposingCharms();
             } else {
-                await this._roll();
-                this.close(false);
+                if (this._isAttackRoll()) {
+                    if (this.object.showDamage) {
+                        await this._damageRoll();
+                        this.close();
+                    } else {
+                        await this._attackRoll();
+                        this.tabGroups['primary'] = 'damage';
+                    }
+                } else {
+                    await this._roll();
+                    this.close(false);
+                }
             }
+
         }
         this.render();
     }
@@ -833,6 +866,23 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             }
         }
 
+        const totalOpposedBonuses = {
+            dice: 0,
+            successes: 0,
+            defense: 0,
+            soak: 0,
+            hardness: 0,
+            resolve: 0,
+            guile: 0,
+            damage: 0,
+        }
+
+        if (this.object.rollType === 'useOpposingCharms') {
+            totalOpposedBonuses.defense = this.object.addOppose.manualBonus.defense + this.object.addOppose.addedBonus.defense;
+            totalOpposedBonuses.soak = this.object.addOppose.manualBonus.soak + this.object.addOppose.addedBonus.soak;
+            totalOpposedBonuses.resolve = this.object.addOppose.manualBonus.resolve + this.object.addOppose.addedBonus.resolve;
+        }
+
         return {
             actor: this.actor,
             selects: this.selects,
@@ -843,8 +893,9 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             penalties: penalties,
             effects: effects,
             weaponTags: weaponTags,
+            totalOpposedBonuses: totalOpposedBonuses,
             buttons: [
-                { type: "submit", icon: "fa-solid fa-dice-d10", label: "ExEss.Roll" },
+                { type: "submit", icon: "fa-solid fa-dice-d10", label: this.object.rollType === 'useOpposingCharms' ? "ExEss.Add" : "ExEss.Roll" },
                 { action: "close", type: "button", icon: "fa-solid fa-xmark", label: "ExEss.Cancel" },
             ],
         };
@@ -1083,24 +1134,53 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 if (item.system.diceroller.activateaura !== 'none') {
                     this.object.activateAura = item.system.diceroller.activateaura;
                 }
+                if (this.object.rollType === 'useOpposingCharms') {
+                    this.object.addOppose.addedBonus.defense += item.system.diceroller.opposedbonuses.defense;
+                    this.object.addOppose.addedBonus.soak += item.system.diceroller.opposedbonuses.soak;
+                    this.object.addOppose.addedBonus.resolve += item.system.diceroller.opposedbonuses.resolve;
+                }
             }
             this.render();
         }
     }
 
     async addOpposingCharm(charm) {
+        if (this.object.rollType === 'useOpposingCharms') {
+            this.addCharm(charm);
+        } else {
+            await this.addOpposedBonus(charm);
+            this.render();
+        }
+    }
+
+    async addOpposedBonus(charm) {
         const index = this.object.opposingCharms.findIndex(opposedCharm => charm._id === opposedCharm._id);
         if (index === -1) {
             this.object.opposingCharms.push(charm);
             if (this._isAttackRoll()) {
                 this.object.defense += charm.system.diceroller.opposedbonuses.defense;
                 this.object.soak += charm.system.diceroller.opposedbonuses.soak;
+                // this.object.hardness += item.system.diceroller.opposedbonuses.hardness;
             }
             if (this.object.rollType === 'social') {
                 this.object.resolve += charm.system.diceroller.opposedbonuses.resolve;
             }
             this.render();
         }
+    }
+
+    async addMultiOpposedBonuses(data) {
+        for (const charm of data.charmList) {
+            charm.actor = data.actor;
+            await this.addOpposedBonus(charm);
+        }
+        this.object.defense += data.defense;
+        this.object.soak += data.soak;
+        this.object.hardness += data.hardness;
+        if (this.object.rollType === 'social') {
+            this.object.difficulty += data.resolve;
+        }
+        this.render();
     }
 
     static addSpecialAttack(event, target) {
@@ -1278,6 +1358,12 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 if (item.system.diceroller.activateaura === this.object.activateAura) {
                     this.object.activateAura = 'none';
                 }
+                if (this.object.rollType === 'useOpposingCharms') {
+                    this.object.addOppose.addedBonus.defense -= item.system.diceroller.opposedbonuses.defense;
+                    this.object.addOppose.addedBonus.soak -= item.system.diceroller.opposedbonuses.soak;
+                    // this.object.addOppose.addedBonus.hardness -= item.system.diceroller.opposedbonuses.hardness;
+                    this.object.addOppose.addedBonus.resolve -= item.system.diceroller.opposedbonuses.resolve;
+                }
             }
         }
         this.render();
@@ -1294,6 +1380,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             if (this._isAttackRoll()) {
                 this.object.defense -= charm.system.diceroller.opposedbonuses.defense;
                 this.object.soak -= charm.system.diceroller.opposedbonuses.soak;
+                // this.object.hardness -= charm.system.diceroller.opposedbonuses.hardness;
             }
             if (this.object.rollType === 'social') {
                 this.object.resolve -= charm.system.diceroller.opposedbonuses.resolve;
@@ -1476,6 +1563,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 if (this._isAttackRoll()) {
                     this.object.defense -= charm.system.diceroller.opposedbonuses.defense;
                     this.object.soak -= charm.system.diceroller.opposedbonuses.soak;
+                    // this.object.hardness -= charm.system.diceroller.opposedbonuses.hardness;
                 }
                 if (this.object.rollType === 'social') {
                     this.object.resolve -= charm.system.diceroller.opposedbonuses.resolve;
@@ -1758,7 +1846,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         this.object.roll.dice[0].options.rollOrder = 1;
 
         if (this.object.rollType !== 'base') {
-            this._updateCharacterResources();
+            this._updateRollerResources();
         }
         console.log(this.object);
     }
@@ -2119,7 +2207,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
     _addOnslaught(number = 1) {
         this.object.updateTargetActorData = true;
         const onslaught = this.object.newTargetData.effects.find(i => i.flags.exaltedessence?.statusId == "onslaught");
-        if (onslaught) {
+        if (onslaught?.changes) {
             onslaught.name = `${game.i18n.localize("ExEss.Onslaught")} (${onslaught.changes[0].value - number})`;
             onslaught.changes[0].value = onslaught.changes[0].value - number;
         }
@@ -2361,7 +2449,54 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             </div>` : ''}`
     }
 
-    async _updateCharacterResources() {
+    async useOpposingCharms() {
+        const addingCharms = [];
+        for (const charm of this.object.addedCharms) {
+            const newCharm = foundry.utils.duplicate(charm);
+            newCharm.timesAdded = charm.timesAdded;
+            addingCharms.push(newCharm);
+        }
+        const data = {
+            charmList: addingCharms,
+            dice: this.object.addOppose.manualBonus.dice,
+            successes: this.object.addOppose.manualBonus.successes,
+            defense: this.object.addOppose.manualBonus.defense,
+            soak: this.object.addOppose.manualBonus.soak,
+            resolve: this.object.addOppose.manualBonus.resolve,
+            hardness: this.object.addOppose.manualBonus.hardness,
+            damage: this.object.addOppose.manualBonus.damage,
+        }
+
+        if (game.rollForm) {
+            data.actor = this.actor;
+            await game.rollForm.addMultiOpposedBonuses(data);
+        }
+
+        game.socket.emit('system.exaltedessence', {
+            type: 'addMultiOpposingCharms',
+            data: data,
+            actorId: this.actor._id,
+        });
+        const messageContent = await foundry.applications.handlebars.renderTemplate("systems/exaltedessence/templates/chat/added-opposing-charms-card.html", {
+            actor: this.actor,
+            addingCharms: addingCharms,
+        });
+        ChatMessage.create({
+            user: game.user.id,
+            content: messageContent,
+            style: CONST.CHAT_MESSAGE_STYLES.OTHER,
+            flags: {
+                "exaltedessence": {
+                    targetActorId: null,
+                    targetTokenId: null,
+                }
+            },
+        });
+        await this._updateRollerResources();
+        this.close();
+    }
+
+    async _updateRollerResources() {
         const actorData = foundry.utils.duplicate(this.actor);
         var newAnimaValue = Math.max(0, actorData.system.anima.value - this.object.cost.anima + this.object.gain.anima);
         if (actorData.system.details.exalt === 'getimian') {
