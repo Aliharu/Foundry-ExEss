@@ -169,14 +169,22 @@ EXALTEDESSENCE.statusEffects = [
         name: 'dematerialized'
     },
     {
+        img: 'systems/exaltedessence/assets/icons/despair.svg',
+        id: 'hindered',
+        label: 'ExEss.Hindered',
+        name: 'hindered'
+    },
+    {
         img: 'systems/exaltedessence/assets/icons/screaming.svg',
         id: 'routing',
         label: 'ExEss.Routing',
+        name: 'routing',
     },
     {
         img: 'icons/svg/skull.svg',
         id: 'incapacitated',
         label: 'ExEss.Incapacitated',
+        name: 'incapacitated',
     },
 ]
 
