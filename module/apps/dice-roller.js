@@ -50,6 +50,8 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 this.object.weaponWeight = data.weight || 'light';
                 this.object.diceModifier = 0;
                 this.object.triggerSelfDefensePenalty = 0;
+                this.object.totalDice = 0;
+                this.object.rollButtonTooltip = "";
 
                 this.object.unusedDiceRoll = null;
                 this.object.unusedDiceRollDisplay = null;
@@ -882,6 +884,17 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             totalOpposedBonuses.soak = this.object.addOppose.manualBonus.soak + this.object.addOppose.addedBonus.soak;
             totalOpposedBonuses.resolve = this.object.addOppose.manualBonus.resolve + this.object.addOppose.addedBonus.resolve;
         }
+        this.object.rollButtonTooltip = "";
+        if (this.object.showDamage) {
+            this.object.totalDice = await this._assembleDamagePool(true);
+        } else {
+            this.object.totalDice = await this._assembleDicePool(true);
+        }
+
+        let diceFooterLabel = `Roll ${this.object.totalDice} Dice`;
+        if (this.object.showDamage && this.object.rollType !== 'decisive') {
+            diceFooterLabel = "Confirm Results";
+        }
 
         return {
             actor: this.actor,
@@ -894,6 +907,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             effects: effects,
             weaponTags: weaponTags,
             totalOpposedBonuses: totalOpposedBonuses,
+            diceFooterLabel: diceFooterLabel,
             buttons: [
                 { type: "submit", icon: "fa-solid fa-dice-d10", label: this.object.rollType === 'useOpposingCharms' ? "ExEss.Add" : "ExEss.Roll" },
                 { action: "close", type: "button", icon: "fa-solid fa-xmark", label: "ExEss.Cancel" },
@@ -1706,21 +1720,31 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         };
     }
 
-    async _baseAbilityDieRoll() {
-        let dice = 0;
+    async _assembleDicePool(display) {
+        let dicePool = 0;
+        let rollButtonTooltip = "<h5>Dice</h5>";
+        let totalPenalties = this.object.penaltyModifier;
+        let totalIgnorePenalties = this.object.ignorePenalties;
+        let rangeModifier = 0;
+
         if (this.object.rollType === 'base') {
-            dice = this.object.dice;
+            dicePool = this.object.dice;
+            rollButtonTooltip += `<p>Base: ${dicePool}</p>`;
         }
         else {
             if (this.actor.type === 'character') {
                 let attributeDice = this.actor.system.attributes[this.object.attribute].value;
+                rollButtonTooltip += `<p>Attribute: ${attributeDice}</p>`;
+
                 let abilityDice = this.actor.system.abilities[this.object.ability].value;
+                rollButtonTooltip += `<p>Ability: ${abilityDice}</p>`;
 
                 if (this.object.attributeExcellency) {
-                    attributeDice += Math.max(attributeDice, abilityDice);
+                    let excellencyDice = 0;
+                    excellencyDice += Math.max(attributeDice, abilityDice);
                     if (this.object.augmentattribute) {
                         if (this.actor.system.attributes[this.object.attribute].value < 5) {
-                            attributeDice++;
+                            excellencyDice++;
                         }
                         if (this.actor.system.essence.value > 1) {
                             if (this.object.doubleSuccess === 10) {
@@ -1731,8 +1755,11 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                             }
                         }
                     }
+                    rollButtonTooltip += `<p>Excellency: ${excellencyDice}</p>`;
+                    attributeDice += excellencyDice;
                 }
                 if (this.object.abilityExcellency) {
+                    rollButtonTooltip += `<p>Excellency: ${abilityDice}</p>`;
                     abilityDice = abilityDice * 2;
                 }
 
@@ -1740,52 +1767,173 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     this.object.successModifier += 1;
                 }
 
-                dice = attributeDice + abilityDice;
+                dicePool = attributeDice + abilityDice;
             }
             else if (this.actor.type === 'npc') {
                 let poolDice = this.actor.system.pools[this.object.pool].value;
-                dice = poolDice;
+                rollButtonTooltip += `<p>Base Pool: ${poolDice}</p>`;
+                dicePool = poolDice;
 
                 if (this.object.poolExcellency) {
                     if (this.object.pool === 'primary') {
-                        dice += 4;
+                        dicePool += 4;
+                        rollButtonTooltip += `<p>Excellency: 4</p>`;
+
                     }
                     else if (this.object.pool === 'secondary') {
-                        dice += 3;
+                        dicePool += 3;
+                        rollButtonTooltip += `<p>Excellency: 3</p>`;
                     }
                 }
 
                 if (this.actor.system.battlegroup && this._isAttackRoll()) {
-                    dice += this.actor.system.drill.value;
+                    dicePool += this.actor.system.drill.value;
+                    rollButtonTooltip += `<p>Drill: ${this.actor.system.drill.value}</p>`;
                 }
             }
             if (this.object.woundPenalty) {
-                dice -= this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2;
+                dicePool -= this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2;
+                rollButtonTooltip += `<p>Wounds: -${this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2}</p>`;
             }
             if (this.object.armorPenalty) {
                 for (let armor of this.actor.armor) {
                     if (armor.system.equipped) {
-                        dice = dice - Math.abs(armor.system.penalty);
+                        dicePool -= Math.abs(armor.system.penalty);
+                        rollButtonTooltip += `<p>Armor: ${armor.system.penalty}</p>`;
                     }
                 }
             }
             if (this.object.stunt) {
-                dice += 2;
+                dicePool += 2;
+                rollButtonTooltip += `<p>Stunt: 2</p>`;
             }
             if (this.object.flurry) {
-                dice -= 3;
+                dicePool -= 3;
+                rollButtonTooltip += `<p>Flurry: -3</p>`;
             }
 
-            dice += this.object.diceModifier;
+            dicePool += this.object.diceModifier;
+            rollButtonTooltip += `<p>Misc Dice: ${this.object.diceModifier}</p>`;
         }
-        if (this.object.rollType === 'social') {
-            this.object.resolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedIntimacy || 0) - parseInt(this.object.supportedIntimacy || 0));
-            this.object.resolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedVirtue || 0) - parseInt(this.object.supportedVirtue || 0));
+        if (dicePool < 0) {
+            dicePool = 0;
         }
+        if (display) {
+            this.object.rollButtonTooltip = rollButtonTooltip;
+        }
+        return dicePool;
+    }
 
-        if (dice < 0) {
-            dice = 0;
+    async _assembleDamagePool(display) {
+        let damageDicePool = 0;
+        let rollButtonTooltip = "<h5>Damage Dice</h5>";
+
+        if (this.object.rollType === 'decisive') {
+            let postDefenseTotal = this.object.accuracyResult - this.object.defense;
+            if (this.object.power) {
+                damageDicePool += this.object.power;
+                rollButtonTooltip += `<p>Power: ${this.object.power}</p>`;
+            }
+            if (postDefenseTotal > 0) {
+                damageDicePool += postDefenseTotal;
+                rollButtonTooltip += `<p>Extra Successes: ${postDefenseTotal}</p>`;
+            }
+            if (this.actor.type === 'npc' && this.actor.system.battlegroup) {
+                damageDicePool += this.actor.system.drill.value;
+                rollButtonTooltip += `<p>Drill: ${this.actor.system.drill.value}</p>`;
+            }
+            if (this.object.damage.damageDice) {
+                damageDicePool += this.object.damage.damageDice;
+                rollButtonTooltip += `<p>Misc: ${this.object.damage.damageDice}</p>`;
+            }
+
+            if (display) {
+                this.object.rollButtonTooltip = rollButtonTooltip;
+            }
         }
+        return damageDicePool;
+    }
+
+    async _baseAbilityDieRoll() {
+        let dice = await this._assembleDicePool(false);
+        // if (this.object.rollType === 'base') {
+        //     dice = this.object.dice;
+        // }
+        // else {
+        //     if (this.actor.type === 'character') {
+        //         let attributeDice = this.actor.system.attributes[this.object.attribute].value;
+        //         let abilityDice = this.actor.system.abilities[this.object.ability].value;
+
+        //         if (this.object.attributeExcellency) {
+        //             attributeDice += Math.max(attributeDice, abilityDice);
+        //             if (this.object.augmentattribute) {
+        //                 if (this.actor.system.attributes[this.object.attribute].value < 5) {
+        //                     attributeDice++;
+        //                 }
+        //                 if (this.actor.system.essence.value > 1) {
+        //                     if (this.object.doubleSuccess === 10) {
+        //                         this.object.doubleSuccess = 9;
+        //                     }
+        //                     else if (this.object.doubleSuccess === 9) {
+        //                         this.object.doubleSuccess = 8;
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //         if (this.object.abilityExcellency) {
+        //             abilityDice = abilityDice * 2;
+        //         }
+
+        //         if (this.object.getimianflow) {
+        //             this.object.successModifier += 1;
+        //         }
+
+        //         dice = attributeDice + abilityDice;
+        //     }
+        //     else if (this.actor.type === 'npc') {
+        //         let poolDice = this.actor.system.pools[this.object.pool].value;
+        //         dice = poolDice;
+
+        //         if (this.object.poolExcellency) {
+        //             if (this.object.pool === 'primary') {
+        //                 dice += 4;
+        //             }
+        //             else if (this.object.pool === 'secondary') {
+        //                 dice += 3;
+        //             }
+        //         }
+
+        //         if (this.actor.system.battlegroup && this._isAttackRoll()) {
+        //             dice += this.actor.system.drill.value;
+        //         }
+        //     }
+        //     if (this.object.woundPenalty) {
+        //         dice -= this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2;
+        //     }
+        //     if (this.object.armorPenalty) {
+        //         for (let armor of this.actor.armor) {
+        //             if (armor.system.equipped) {
+        //                 dice = dice - Math.abs(armor.system.penalty);
+        //             }
+        //         }
+        //     }
+        //     if (this.object.stunt) {
+        //         dice += 2;
+        //     }
+        //     if (this.object.flurry) {
+        //         dice -= 3;
+        //     }
+
+        //     dice += this.object.diceModifier;
+        // }
+        // if (this.object.rollType === 'social') {
+        //     this.object.resolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedIntimacy || 0) - parseInt(this.object.supportedIntimacy || 0));
+        //     this.object.resolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedVirtue || 0) - parseInt(this.object.supportedVirtue || 0));
+        // }
+
+        // if (dice < 0) {
+        //     dice = 0;
+        // }
         this.object.dice = dice;
 
         if (this.object.rollType === 'buildPower' && this.actor.type === 'npc' && this.actor.system.battlegroup) {
@@ -2044,11 +2192,8 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         else {
             if (this.object.rollType === 'decisive') {
                 // Deal Damage
-                let damage = postDefenseTotal + this.object.power + this.object.damage.damageDice;
-                if (this.actor.type === 'npc' && actorData.system.battlegroup) {
-                    damage += actorData.system.drill.value;
-                }
-                var rollModifiers = {
+                let damage = await this._assembleDamagePool(false);
+                let rollModifiers = {
                     successModifier: this.object.damage.damageSuccessModifier,
                     doubleSuccess: this.object.damage.doubleSuccess,
                     targetNumber: this.object.damage.targetNumber,
@@ -2058,7 +2203,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     preRollMacros: [],
                     macros: [],
                 }
-                var diceRollResults = await this._calculateRoll(damage, rollModifiers);
+                let diceRollResults = await this._calculateRoll(damage, rollModifiers);
                 if (this.object.damage.rollTwice) {
                     const secondRoll = await this._calculateRoll(damage, rollModifiers);
                     if (secondRoll.total > diceRollResults.total) {
