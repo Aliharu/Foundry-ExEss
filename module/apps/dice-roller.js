@@ -376,6 +376,12 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                         }
                     }
                 }
+                if (this.object.woundPenalty && game.settings.get("exaltedessence", "woundBonuses")) {
+                    if (game.settings.get("exaltedessence", "woundBonuses")) {
+                        this.object.defense -= this.object.target.actor.system.health.penalty;
+                        this.object.soak -= this.object.target.actor.system.health.penalty;
+                    }
+                }
                 if (this.object.defense < 0) {
                     this.object.defense = 0;
                 }
@@ -732,12 +738,22 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             }
 
             if (this.object.woundPenalty) {
-                penalties.push(
-                    {
-                        name: "ExEss.WoundPenalty",
-                        summary: `${this.actor.system.health.penalty * -1} Dice`
-                    },
-                );
+                if (game.settings.get("exaltedessence", "woundBonuses")) {
+                    penalties.push(
+                        {
+                            name: "ExEss.WoundBonus",
+                            summary: `${this.actor.system.health.penalty} Dice`
+                        },
+                    );
+                } else {
+                    penalties.push(
+                        {
+                            name: "ExEss.WoundPenalty",
+                            summary: `${this.actor.system.health.penalty * -1} Dice`
+                        },
+                    );
+                }
+
             }
             if (this.object.getimianflow) {
                 effects.push(
@@ -892,7 +908,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         }
 
         let diceFooterLabel = `Roll ${this.object.totalDice} Dice`;
-        if (this.object.showDamage && this.object.rollType !== 'decisive') {
+        if (this.object.showDamage && (this.object.rollType !== 'decisive' || game.settings.get("exaltedessence", "fasterCombat"))) {
             diceFooterLabel = "Confirm Results";
         }
 
@@ -1792,8 +1808,8 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 }
             }
             if (this.object.woundPenalty) {
-                dicePool -= this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2;
-                rollButtonTooltip += `<p>Wounds: -${this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2}</p>`;
+                dicePool = dicePool + (game.settings.get("exaltedessence", "woundBonuses") ? (this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2) : -(this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2));
+                rollButtonTooltip += `<p>Wounds: ${(this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2) * (game.settings.get("exaltedessence", "woundBonuses") ? 1 : -1)}</p>`;
             }
             if (this.object.armorPenalty) {
                 for (let armor of this.actor.armor) {
@@ -1856,84 +1872,6 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
 
     async _baseAbilityDieRoll() {
         let dice = await this._assembleDicePool(false);
-        // if (this.object.rollType === 'base') {
-        //     dice = this.object.dice;
-        // }
-        // else {
-        //     if (this.actor.type === 'character') {
-        //         let attributeDice = this.actor.system.attributes[this.object.attribute].value;
-        //         let abilityDice = this.actor.system.abilities[this.object.ability].value;
-
-        //         if (this.object.attributeExcellency) {
-        //             attributeDice += Math.max(attributeDice, abilityDice);
-        //             if (this.object.augmentattribute) {
-        //                 if (this.actor.system.attributes[this.object.attribute].value < 5) {
-        //                     attributeDice++;
-        //                 }
-        //                 if (this.actor.system.essence.value > 1) {
-        //                     if (this.object.doubleSuccess === 10) {
-        //                         this.object.doubleSuccess = 9;
-        //                     }
-        //                     else if (this.object.doubleSuccess === 9) {
-        //                         this.object.doubleSuccess = 8;
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //         if (this.object.abilityExcellency) {
-        //             abilityDice = abilityDice * 2;
-        //         }
-
-        //         if (this.object.getimianflow) {
-        //             this.object.successModifier += 1;
-        //         }
-
-        //         dice = attributeDice + abilityDice;
-        //     }
-        //     else if (this.actor.type === 'npc') {
-        //         let poolDice = this.actor.system.pools[this.object.pool].value;
-        //         dice = poolDice;
-
-        //         if (this.object.poolExcellency) {
-        //             if (this.object.pool === 'primary') {
-        //                 dice += 4;
-        //             }
-        //             else if (this.object.pool === 'secondary') {
-        //                 dice += 3;
-        //             }
-        //         }
-
-        //         if (this.actor.system.battlegroup && this._isAttackRoll()) {
-        //             dice += this.actor.system.drill.value;
-        //         }
-        //     }
-        //     if (this.object.woundPenalty) {
-        //         dice -= this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2;
-        //     }
-        //     if (this.object.armorPenalty) {
-        //         for (let armor of this.actor.armor) {
-        //             if (armor.system.equipped) {
-        //                 dice = dice - Math.abs(armor.system.penalty);
-        //             }
-        //         }
-        //     }
-        //     if (this.object.stunt) {
-        //         dice += 2;
-        //     }
-        //     if (this.object.flurry) {
-        //         dice -= 3;
-        //     }
-
-        //     dice += this.object.diceModifier;
-        // }
-        // if (this.object.rollType === 'social') {
-        //     this.object.resolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedIntimacy || 0) - parseInt(this.object.supportedIntimacy || 0));
-        //     this.object.resolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedVirtue || 0) - parseInt(this.object.supportedVirtue || 0));
-        // }
-
-        // if (dice < 0) {
-        //     dice = 0;
-        // }
         this.object.dice = dice;
 
         if (this.object.rollType === 'buildPower' && this.actor.type === 'npc' && this.actor.system.battlegroup) {
@@ -2191,31 +2129,44 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         }
         else {
             if (this.object.rollType === 'decisive') {
-                // Deal Damage
-                let damage = await this._assembleDamagePool(false);
-                let rollModifiers = {
-                    successModifier: this.object.damage.damageSuccessModifier,
-                    doubleSuccess: this.object.damage.doubleSuccess,
-                    targetNumber: this.object.damage.targetNumber,
-                    reroll: this.object.damage.reroll,
-                    rerollFailed: this.object.damage.rerollFailed,
-                    rerollNumber: this.object.damage.rerollNumber,
-                    preRollMacros: [],
-                    macros: [],
-                }
-                let diceRollResults = await this._calculateRoll(damage, rollModifiers);
-                if (this.object.damage.rollTwice) {
-                    const secondRoll = await this._calculateRoll(damage, rollModifiers);
-                    if (secondRoll.total > diceRollResults.total) {
-                        diceRollResults = secondRoll;
+                let rolledDamageSuccesses = 0;
+                let diceRollResults = null;
+                let damageDicePool = await this._assembleDamagePool(false);
+                if (game.settings.get("exaltedessence", "fasterCombat")) {
+                    rolledDamageSuccesses = damageDicePool + this.object.damage.damageSuccessModifier;
+                } else {
+                    // Deal Damage
+                    let rollModifiers = {
+                        successModifier: this.object.damage.damageSuccessModifier,
+                        doubleSuccess: this.object.damage.doubleSuccess,
+                        targetNumber: this.object.damage.targetNumber,
+                        reroll: this.object.damage.reroll,
+                        rerollFailed: this.object.damage.rerollFailed,
+                        rerollNumber: this.object.damage.rerollNumber,
+                        preRollMacros: [],
+                        macros: [],
                     }
+                    diceRollResults = await this._calculateRoll(damage, rollModifiers);
+                    if (this.object.damage.rollTwice) {
+                        const secondRoll = await this._calculateRoll(damage, rollModifiers);
+                        if (secondRoll.total > diceRollResults.total) {
+                            diceRollResults = secondRoll;
+                        }
+                    }
+                    rolledDamageSuccesses = diceRollResults.total;
                 }
-                let damageTotal = Math.max(0, diceRollResults.total - Math.max(0, this.object.soak - this.object.damage.ignoreSoak));
+
+                let damageTotal = Math.max(0, rolledDamageSuccesses - Math.max(0, this.object.soak - this.object.damage.ignoreSoak));
                 actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.power);
 
                 this.actor.update(actorData);
                 if (damageTotal > 0) {
                     this._dealHealthDamage(damageTotal);
+                    if (game.settings.get("exaltedessence", "calculateOnslaught")) {
+                        this._removeOnslaught();
+                    }
+                } else if (game.settings.get("exaltedessence", "wearingDownFoes")) {
+                    this._addOnslaught(rolledDamageSuccesses, 'wearingDown');
                 }
 
                 messageContent = `
@@ -2224,22 +2175,22 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                             <div class="dice-result">
                                 <h4 class="dice-total">${this.object.accuracyResult} Successes vs ${this.object.defense} defense</h4>
                                 <h4 class="dice-total">${postDefenseTotal} Extra Successes + ${this.object.power} power</h4>
-                                <h4 class="dice-total">${damage} Damage dice + ${this.object.damage.damageSuccessModifier} successes </h4>
+                                ${damageDicePool ? `<h4 class="dice-total">${damageDicePool + this.object.damage.damageSuccessModifier} Damage</h4>` : `<h4 class="dice-total">${damageDicePool} Damage dice + ${this.object.damage.damageSuccessModifier} successes </h4>`}
                                 <div class="dice-tooltip">
-                                  <div class="dice">
+                                  ${diceRollResults ? `<div class="dice">
                                       <ol class="dice-rolls">${diceRollResults.diceDisplay}</ol>
                                   </div>
-                                </div>
-                                <h4 class="dice-total">${diceRollResults.total} Damage - ${this.object.soak} soak ${this.object.damage.ignoreSoak ? `(Ignore ${this.object.damage.ignoreSoak})` : ''}</h4>
+                                </div>` : ''}
+                                <h4 class="dice-total">${rolledDamageSuccesses} Damage - ${this.object.soak} soak ${this.object.damage.ignoreSoak ? `(Ignore ${this.object.damage.ignoreSoak})` : ''}</h4>
                                 <h4 class="dice-total">${damageTotal} Total Damage</h4>
                             </div>
                         </div>
                     </div>`
                 messageContent = await this._createChatMessageContent(messageContent, 'Decisive Damage');
-                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER, rolls: [diceRollResults.roll] });
+                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER, rolls: diceRollResults ? [diceRollResults.roll] : [] });
             }
             else if (this.object.rollType === 'withering') {
-                var powerGained = postDefenseTotal + this.object.bonusPower + 1;
+                let powerGained = postDefenseTotal + this.object.bonusPower + 1;
                 if (postDefenseTotal < this.object.overwhelming) {
                     powerGained = this.object.overwhelming + 1;
                 }
@@ -2284,12 +2235,13 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             }
         }
         if (this.object.rollType === 'withering' && this.object.target && game.settings.get("exaltedessence", "calculateOnslaught")) {
-            this._addOnslaught(1);
+            if (game.settings.get("exaltedessence", "wearingDownFoes")) {
+                this._addOnslaught(postDefenseTotal + 1, 'wearingDown');
+            } else {
+                this._addOnslaught(1);
+            }
         }
         if (postDefenseTotal >= 0 && this.object.target) {
-            if (this.object.rollType === 'decisive' && game.settings.get("exaltedessence", "calculateOnslaught")) {
-                this._removeOnslaught();
-            }
             if (this.object.gambit) {
                 this._resolveGambit(postDefenseTotal);
             }
@@ -2349,35 +2301,74 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         this.attackSequence();
     }
 
-    _addOnslaught(number = 1) {
+    _addOnslaught(number = 1, type = 'core') {
         this.object.updateTargetActorData = true;
         const onslaught = this.object.newTargetData.effects.find(i => i.flags.exaltedessence?.statusId == "onslaught");
-        if (onslaught?.changes) {
-            onslaught.name = `${game.i18n.localize("ExEss.Onslaught")} (${onslaught.changes[0].value - number})`;
-            onslaught.changes[0].value = onslaught.changes[0].value - number;
-        }
-        else {
-            this.object.newTargetData.effects.push({
-                name: 'Onslaught',
-                img: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
-                origin: this.object.target.actor.uuid,
-                disabled: false,
-                duration: {
-                    rounds: 10,
-                },
-                flags: {
-                    "exaltedessence": {
-                        statusId: 'onslaught',
+        if (type === 'core') {
+            if (onslaught?.system?.changes) {
+                onslaught.name = `${game.i18n.localize("ExEss.ConcentratedAttacks")} (${onslaught.system.changes[0].value - number})`;
+                onslaught.system.changes[0].value = onslaught.system.changes[0].value - number;
+            }
+            else {
+                this.object.newTargetData.effects.push({
+                    name: game.i18n.localize("ExEss.ConcentratedAttacks"),
+                    img: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
+                    origin: this.object.target.actor.uuid,
+                    disabled: false,
+                    duration: {
+                        rounds: 10,
+                    },
+                    flags: {
+                        "exaltedessence": {
+                            statusId: 'onslaught',
+                        }
+                    },
+                    system: {
+                        changes: [
+                            {
+                                "key": "system.hardness.value",
+                                "value": 0,
+                                "mode": 2
+                            }
+                        ]
                     }
-                },
-                changes: [
-                    {
-                        "key": "system.hardness.value",
-                        "value": 0,
-                        "mode": 2
+                });
+            }
+        } else {
+            if (onslaught?.system?.changes) {
+                onslaught.name = `${game.i18n.localize("ExEss.WearingDown")} (${onslaught.system.changes[0].value - number})`;
+                onslaught.system.changes[0].value = onslaught.system.changes[0].value - number;
+                onslaught.system.changes[1].value = onslaught.system.changes[1].value - number;
+            } else {
+                this.object.newTargetData.effects.push({
+                    name: `${game.i18n.localize("ExEss.WearingDown")} (${number})`,
+                    img: 'systems/exaltedessence/assets/icons/surrounded-shield.svg',
+                    origin: this.object.target.actor.uuid,
+                    disabled: false,
+                    duration: {
+                        rounds: 10,
+                    },
+                    flags: {
+                        "exaltedessence": {
+                            statusId: 'onslaught',
+                        }
+                    },
+                    system: {
+                        changes: [
+                            {
+                                "key": "system.hardness.value",
+                                "value": number * -1,
+                                "mode": 2
+                            },
+                            {
+                                "key": "system.soak.value",
+                                "value": number * -1,
+                                "mode": 2
+                            }
+                        ]
                     }
-                ]
-            });
+                });
+            }
         }
     }
 
@@ -2394,19 +2385,21 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
     }
 
     _removeOnslaught() {
-        this.object.newTargetData.effects = this.object.newTargetData.effects.filter(i => i.flags.exaltedessence?.statusId !== "onslaught");
-        if (game.user.isGM) {
-            const onslaught = this.object.target.actor.effects.find(i => i.flags.exaltedessence?.statusId == "onslaught");
-            if (onslaught) {
-                onslaught.delete();
+        if (this.object.target) {
+            this.object.newTargetData.effects = this.object.newTargetData.effects.filter(i => i.flags.exaltedessence?.statusId !== "onslaught");
+            if (game.user.isGM) {
+                const onslaught = this.object.target.actor.effects.find(i => i.flags.exaltedessence?.statusId == "onslaught");
+                if (onslaught) {
+                    onslaught.delete();
+                }
             }
-        }
-        else {
-            game.socket.emit('system.exaltedessence', {
-                type: 'removeOnslaught',
-                id: this.object.target.id,
-                data: null,
-            });
+            else {
+                game.socket.emit('system.exaltedessence', {
+                    type: 'removeOnslaught',
+                    id: this.object.target.id,
+                    data: null,
+                });
+            }
         }
     }
 

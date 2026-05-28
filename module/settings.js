@@ -1,4 +1,43 @@
 export function registerSettings() {
+    game.settings.registerMenu('exaltedessence', 'rulesConfig', {
+        name: "ExEss.RulesConfig",
+        label: "ExEss.RulesConfigLabel",
+        hint: "ExEss.RulesConfigLabelDesc",
+        icon: "fa-solid fa-globe",
+        type: RulesConfigurator,
+        restricted: true,
+    });
+
+    game.settings.register("exaltedessence", "wearingDownFoes", {
+        name: game.i18n.localize('ExEss.WearingDownFoes'),
+        hint: game.i18n.localize('ExEss.WearingDownFoesDescription'),
+        scope: "world",
+        config: false,
+        type: Boolean,
+        ruleChange: true,
+        default: false
+    });
+
+    game.settings.register("exaltedessence", "fasterCombat", {
+        name: game.i18n.localize('ExEss.FasterCombat'),
+        hint: game.i18n.localize('ExEss.FasterCombatDescription'),
+        scope: "world",
+        config: false,
+        type: Boolean,
+        ruleChange: true,
+        default: false
+    });
+
+    game.settings.register("exaltedessence", "woundBonuses", {
+        name: game.i18n.localize('ExEss.WoundBonuses'),
+        hint: game.i18n.localize('ExEss.WoundBonusesDescription'),
+        scope: "world",
+        config: false,
+        type: Boolean,
+        ruleChange: true,
+        default: false
+    });
+
     game.settings.register("exaltedessence", "sheetStyle", {
         name: "ExEss.SheetStyle",
         hint: "ExEss.SheetStyleDescription",
@@ -68,7 +107,7 @@ export function registerSettings() {
         type: Boolean,
         config: true,
     });
-    
+
     game.settings.register('exaltedessence', 'weaponToWithering', {
         name: game.i18n.localize('ExEss.WeaponDamageWithering'),
         hint: game.i18n.localize('ExEss.WeaponDamageWitheringDescription'),
@@ -122,4 +161,48 @@ export function registerSettings() {
         default: ""
     });
 
+}
+
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
+class RulesConfigurator extends HandlebarsApplicationMixin(ApplicationV2) {
+
+    static PARTS = {
+        sheet: { template: "systems/exaltedessence/templates/dialogues/rules-config.html" },
+        footer: { template: "templates/generic/form-footer.hbs" }
+    };
+
+    static DEFAULT_OPTIONS = {
+        window: {
+            title: "Rules Config",
+        },
+        tag: "form",
+        form: {
+            handler: RulesConfigurator.myFormHandler,
+            submitOnClose: true,
+            submitOnChange: false,
+            closeOnSubmit: true
+        },
+        position: { width: 600 },
+        classes: [`standard-form`],
+    };
+
+    async _prepareContext(options) {
+        const context = await super._prepareContext(options);
+        context.settings = Array.from(game.settings.settings).filter(s => s[1].ruleChange && !s[1].homebrew).map(i => i[1]);
+        // context.homebrewSettings = Array.from(game.settings.settings).filter(s => s[1].ruleChange && s[1].homebrew).map(i => i[1]);
+
+        context.settings.forEach(s => s.inputType = s.type == Boolean ? "checkbox" : "text");
+        // context.homebrewSettings.forEach(s => s.inputType = s.type == Boolean ? "checkbox" : "text");
+
+        context.settings.forEach(s => s.value = game.settings.get(s.namespace, s.key));
+        // context.homebrewSettings.forEach(s => s.value = game.settings.get(s.namespace, s.key));
+        return context;
+    }
+
+    static async myFormHandler(event, form, formData) {
+        for (const setting in formData.object) {
+            game.settings.set("exaltedessence", setting, formData.object[setting]);
+        }
+    }
 }

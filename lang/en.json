@@ -20,28 +20,22 @@
     "ExEss.HealthLevels": "Health Levels",
     "ExEss.MajorVirtue": "Major Virtue",
     "ExEss.MinorVirtue": "Minor Virtue",
-
     "ExEss.DotColor": "Dot Color",
     "ExEss.DotColors": "Dot Colors",
     "ExEss.AnimaColor": "Anima Color",
-
     "ExEss.InitiativeIcon": "Initiative Icon",
     "ExEss.InitiativeIconColor": "Initiative Icon Color",
-
     "ExEss.Flowing": "Flowing",
     "ExEss.Still": "Still",
-
     "ExEss.Aura": "Aura",
     "ExEss.ActivateAura": "Activate Aura",
     "ExEss.Nature": "Nature",
     "ExEss.SacredHunt": "Sacred Hunt",
     "ExEss.DevilBody": "Devil Body",
-
     "ExEss.Anima": "Anima",
     "ExEss.Passive": "Passive",
     "ExEss.Active": "Active",
     "ExEss.Iconic": "Iconic",
-
     "ExEss.Animal": "Animal",
     "ExEss.Mortal": "Mortal",
     "ExEss.Elemental": "Elemental",
@@ -49,15 +43,12 @@
     "ExEss.God": "God",
     "ExEss.Undead": "Undead",
     "ExEss.Demon": "Demon",
-
     "ExEss.Creature": "Creature",
     "ExEss.Raksha": "Raksha",
-
     "ExEss.Behemoth": "Behemoth",
     "ExEss.Construct": "Construct",
     "ExEss.MagicCreature": "Magic Creature",
     "ExEss.WyldMonster": "Wyld Monster",
-
     "ExEss.Abyssal": "Abyssal",
     "ExEss.Alchemical": "Alchemical",
     "ExEss.Dragonblooded": "Dragonblooded",
@@ -69,49 +60,37 @@
     "ExEss.Sidereal": "Sidereal",
     "ExEss.Solar": "Solar",
     "ExEss.Other": "Other",
-
     "ExEss.GodBlooded": "God-Blooded",
     "ExEss.DragonKing": "Dragon King",
-
     "ExEss.Import": "Import",
     "ExEss.Folder": "Folder",
     "ExEss.Template": "Template",
-
     "ExEss.Mountain": "Mountain",
     "ExEss.Puppeteer": "Puppeteer",
-
     "ExEss.Terrestrial": "Terrestrial",
     "ExEss.Main": "Main",
-
     "ExEss.Sovereign": "Sovereign",
     "ExEss.Janest": "Janest",
     "ExEss.Umbral": "Umbral",
     "ExEss.Hearteater": "Hearteater",
     "ExEss.DreamSouled": "DreamSouled",
     "ExEss.Architect": "Architect",
-
     "ExEss.Charm": "Charm",
     "ExEss.QuickCharacter": "Quick Character",
-
     "ExEss.CharmType": "Charm Type",
-
     "ExEss.ItemSearch": "Item Search",
     "ExEss.Types": "Types",
     "ExEss.Filter": "Filter",
     "ExEss.ItemList": "Item List",
     "ExEss.IncludeWorldItems": "Include World Items",
     "ExEss.CharmFilters": "Charm Filters",
-
     "ExEss.Attribute": "Attribute",
     "ExEss.Attributes": "Attributes",
-
     "ExEss.Force": "Force",
     "ExEss.Finesse": "Finesse",
     "ExEss.Fortitude": "Fortitude",
-
     "ExEss.Ability": "Ability",
     "ExEss.Abilities": "Abilities",
-
     "ExEss.Combat": "Combat",
     "ExEss.Defense": "Defense",
     "ExEss.DefenseNPC": "Defense (NPC Only)",
@@ -120,29 +99,22 @@
     "ExEss.Soak": "Soak",
     "ExEss.Hardness": "Hardness",
     "ExEss.Resolve": "Resolve",
-
     "ExEss.Battlegroup": "Battlegroup",
     "ExEss.Size": "Size",
     "ExEss.Drill": "Drill",
-
     "ExEss.Equipped": "Equipped",
-
     "ExEss.Weapons": "Weapons",
     "ExEss.Accuracy": "Accuracy",
     "ExEss.Damage": "Damage",
     "ExEss.Overwhelming": "Overwhelming",
-
     "ExEss.Melee": "Melee",
     "ExEss.Ranged": "Ranged",
     "ExEss.Thrown": "Thrown",
-
     "ExEss.Armor": "Armor",
     "ExEss.Penalty": "Penalty",
-
     "ExEss.Attack": "Attack",
     "ExEss.Decisive": "Decisive",
     "ExEss.Withering": "Withering",
-
     "ExEss.Athletics": "Athletics",
     "ExEss.Awareness": "Awareness",
     "ExEss.CloseCombat": "Close Combat",
@@ -162,10 +134,10 @@
     "ExEss.Evocations": "Evocations",
     "ExEss.CurrentPenalty": "Current Penalty",
     "ExEss.WoundPenalty": "Wound Penalty",
+    "ExEss.WoundBonus": "Wound Bonus",
     "ExEss.Flurry": "Flurry",
     "ExEss.ArmorPenalty": "Armor Penalty",
     "ExEss.CurrentWoundPenalty": "Current Wound Penalty",
-
     "ExEss.TargetNumber": "Target Number",
     "ExEss.Reroll": "Reroll",
     "ExEss.RerollFailed": "Reroll Failed",
@@ -177,7 +149,6 @@
     "ExEss.Stunt": "Stunt",
     "ExEss.Dice": "Dice",
     "ExEss.JoinBattle": "Join Battle",
-
     "ExEss.Virtue": "Virtue",
     "ExEss.Virtues": "Virtues",
     "ExEss.Intimacy": "Intimacy",
@@ -197,7 +168,6 @@
     "ExEss.Description": "Description",
     "ExEss.Items": "Items",
     "ExEss.Templates": "Templates",
-
     "ExEss.FullDefense": "Full Defense",
     "ExEss.DefendOther": "Defend Other",
     "ExEss.Rush": "Rush",
@@ -207,14 +177,10 @@
     "ExEss.Sprint": "Sprint",
     "ExEss.RiseFromProne": "Rise From Prone",
     "ExEss.Opposed": "Opposed",
-
     "ExEss.CharmPrerequisites": "Charm Prerequisites",
     "ExEss.OtherPrerequisites": "Other Prerequisites",
-
     "ExEss.CharmImportHint": "CHARM NAME\nPrerequisites: Essence X, Ability X, Other Requirements\nDescription and mechanics of the charm.\nSECOND CHARM\nPrerequisites: Essence X, Ability X, Other Requirements\nSecond Charm Description",
-
     "ExEss.QCImportHint": "Place statblocks from Pillars of Creation here.\n\nThis importer will not work on the generic statblocks in the core rulebook.\n Watch for colons in item descriptions as that will cause issues with importing items",
-
     "ExEss.MilestonesExplain": "With milestones you may purchase the following advancements",
     "ExEss.PersonalMilestoneExplain": "Repurchase charm, add charm mode (including personal), add tertiary merit, aquire first dot in an ability",
     "ExEss.MinorMilestoneExplain": "Any Charm, Increase Ability by +1.",
@@ -222,79 +188,61 @@
     "ExEss.ExaltMilestoneExplain": "Minor or Personal Advancement. Must be spent on universal or exalt charms",
     "ExEss.EssenceIncrease": "Essence Increase",
     "ExEss.EssanceIncreaseExplain": "Receive 1 excellency or Ox-Body for free",
-
     "ExEss.Requirement": "Requirement",
-
     "ExEss.TraitSelection": "Trait Selection",
-
     "ExEss.Spell": "Spell",
     "ExEss.Spells": "Spells",
     "ExEss.Circle": "Circle",
-
     "ExEss.First": "First",
     "ExEss.Second": "Second",
     "ExEss.Third": "Third",
-
     "ExEss.FirstCircle": "First Circle",
     "ExEss.SecondCircle": "Second Circle",
     "ExEss.ThirdCircle": "Third Circle",
-
     "ExEss.Universal": "Universal",
     "ExEss.Necromancy": "Necromancy",
     "ExEss.Sorcery": "Sorcery",
     "ExEss.Cost": "Cost",
     "ExEss.Costs": "Costs",
     "ExEss.Gain": "Gain",
-
     "ExEss.Emerald": "Emerald",
     "ExEss.Sapphire": "Sapphire",
     "ExEss.Adamant": "Adamant",
-
     "ExEss.Points": "Points",
-
     "ExEss.Roll": "Roll",
     "ExEss.RollDice": "Roll Dice",
     "ExEss.RollAbility": "Roll Ability",
     "ExEss.RollPool": "Roll Pool",
-
     "ExEss.CatchBreath": "Catch Breath",
     "ExEss.FullRest": "Full Rest",
-
     "ExEss.Strength": "Strength",
     "ExEss.Milestones": "Milestones",
-
     "ExEss.Personal": "Personal",
     "ExEss.Minor": "Minor",
     "ExEss.Major": "Major",
     "ExEss.Type": "Type",
     "ExEss.Tie": "Tie",
     "ExEss.Principle": "Principle",
-
     "ExEss.BonusSuccesses": "Bonus Successes",
     "ExEss.MiscPenalty": "Misc Penalty",
     "ExEss.DicePenalty": "Dice Penalty",
     "ExEss.DiceModifier": "Dice Modifier",
     "ExEss.SuccessModifier": "Success Modifier",
-
     "ExEss.MiscBonus": "Misc Bonus",
     "ExEss.BonusDice": "Bonus Dice",
     "ExEss.Successes": "Successes",
     "ExEss.DamageDice": "Damage Dice",
     "ExEss.DamageSuccesses": "Damage Successes",
-
     "ExEss.Rating": "Rating",
     "ExEss.Primary": "Primary",
     "ExEss.Secondary": "Secondary",
     "ExEss.Tertiary": "Tertiary",
     "ExEss.Pool": "Pool",
     "ExEss.Pools": "Pools",
-
     "ExEss.IconTintColor": "Icon Tint Color",
-
     "ExEss.PrimaryPool": "Primary Pool",
     "ExEss.SecondaryPool": "Secondary Pool",
     "ExEss.TertiaryPool": "Tertiary Pool",
-
     "ExEss.Languages": "Languages",
     "ExEss.LowRealm": "Low Realm",
     "ExEss.HighRealm": "High Realm",
@@ -307,16 +255,13 @@
     "ExEss.Seatongue": "Seatongue",
     "ExEss.GuildCant": "Guild Cant",
     "ExEss.LocalTongue": "Local Tongue",
-
     "ExEss.TraitSave": "Update",
     "ExEss.TraitSelectorSpecial": "Special (Split with Semi-Colon)",
-
     "ExEss.Effects": "Effects",
     "ExEss.EffectNew": "Effect New",
     "ExEss.EffectTemporary": "Effect Temporary",
     "ExEss.EffectPassive": "Effect Passive",
     "ExEss.EffectInactive": "Effect Inactive",
-
     "ExEss.Add": "Add",
     "ExEss.EffectCreate": "Effect Create",
     "ExEss.EffectToggle": "Effect Toggle",
@@ -324,54 +269,41 @@
     "ExEss.EffectDelete": "Effect Delete",
     "ExEss.Duration": "Duration",
     "ExEss.Source": "Source",
-
     "ExEss.Social": "Social",
     "ExEss.Influence": "Influence",
     "ExEss.SocialInfluence": "Social Influence",
-
     "ExEss.ConcentratedAttacks": "Concentrated Attacks",
     "ExEss.ShowOnslaughtDescription": "Targets of withering attacks will suffer a -1 hardness per attack until hit with a decisive",
-
     "ExEss.UseActiveEffectsDropdown": "Use Active Effects Dropdown",
     "ExEss.UseActiveEffectsDropdownDescription": "Use a dropdown list for the key in active effects rather than an open input",
-
     "ExEss.Help": "Help",
-
     "ExEss.None": "None",
     "ExEss.Air": "Air",
     "ExEss.Earth": "Earth",
     "ExEss.Fire": "Fire",
     "ExEss.Water": "Water",
     "ExEss.Wood": "Wood",
-
     "ExEss.Blood": "Blood",
     "ExEss.Breath": "Breath",
     "ExEss.Flesh": "Flesh",
     "ExEss.Marrow": "Marrow",
     "ExEss.Soil": "Soil",
-
     "ExEss.ExcellentStrike": "Excellent Strike",
-
     "ExEss.Gambit": "Gambit",
     "ExEss.Gambits": "Gambits",
     "ExEss.PowerSpent": "Power Spent",
     "ExEss.ActiveEffects": "Active Effects",
-
     "ExEss.Conditions": "Conditions",
     "ExEss.Disarmed": "Disarmed",
     "ExEss.Prone": "Prone",
     "ExEss.Light": "Light",
     "ExEss.Medium": "Medium",
     "ExEss.Heavy": "Heavy",
-
     "ExEss.Mundane": "Mundane",
     "ExEss.Artifact": "Artifact",
-
     "ExEss.ArmorFilters": "Armor Filters",
     "ExEss.WeaponFilters": "Weapon Filters",
     "ExEss.SpellFilters": "Spell Filters",
-
-
     "ExEss.LightCover": "Light Cover",
     "ExEss.HeavyCover": "Heavy Cover",
     "ExEss.Surprised": "Surprised",
@@ -380,33 +312,27 @@
     "ExEss.Routing": "Routing",
     "ExEss.Concealment": "Concealment",
     "ExEss.Dematerialized": "Dematerialized",
-
     "ExEss.SupportingVirtue": "Supporting Virtue",
     "ExEss.OpposedVirtue": "Opposed Virtue",
     "ExEss.SupportingIntimacy": "Supporting Intimacy",
     "ExEss.OpposedIntimacy": "Opposed Intimacy",
     "ExEss.VisibleIntimacies": "Visible Intimacies",
     "ExEss.CharacterNotes": "Character Notes",
-    
     "ExEss.Save": "Save",
     "ExEss.Cancel": "Cancel",
     "ExEss.Close": "Close",
     "ExEss.Delete": "Delete",
     "ExEss.Tags": "Tags",
-
     "ExEss.PauseIcon": "Pause Icon",
     "ExEss.PauseIconDescription": "What the pause icon will look like",
-
     "ExEss.Balanced": "Balanced",
     "ExEss.Paired": "Paired",
     "ExEss.Improvised": "Improvised",
     "ExEss.TwoHanded": "Two-Handed",
-
     "ExEss.ReadMe": "Read Me",
     "ExEss.SaveRoll": "Save Roll",
     "ExEss.PickColor": "Pick Color",
     "ExEss.CalculateHealth": "Calculate Health",
-
     "ExEss.Update": "Update",
     "ExEss.AddCharm": "Add Charm",
     "ExEss.AddOpposingCharms": "Add Opposing Charms",
@@ -417,15 +343,12 @@
     "ExEss.DefensePenalty": "Defense Penalty",
     "ExEss.OnslaughtPenalty": "Onslaught Penalty",
     "ExEss.Onslaught": "Onslaught",
-
     "ExEss.WeaponTags": "Weapon Tags",
-
     "ExEss.DamageType": "Damage Type",
     "ExEss.AutoDecisiveDamage": "Auto Decisive Damage",
     "ExEss.AutoDecisiveDamageDescription": "Health damage will be automatically added to characeters hit by decisive attack.",
     "ExEss.Lethal": "Lethal",
     "ExEss.Aggravated": "Aggravated",
-
     "ExEss.BonusPower": "Bonus Power",
     "ExEss.WeaponDamageWithering": "Weapon damage to withering",
     "ExEss.WeaponDamageWitheringDescription": "Add weapon damage to withering attacks.",
@@ -441,11 +364,9 @@
     "ExEss.OtherModifiers": "Other Modifiers",
     "ExEss.IgnoreSoak": "Ignore Soak",
     "ExEss.HealthType": "Health Type",
-
     "ExEss.PenaltyZeroHealth": "Penalty Zero Health",
     "ExEss.PenaltyOneHealth": "Penalty One Health",
     "ExEss.PenaltyTwoHealth": "Penalty Two Health",
-
     "ExEss.SavedRolls": "Saved Rolls",
     "ExEss.SpecialAttacks": "Special Attacks",
     "ExEss.Preset": "Preset",
@@ -473,7 +394,6 @@
     "ExEss.ThrownDagger": "Thrown Dagger",
     "ExEss.OpposedBonuses": "Opposed Bonuses",
     "ExEss.OpposingCharms": "Opposing Charms",
-
     "ExEss.Disarm": "Disarm",
     "ExEss.Distract": "Distract",
     "ExEss.Ensnare": "Ensnare",
@@ -486,18 +406,13 @@
     "ExEss.Unhorse": "Unhorse",
     "ExEss.Tree": "Tree",
     "ExEss.Leaves": "Leaves",
-
     "ExEss.NoTargets": "No Targets",
-
     "ExEss.Activatable": "Activatable",
     "ExEss.SheetStyle": "Sheet Style",
     "ExEss.SheetStyleDescription": "The background image used on exalted sheets",
-
     "ExEss.NonTargetRollCards": "Non-Target Roll Cards",
     "ExEss.NonTargetRollCardsDescription": "Cards will display every time a character makes a roll.  Not just for targeted rolls.",
-    
     "ExEss.Stylings": "Stylings",
-
     "ExEss.AttributeExcellency": "Attribute Excellency",
     "ExEss.AbilityExcellency": "Ability Excellency",
     "ExEss.Rerolls": "Rerolls",
@@ -510,10 +425,19 @@
     "ExEss.Weight": "Weight",
     "ExEss.ItemTypes": "Item Types",
     "ExEss.BuildingPowerFor": "Building Power For",
-
     "ExEss.AutoAddToRolls": "Auto Add To Rolls (If Active)",
     "ExEss.CharacterRolls": "Character Rolls",
     "ExEss.OpposedRolls": "Opposed Rolls",
     "ExEss.SameAbilityAttribute": "Same Ability/Attribute",
-    "ExEss.Attacks": "Attacks"
+    "ExEss.Attacks": "Attacks",
+    "ExEss.RulesConfig": "Rules Config",
+    "ExEss.RulesConfigLabel": "Rules Configuration",
+    "ExEss.RulesConfigLabelDesc": "Various changes to rules in the system",
+    "ExEss.WearingDown": "Wearing Down",
+    "ExEss.WearingDownFoes": "Wearing Down Foes",
+    "ExEss.WearingDownFoesDescription": "Withering attacks and no damage decisives lower hardness and soak values.",
+    "ExEss.FasterCombat": "Faster Combat",
+    "ExEss.FasterCombatDescription": "Decisive attacks are not rolled but instead do full damage.",
+    "ExEss.WoundBonuses": "Wound Bonuses",
+    "ExEss.WoundBonusesDescription": "Wound penalties now add dice bonuses and apply penalties to defense/soak/hardness."
 }
