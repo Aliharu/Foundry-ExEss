@@ -48,6 +48,16 @@ export function registerSettings() {
         default: false
     });
 
+    game.settings.register("exaltedessence", "fearsomeSize", {
+        name: game.i18n.localize('ExEss.FearsomeSize'),
+        hint: game.i18n.localize('ExEss.FearsomeSizeDescription'),
+        scope: "world",
+        config: false,
+        type: Boolean,
+        ruleChange: true,
+        default: false
+    });
+
     game.settings.register("exaltedessence", "alternateAnima", {
         name: game.i18n.localize('ExEss.AlternateAnima'),
         hint: game.i18n.localize('ExEss.AlternateAnimaDescription'),
@@ -56,6 +66,16 @@ export function registerSettings() {
         type: Boolean,
         ruleChange: true,
         default: false
+    });
+
+    game.settings.register('exaltedessence', 'weaponToWithering', {
+        name: game.i18n.localize('ExEss.WeaponDamageWithering'),
+        hint: game.i18n.localize('ExEss.WeaponDamageWitheringDescription'),
+        default: false,
+        scope: 'world',
+        type: Boolean,
+        config: true,
+        ruleChange: true,
     });
 
     game.settings.register("exaltedessence", "sheetStyle", {
@@ -123,15 +143,6 @@ export function registerSettings() {
         name: game.i18n.localize('ExEss.AutoDecisiveDamage'),
         hint: game.i18n.localize('ExEss.AutoDecisiveDamageDescription'),
         default: true,
-        scope: 'world',
-        type: Boolean,
-        config: true,
-    });
-
-    game.settings.register('exaltedessence', 'weaponToWithering', {
-        name: game.i18n.localize('ExEss.WeaponDamageWithering'),
-        hint: game.i18n.localize('ExEss.WeaponDamageWitheringDescription'),
-        default: false,
         scope: 'world',
         type: Boolean,
         config: true,

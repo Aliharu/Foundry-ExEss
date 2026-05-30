@@ -442,6 +442,8 @@
     "ExEss.WoundBonusesDescription": "Wound penalties now add dice bonuses and apply penalties to defense/soak/hardness.",
     "ExEss.PowerfulSpells": "Powerful Spells",
     "ExEss.PowerfulSpellsDescription": "Increase difficulty of Focus Will to 4,  Boosts combat spell damage.",
+    "ExEss.FearsomeSize": "Fearsome Size",
+    "ExEss.FearsomeSizeDescription": "If battlegroups size is greater than weapon damage bonus use size for damage bonus. Power resets to size after a decisive attack instead of 0.",
     "ExEss.AlternateAnima": "Alternate Anima",
     "ExEss.AlternateAnimaDescription": "Alternate Anima Description"
 }

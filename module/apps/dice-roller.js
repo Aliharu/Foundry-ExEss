@@ -170,6 +170,9 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 if (this.actor.type === 'npc') {
                     if (this.actor.system.battlegroup) {
                         this.object.overwhelming = Math.min(this.actor.system.size.value + 1, 5);
+                        if (game.settings.get("exaltedessence", "fearsomeSize")) {
+                            this.object.damage.damageSuccessModifier = Math.max(this.actor.system.size.value, this.object.damage.damageSuccessModifier);
+                        }
                     }
                 }
                 this.object.weaponType = data.weapon.weapontype || "melee";
@@ -2138,9 +2141,9 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                         preRollMacros: [],
                         macros: [],
                     }
-                    diceRollResults = await this._calculateRoll(damage, rollModifiers);
+                    diceRollResults = await this._calculateRoll(damageDicePool, rollModifiers);
                     if (this.object.damage.rollTwice) {
-                        const secondRoll = await this._calculateRoll(damage, rollModifiers);
+                        const secondRoll = await this._calculateRoll(damageDicePool, rollModifiers);
                         if (secondRoll.total > diceRollResults.total) {
                             diceRollResults = secondRoll;
                         }
@@ -2150,6 +2153,9 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
 
                 let damageTotal = Math.max(0, rolledDamageSuccesses - Math.max(0, this.object.soak - this.object.damage.ignoreSoak));
                 actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.power);
+                if (game.settings.get("exaltedessence", "fearsomeSize") && this.actor.system.battlegroup) {
+                    actorData.system.power.value = Math.max(this.actor.system.size.value, actorData.system.power.value);
+                }
 
                 this.actor.update(actorData);
                 if (damageTotal > 0) {
