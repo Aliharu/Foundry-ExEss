@@ -504,12 +504,14 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             this._checkAttributeBonuses();
             this._checkExcellencyBonuses();
 
-            if (excellencyTrue) {
-                this.object.cost.motes++;
-            }
+            if (this.actor.system.details.exalt !== 'solar' && (!game.settings.get("exaltedessence", "alternateAnima") || this.actor.system.anima.value < 3)) {
+                if (excellencyTrue) {
+                    this.object.cost.motes++;
+                }
 
-            if (excellencyFalse) {
-                this.object.cost.motes--;
+                if (excellencyFalse) {
+                    this.object.cost.motes--;
+                }
             }
         }
 
@@ -1452,19 +1454,6 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             this.render();
         });
 
-        html.on("change", ".excellency-check", ev => {
-            if (this.actor.system.details.exalt !== 'solar') {
-                if (ev.target.checked) {
-                    this.object.cost.motes++;
-                }
-                else {
-                    this.object.cost.motes--;
-                }
-            }
-            this._checkExcellencyBonuses();
-            this.render();
-        });
-
         html.find('.add-charm').click(ev => {
             ev.stopPropagation();
             let li = $(ev.currentTarget).parents(".item");
@@ -1973,7 +1962,10 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
     }
 
     _buildResource() {
-        var total = this.object.diceRollTotal - 3;
+        let total = this.object.diceRollTotal - 3;
+        if (this.object.rollType === 'focusWill' && game.settings.get("exaltedessence", "powerfulSpells")) {
+            total--;
+        }
         let self = (this.object.buildPowerTarget || 'self') === 'self';
 
         var message = '';
@@ -2636,25 +2628,30 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
 
     async _updateRollerResources() {
         const actorData = foundry.utils.duplicate(this.actor);
-        var newAnimaValue = Math.max(0, actorData.system.anima.value - this.object.cost.anima + this.object.gain.anima);
+        let newAnimaValue = Math.max(0, actorData.system.anima.value - this.object.cost.anima + this.object.gain.anima);
+        let moteCost = this.object.cost.motes;
+        if (game.settings.get("exaltedessence", "alternateAnima")) {
+            moteCost += this.actor.altAnimaSpendConversion(this.object.cost.anima);
+        } else {
+            actorData.system.anima.value = newAnimaValue;
+        }
         if (actorData.system.details.exalt === 'getimian') {
             if (actorData.system.settings.charmspendpool === 'still') {
-                actorData.system.still.value = Math.max(0, actorData.system.still.value - this.object.cost.motes - this.object.cost.committed);
+                actorData.system.still.value = Math.max(0, actorData.system.still.value - moteCost - this.object.cost.committed);
                 actorData.system.still.value += this.object.gain.motes;
             }
             if (actorData.system.settings.charmspendpool === 'flowing') {
-                actorData.system.flowing.value = Math.max(0, actorData.system.flowing.value - this.object.cost.motes - this.object.cost.committed);
+                actorData.system.flowing.value = Math.max(0, actorData.system.flowing.value - moteCost - this.object.cost.committed);
                 actorData.system.flowing.value += this.object.gain.motes;
             }
         }
         else {
-            actorData.system.motes.value = Math.max(0, actorData.system.motes.value - this.object.cost.motes - this.object.cost.committed + this.object.gain.motes);
+            actorData.system.motes.value = Math.max(0, actorData.system.motes.value - moteCost - this.object.cost.committed + this.object.gain.motes);
         }
         actorData.system.motes.committed += this.object.cost.committed;
         actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - this.object.cost.stunt);
         actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.cost.power + this.object.gain.power);
         this.object.power = actorData.system.power.value;
-        actorData.system.anima.value = newAnimaValue;
         let totalHealth = 0;
         for (let [key, health_level] of Object.entries(actorData.system.health.levels)) {
             totalHealth += health_level.value;

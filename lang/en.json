@@ -439,5 +439,9 @@
     "ExEss.FasterCombat": "Faster Combat",
     "ExEss.FasterCombatDescription": "Decisive attacks are not rolled but instead do full damage.",
     "ExEss.WoundBonuses": "Wound Bonuses",
-    "ExEss.WoundBonusesDescription": "Wound penalties now add dice bonuses and apply penalties to defense/soak/hardness."
+    "ExEss.WoundBonusesDescription": "Wound penalties now add dice bonuses and apply penalties to defense/soak/hardness.",
+    "ExEss.PowerfulSpells": "Powerful Spells",
+    "ExEss.PowerfulSpellsDescription": "Increase difficulty of Focus Will to 4,  Boosts combat spell damage.",
+    "ExEss.AlternateAnima": "Alternate Anima",
+    "ExEss.AlternateAnimaDescription": "Alternate Anima Description"
 }

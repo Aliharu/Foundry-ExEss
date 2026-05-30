@@ -153,7 +153,8 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
       isNPC: this.actor.type === 'npc',
       collapseStates: this.collapseStates,
       selects: CONFIG.EXALTEDESSENCE.selects,
-      isExalt: this.actor.type === 'character' || this.actor.system.creaturetype === 'exalt'
+      isExalt: this.actor.type === 'character' || this.actor.system.creaturetype === 'exalt',
+      useAlternateAnima: game.settings.get("exaltedessence", "alternateAnima"),
     };
 
     if (this.document.limited) {
@@ -446,10 +447,6 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
 
   static updateAnima(event, target) {
     this.actor.updateAnima(target.dataset.direction);
-  }
-
-  _updateAnima(direction) {
-    this.actor.update({ [`system.anima.value`]: direction === 'up' ? Math.min(10, this.actor.system.anima.value + 1) : Math.max(0, this.actor.system.anima.value - 1) });
   }
 
   /**

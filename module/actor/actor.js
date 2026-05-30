@@ -162,20 +162,22 @@ export class ExaltedessenceActor extends Actor {
       const newMotes = Math.max(0, this.system.motes.value - commitChange);
       updateData.system.motes.value = newMotes;
     }
-    if (updateData?.system?.motes?.value !== undefined && updateData?.system?.motes?.value !== this.system.motes.value) {
-      const animaChange = Math.max(0, this.system.motes.value - updateData?.system?.motes?.value);
-      const newAnima = Math.min(10, this.system.anima.value + animaChange);
-      updateData.system.anima = { 'value': newAnima };
-    }
-    if (updateData?.system?.flowing?.value !== undefined && updateData?.system?.flowing?.value !== this.system.flowing.value) {
-      const animaChange = Math.max(0, this.system.flowing.value - updateData?.system?.flowing?.value);
-      const newAnima = Math.min(10, this.system.anima.value + animaChange);
-      updateData.system.anima = { 'value': newAnima };
-    }
-    if (updateData?.system?.still?.value !== undefined && updateData?.system?.still?.value !== this.system.still.value) {
-      const animaChange = Math.max(0, this.system.still.value - updateData?.system?.still?.value);
-      const newAnima = Math.min(10, this.system.anima.value + animaChange);
-      updateData.system.anima = { 'value': newAnima };
+    if (!game.settings.get("exaltedessence", "alternateAnima")) {
+      if (updateData?.system?.motes?.value !== undefined && updateData?.system?.motes?.value !== this.system.motes.value) {
+        const animaChange = Math.max(0, this.system.motes.value - updateData?.system?.motes?.value);
+        const newAnima = Math.min(10, this.system.anima.value + animaChange);
+        updateData.system.anima = { 'value': newAnima };
+      }
+      if (updateData?.system?.flowing?.value !== undefined && updateData?.system?.flowing?.value !== this.system.flowing.value) {
+        const animaChange = Math.max(0, this.system.flowing.value - updateData?.system?.flowing?.value);
+        const newAnima = Math.min(10, this.system.anima.value + animaChange);
+        updateData.system.anima = { 'value': newAnima };
+      }
+      if (updateData?.system?.still?.value !== undefined && updateData?.system?.still?.value !== this.system.still.value) {
+        const animaChange = Math.max(0, this.system.still.value - updateData?.system?.still?.value);
+        const newAnima = Math.min(10, this.system.anima.value + animaChange);
+        updateData.system.anima = { 'value': newAnima };
+      }
     }
     if (updateData?.system?.anima?.value !== undefined && updateData?.system?.anima?.value !== this.system.anima.value) {
       animaTokenMagic(this, updateData.system.anima.value);
@@ -185,20 +187,30 @@ export class ExaltedessenceActor extends Actor {
   _prepareBaseActorData(system) {
     system.motes.max = Math.min(15, system.essence.value * 2 + Math.floor((system.essence.value - 1) / 2) + 3);
     let animaLevel = "";
-    if (system.anima.value >= 1) {
-      animaLevel = "dim";
-    }
-    if (system.anima.value >= 3) {
-      animaLevel = "glowing";
-    }
-    if (system.anima.value >= 5) {
-      animaLevel = "burning";
-    }
-    if (system.anima.value >= 7) {
-      animaLevel = "bonfire";
-    }
-    if (system.anima.value === 10) {
-      animaLevel = "iconic";
+    if (game.settings.get("exaltedessence", "alternateAnima")) {
+      const animaMap = {
+        0: 'dim',
+        1: 'glowing',
+        2: 'burning',
+        3: 'iconic',
+      };
+      animaLevel = animaMap[system.anima.value];
+    } else {
+      if (system.anima.value >= 1) {
+        animaLevel = "dim";
+      }
+      if (system.anima.value >= 3) {
+        animaLevel = "glowing";
+      }
+      if (system.anima.value >= 5) {
+        animaLevel = "burning";
+      }
+      if (system.anima.value >= 7) {
+        animaLevel = "bonfire";
+      }
+      if (system.anima.value === 10) {
+        animaLevel = "iconic";
+      }
     }
     system.anima.level = animaLevel;
   }
@@ -219,21 +231,26 @@ export class ExaltedessenceActor extends Actor {
       }
     } else {
       if (item.type === 'charm') {
+        let moteCost = item.system.cost.motes;
+        if (game.settings.get("exaltedessence", "alternateAnima")) {
+          moteCost += this.altAnimaSpendConversion(item.system.cost.anima);
+        } else {
+          actorData.system.anima.value = Math.max(0, actorData.system.anima.value - item.system.cost.anima + item.system.gain.anima);
+        }
         if (actorData.system.details.exalt === 'getimian') {
           if (actorData.system.settings.charmspendpool === 'still') {
-            actorData.system.still.value = Math.max(0, actorData.system.still.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
+            actorData.system.still.value = Math.max(0, actorData.system.still.value - moteCost - item.system.cost.committed + item.system.gain.motes);
           }
           if (actorData.system.settings.charmspendpool === 'flowing') {
-            actorData.system.flowing.value = Math.max(0, actorData.system.flowing.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
+            actorData.system.flowing.value = Math.max(0, actorData.system.flowing.value - moteCost - item.system.cost.committed + item.system.gain.motes);
           }
         }
         else {
-          actorData.system.motes.value = Math.max(0, actorData.system.motes.value - item.system.cost.motes - item.system.cost.committed + item.system.gain.motes);
+          actorData.system.motes.value = Math.max(0, actorData.system.motes.value - moteCost - item.system.cost.committed + item.system.gain.motes);
         }
         actorData.system.motes.committed += item.system.cost.committed;
         actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - item.system.cost.stunt);
         actorData.system.power.value = Math.max(0, actorData.system.power.value - item.system.cost.power + item.system.gain.power);
-        actorData.system.anima.value = Math.max(0, actorData.system.anima.value - item.system.cost.anima + item.system.gain.anima);
         if (item.system.cost.health) {
           let totalHealth = actorData.type === 'character' ? 0 : actorData.system.health.levels;
           if (actorData.type === 'character') {
@@ -292,7 +309,17 @@ export class ExaltedessenceActor extends Actor {
   }
 
   updateAnima(direction) {
-    this.update({ [`system.anima.value`]: direction === 'up' ? Math.min(10, this.system.anima.value + 1) : Math.max(0, this.system.anima.value - 1) });
+    this.update({ [`system.anima.value`]: direction === 'up' ? Math.min((game.settings.get("exaltedessence", "alternateAnima") ? 3 : 10), this.system.anima.value + 1) : Math.max(0, this.system.anima.value - 1) });
+  }
+
+  altAnimaSpendConversion(animaCost) {
+    if (animaCost > 0 && animaCost < 5 && this.system.anima.value < 2) {
+      return 1;
+    }
+    if (animaCost >= 5 && this.system.anima.value < 3) {
+      return 2;
+    }
+    return 0;
   }
 
   getSheetBackground() {
@@ -529,14 +556,26 @@ async function animaTokenMagic(actor, newAnimaValue) {
 
     if (actorToken) {
       await TokenMagic.deleteFilters(actorToken);
-      if (newAnimaValue > 2) {
-        if (newAnimaValue >= 7) {
+      let animaMap = {
+        glowing: 2,
+        burning: 5,
+        bonfire: 7,
+      }
+      if (game.settings.get("exaltedessence", "alternateAnima")) {
+        animaMap = {
+          glowing: 1,
+          burning: 2,
+          bonfire: 3,
+        }
+      }
+      if (newAnimaValue > animaMap['glowing']) {
+        if (newAnimaValue >= animaMap['bonfire']) {
           await TokenMagic.addUpdateFilters(actorToken, bonfire);
           if (actorToken.actor.system.details.caste.toLowerCase() === "sovereign") {
             await TokenMagic.addUpdateFilters(actorToken, sovereign);
           }
         }
-        else if (newAnimaValue >= 5) {
+        else if (newAnimaValue >= animaMap['burning']) {
           await TokenMagic.addUpdateFilters(actorToken, burning);
           if (actorToken.actor.system.details.caste.toLowerCase() === "sovereign") {
             await TokenMagic.addUpdateFilters(actorToken, sovereign);

@@ -80,6 +80,7 @@
                 </div>
             </div>
             <div class="resource-content flexrow flex-center flex-between">
+                {{#unless useAlternateAnima}}
                 <div>
                     <a data-action="updateAnima" data-direction="down"><i
                             class="fas fa-caret-down cursor-pointer"></i></a><label class="resource-label">{{localize
@@ -87,7 +88,14 @@
                             class="fas fa-caret-up cursor-pointer"></i></a>
                     <input type="number" name="system.anima.value" value="{{system.anima.value}}" data-dtype="Number" />
                 </div>
+                {{/unless}}
                 <div>
+                    {{#if useAlternateAnima}}
+                    <a data-action="updateAnima" data-direction="down"><i
+                            class="fas fa-caret-down cursor-pointer"></i></a><label class="resource-label">{{localize
+                        "ExEss.Anima"}}</label><a data-action="updateAnima" data-direction="up"><i
+                            class="fas fa-caret-up cursor-pointer"></i></a>
+                    {{/if}}
                     <div class="resource-label" style="margin-top: 18px;">{{system.anima.level}}</div>
                 </div>
             </div>

@@ -38,6 +38,26 @@ export function registerSettings() {
         default: false
     });
 
+    game.settings.register("exaltedessence", "powerfulSpells", {
+        name: game.i18n.localize('ExEss.PowerfulSpells'),
+        hint: game.i18n.localize('ExEss.PowerfulSpellsDescription'),
+        scope: "world",
+        config: false,
+        type: Boolean,
+        ruleChange: true,
+        default: false
+    });
+
+    game.settings.register("exaltedessence", "alternateAnima", {
+        name: game.i18n.localize('ExEss.AlternateAnima'),
+        hint: game.i18n.localize('ExEss.AlternateAnimaDescription'),
+        scope: "world",
+        config: false,
+        type: Boolean,
+        ruleChange: true,
+        default: false
+    });
+
     game.settings.register("exaltedessence", "sheetStyle", {
         name: "ExEss.SheetStyle",
         hint: "ExEss.SheetStyleDescription",

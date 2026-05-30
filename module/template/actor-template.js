@@ -22,7 +22,7 @@ class CommonActorData extends foundry.abstract.TypeDataModel {
         nature: new fields.StringField({ initial: "" }),
       }),
       motes: new fields.SchemaField({
-        value: new fields.NumberField({ initial: 0 }),
+        value: new fields.NumberField({ initial: 5 }),
         min: new fields.NumberField({ initial: 0 }),
         max: new fields.NumberField({ initial: 5 }),
         committed: new fields.NumberField({ initial: 0 }),
