@@ -2,8 +2,8 @@
     {{#if isNPC}}
     <div class="flex-group-center">
         <div class="flex-group-left pool">
-            <label class="resource-label roll-pool" data-action="makeActionRoll" data-rolltype="ability" data-roll="{{pool.primary.value}}"
-                data-pool="primary">
+            <label class="resource-label roll-pool" data-action="makeActionRoll" data-rolltype="ability"
+                data-roll="{{pool.primary.value}}" data-pool="primary">
                 {{localize "ExEss.Primary"}} {{localize "ExEss.Pool"}}
             </label>
             <div class="d-flex">
@@ -14,8 +14,8 @@
             </div>
         </div>
         <div class="flex-group-left pool">
-            <label class="resource-label roll-pool" data-action="makeActionRoll" data-rolltype="ability" data-roll="{{pool.secondary.value}}"
-                data-pool="secondary">
+            <label class="resource-label roll-pool" data-action="makeActionRoll" data-rolltype="ability"
+                data-roll="{{pool.secondary.value}}" data-pool="secondary">
                 {{localize "ExEss.Secondary"}} {{localize "ExEss.Pool"}}
             </label>
             <div class="d-flex">
@@ -26,8 +26,8 @@
             </div>
         </div>
         <div class="flex-group-left pool">
-            <label class="resource-label roll-pool" data-action="makeActionRoll" data-rolltype="ability" data-roll="{{pool.tertiary.value}}"
-                data-pool="tertiary">
+            <label class="resource-label roll-pool" data-action="makeActionRoll" data-rolltype="ability"
+                data-roll="{{pool.tertiary.value}}" data-pool="tertiary">
                 {{localize "ExEss.Tertiary"}} {{localize "ExEss.Pool"}}
             </label>
             <div class="d-flex">
@@ -111,7 +111,7 @@
                     </div>
                 </div>
             </div>
-            <div class="grid grid-4col flex-group-center">
+            <div class="grid grid-3col flex-group-center">
                 {{#if isNPC}}
                 <div class="resource-content flexrow flex-center flex-between">
                     <div>
@@ -127,8 +127,6 @@
                         <input type="number" name="system.parry.value" value="{{system.parry.value}}"
                             data-dtype="Number" />
                     </div>
-                </div>
-                <div class="resource-content flexrow flex-center flex-between">
                     <div>
                         <label class="resource-label">{{localize "ExEss.Evasion"}}</label>
                         <input type="number" name="system.evasion.value" value="{{system.evasion.value}}"
@@ -142,11 +140,22 @@
                         <input type="number" name="system.soak.value" value="{{system.soak.value}}"
                             data-dtype="Number" />
                     </div>
+                    {{#if useCombatReforged}}
+                    <div>
+                        <label class="resource-label">{{localize "ExEss.Poise"}}</label>
+                        <div class="resource-content flexrow flex-center flex-between">
+                            <input type="number" name="system.poise.value" value="{{system.poise.value}}"
+                                data-dtype="Number" />/<input type="number" name="system.poise.max"
+                                value="{{system.poise.max}}" data-dtype="Number" />
+                        </div>
+                    </div>
+                    {{else}}
                     <div>
                         <label class="resource-label">{{localize "ExEss.Hardness"}}</label>
                         <input type="number" name="system.hardness.value" value="{{system.hardness.value}}"
                             data-dtype="Number" />
                     </div>
+                    {{/if}}
                 </div>
                 <div class="resource-content flexrow flex-center flex-between">
                     <div>

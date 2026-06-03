@@ -98,6 +98,8 @@
     "ExEss.Evasion": "Evasion",
     "ExEss.Soak": "Soak",
     "ExEss.Hardness": "Hardness",
+    "ExEss.Poise": "Poise",
+    "ExEss.Hardness/Poise": "Hardness/Poise",
     "ExEss.Resolve": "Resolve",
     "ExEss.Battlegroup": "Battlegroup",
     "ExEss.Size": "Size",
@@ -148,6 +150,11 @@
     "ExEss.Excellency": "Excellency",
     "ExEss.Stunt": "Stunt",
     "ExEss.Dice": "Dice",
+    "ExEss.CloseRange": "Close Range",
+    "ExEss.ShortRange": "Short Range",
+    "ExEss.MediumRange": "Medium Range",
+    "ExEss.LongRange": "Long Range",
+    "ExEss.ExtremeRange": "Extreme Range",
     "ExEss.JoinBattle": "Join Battle",
     "ExEss.Virtue": "Virtue",
     "ExEss.Virtues": "Virtues",
@@ -310,6 +317,7 @@
     "ExEss.Incapacitated": "Incapacitated",
     "ExEss.Hindered": "Hindered",
     "ExEss.Routing": "Routing",
+    "ExEss.Break": "Break",
     "ExEss.Concealment": "Concealment",
     "ExEss.Dematerialized": "Dematerialized",
     "ExEss.SupportingVirtue": "Supporting Virtue",
@@ -445,5 +453,7 @@
     "ExEss.FearsomeSize": "Fearsome Size",
     "ExEss.FearsomeSizeDescription": "If battlegroups size is greater than weapon damage bonus use size for damage bonus. Power resets to size after a decisive attack instead of 0.",
     "ExEss.AlternateAnima": "Alternate Anima",
-    "ExEss.AlternateAnimaDescription": "Alternate Anima Description"
+    "ExEss.AlternateAnimaDescription": "Alternate Anima Description",
+    "ExEss.CombatReforged": "Combat Reforged",
+    "ExEss.CombatReforgedDescription": "Use the 'Essence Combat Reforged' combat system from the Storytellers Guide."
 }

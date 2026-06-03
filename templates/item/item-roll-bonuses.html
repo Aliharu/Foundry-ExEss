@@ -9,23 +9,19 @@
         </div>
         <div>
             <label class="resource-label">{{localize "ExEss.SuccessBonus"}} </label>
-            <input name="system.diceroller.bonussuccesses" value="{{system.diceroller.bonussuccesses}}"
-                type="number">
+            <input name="system.diceroller.bonussuccesses" value="{{system.diceroller.bonussuccesses}}" type="number">
         </div>
         <div>
             <label class="resource-label">{{localize "ExEss.DoubleSuccess"}} + </label>
-            <input name="system.diceroller.doublesuccess" value="{{system.diceroller.doublesuccess}}"
-                type="number">
+            <input name="system.diceroller.doublesuccess" value="{{system.diceroller.doublesuccess}}" type="number">
         </div>
         <div>
             <label class="resource-label">{{localize "ExEss.RerollNumDice"}} </label>
-            <input name="system.diceroller.rerolldice" value="{{system.diceroller.rerolldice}}"
-                type="number">
+            <input name="system.diceroller.rerolldice" value="{{system.diceroller.rerolldice}}" type="number">
         </div>
         <div>
             <label class="resource-label">{{localize "ExEss.DicetoSuccesses"}} </label>
-            <input name="system.diceroller.dicetosuccesses" value="{{system.diceroller.dicetosuccesses}}"
-                type="number">
+            <input name="system.diceroller.dicetosuccesses" value="{{system.diceroller.dicetosuccesses}}" type="number">
         </div>
         <div>
             <label class="resource-label">{{localize "ExEss.RerollFailed"}} </label>
@@ -55,7 +51,8 @@
     <div class="resource grid grid-3col flex-center">
         <div>
             <label class="resource-label">{{localize "ExEss.DiceBonus"}} </label>
-            <input name="system.diceroller.damage.bonusdice" value="{{system.diceroller.damage.bonusdice}}" type="number">
+            <input name="system.diceroller.damage.bonusdice" value="{{system.diceroller.damage.bonusdice}}"
+                type="number">
         </div>
         <div>
             <label class="resource-label">{{localize "ExEss.SuccessBonus"}} </label>
@@ -75,7 +72,8 @@
         <div>
             <label class="resource-label">{{localize "ExEss.DoubleExtraSuccesses"}} </label>
             <div>
-                <input type="checkbox" name="system.diceroller.damage.doubleextrasuccess" {{checked system.diceroller.damage.doubleextrasuccess}}>
+                <input type="checkbox" name="system.diceroller.damage.doubleextrasuccess" {{checked
+                    system.diceroller.damage.doubleextrasuccess}}>
             </div>
         </div>
     </div>
@@ -85,8 +83,8 @@
     <div>
         {{localize "ExEss.OpposedBonuses"}}
     </div>
-    <input name="system.diceroller.opposedbonuses.enabled" 
-        type="checkbox" {{checked system.diceroller.opposedbonuses.enabled}}>
+    <input name="system.diceroller.opposedbonuses.enabled" type="checkbox" {{checked
+        system.diceroller.opposedbonuses.enabled}}>
 </div>
 <div>
     <div class="resource grid grid-3col flex-center">
@@ -97,11 +95,19 @@
         </div>
         <div>
             <label class="resource-label">{{localize "ExEss.Defense"}}</label>
-            <input name="system.diceroller.opposedbonuses.defense" value="{{system.diceroller.opposedbonuses.defense}}" type="number">
+            <input name="system.diceroller.opposedbonuses.defense" value="{{system.diceroller.opposedbonuses.defense}}"
+                type="number">
         </div>
         <div>
             <label class="resource-label">{{localize "ExEss.Soak"}}</label>
-            <input name="system.diceroller.opposedbonuses.soak" value="{{system.diceroller.opposedbonuses.soak}}" type="number">
+            <input name="system.diceroller.opposedbonuses.soak" value="{{system.diceroller.opposedbonuses.soak}}"
+                type="number">
         </div>
+        <div>
+            <label class="resource-label">{{hardnessLabel}}</label>
+            <input name="system.diceroller.opposedbonuses.hardness" value="{{system.diceroller.opposedbonuses.hardness}}"
+                type="number">
+        </div>
+        
     </div>
 </div>

@@ -49,6 +49,22 @@
                         <input class="total-input" type="number" value="{{totalOpposedBonuses.resolve}}" disabled>
                     </div>
                 </div>
+                {{#if useCombatReforged}}
+                <div class="opposed-info-inputs">
+                    <div class="resource-label opposed-bonus-label">{{localize "ExEss.Poise"}}</div>
+                    <div class="mb-1">
+                        <input class="locked-input" type="number" name="object.addOppose.addedBonus.poise"
+                            value="{{data.addOppose.addedBonus.poise}}" disabled>
+                    </div>
+                    <div class="mb-1">
+                        <input type="number" name="object.addOppose.manualBonus.poise"
+                            value="{{data.addOppose.manualBonus.poise}}">
+                    </div>
+                    <div>
+                        <input class="total-input" type="number" value="{{totalOpposedBonuses.poise}}" disabled>
+                    </div>
+                </div>
+                {{/if}}
             </div>
         </div>
     </div>
@@ -102,7 +118,16 @@
         </div>
         {{/ifEquals}}
 
-        <div></div>
+        {{#if isAttackRoll}}
+        {{#if useCombatReforged}}
+        <div>
+            <select name="object.range" value="{{data.range}}" data-type="String">
+                {{selectOptions selects.ranges selected=data.range localize=true}}
+            </select>
+        </div>
+        {{/if}}
+        {{/if}}
+
         {{#ifEquals actor.system.details.exalt 'dragonblooded'}}
         <div>
             <div class="resource-label">{{localize "ExEss.ActivateAura"}}</div>

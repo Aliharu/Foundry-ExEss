@@ -68,6 +68,16 @@ export function registerSettings() {
         default: false
     });
 
+    game.settings.register("exaltedessence", "combatReforged", {
+        name: game.i18n.localize('ExEss.CombatReforged'),
+        hint: game.i18n.localize('ExEss.CombatReforgedDescription'),
+        scope: "world",
+        config: false,
+        type: Boolean,
+        ruleChange: true,
+        default: false
+    });
+
     game.settings.register('exaltedessence', 'weaponToWithering', {
         name: game.i18n.localize('ExEss.WeaponDamageWithering'),
         hint: game.i18n.localize('ExEss.WeaponDamageWitheringDescription'),

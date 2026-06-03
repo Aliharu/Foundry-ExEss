@@ -55,6 +55,7 @@ class CommonActorData extends foundry.abstract.TypeDataModel {
       armoredsoak: statField(0),
       naturalsoak: statField(1),
       hardness: statField(3),
+      poise: resourceField(3, 3),
       stunt: statField(0),
       resolve: statField(2),
       savedRolls: new fields.ObjectField({ initial: {} }),

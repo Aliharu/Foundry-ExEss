@@ -170,6 +170,9 @@ Hooks.once('init', async function () {
             await game.canvas.tokens.get(id).toggleStatusEffect(status);
           }
         }
+        if (targetedActor.effects.find(e => e.statuses.has('break') && targetedActor.system.poise.value >= targetedActor.system.poise.max)) {
+          await game.canvas.tokens.get(id).toggleStatusEffect('break');
+        }
       }
     }
 

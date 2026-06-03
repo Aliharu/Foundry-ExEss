@@ -81,7 +81,7 @@
       <div class="item-name">Name</div>
       <div class="item-name">{{localize "ExEss.Soak"}}</div>
       <div class="item-name">{{localize "ExEss.Penalty"}}</div>
-      <div class="item-name">{{localize "ExEss.Hardness"}}</div>
+      <div class="item-name">{{hardnessLabel}}</div>
       <div class="item-controls">
         <a class="item-control" data-action="createItem" title="Create armor"
           data-type="armor"><i class="fas fa-plus"></i>
@@ -101,7 +101,11 @@
         {{item.system.penalty}}
       </div>
       <div class="resource-value-static">
+        {{#if useCombatReforged}}
+        {{item.system.poise}}
+        {{else}}
         {{item.system.hardness}}
+        {{/if}}
       </div>
       <div class="item-controls">
         <a class="item-control" data-action="itemAction" data-actiontype="chatItem" title="Chat Item"><i

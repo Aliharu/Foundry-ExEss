@@ -39,6 +39,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
 
                 this.object.defense = 0;
                 this.object.soak = 0;
+                this.object.poise = 0;
                 this.object.doubleExtraSuccess = false;
                 this.object.resolve = 0;
                 this.object.successModifier = data.accuracy || 0;
@@ -48,6 +49,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 this.object.conditions = (this.actor.token && this.actor.token.actor.effects) ? this.actor.token.actor.effects : [];
                 this.object.weaponType = data.weaponType || 'melee';
                 this.object.weaponWeight = data.weight || 'light';
+                this.object.range = 'close';
                 this.object.diceModifier = 0;
                 this.object.triggerSelfDefensePenalty = 0;
                 this.object.totalDice = 0;
@@ -57,7 +59,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 this.object.unusedDiceRollDisplay = null;
                 this.object.unusedDiceRollTotal = null;
 
-                if (data.rollType === 'withering' || data.rollType === 'gambit' || data.rollType === 'decisive') {
+                if (this._isAttackRoll()) {
                     if (this.object.conditions.some(e => e.name === 'prone')) {
                         this.object.diceModifier -= 3;
                     }
@@ -107,6 +109,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     soak: 0,
                     resolve: 0,
                     hardness: 0,
+                    poise: 0,
                     damage: 0,
                 },
                 manualBonus: {
@@ -116,6 +119,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     soak: 0,
                     resolve: 0,
                     hardness: 0,
+                    poise: 0,
                     damage: 0,
                 }
             };
@@ -353,6 +357,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     }
                 }
                 this.object.soak = this.object.target.actor.system.soak.value;
+                this.object.poise = this.object.target.actor.system.poise.value;
 
                 if (this.object.rollType === 'social') {
                     this.object.resolve = this.object.target.actor.system.resolve.value;
@@ -379,11 +384,9 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                         }
                     }
                 }
-                if (this.object.woundPenalty && game.settings.get("exaltedessence", "woundBonuses")) {
-                    if (game.settings.get("exaltedessence", "woundBonuses")) {
-                        this.object.defense -= this.object.target.actor.system.health.penalty;
-                        this.object.soak -= this.object.target.actor.system.health.penalty;
-                    }
+                if (this.object.woundPenalty && (game.settings.get("exaltedessence", "woundBonuses") || game.settings.get("exaltedessence", "combatReforged"))) {
+                    this.object.defense -= this.object.target.actor.system.health.penalty;
+                    this.object.soak -= this.object.target.actor.system.health.penalty;
                 }
                 if (this.object.defense < 0) {
                     this.object.defense = 0;
@@ -743,7 +746,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             }
 
             if (this.object.woundPenalty) {
-                if (game.settings.get("exaltedessence", "woundBonuses")) {
+                if (game.settings.get("exaltedessence", "woundBonuses") || game.settings.get("exaltedessence", "combatReforged")) {
                     penalties.push(
                         {
                             name: "ExEss.WoundBonus",
@@ -759,6 +762,16 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     );
                 }
 
+            }
+            if (this._isAttackRoll() && game.settings.get("exaltedessence", "combatReforged")) {
+                if (this.object.weaponType !== 'melee' && this.object.range === 'close') {
+                    penalties.push(
+                        {
+                            name: "ExEss.RangePenalty",
+                            summary: `-3 Dice`
+                        },
+                    );
+                }
             }
             if (this.object.getimianflow) {
                 effects.push(
@@ -895,6 +908,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             defense: 0,
             soak: 0,
             hardness: 0,
+            poise: 0,
             resolve: 0,
             guile: 0,
             damage: 0,
@@ -904,6 +918,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             totalOpposedBonuses.defense = this.object.addOppose.manualBonus.defense + this.object.addOppose.addedBonus.defense;
             totalOpposedBonuses.soak = this.object.addOppose.manualBonus.soak + this.object.addOppose.addedBonus.soak;
             totalOpposedBonuses.resolve = this.object.addOppose.manualBonus.resolve + this.object.addOppose.addedBonus.resolve;
+            totalOpposedBonuses.poise = this.object.addOppose.manualBonus.poise + this.object.addOppose.addedBonus.poise;
         }
         this.object.rollButtonTooltip = "";
         if (this.object.showDamage) {
@@ -913,7 +928,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         }
 
         let diceFooterLabel = `Roll ${this.object.totalDice} Dice`;
-        if (this.object.showDamage && (this.object.rollType !== 'decisive' || game.settings.get("exaltedessence", "fasterCombat"))) {
+        if (this.object.rollType === 'useOpposingCharms' || (this.object.showDamage && (this.object.rollType !== 'decisive' || game.settings.get("exaltedessence", "fasterCombat")))) {
             diceFooterLabel = "Confirm Results";
         }
 
@@ -928,6 +943,8 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             effects: effects,
             weaponTags: weaponTags,
             totalOpposedBonuses: totalOpposedBonuses,
+            useCombatReforged: game.settings.get("exaltedessence", "combatReforged"),
+            hardnessLabel: game.settings.get("exaltedessence", "combatReforged") ? game.i18n.localize("ExEss.Poise") : game.i18n.localize("ExEss.Hardness"),
             diceFooterLabel: diceFooterLabel,
             buttons: [
                 { type: "submit", icon: "fa-solid fa-dice-d10", label: this.object.rollType === 'useOpposingCharms' ? "ExEss.Add" : "ExEss.Roll" },
@@ -1173,6 +1190,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     this.object.addOppose.addedBonus.defense += item.system.diceroller.opposedbonuses.defense;
                     this.object.addOppose.addedBonus.soak += item.system.diceroller.opposedbonuses.soak;
                     this.object.addOppose.addedBonus.resolve += item.system.diceroller.opposedbonuses.resolve;
+                    this.object.addOppose.addedBonus.poise += item.system.diceroller.opposedbonuses.hardness;
                 }
             }
             this.render();
@@ -1195,7 +1213,8 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             if (this._isAttackRoll()) {
                 this.object.defense += charm.system.diceroller.opposedbonuses.defense;
                 this.object.soak += charm.system.diceroller.opposedbonuses.soak;
-                // this.object.hardness += item.system.diceroller.opposedbonuses.hardness;
+                this.object.hardness += charm.system.diceroller.opposedbonuses.hardness;
+                this.object.poise += charm.system.diceroller.opposedbonuses.hardness;
             }
             if (this.object.rollType === 'social') {
                 this.object.resolve += charm.system.diceroller.opposedbonuses.resolve;
@@ -1212,6 +1231,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         this.object.defense += data.defense;
         this.object.soak += data.soak;
         this.object.hardness += data.hardness;
+        this.object.poise += data.hardness;
         if (this.object.rollType === 'social') {
             this.object.difficulty += data.resolve;
         }
@@ -1396,7 +1416,8 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 if (this.object.rollType === 'useOpposingCharms') {
                     this.object.addOppose.addedBonus.defense -= item.system.diceroller.opposedbonuses.defense;
                     this.object.addOppose.addedBonus.soak -= item.system.diceroller.opposedbonuses.soak;
-                    // this.object.addOppose.addedBonus.hardness -= item.system.diceroller.opposedbonuses.hardness;
+                    this.object.addOppose.addedBonus.hardness -= item.system.diceroller.opposedbonuses.hardness;
+                    this.object.addOppose.addedBonus.poise -= item.system.diceroller.opposedbonuses.hardness;
                     this.object.addOppose.addedBonus.resolve -= item.system.diceroller.opposedbonuses.resolve;
                 }
             }
@@ -1415,7 +1436,8 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             if (this._isAttackRoll()) {
                 this.object.defense -= charm.system.diceroller.opposedbonuses.defense;
                 this.object.soak -= charm.system.diceroller.opposedbonuses.soak;
-                // this.object.hardness -= charm.system.diceroller.opposedbonuses.hardness;
+                this.object.hardness -= charm.system.diceroller.opposedbonuses.hardness;
+                this.object.poise -= charm.system.diceroller.opposedbonuses.hardness;
             }
             if (this.object.rollType === 'social') {
                 this.object.resolve -= charm.system.diceroller.opposedbonuses.resolve;
@@ -1585,7 +1607,8 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 if (this._isAttackRoll()) {
                     this.object.defense -= charm.system.diceroller.opposedbonuses.defense;
                     this.object.soak -= charm.system.diceroller.opposedbonuses.soak;
-                    // this.object.hardness -= charm.system.diceroller.opposedbonuses.hardness;
+                    this.object.hardness -= charm.system.diceroller.opposedbonuses.hardness;
+                    this.object.poise -= charm.system.diceroller.opposedbonuses.hardness;
                 }
                 if (this.object.rollType === 'social') {
                     this.object.resolve -= charm.system.diceroller.opposedbonuses.resolve;
@@ -1800,8 +1823,14 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 }
             }
             if (this.object.woundPenalty) {
-                dicePool = dicePool + (game.settings.get("exaltedessence", "woundBonuses") ? (this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2) : -(this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2));
-                rollButtonTooltip += `<p>Wounds: ${(this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2) * (game.settings.get("exaltedessence", "woundBonuses") ? 1 : -1)}</p>`;
+                dicePool = dicePool + ((game.settings.get("exaltedessence", "woundBonuses") || game.settings.get("exaltedessence", "combatReforged")) ? (this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2) : -(this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2));
+                rollButtonTooltip += `<p>Wounds: ${(this.actor.system.health.penalty !== 'inc' ? this.actor.system.health.penalty : 2) * ((game.settings.get("exaltedessence", "woundBonuses") || game.settings.get("exaltedessence", "combatReforged")) ? 1 : -1)}</p>`;
+            }
+            if (this._isAttackRoll() && game.settings.get("exaltedessence", "combatReforged")) {
+                if (this.object.weaponType !== 'melee' && this.object.range === 'close') {
+                    rollButtonTooltip += `<p>Range: -3</p>`
+                }
+                dicePool -= 3;
             }
             if (this.object.armorPenalty) {
                 for (let armor of this.actor.armor) {
@@ -1818,6 +1847,9 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             if (this.object.flurry) {
                 dicePool -= 3;
                 rollButtonTooltip += `<p>Flurry: -3</p>`;
+            }
+            if (game.settings.get("exaltedessence", "combatReforged")) {
+
             }
 
             dicePool += this.object.diceModifier;
@@ -1923,7 +1955,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         }
         this.object.roll.dice[0].options.rollOrder = 1;
 
-        if (this.object.rollType !== 'base') {
+        if (this.object.rollType !== 'base' && !this._isAttackRoll()) {
             this._updateRollerResources();
         }
         console.log(this.object);
@@ -1982,14 +2014,19 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         }
         else {
             let extraPower = ``;
+            let powerGained = total + 1;
             if (self) {
                 const actorData = foundry.utils.duplicate(this.actor);
+                if (game.settings.get("exaltedessence", "combatReforged") && this.actor.effects.some(e => e.statuses.has('break'))) {
+                    powerGained = Math.max(0, powerGained - (actorData.system.poise.max - actorData.system.poise.value));
+                }
                 if (this.object.rollType === 'buildPower') {
-                    if (total + actorData.system.power.value > 10) {
-                        const extraPowerValue = Math.floor((total + 1 + actorData.system.power.value - 10));
+                    if (powerGained + actorData.system.power.value > 10) {
+                        const extraPowerValue = Math.floor((powerGained + actorData.system.power.value - 10));
                         extraPower = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
                     }
-                    actorData.system.power.value = Math.min(10, total + actorData.system.power.value + 1);
+                    // actorData.system.power.value = Math.min(10, total + actorData.system.power.value + 1);
+                    this._updateCharacterPower(actorData, total + 1);
                 }
                 else {
                     actorData.system.will.value = Math.min(10, total + actorData.system.will.value + 1);
@@ -1999,11 +2036,15 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             else {
                 this.object.updateTargetActorData = true;
                 if (this.object.rollType === 'buildPower') {
-                    if (total + this.object.newTargetData.system.power.value > 10) {
-                        const extraPowerValue = Math.floor((total + 1 + this.object.newTargetData.system.power.value - 10));
+                    if (game.settings.get("exaltedessence", "combatReforged") && this.object.newTargetData.effects.some(e => e.statuses.includes('break'))) {
+                        powerGained = Math.max(0, powerGained - (this.object.newTargetData.system.poise.max - this.object.newTargetData.system.poise.value));
+                    }
+                    if (powerGained + this.object.newTargetData.system.power.value > 10) {
+                        const extraPowerValue = Math.floor((powerGained + this.object.newTargetData.system.power.value - 10));
                         extraPower = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
                     }
-                    this.object.newTargetData.system.power.value = Math.min(10, total + this.object.newTargetData.system.power.value + 1);
+                    // this.object.newTargetData.system.power.value = Math.min(10, total + this.object.newTargetData.system.power.value + 1);
+                    this._updateCharacterPower(this.object.newTargetData, total + 1, true);
                 }
                 else {
                     this.object.newTargetData.system.will.value = Math.min(10, total + this.object.newTargetData.system.will.value + 1);
@@ -2075,7 +2116,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
     async _damageRoll() {
         const actorData = foundry.utils.duplicate(this.actor);
 
-        var postDefenseTotal = this.object.accuracyResult - this.object.defense;
+        let postDefenseTotal = this.object.accuracyResult - this.object.defense;
         let title = "Decisive Attack";
         if (this.object.rollType === 'withering') {
             title = "Withering Attack";
@@ -2084,22 +2125,34 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             title = "Gambit";
         }
         if (this.object.damage.doubleExtraSuccess) {
-            var basePostDefenseTotal = this.object.preBonusSuccesses - this.object.defense;
+            let basePostDefenseTotal = this.object.preBonusSuccesses - this.object.defense;
             if (basePostDefenseTotal > 0) {
                 postDefenseTotal += basePostDefenseTotal;
             }
         }
-        var messageContent = '';
+        let messageContent = '';
+        let combatReforgedMessage = '';
+        if (this.object.target && this.object.rollType === 'withering' && game.settings.get("exaltedessence", "combatReforged")) {
+            combatReforgedMessage += `<h4 class="dice-total">${postDefenseTotal} Extra Successes vs ${this.object.poise} Poise</h4>`;
+            const targetBroken = this._updateTargetPoise(postDefenseTotal);
+            if (targetBroken) {
+                combatReforgedMessage += '<h4 class="dice-total">Target Broken</h4>';
+            } else {
+                combatReforgedMessage += `<h4 class="dice-total">${this.object.overwhelming} Poise Damage</h4>`;
+            }
+        }
 
         if (postDefenseTotal < 0) {
-            var overwhlemingMessage = '';
+            let overwhlemingMessage = '';
             let extraPowerMessage = ``;
             if (this.object.rollType === 'withering') {
-                overwhlemingMessage = `<h4 class="dice-total">${this.object.overwhelming} Power Built!</h4>`;
-                actorData.system.power.value = Math.min(10, this.object.overwhelming + actorData.system.power.value);
-                if (this.object.overwhelming + actorData.system.power.value > 10) {
-                    const extraPowerValue = Math.floor((this.object.overwhelming + actorData.system.power.value - 10));
-                    extraPowerMessage = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
+                if (!game.settings.get("exaltedessence", "combatReforged")) {
+                    overwhlemingMessage = `<h4 class="dice-total">${this.object.overwhelming} Power Built!</h4>`;
+                    actorData.system.power.value = Math.min(10, this.object.overwhelming + actorData.system.power.value);
+                    if (this.object.overwhelming + actorData.system.power.value > 10) {
+                        const extraPowerValue = Math.floor((this.object.overwhelming + actorData.system.power.value - 10));
+                        extraPowerMessage = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
+                    }
                 }
             }
             else {
@@ -2189,15 +2242,21 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             }
             else if (this.object.rollType === 'withering') {
                 let powerGained = postDefenseTotal + this.object.bonusPower + 1;
-                if (postDefenseTotal < this.object.overwhelming) {
+                if (postDefenseTotal < this.object.overwhelming && !game.settings.get("exaltedessence", "combatReforged")) {
                     powerGained = this.object.overwhelming + 1;
                 }
                 let extraPowerMessage = ``;
+                if (game.settings.get("exaltedessence", "combatReforged")) {
+                    if (game.settings.get("exaltedessence", "combatReforged") && this.actor.effects.find(e => e.statuses.has('break'))) {
+                        powerGained = Math.max(0, powerGained - (actorData.system.poise.max - actorData.system.poise.value));
+                    }
+                }
                 if (powerGained + actorData.system.power.value > 10) {
                     const extraPowerValue = Math.floor((powerGained + actorData.system.power.value - 10));
                     extraPowerMessage = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
                 }
-                actorData.system.power.value = Math.min(10, powerGained + actorData.system.power.value);
+                // actorData.system.power.value = Math.min(10, powerGained + actorData.system.power.value);
+                this._updateCharacterPower(actorData, powerGained);
                 this.actor.update(actorData);
                 messageContent = `
                       <div>
@@ -2207,6 +2266,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                                   ${this.object.bonusPower ? `<h4 class="dice-total">${this.object.bonusPower} Bonus Power</h4>` : ''}
                                   <h4 class="dice-total">1 Base + ${postDefenseTotal} Extra Successes</h4>
                                   <h4 class="dice-total">${this.object.overwhelming} Overwhelming</h4>
+                                  ${combatReforgedMessage}
                                   <h4 class="dice-total">${powerGained} Power Built!</h4>
                                   ${extraPowerMessage}
                               </div>
@@ -2214,6 +2274,18 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                       </div>`
                 messageContent = await this._createChatMessageContent(messageContent, 'Decisive Damage');
                 ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER });
+                if (this.object.target) {
+                    if (game.settings.get("exaltedessence", "combatReforged")) {
+                        this._updateTargetPoise(postDefenseTotal);
+                    }
+                    else if (game.settings.get("exaltedessence", "calculateOnslaught")) {
+                        if (game.settings.get("exaltedessence", "wearingDownFoes")) {
+                            this._addOnslaught(postDefenseTotal + 1, 'wearingDown');
+                        } else {
+                            this._addOnslaught(1);
+                        }
+                    }
+                }
             }
             else if (this.object.rollType === 'gambit') {
                 actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.powerSpent);
@@ -2230,13 +2302,6 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                       </div>`
                 messageContent = await this._createChatMessageContent(messageContent, 'Withering Power');
                 ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER });
-            }
-        }
-        if (this.object.rollType === 'withering' && this.object.target && game.settings.get("exaltedessence", "calculateOnslaught")) {
-            if (game.settings.get("exaltedessence", "wearingDownFoes")) {
-                this._addOnslaught(postDefenseTotal + 1, 'wearingDown');
-            } else {
-                this._addOnslaught(1);
             }
         }
         if (postDefenseTotal >= 0 && this.object.target) {
@@ -2296,6 +2361,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         if (this.object.updateTargetActorData) {
             this._updateTargetActor();
         }
+        this._updateRollerResources();
         this.attackSequence();
     }
 
@@ -2449,6 +2515,32 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         }
     }
 
+    _updateTargetPoise(postDefenseTotal) {
+        this.object.updateTargetActorData = true;
+        if (this.object.poise <= postDefenseTotal) {
+            this.object.newTargetData.system.poise.value = 0;
+            this.object.addStatuses.push('break');
+            return true;
+        }
+        else {
+            if (!this.object.target.actor.effects.find(e => e.statuses.has('break'))) {
+                this.object.newTargetData.system.poise.value -= Math.max(0, this.object.newTargetData.system.poise.value - this.object.overwhelming);
+            }
+        }
+        return false;
+    }
+
+    _updateCharacterPower(actorData, powerChange) {
+        let finalPowerUpdate = powerChange;
+        if (game.settings.get("exaltedessence", "combatReforged")) {
+            if (actorData.effects.some(e => e.statuses.includes('break'))) {
+                finalPowerUpdate = Math.max(0, finalPowerUpdate - (actorData.system.poise.max - actorData.system.poise.value));
+                actorData.system.poise.value = Math.min(actorData.system.poise.value + powerChange, actorData.system.poise.max);
+            }
+        }
+        actorData.system.power.value = Math.min(10, actorData.system.power.value + finalPowerUpdate);
+    }
+
     _addEndofRoundDefensePenalty(value) {
         var changes = [
             {
@@ -2515,8 +2607,11 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             for (const status of this.object.addStatuses) {
                 const effectExists = this.object.target.actor.effects.find(e => e.statuses.has(status));
                 if (!effectExists) {
-                    await this.object.target.toggleStatusEffect(status);
+                    await this.object.target.actor.toggleStatusEffect(status);
                 }
+            }
+            if (this.object.target.actor.effects.find(e => e.statuses.has('break') && this.object.newTargetData.system.poise.value >= this.object.newTargetData.system.poise.max)) {
+                await this.object.target.actor.toggleStatusEffect('break');
             }
         }
         else {
@@ -2599,6 +2694,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             defense: this.object.addOppose.manualBonus.defense,
             soak: this.object.addOppose.manualBonus.soak,
             resolve: this.object.addOppose.manualBonus.resolve,
+            poise: this.object.addOppose.manualBonus.poise,
             hardness: this.object.addOppose.manualBonus.hardness,
             damage: this.object.addOppose.manualBonus.damage,
         }
@@ -2656,7 +2752,13 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         }
         actorData.system.motes.committed += this.object.cost.committed;
         actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - this.object.cost.stunt);
-        actorData.system.power.value = Math.max(0, actorData.system.power.value - this.object.cost.power + this.object.gain.power);
+
+        this._updateCharacterPower(actorData, this.object.gain.power - this.object.cost.power);
+        if (game.settings.get("exaltedessence", "combatReforged") && this.actor.effects.find(e => e.statuses.has('break'))) {
+            if (actorData.system.poise.value === actorData.system.poise.max) {
+                this.actor.toggleStatusEffect('break');
+            }
+        }
         this.object.power = actorData.system.power.value;
         let totalHealth = 0;
         for (let [key, health_level] of Object.entries(actorData.system.health.levels)) {

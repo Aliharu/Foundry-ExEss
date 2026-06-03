@@ -250,7 +250,19 @@ export class ExaltedessenceActor extends Actor {
         }
         actorData.system.motes.committed += item.system.cost.committed;
         actorData.system.stunt.value = Math.max(0, actorData.system.stunt.value - item.system.cost.stunt);
-        actorData.system.power.value = Math.max(0, actorData.system.power.value - item.system.cost.power + item.system.gain.power);
+        let finalPowerUpdate = Math.max(0, actorData.system.power.value - item.system.cost.power + item.system.gain.power);
+        if (game.settings.get("exaltedessence", "combatReforged")) {
+          if (actorData.effects.some(e => e.statuses.includes('break'))) {
+            finalPowerUpdate = Math.max(0, finalPowerUpdate - (actorData.system.poise.max - actorData.system.poise.value));
+            actorData.system.poise.value = Math.min(actorData.system.poise.value + Math.max(0, actorData.system.power.value - item.system.cost.power + item.system.gain.power), actorData.system.poise.max);
+          }
+        }
+        actorData.system.power.value = finalPowerUpdate;
+        if (game.settings.get("exaltedessence", "combatReforged") && this.effects.find(e => e.statuses.has('break'))) {
+          if (actorData.system.poise.value === actorData.system.poise.max) {
+            this.toggleStatusEffect('break');
+          }
+        }
         if (item.system.cost.health) {
           let totalHealth = actorData.type === 'character' ? 0 : actorData.system.health.levels;
           if (actorData.type === 'character') {

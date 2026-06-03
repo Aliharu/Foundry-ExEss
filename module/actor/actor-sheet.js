@@ -155,6 +155,8 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
       selects: CONFIG.EXALTEDESSENCE.selects,
       isExalt: this.actor.type === 'character' || this.actor.system.creaturetype === 'exalt',
       useAlternateAnima: game.settings.get("exaltedessence", "alternateAnima"),
+      useCombatReforged: game.settings.get("exaltedessence", "combatReforged"),
+      hardnessLabel: game.settings.get("exaltedessence", "combatReforged") ? game.i18n.localize("ExEss.Poise") : game.i18n.localize("ExEss.Hardness"),
     };
 
     if (this.document.limited) {

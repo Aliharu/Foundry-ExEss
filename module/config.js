@@ -42,6 +42,7 @@ EXALTEDESSENCE.activeEffectChanges = {
     'system.defense.value': 'ExEss.DefenseNPC',
     'system.soak.value': 'ExEss.Soak',
     'system.hardness.value': 'ExEss.Hardness',
+    'system.poise.value': 'ExEss.Poise',
     'system.resolve.value': 'ExEss.Resolve',
     'system.health.levels.zero.value': 'ExEss.PenaltyZeroHealth',
     'system.health.levels.one.value': 'ExEss.PenaltyOneHealth',
@@ -179,6 +180,12 @@ EXALTEDESSENCE.statusEffects = [
         id: 'routing',
         label: 'ExEss.Routing',
         name: 'routing',
+    },
+    {
+        img: 'systems/exaltedessence/assets/icons/back-pain.svg',
+        id: 'break',
+        label: 'ExEss.Break',
+        name: 'break',
     },
     {
         img: 'icons/svg/skull.svg',
@@ -490,5 +497,12 @@ EXALTEDESSENCE.selects = {
     damageTypes: {
         'lethal': "ExEss.Lethal",
         'aggravated': "ExEss.Aggravated",
+    },
+    ranges: {
+        "close": "ExEss.CloseRange",
+        "short": "ExEss.ShortRange",
+        "medium": "ExEss.MediumRange",
+        "long": "ExEss.LongRange",
+        "extreme": "ExEss.ExtremeRange",
     },
 }
