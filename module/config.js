@@ -61,6 +61,7 @@ EXALTEDESSENCE.languages = {
     "seatongue": "Seatongue",
     "guildcant": "Guild Cant",
     "localtongue": "Local Tongue",
+    'autocthonic': "Autocthonic"
 };
 
 EXALTEDESSENCE.weapontags = {
@@ -307,6 +308,7 @@ EXALTEDESSENCE.selects = {
         "0": "ExEss.None",
         "2": "ExEss.Minor",
         "3": "ExEss.Major",
+        "4": "ExEss.Defining",
     },
     gambits: {
         disarm: "ExEss.Disarm",
@@ -427,6 +429,7 @@ EXALTEDESSENCE.selects = {
     intimacyStrengths: {
         minor: "ExEss.Minor",
         major: "ExEss.Major",
+        defining: "ExEss.Defining"
     },
     intimacyTypes: {
         tie: "ExEss.Tie",

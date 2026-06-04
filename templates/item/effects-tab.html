@@ -26,8 +26,17 @@
             </select>
         </div>
         {{/ifEquals}}
+        {{#ifEquals type 'spell'}}
+        <div>
+            <label class="resource-label">{{localize "ExEss.ControlSpell"}}</label>
+            <div>
+                <input name="system.iscontrolspell" type="checkbox" {{checked system.iscontrolspell}}>
+            </div>
+        </div>
+        {{/ifEquals}}
     </div>
     {{/if}}
+
     {{#ifEquals type 'weapon'}}
     <div class="grid grid-2col flex-group-center">
         <div>

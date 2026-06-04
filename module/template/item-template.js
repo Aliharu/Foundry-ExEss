@@ -128,6 +128,7 @@ export class ItemSpellData extends CommonItemData {
             circle: new fields.StringField({ initial: "first" }),
             cost: new fields.NumberField({ initial: 0 }),
             spelltype: new fields.StringField({ initial: "universal" }),
+            iscontrolspell: new fields.BooleanField({ initial: false }),
         }
     }
 }

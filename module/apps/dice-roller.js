@@ -183,9 +183,11 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 if (this.actor.type === 'character') {
                     if (this.object.weaponType === 'melee') {
                         this.object.ability = 'close';
+                        this.object.range = 'close';
                     }
                     else {
                         this.object.ability = 'ranged';
+                        this.object.short = 'close';
                     }
                 }
                 if (this.object.weaponTags) {
@@ -2081,13 +2083,14 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
     }
 
     _socialInfluence() {
-        var message = '';
-        if (this.object.diceRollTotal < this.object.resolve) {
-            message = `<h4 class="dice-total">${this.object.diceRollTotal} Successes vs ${this.object.resolve} Resolve</h4><h4 class="dice-total">Influence Failed</h4>`;
+        let message = '';
+        let totalResolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedIntimacy) + parseInt(this.object.opposedVirtue) - parseInt(this.object.supportedIntimacy) - parseInt(this.object.supportedVirtue));
+        if (this.object.diceRollTotal < totalResolve) {
+            message = `<h4 class="dice-total">${this.object.diceRollTotal} Successes vs ${totalResolve} Resolve</h4><h4 class="dice-total">Influence Failed</h4>`;
         }
         else {
-            var total = this.object.diceRollTotal - this.object.resolve;
-            message = `<h4 class="dice-total">${this.object.diceRollTotal} Successes vs ${this.object.resolve} Resolve</h4> <h4 class="dice-total">${total} Extra Successes!</h4>`;
+            let total = this.object.diceRollTotal - totalResolve;
+            message = `<h4 class="dice-total">${this.object.diceRollTotal} Successes vs ${totalResolve} Resolve</h4> <h4 class="dice-total">${total} Extra Successes!</h4>`;
         }
         return message;
     }
