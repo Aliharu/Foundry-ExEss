@@ -131,6 +131,7 @@ export class CharacterData extends CommonActorData {
       }),
       evasion: statField(0),
       parry: statField(0),
+      narrativepoints: resourceField(0, 3),
       advantages: new fields.SchemaField({
         one: new fields.StringField({ initial: "" }),
         two: new fields.StringField({ initial: "" }),
@@ -147,13 +148,13 @@ export class CharacterData extends CommonActorData {
   }
 
   static migrateData(source) {
-    if(source.attributes?.force?.name === '') {
+    if (source.attributes?.force?.name === '') {
       source.attributes.force.name = 'ExEss.Force';
     }
-    if(source.attributes?.finesse?.name === '') {
+    if (source.attributes?.finesse?.name === '') {
       source.attributes.finesse.name = 'ExEss.Finesse';
     }
-    if(source.attributes?.fortitude?.name === '') {
+    if (source.attributes?.fortitude?.name === '') {
       source.attributes.fortitude.name = 'ExEss.Fortitude';
     }
     return super.migrateData(source);

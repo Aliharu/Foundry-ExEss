@@ -78,6 +78,16 @@ export function registerSettings() {
         default: false
     });
 
+    game.settings.register("exaltedessence", "narrativePoints", {
+        name: game.i18n.localize('ExEss.NarrativePoints'),
+        hint: game.i18n.localize('ExEss.NarrativePointsDescription'),
+        scope: "world",
+        config: false,
+        type: Boolean,
+        ruleChange: true,
+        default: false
+    });
+
     game.settings.register('exaltedessence', 'weaponToWithering', {
         name: game.i18n.localize('ExEss.WeaponDamageWithering'),
         hint: game.i18n.localize('ExEss.WeaponDamageWitheringDescription'),

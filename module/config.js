@@ -304,6 +304,11 @@ EXALTEDESSENCE.selects = {
         self: "ExEss.Self",
         target: "ExEss.Target",
     },
+    virtueLevels: {
+        "0": "ExEss.None",
+        "2": "ExEss.Minor",
+        "3": "ExEss.Major",
+    },
     intimacyLevels: {
         "0": "ExEss.None",
         "2": "ExEss.Minor",

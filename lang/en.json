@@ -100,6 +100,7 @@
     "ExEss.Hardness": "Hardness",
     "ExEss.Poise": "Poise",
     "ExEss.Hardness/Poise": "Hardness/Poise",
+    "ExEss.Narrative": "Narrative",
     "ExEss.Resolve": "Resolve",
     "ExEss.Battlegroup": "Battlegroup",
     "ExEss.Size": "Size",
@@ -458,5 +459,7 @@
     "ExEss.AlternateAnima": "Alternate Anima",
     "ExEss.AlternateAnimaDescription": "Alternate Anima Description",
     "ExEss.CombatReforged": "Combat Reforged",
-    "ExEss.CombatReforgedDescription": "Use the 'Essence Combat Reforged' combat system from the Storytellers Guide."
+    "ExEss.CombatReforgedDescription": "Use the 'Essence Combat Reforged' combat system from the Storytellers Guide.",
+    "ExEss.NarrativePoints": "Narrative Points",
+    "ExEss.NarrativePointsDescription": "Use Narrative points from the Storytellers Guide."
 }
