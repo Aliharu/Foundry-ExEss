@@ -103,6 +103,18 @@ EXALTEDESSENCE.armortags = {
     "towering": "Towering",
 };
 
+EXALTEDESSENCE.gambits = {
+    disarm: "ExEss.Disarm",
+    distract: "ExEss.Distract",
+    ensnare: "ExEss.Ensnare",
+    knockback: "ExEss.Knockback",
+    knockdown: "ExEss.Knockdown",
+    pilfer: "ExEss.Pilfer",
+    pull: "ExEss.Pull",
+    reveal_weakness: "ExEss.RevealWeakness",
+    unhorse: "ExEss.Unhorse",
+};
+
 EXALTEDESSENCE.statusEffects = [
     {
         img: 'systems/exaltedessence/assets/icons/drop-weapon.svg',
@@ -193,6 +205,13 @@ EXALTEDESSENCE.statusEffects = [
         id: 'incapacitated',
         label: 'ExEss.Incapacitated',
         name: 'incapacitated',
+    },
+    {
+        img: 'systems/exaltedessence/assets/icons/shaking-hands.svg',
+        id: 'grappling',
+        name: 'ExEss.Grappling',
+        description: "<p>Character is in a grapple</p>",
+        tooltip: "<p>Character is in a grapple</p>",
     },
 ]
 
@@ -314,17 +333,6 @@ EXALTEDESSENCE.selects = {
         "2": "ExEss.Minor",
         "3": "ExEss.Major",
         "4": "ExEss.Defining",
-    },
-    gambits: {
-        disarm: "ExEss.Disarm",
-        distract: "ExEss.Distract",
-        ensnare: "ExEss.Ensnare",
-        knockback: "ExEss.Knockback",
-        knockdown: "ExEss.Knockdown",
-        pilfer: "ExEss.Pilfer",
-        pull: "ExEss.Pull",
-        reveal_weakness: "ExEss.RevealWeakness",
-        unhorse: "ExEss.Unhorse",
     },
     exaltTypes: {
         abyssal: "ExEss.Abyssal",

@@ -1,3 +1,5 @@
+import { EXALTEDESSENCE } from "../config.js";
+
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -340,7 +342,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             if (this.object.specialAttacksList === undefined) {
                 this.object.specialAttacksList = [
                     { id: 'aim', name: "Aim", added: false, show: this._isAttackRoll(), description: '+3 Dice, Cannot be used on the same turn as a reflexive move or flurry.', img: 'systems/exaltedessence/assets/icons/targeting.svg' },
-                    { id: 'chopping', name: "Chopping/Powerful", added: false, show: false, description: 'Reduce defense by 1. Increase dice by 2 on withering.  -1 enemy hardness on decisive', img: 'systems/exaltedessence/assets/icons/battered-axe.svg' },
+                    { id: 'chopping', name: "Chopping/Powerful", added: false, show: false, description: game.settings.get("exaltedessence", "combatReforged") ? 'Reduce defense by 1.  Gain +1 Overwhelming on withering or increase threshold to restore Poise by 1 on a successful decisive attack' : `Reduce defense by 1. Increase dice by 2 on withering (+1 OVW in combat reforged).  -1 enemy hardness on decisive`, img: 'systems/exaltedessence/assets/icons/battered-axe.svg' },
                     { id: 'piercing', name: "Piercing", added: false, show: false, description: 'Reduce defense by 1.  Ignore 2 soak.', img: 'systems/exaltedessence/assets/icons/fast-arrow.svg' },
                     { id: 'rush', name: "Rush", added: false, show: this._isAttackRoll(), description: 'Special attack, move 1 range band closer and gain +3 dice on attack.', img: 'systems/exaltedessence/assets/icons/running-ninja.svg' },
                 ];
@@ -374,6 +376,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     }
                     if (this.object.target.actor.effects.some(e => e.name === 'surprised')) {
                         this.object.defense -= 1;
+                        this.object.poise -= 1;
                     }
                     if (this.object.target.actor.effects.some(e => e.name === 'lightcover')) {
                         if (this.object.weaponType !== 'melee') {
@@ -384,6 +387,9 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                         if (this.object.weaponType !== 'melee') {
                             this.object.defense += 2;
                         }
+                    }
+                    if (game.settings.get("exaltedessence", "combatReforged") && this.object.target.actor.effects.some(e => e.name === 'grappling')) {
+                        this.object.defense -= 1;
                     }
                 }
                 if (this.object.woundPenalty && (game.settings.get("exaltedessence", "woundBonuses") || game.settings.get("exaltedessence", "combatReforged"))) {
@@ -713,6 +719,14 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                             summary: "-1 Defense"
                         },
                     );
+                    if (game.settings.get("exaltedessence", "combatReforged")) {
+                        effects.push(
+                            {
+                                name: "Target is Surprised",
+                                summary: "-1 Poise"
+                            },
+                        );
+                    }
                 }
                 if (this.object.target.actor.effects.some(e => e.name === 'lightcover')) {
                     if (this.object.weaponType !== 'melee') {
@@ -733,6 +747,14 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                             },
                         );
                     }
+                }
+                if (game.settings.get("exaltedessence", "combatReforged") && this.object.target.actor.effects.some(e => e.name === 'grappling')) {
+                    penalties.push(
+                        {
+                            name: "Target Is in a Grapple",
+                            summary: "-1 Defense"
+                        },
+                    );
                 }
             }
         }
@@ -789,7 +811,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     effects.push(
                         {
                             name: "Augment Attribute",
-                            summary: "+ 1 Dice"
+                            summary: "+1 Dice"
                         },
                     );
                 }
@@ -934,6 +956,11 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             diceFooterLabel = "Confirm Results";
         }
 
+        const gambitList = CONFIG.EXALTEDESSENCE.gambits;
+        if (game.settings.get("exaltedessence", "combatReforged")) {
+            gambitList['grapple'] = 'ExEss.Grapple';
+        }
+
         return {
             actor: this.actor,
             selects: this.selects,
@@ -948,6 +975,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             useCombatReforged: game.settings.get("exaltedessence", "combatReforged"),
             hardnessLabel: game.settings.get("exaltedessence", "combatReforged") ? game.i18n.localize("ExEss.Poise") : game.i18n.localize("ExEss.Hardness"),
             diceFooterLabel: diceFooterLabel,
+            gambitList: gambitList,
             buttons: [
                 { type: "submit", icon: "fa-solid fa-dice-d10", label: this.object.rollType === 'useOpposingCharms' ? "ExEss.Add" : "ExEss.Roll" },
                 { action: "close", type: "button", icon: "fa-solid fa-xmark", label: "ExEss.Cancel" },
@@ -1244,7 +1272,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         event.stopPropagation();
         let li = $(target).parents(".item");
         let id = li.data("item-id");
-        for (var specialAttack of this.object.specialAttacksList) {
+        for (let specialAttack of this.object.specialAttacksList) {
             if (specialAttack.id === id) {
                 specialAttack.added = true;
             }
@@ -1254,7 +1282,11 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         }
         else {
             if (id === 'chopping' && this.object.rollType === 'withering') {
-                this.object.diceModifier += 2;
+                if (game.settings.get("exaltedessence", "combatReforged")) {
+                    this.object.diceModifier += 2;
+                } else {
+                    this.object.overwhelming += 1;
+                }
             }
             else if (id === 'piercing' && this.object.rollType === 'decisive') {
                 this.object.damage.ignoreSoak += 2;
@@ -1266,21 +1298,25 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
 
     static removeSpecialAttack(event, target) {
         event.stopPropagation();
-        let li = $(target).parents(".item");
-        let id = li.data("item-id");
+        let li = target.closest(".item");
+        let id = li.dataset.itemId;
+        for (let specialAttack of this.object.specialAttacksList) {
+            if (specialAttack.id === id) {
+                specialAttack.added = false;
+            }
+        }
         if (id === 'rush' || id === 'aim') {
             this.object.diceModifier -= 3;
         }
         else {
-            for (var specialAttack of this.object.specialAttacksList) {
-                if (specialAttack.id === id) {
-                    specialAttack.added = false;
+            if (id === 'chopping' && this.object.rollType === 'withering') {
+                if (game.settings.get("exaltedessence", "combatReforged")) {
+                    this.object.diceModifier -= 2;
+                } else {
+                    this.object.overwhelming -= 1;
                 }
             }
-            if (id === 'chopping') {
-                this.object.diceModifier -= 2;
-            }
-            else if (id === 'piercing') {
+            else if (id === 'piercing' && this.object.rollType === 'decisive') {
                 this.object.damage.ignoreSoak -= 2;
             }
             this.object.triggerSelfDefensePenalty = Math.max(0, this.object.triggerSelfDefensePenalty - 1);
@@ -1455,6 +1491,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         html.on("change", "#gambit", ev => {
             const gambitCosts = {
                 'none': 0,
+                'grapple': 0,
                 'disarm': this.object.defense,
                 'distract': 2,
                 'ensnare': 3,
