@@ -162,7 +162,7 @@ export class ExaltedessenceActor extends Actor {
       const newMotes = Math.max(0, this.system.motes.value - commitChange);
       updateData.system.motes.value = newMotes;
     }
-    if (!game.settings.get("exaltedessence", "alternateAnima")) {
+    if ((this.type === 'character' || this.system.creaturetype === 'exalt') && !game.settings.get("exaltedessence", "alternateAnima")) {
       if (updateData?.system?.motes?.value !== undefined && updateData?.system?.motes?.value !== this.system.motes.value) {
         const animaChange = Math.max(0, this.system.motes.value - updateData?.system?.motes?.value);
         const newAnima = Math.min(10, this.system.anima.value + animaChange);
@@ -230,7 +230,7 @@ export class ExaltedessenceActor extends Actor {
         actorData.system.motes.committed -= item.system.cost.committed;
       }
     } else {
-      if (item.type === 'charm') {
+      if (item.type === 'charm' || item.type === 'quality') {
         let moteCost = item.system.cost.motes;
         if (game.settings.get("exaltedessence", "alternateAnima")) {
           moteCost += this.altAnimaSpendConversion(item.system.cost.anima);

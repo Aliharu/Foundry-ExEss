@@ -64,6 +64,9 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
       case 'charm':
         options.parts.push('cost', 'bonuses');
         break;
+      case 'quality':
+        options.parts.push('cost');
+        break;
     }
     options.parts.push('effects');
   }
