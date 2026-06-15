@@ -95,6 +95,17 @@ EXALTEDESSENCE.weapontags = {
     "twohanded": "Two-Handed",
 };
 
+EXALTEDESSENCE.itemIcons = {
+    intimacy: "systems/exaltedessence/assets/icons/hearts.svg",
+    spell: "systems/exaltedessence/assets/icons/magic-swirl.svg",
+    ritual: "icons/svg/book.svg",
+    merit: "icons/svg/coins.svg",
+    quality: "icons/svg/aura.svg",
+    weapon: "icons/svg/sword.svg",
+    armor: "systems/exaltedessence/assets/icons/breastplate.svg",
+    charm: "icons/svg/explosion.svg",
+};
+
 EXALTEDESSENCE.armortags = {
     "artifact": "Artifact",
     "buoyant": "Buoyant",

@@ -148,14 +148,14 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
 
     for (let charmText of charmBlocks) {
       let lines = charmText.split('\n').map(line => line.trim()).filter(line => line);
-        
+
       // Combine name if the second line is also all caps
       let charmName = lines[0];
       if (lines[1] && lines[1] === lines[1].toUpperCase()) {
-          charmName += " " + lines[1];
-          lines.splice(1, 1); // Remove the second line since it's now part of the name
+        charmName += " " + lines[1];
+        lines.splice(1, 1); // Remove the second line since it's now part of the name
       }
-      
+
       charmName = this._formatTitleCase(charmName);
       let prerequisitesLine = lines.find(line => line.startsWith("Prerequisites:") || line.startsWith("Prerequisite:"));
       const charmAbilities = Object.keys(CONFIG.EXALTEDESSENCE.selects.charmAbilities);
@@ -270,29 +270,25 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
   async createQuickCharacter() {
     let actorData = this._getStatBlock(false);
     let folder = await this._getFolder();
-    const itemData = [
-    ];
     let currentPool = null;
     this.errorSection = 'Initial Info';
 
     const lines = this.data.textBox.split(/\r?\n/);
     let isItemSection = false;
-    let currentItem = null;
-    let genericQualities = "";
 
     actorData.items = [];
     actorData.name = lines[0];
-    lines.forEach(line => {
-      if (line.match(/ATTACKS AND QUALITIES/)) {
-        isItemSection = true;
-        return;
+    for (const line of lines) {
+      if (line.match(/ATTACKS AND QUALITIES/i)) {
+        break;
       }
 
       if (!isItemSection) {
         const primaryMatch = line.match(/Primary Pool \((\d+)\): (.+)/);
         const secondaryMatch = line.match(/Secondary Pool \((\d+)\): (.+)/);
         const tertiaryMatch = line.match(/Tertiary Pool \((\d+)\)/);
-        const statMatch = line.match(/(Resolve|Health Levels|Essence|Defense|Hardness|Soak): (\d+)/);
+        const virtueMatch = line.includes('Virtues');
+        const statMatch = line.match(/(Resolve|Health Levels|Essence|Defense|Hardness|Motes|Soak): (\d+)/);
 
         if (primaryMatch) {
           currentPool = 'primary';
@@ -303,57 +299,38 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
         } else if (tertiaryMatch) {
           currentPool = null;
           actorData.system.pools.tertiary = { value: parseInt(tertiaryMatch[1], 10), actions: "" };
+        } else if (virtueMatch) {
+          const virtueSplit = line.replace("Virtues:", "").split(',');
+          actorData.system.details.majorvirtue = virtueSplit[0];
+          if (virtueSplit[1]) {
+            actorData.system.details.minorvirtue = virtueSplit[1];
+          }
         } else if (statMatch) {
           currentPool = null;
           const stat = statMatch[1].toLowerCase().replace(' ', '_');
-          if(stat === 'health_levels') {
+          if (stat === 'health_levels') {
             actorData.system.health.levels = parseInt(statMatch[2], 10);
           } else {
             actorData.system[stat].value = parseInt(statMatch[2], 10);
+            if (stat === 'hardness') {
+              actorData.system.poise.max = parseInt(statMatch[2], 10);
+              actorData.system.poise.value = parseInt(statMatch[2], 10);
+            }
           }
         } else if (currentPool && line.trim()) {
-          actorData.system[currentPool].actions += ` ${line}`;
+          actorData.system.pools[currentPool].actions += ` ${line}`;
         } else {
           actorData.system.biography += ` ${line}`;
         }
-      } else {
-        if (line.trim() === "") {
-          if (genericQualities) {
-            genericQualities.split(', ').forEach(quality => {
-              actorData.items.push({ name: quality.trim(), system: { description: '' } });
-            });
-            genericQualities = "";
-          }
-          return;
-        }
-
-        const itemMatch = line.match(
-          /^(?!Tags:|following spells)([^:]+):\s*(.*)|^(.+?)\s*\(p\.\s*(\d+|XX)\)/i
-        );
-        if (itemMatch) {
-          if (currentItem) actorData.items.push(currentItem);
-          currentItem = { name: itemMatch[1].trim(), type: 'quality', system: { description: itemMatch[2].trim() } };
-        } else if (currentItem) {
-          currentItem.system.description += ' ' + line.trim();
-        } else {
-          genericQualities += (genericQualities ? ' ' : '') + line.trim();
-        }
       }
-    });
-    if (currentItem) actorData.items.push(currentItem);
-    if (genericQualities) {
-      genericQualities.split(', ').forEach(quality => {
-        const existingQuality = game.items.find(item => item.name.trim().toLowerCase() === quality.trim().toLowerCase() && item.type === 'quality');
-        if(existingQuality) {
-          actorData.items.push(foundry.utils.duplicate(existingQuality));
-        } else {
-          actorData.items.push({ name: quality.trim(), type: 'quality', system: { description: '' } });
-        }
-      });
     }
+    const { items, qualities, tacticsText } = this._parseAttacksAndQualities(this.data.textBox);
+    // console.log("Items:", items);
+    // console.log("Qualities:", qualities);
+    actorData.system.biography += `\n${tacticsText}`;
+    actorData.items = items;
     const moteCostRegex = /Spend\s+(\d+)\s+motes?/;
     const moteCommitRegex = /Commit\s+(\d+)\s+motes?/;
-    const weaponStatRegex = /([+-]?\d+)\s*(Accuracy|Defense|Damage|Overwhelming)|\b(Accuracy|Defense|Damage|Overwhelming)\s*([+-]?\d+)/g;
     actorData.items.forEach(item => {
       const description = item.system?.description;
 
@@ -371,23 +348,248 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
           item.system.cost = item.system.cost || {};
           item.system.cost.committed = committed;
         }
-
-        let weaponMatch;
-        while ((weaponMatch = weaponStatRegex.exec(description)) !== null) {
-          const value = parseInt(weaponMatch[1] || weaponMatch[4], 10);  // Capture the correct value
-          const label = (weaponMatch[2] || weaponMatch[3]).toLowerCase(); // Capture the correct label
-
-          item.system[label] = value;
-          item.type = 'weapon';
-        }
       }
     });
+    for (const qualityName of qualities) {
+      const quality = game.items.find(item => item.name.trim().toLowerCase() === qualityName.replace(/\s*\([^)]*\)\s*/g, "").trim().toLowerCase() && item.type === 'quality');
+      if (quality) {
+        actorData.items.push(foundry.utils.duplicate(quality));
+      } else {
+        actorData.items.push({ name: qualityName.trim(), img: CONFIG.EXALTEDESSENCE.itemIcons['quality'], type: 'quality', system: { description: '' } });
+      }
+    }
     if (folder) {
       actorData.folder = folder;
     }
     console.log(actorData.system);
     console.log(actorData.items);
     await Actor.create(actorData);
+  }
+
+  _parseAttacksAndQualities(text) {
+    const startIndex = text.search(/Attacks and Qualities/i);
+
+    if (startIndex === -1) {
+      return { qualities: [], items: [] };
+    }
+
+    text = text.slice(startIndex);
+
+    // Remove header
+    text = text.replace(/^Attacks and Qualities\s*/i, "").trim();
+
+    // Normalize line breaks and wrapped lines
+    text = text.replace(/\r/g, "");
+
+    // Find the first unique item (first "Name:")
+    const firstItemMatch = text.match(/^(.+?):/m);
+    if (!firstItemMatch) return { qualities: [], items: [] };
+
+    const firstItemIndex = firstItemMatch.index;
+
+    // Everything before the first item is generic qualities
+    const qualitiesText = text.slice(0, firstItemIndex).replace(/\n/g, " ").trim();
+
+    // Split qualities on commas that are not inside parentheses
+    const qualities = [];
+    let depth = 0;
+    let start = 0;
+
+    for (let i = 0; i < qualitiesText.length; i++) {
+      const char = qualitiesText[i];
+
+      if (char === "(") depth++;
+      else if (char === ")") depth--;
+
+      if (char === "," && depth === 0) {
+        qualities.push(qualitiesText.slice(start, i).trim());
+        start = i + 1;
+      }
+    }
+
+    qualities.push(qualitiesText.slice(start).trim());
+
+    const itemsText = text.slice(firstItemIndex).trim();
+    let itemSection = itemsText;
+
+    const weaponsMatch = itemsText.match(/\bWeapons:/i);
+
+    let weaponsText = "";
+    let tacticsText = "";
+
+    if (weaponsMatch) {
+      itemSection = itemsText.slice(0, weaponsMatch.index).trim();
+      weaponsText = itemsText.slice(weaponsMatch.index).trim();
+      weaponsText = weaponsText.replace(/^Weapons:\s*/i, "").trim();
+    }
+    const tacticsMatch = weaponsText.match(/Tactics and Advice/i);
+    let weaponsSection = weaponsText;
+
+    if (tacticsMatch) {
+      weaponsSection = weaponsText.slice(0, tacticsMatch.index).trim();
+      tacticsText = weaponsText.slice(tacticsMatch.index).trim();
+    }
+
+    // Parse unique items
+    let items = [];
+
+    const itemRegex =
+      /^([^:\n]+):\s*([\s\S]*?)(?=^[^:\n]+:\s*|\s*$)/gm;
+
+    let match;
+
+    let itemName = '';
+    let itemDescription = '';
+
+    for (const line of itemSection.split(/\r?\n/)) {
+      if ((match = itemRegex.exec(line)) !== null) {
+        if (itemName) {
+          items.push({
+            name: itemName,
+            type: 'quality',
+            img: CONFIG.EXALTEDESSENCE.itemIcons['quality'],
+            system: {
+              description: itemDescription,
+            }
+          });
+        }
+        itemName = match[1].trim();
+        itemDescription = match[2]
+          .replace(/\n+/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+      } else {
+        itemDescription += line;
+      }
+    };
+    if (itemName) {
+      items.push({
+        name: itemName,
+        type: 'quality',
+        img: CONFIG.EXALTEDESSENCE.itemIcons['quality'],
+        system: {
+          description: itemDescription,
+        }
+      });
+    }
+
+    const weapons = this._parseWeapons(weaponsSection);
+    console.log(weapons);
+    // while ((match = itemRegex.exec(text)) !== null) {
+    //   items.push({
+    //     name: match[1].trim(),
+    //     description: match[2]
+    //       .replace(/\n+/g, " ")
+    //       .replace(/\s+/g, " ")
+    //       .trim()
+    //   });
+    // }
+    items = [...items, ...weapons];
+    console.log(items);
+    return {
+      qualities,
+      items,
+      tacticsText,
+    };
+  }
+
+  _parseWeapons(text) {
+    // Remove header and normalize whitespace
+    text = text
+      .replace(/^Weapons:\s*/i, "")
+      .trim();
+
+    let weaponStrings = [];
+
+    let index = 0;
+    let textLines = text.split(/\r?\n/);
+
+    while (index < textLines.length) {
+      if (!textLines[index + 1] || !textLines[index + 1].includes(')')) {
+        weaponStrings.push(textLines[index]);
+        index++;
+      } else {
+        weaponStrings.push(textLines[index] + textLines[index + 1]);
+        index += 2;
+      }
+    }
+    const weapons = [];
+
+    const weaponTags = [
+      "aggravated",
+      "artifact",
+      "balanced",
+      "chopping",
+      "concealable",
+      "defensive",
+      "disarming",
+      "flame",
+      "flexible",
+      "improvised",
+      "magicdamage",
+      "melee",
+      "mounted",
+      "natural",
+      "worn",
+      "offhand",
+      "onehanded",
+      "paired",
+      "piercing",
+      "pulling",
+      "powerful",
+      "ranged",
+      "reaching",
+      "returning",
+      "shield",
+      "smashing",
+      "thrown",
+      "twohanded"
+    ];
+    for (const weapon of weaponStrings) {
+      let newWeapon = {
+        name: '',
+        type: 'weapon',
+        img: CONFIG.EXALTEDESSENCE.itemIcons['weapon'],
+        system: {
+          accuracy: 0,
+          damage: 0,
+          defense: 0,
+          overwhelming: 0,
+          traits: {
+            weapontags: {
+              value: [],
+              custom: ""
+            }
+          }
+        }
+      };
+      let weaponSplit = weapon.split('(');
+      newWeapon.name = weaponSplit[0];
+      if (weaponSplit[1]) {
+        const statArray = weaponSplit[1].replace(/[()]/g, "").replace(/Tags:/gi, "").split(',');
+        for (const stat of statArray) {
+          const cleanedStat = stat.toLowerCase().trim();
+          if (cleanedStat.includes('accuracy')) {
+            newWeapon.system.accuracy = parseInt(stat.replace(/\D/g, ""));
+          }
+          if (cleanedStat.includes('damage')) {
+            newWeapon.system.damage = parseInt(stat.replace(/\D/g, ""));
+          }
+          if (cleanedStat.includes('overwhelming')) {
+            newWeapon.system.overwhelming = parseInt(stat.replace(/\D/g, ""));
+          }
+          if (cleanedStat.includes('defense')) {
+            newWeapon.system.defense = parseInt(stat.replace(/\D/g, ""));
+          }
+          if (weaponTags.includes(cleanedStat)) {
+            newWeapon.system.traits.weapontags.value.push(cleanedStat);
+          }
+        }
+      }
+      weapons.push(newWeapon);
+    }
+
+    return weapons;
   }
 
   _getItemData(textArray, index, actorData) {
