@@ -1,4 +1,4 @@
-<div class="tab {{tab.cssClass}}" data-group="primary" data-tab="effects">
+<div class="tab {{tab.cssClass}}" data-group="primary" data-tab="details">
     {{#ifEquals type 'armor'}}
     <div class="grid grid-2col flex-group-center">
         <div>
@@ -25,6 +25,13 @@
                 {{selectOptions selects.autoAddToRollOptions selected=system.autoaddtorolls localize=true}}
             </select>
         </div>
+        <div>
+            <div class="flex-center">
+                <div class="resource-label">{{localize "ExEss.ListingName"}}</div>
+            </div>
+            <input type="text" name="system.listingname" value="{{system.listingname}}"
+                placeholder="Defaults to ability name" />
+        </div>
         {{/ifEquals}}
         {{#ifEquals type 'spell'}}
         <div>
@@ -32,6 +39,13 @@
             <div>
                 <input name="system.iscontrolspell" type="checkbox" {{checked system.iscontrolspell}}>
             </div>
+        </div>
+        <div>
+            <div class="flex-center">
+                <div class="resource-label">{{localize "ExEss.ListingName"}}</div>
+            </div>
+            <input type="text" name="system.listingname" value="{{system.listingname}}"
+                placeholder="Defaults to ability name" />
         </div>
         {{/ifEquals}}
     </div>
@@ -64,6 +78,4 @@
     </div>
     {{/ifEquals}}
 
-
-    {{> systems/exaltedessence/templates/actor/active-effects.html}}
 </div>

@@ -28,6 +28,7 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
       deleteEmbeddedItem: this.deleteEmbeddedItem,
       editTraits: this.editTraits,
       effectControl: this.effectControl,
+      triggerAction: this.triggerAction,
     },
     dragDrop: [{ dragSelector: '[data-drag]', dropSelector: null }],
     form: {
@@ -42,12 +43,13 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
     tabs: { template: 'systems/exaltedessence/templates/dialogues/tabs.html' },
     description: { template: 'systems/exaltedessence/templates/item/description-tab.html' },
     cost: { template: 'systems/exaltedessence/templates/item/costs-tab.html' },
+    automations: { template: 'systems/exaltedessence/templates/item/automations-tab.html' },
     bonuses: { template: 'systems/exaltedessence/templates/item/bonuses-tab.html' },
-    effects: { template: 'systems/exaltedessence/templates/item/effects-tab.html' },
+    details: { template: 'systems/exaltedessence/templates/item/details-tab.html' },
   };
 
   get title() {
-    return `${game.i18n.localize(this.item.name)}`
+    return `${game.i18n.localize(this.item.name)}`;
   }
 
   _initializeApplicationOptions(options) {
@@ -68,7 +70,7 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
         options.parts.push('cost');
         break;
     }
-    options.parts.push('effects');
+    options.parts.push('automations', 'details');
   }
 
   async _prepareContext(options) {
@@ -94,6 +96,7 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
       isActivatable: ['spell', 'ritual', 'item', 'quality', 'weapon', 'charm'].includes(itemData.type),
       useCombatReforged: game.settings.get("exaltedessence", "combatReforged"),
       hardnessLabel: game.settings.get("exaltedessence", "combatReforged") ? game.i18n.localize("ExEss.Poise") : game.i18n.localize("ExEss.Hardness"),
+      hasDiceTriggers: ['charm', 'quality'].includes(itemData.type),
     };
 
     context.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
@@ -183,6 +186,77 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
     onManageActiveEffect(target, this.item);
   }
 
+  static async triggerAction(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+    const functionType = target.dataset.function;
+    const index = target.dataset.itemIndex;
+
+    let currentTriggerData = null;
+
+    if (functionType === 'add' || functionType === 'edit') {
+      if (functionType === 'edit') {
+        currentTriggerData = this.item.system.triggers.dicerollertriggers[index];
+      }
+
+      const template = "systems/exaltedessence/templates/dialogues/edit-dice-trigger.html";
+      const html = await foundry.applications.handlebars.renderTemplate(template, { name: currentTriggerData ? currentTriggerData.name : "New Roll Trigger", system: currentTriggerData ? currentTriggerData : this.item.system, selects: CONFIG.EXALTEDESSENCE.selects });
+
+      new foundry.applications.api.DialogV2({
+        window: { title: game.i18n.localize("ExEss.DiceTrigger"), resizable: true },
+        content: html,
+        classes: [this.item.getSheetBackground()],
+        render: (event, dialog) => {
+        },
+        buttons: [{
+          action: "choice",
+          label: game.i18n.localize("ExEss.Save"),
+          default: true,
+          callback: (event, button, dialog) => button.form.elements
+        }, {
+          action: "cancel",
+          label: game.i18n.localize("ExEss.Cancel"),
+          callback: (event, button, dialog) => false
+        }],
+        submit: result => {
+          if (result) {
+            const triggerData = {
+              id: currentTriggerData?.id || foundry.utils.randomID(16),
+              name: result.name.value,
+            };
+            if (!triggerData.name) {
+              ui.notifications.error(`New trigger requires name.`)
+              return;
+            }
+
+            let formData = {};
+
+            let items = this.item?.system.triggers.dicerollertriggers;
+            if (!items) {
+              items = [];
+            }
+            if (index) {
+              items[index] = triggerData;
+            } else {
+              items.push(triggerData);
+            }
+
+            foundry.utils.setProperty(formData, `system.triggers.dicerollertriggers`, items);
+
+            this.item.update(formData);
+          }
+        }
+      }).render({ force: true });
+    }
+    if (functionType === 'delete') {
+      let formData = {};
+      const items = this.item.system.triggers.dicerollertriggers;
+      items.splice(index, 1);
+      foundry.utils.setProperty(formData, `system.triggers.dicerollertriggers`, items);
+      this.item.update(formData);
+    }
+  }
+
   /** @override */
   _onRender(context, options) {
     this.#dragDrop.forEach((d) => d.bind(this.element));
@@ -212,6 +286,12 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
           tab.label += 'Description';
           tab.cssClass = this.tabGroups['primary'] === 'description' ? 'active' : '';
           break;
+        case 'automations':
+          tab.id = 'automations';
+          tab.partId = 'automations';
+          tab.label += 'Automations';
+          tab.cssClass = this.tabGroups['primary'] === 'automations' ? 'active' : '';
+          break;
         case 'cost':
           tab.id = 'cost';
           tab.partId = 'cost';
@@ -224,11 +304,11 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
           tab.label += 'Bonuses';
           tab.cssClass = this.tabGroups['primary'] === 'bonuses' ? 'active' : '';
           break;
-        case 'effects':
-          tab.id = 'effects';
-          tab.partId = 'effects';
-          tab.label += 'Effects';
-          tab.cssClass = this.tabGroups['primary'] === 'effects' ? 'active' : '';
+        case 'details':
+          tab.id = 'details';
+          tab.partId = 'details';
+          tab.label += 'Details';
+          tab.cssClass = this.tabGroups['primary'] === 'details' ? 'active' : '';
           break;
       }
       if (tab.id) {
@@ -384,11 +464,7 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
     };
 
     if (itemObject.type === "charm") {
-      const detailsTabactive = this.tabGroups.primary === 'details';
       let items = obj?.system.charmprerequisites;
-      if (detailsTabactive) {
-        items = obj?.system.archetype.charmprerequisites;
-      }
       if (!items) {
         items = [];
       }
@@ -413,10 +489,8 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
         }
       }
 
-
-
       let formData = {};
-      foundry.utils.setProperty(formData, `system${detailsTabactive ? '.archetype' : ''}.charmprerequisites`, items);
+      foundry.utils.setProperty(formData, `system.charmprerequisites`, items);
 
       obj.update(formData);
     }
@@ -539,7 +613,7 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
     }
 
     // Perform the sort
-    const sortUpdates = foundry.utils.SortingHelpers.performIntegerSort(effect, {
+    const sortUpdates = foundry.utils.performIntegerSort(effect, {
       target,
       siblings,
     });

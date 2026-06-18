@@ -4,7 +4,7 @@
 import TraitSelector from "../apps/trait-selector.js";
 import { onManageActiveEffect, prepareActiveEffectCategories } from "../effects.js";
 import { prepareItemTraits } from "../item/item.js";
-import { isColor, parseCounterStates, toggleDisplay } from "../utils/utils.js";
+import { isColor, parseCounterStates, setupActorItemLists, toggleDisplay } from "../utils/utils.js";
 import { addDefensePenalty } from "./actor.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
@@ -305,110 +305,10 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
    */
   _prepareCharacterItems(sheetData) {
     const actorData = this.actor;
-
-    // Initialize containers.
-    const gear = [];
-    const weapons = [];
-    const armor = [];
-    const merits = [];
-    const qualities = [];
-    let intimacies = [];
-    const rituals = [];
-
-    const charms = {
-      force: { name: 'ExEss.Force', visible: false, list: [] },
-      finesse: { name: 'ExEss.Finesse', visible: false, list: [] },
-      fortitude: { name: 'ExEss.Fortitude', visible: false, list: [] },
-      athletics: { name: 'ExEss.Athletics', visible: false, list: [] },
-      awareness: { name: 'ExEss.Awareness', visible: false, list: [] },
-      close: { name: 'ExEss.CloseCombat', visible: false, list: [] },
-      craft: { name: 'ExEss.Craft', visible: false, list: [] },
-      embassy: { name: 'ExEss.Embassy', visible: false, list: [] },
-      integrity: { name: 'ExEss.Integrity', visible: false, list: [] },
-      navigate: { name: 'ExEss.Navigate', visible: false, list: [] },
-      performance: { name: 'ExEss.Performance', visible: false, list: [] },
-      physique: { name: 'ExEss.Physique', visible: false, list: [] },
-      presence: { name: 'ExEss.Presence', visible: false, list: [] },
-      ranged: { name: 'ExEss.RangedCombat', visible: false, list: [] },
-      sagacity: { name: 'ExEss.Sagacity', visible: false, list: [] },
-      stealth: { name: 'ExEss.Stealth', visible: false, list: [] },
-      war: { name: 'ExEss.War', visible: false, list: [] },
-      martial: { name: 'ExEss.MartialArts', visible: false, list: [] },
-      evocation: { name: 'ExEss.Evocations', visible: false, list: [] },
-      other: { name: 'ExEss.Other', visible: false, list: [] },
-    }
-
-    const spells = {
-      first: { name: 'ExEss.First', visible: false, list: [] },
-      second: { name: 'ExEss.Second', visible: false, list: [] },
-      third: { name: 'ExEss.Third', visible: false, list: [] },
-    }
-
-    // Iterate through items, allocating to containers
-    for (let i of this.document.items) {
-      i.img = i.img || DEFAULT_TOKEN;
-      // Append to gear.
-      if (i.type === 'item') {
-        gear.push(i);
-      }
-      else if (i.type === 'weapon') {
-        prepareItemTraits('weapon', i);
-        weapons.push(i);
-      }
-      else if (i.type === 'armor') {
-        prepareItemTraits('armor', i);
-        armor.push(i);
-      }
-      // Append to merits.
-      else if (i.type === 'merit') {
-        merits.push(i);
-      }
-      else if (i.type === 'quality') {
-        qualities.push(i);
-      }
-      else if (i.type === 'intimacy') {
-        intimacies.push(i);
-      }
-      else if (i.type === 'ritual') {
-        rituals.push(i);
-      }
-      // Append to charms.
-      else if (i.type === 'charm') {
-        if (i.system.ability !== undefined) {
-          charms[i.system.ability].list.push(i);
-          charms[i.system.ability].visible = true;
-        }
-      }
-      else if (i.type === 'spell') {
-        if (i.system.circle !== undefined) {
-          spells[i.system.circle].list.push(i);
-          spells[i.system.circle].visible = true;
-        }
-      }
-    }
-
+    setupActorItemLists(actorData, this.document.items, this.collapseStates);
     if (this.document.limited) {
-      intimacies = intimacies.filter(intimacy => intimacy.system.visible);
+      actorData.intimacies = actorData.intimacies.filter(intimacy => intimacy.system.visible);
     }
-
-    for (const s of Object.values(spells)) {
-      s.list.sort((a, b) => (a.sort || 0) - (b.sort || 0));
-    }
-
-    for (const c of Object.values(charms)) {
-      c.list.sort((a, b) => (a.sort || 0) - (b.sort || 0));
-    }
-
-    // Assign and return
-    actorData.gear = gear.sort((a, b) => (a.sort || 0) - (b.sort || 0));
-    actorData.weapons = weapons.sort((a, b) => (a.sort || 0) - (b.sort || 0));
-    actorData.armor = armor.sort((a, b) => (a.sort || 0) - (b.sort || 0));
-    actorData.merits = merits.sort((a, b) => (a.sort || 0) - (b.sort || 0));
-    actorData.qualities = qualities.sort((a, b) => (a.sort || 0) - (b.sort || 0));
-    actorData.rituals = rituals.sort((a, b) => (a.sort || 0) - (b.sort || 0));
-    actorData.intimacies = intimacies.sort((a, b) => (a.sort || 0) - (b.sort || 0));
-    actorData.charms = charms;
-    actorData.spells = spells;
   }
 
   /**
@@ -1410,7 +1310,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
     }
 
     // Perform the sort
-    const sortUpdates = foundry.utils.SortingHelpers.performIntegerSort(effect, {
+    const sortUpdates = foundry.utils.performIntegerSort(effect, {
       target,
       siblings,
     });
@@ -1533,7 +1433,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
     }
 
     // Perform the sort
-    const sortUpdates = foundry.utils.SortingHelpers.performIntegerSort(item, {
+    const sortUpdates = foundry.utils.performIntegerSort(item, {
       target,
       siblings,
     });

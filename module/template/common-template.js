@@ -17,7 +17,7 @@ export function statField(initialValue) {
 
 export function traitField() {
     return new fields.SchemaField({
-        value: new fields.ArrayField(new fields.StringField({ initial: ""})),
+        value: new fields.ArrayField(new fields.StringField({ initial: "" })),
         custom: new fields.StringField({ initial: "" }),
     });
 }
@@ -69,6 +69,32 @@ export function costData() {
             anima: new fields.NumberField({ initial: 0 }),
             health: new fields.NumberField({ initial: 0 }),
             power: new fields.NumberField({ initial: 0 }),
+        }),
+    };
+}
+
+
+export function triggerData() {
+    return {
+        triggers: new fields.SchemaField({
+            dicerollertriggers: new fields.ArrayField(
+                new fields.SchemaField({
+                    name: new fields.StringField({ initial: "" }),
+                    triggerTime: new fields.StringField({ initial: "beforeRoll" }),
+                    bonuses: new fields.ArrayField(
+                        new fields.SchemaField({
+                            resctriction: new fields.StringField({ initial: "" }),
+                            value: new fields.StringField({ initial: "" }),
+                        }),
+                    ),
+                    requirements: new fields.ArrayField(
+                        new fields.SchemaField({
+                            resctriction: new fields.StringField({ initial: "" }),
+                            value: new fields.StringField({ initial: "" }),
+                        }),
+                    ),
+                }),
+            ),
         }),
     };
 }

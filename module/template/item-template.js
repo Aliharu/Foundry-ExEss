@@ -1,4 +1,4 @@
-import { activatableData, charmPrerequisite, costData, traitField } from "./common-template.js";
+import { activatableData, charmPrerequisite, costData, traitField, triggerData } from "./common-template.js";
 
 const fields = foundry.data.fields;
 
@@ -114,6 +114,7 @@ export class ItemQualityData extends CommonItemData {
             ...commonData,
             ...activatableData(),
             ...costData(),
+            ...triggerData(),
         }
     }
 }
@@ -128,6 +129,7 @@ export class ItemSpellData extends CommonItemData {
             circle: new fields.StringField({ initial: "first" }),
             cost: new fields.NumberField({ initial: 0 }),
             spelltype: new fields.StringField({ initial: "universal" }),
+            listingname: new fields.StringField({ initial: "" }),
             iscontrolspell: new fields.BooleanField({ initial: false }),
         }
     }
@@ -141,11 +143,13 @@ export class ItemCharmData extends CommonItemData {
             ...commonData,
             ...activatableData(),
             ...costData(),
+            // ...triggerData(),
             charmtype: new fields.StringField({ initial: "other" }),
             ability: new fields.StringField({ initial: "athletics" }),
             requirement: new fields.NumberField({ initial: 0 }),
             essence: new fields.NumberField({ initial: 0 }),
             prerequisites: new fields.StringField({ initial: "" }),
+            listingname: new fields.StringField({ initial: "" }),
             charmprerequisites: new fields.ArrayField(
                 new fields.SchemaField({
                     ...charmPrerequisite()

@@ -440,10 +440,15 @@
     "ExEss.ItemTypes": "Item Types",
     "ExEss.BuildingPowerFor": "Building Power For",
     "ExEss.AutoAddToRolls": "Auto Add To Rolls (If Active)",
+    "ExEss.ListingName": "ListingName",
+
+    
     "ExEss.CharacterRolls": "Character Rolls",
     "ExEss.OpposedRolls": "Opposed Rolls",
     "ExEss.SameAbilityAttribute": "Same Ability/Attribute",
     "ExEss.Attacks": "Attacks",
+    "ExEss.DiceRollerTriggers": "Dice Roller Triggers",
+    "ExEss.DiceTrigger": "Dice Trigger",
     "ExEss.RulesConfig": "Rules Config",
     "ExEss.RulesConfigLabel": "Rules Configuration",
     "ExEss.RulesConfigLabelDesc": "Various changes to rules in the system",

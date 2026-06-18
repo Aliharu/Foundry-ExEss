@@ -1,4 +1,5 @@
 import RollForm from "../apps/dice-roller.js";
+import { prepareItemTraits } from "../item/item.js";
 
 export async function getEnritchedHTML(item) {
     item.enritchedHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(item.system.description, { async: true, secrets: true, relativeTo: item });
@@ -11,9 +12,9 @@ export function sortDice(diceRoll, ignoreSetting = false) {
 export function toggleDisplay(target) {
     const li = target.nextElementSibling;
     if ((li.style.display || 'none') == 'none') {
-      li.style.display = 'block';
+        li.style.display = 'block';
     } else {
-      li.style.display = 'none';
+        li.style.display = 'none';
     }
 }
 
@@ -33,4 +34,121 @@ export function isColor(strColor) {
 
 export function noActorBaseRoll() {
     new RollForm(null, { classes: ["exaltedessence exaltedessence-dialog dice-roller", `${game.settings.get("exaltedessence", "sheetStyle")}-background`] }, {}, { rollType: 'base' }).render(true);
+}
+
+export function setupActorItemLists(actorData, items, collapseStates = null) {
+    // Initialize containers.
+    const gear = [];
+    const weapons = [];
+    const armor = [];
+    const merits = [];
+    const qualities = [];
+    const intimacies = [];
+    const rituals = [];
+
+    const charms = {
+        force: { name: 'ExEss.Force', visible: false, list: [] },
+        finesse: { name: 'ExEss.Finesse', visible: false, list: [] },
+        fortitude: { name: 'ExEss.Fortitude', visible: false, list: [] },
+        athletics: { name: 'ExEss.Athletics', visible: false, list: [] },
+        awareness: { name: 'ExEss.Awareness', visible: false, list: [] },
+        close: { name: 'ExEss.CloseCombat', visible: false, list: [] },
+        craft: { name: 'ExEss.Craft', visible: false, list: [] },
+        embassy: { name: 'ExEss.Embassy', visible: false, list: [] },
+        integrity: { name: 'ExEss.Integrity', visible: false, list: [] },
+        navigate: { name: 'ExEss.Navigate', visible: false, list: [] },
+        performance: { name: 'ExEss.Performance', visible: false, list: [] },
+        physique: { name: 'ExEss.Physique', visible: false, list: [] },
+        presence: { name: 'ExEss.Presence', visible: false, list: [] },
+        ranged: { name: 'ExEss.RangedCombat', visible: false, list: [] },
+        sagacity: { name: 'ExEss.Sagacity', visible: false, list: [] },
+        stealth: { name: 'ExEss.Stealth', visible: false, list: [] },
+        war: { name: 'ExEss.War', visible: false, list: [] },
+        martial: { name: 'ExEss.MartialArts', visible: false, list: [] },
+        evocation: { name: 'ExEss.Evocations', visible: false, list: [] },
+        other: { name: 'ExEss.Other', visible: false, list: [] },
+    }
+
+    const spells = {
+        first: { name: 'ExEss.First', visible: false, list: [] },
+        second: { name: 'ExEss.Second', visible: false, list: [] },
+        third: { name: 'ExEss.Third', visible: false, list: [] },
+    }
+
+    // Iterate through items, allocating to containers
+    for (let i of items) {
+        i.img = i.img || DEFAULT_TOKEN;
+        // Append to gear.
+        if (i.type === 'item') {
+            gear.push(i);
+        }
+        else if (i.type === 'weapon') {
+            prepareItemTraits('weapon', i);
+            weapons.push(i);
+        }
+        else if (i.type === 'armor') {
+            prepareItemTraits('armor', i);
+            armor.push(i);
+        }
+        // Append to merits.
+        else if (i.type === 'merit') {
+            merits.push(i);
+        }
+        else if (i.type === 'quality') {
+            qualities.push(i);
+        }
+        else if (i.type === 'intimacy') {
+            intimacies.push(i);
+        }
+        else if (i.type === 'ritual') {
+            rituals.push(i);
+        }
+        // Append to charms.
+        else if (i.type === 'charm') {
+            if (i.system.listingname) {
+                if (!charms[i.system.listingname]) {
+                    charms[i.system.listingname] = { name: i.system.listingname, visible: true, list: [], collapse: collapseStates?.charm[i.system.listingname] ?? true };
+                }
+                charms[i.system.listingname].list.push(i);
+            } else {
+                if (i.system.ability !== undefined) {
+                    charms[i.system.ability].list.push(i);
+                    charms[i.system.ability].visible = true;
+                }
+            }
+        }
+        else if (i.type === 'spell') {
+            if (i.system.listingname) {
+                if (!spells[i.system.listingname]) {
+                    spells[i.system.listingname] = { name: i.system.listingname, visible: true, list: [], collapse: collapseStates?.spell[i.system.listingname] ?? true };
+                }
+                spells[i.system.listingname].list.push(i);
+            } else {
+                if (i.system.circle !== undefined) {
+                    spells[i.system.circle].list.push(i);
+                    spells[i.system.circle].visible = true;
+                }
+            }
+
+        }
+    }
+
+    for (const spell of Object.values(spells)) {
+        spell.list.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    }
+
+    for (const charm of Object.values(charms)) {
+        charm.list.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    }
+
+    // Assign and return
+    actorData.gear = gear.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    actorData.weapons = weapons.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    actorData.armor = armor.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    actorData.merits = merits.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    actorData.qualities = qualities.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    actorData.rituals = rituals.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    actorData.intimacies = intimacies.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    actorData.charms = charms;
+    actorData.spells = spells;
 }

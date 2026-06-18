@@ -101,7 +101,8 @@ Hooks.once('init', async function () {
     "systems/exaltedessence/templates/actor/charm-list.html",
     "systems/exaltedessence/templates/actor/intimacies-list.html",
     "systems/exaltedessence/templates/item/item-cost.html",
-    "systems/exaltedessence/templates/item/item-roll-bonuses.html"
+    "systems/exaltedessence/templates/item/item-roll-bonuses.html",
+    "systems/exaltedessence/templates/item/item-trigger-list.html",
   ]);
 
   Combatant.prototype._getInitiativeFormula = function () {
