@@ -152,3 +152,101 @@ export function setupActorItemLists(actorData, items, collapseStates = null) {
     actorData.charms = charms;
     actorData.spells = spells;
 }
+
+export function createListSections(items) {
+    const sectionList = {};
+
+    for (const item of items) {
+        if (item.system.listingname) {
+            if (!sectionList[item.system.listingname]) {
+                sectionList[item.system.listingname] = { name: item.system.listingname, visible: true, list: [], collapse: true };
+            }
+            sectionList[item.system.listingname].list.push(item);
+        }
+        else {
+            switch (item.type) {
+                case 'charm':
+                    if (!sectionList[item.system.ability]) {
+                        sectionList[item.system.ability] = { name: game.i18n.localize(CONFIG.EXALTEDESSENCE.selects.charmAbilities[item.system.ability]) || 'Ex3.Other', visible: true, list: [], collapse: true };
+                    }
+                    sectionList[item.system.ability].list.push(item);
+                    break;
+                case 'spell':
+                    if (!sectionList[item.system.circle]) {
+                        sectionList[item.system.circle] = { name: `${game.i18n.localize(CONFIG.EXALTEDESSENCE.selects.sorceryCircles[item.system.circle])} Spells`, visible: true, list: [], collapse: true };
+                    }
+                    sectionList[item.system.circle].list.push(item);
+                    break;
+                case 'merit':
+                    if (!sectionList['merits']) {
+                        sectionList['merits'] = { name: game.i18n.localize("ExEss.Merits"), list: [], collapse: true };
+                    }
+                    sectionList['merits'].list.push(item);
+                    break;
+                case 'armor':
+                    if (item.system.traits.armortags.value.includes('artifact')) {
+                        sectionList[`armorArtifact${item.system.weighttype}`] = {
+                            name: `${game.i18n.localize(CONFIG.EXALTEDESSENCE.weightTypes[item.system.weighttype])} Artifact Armor`,
+                            list: [],
+                            collapse: true
+                        }
+                        sectionList[`armorArtifact${item.system.weighttype}`].list.push(item);
+                    }
+                    else {
+                        sectionList[`armor${item.system.weighttype}`] = {
+                            name: `${game.i18n.localize(CONFIG.EXALTEDESSENCE.weightTypes[item.system.weighttype])} Mundane Armor`,
+                            list: [],
+                            collapse: true
+                        }
+                        sectionList[`armor${item.system.weighttype}`].list.push(item);
+                    }
+                    break;
+                case 'weapon':
+                    if (item.system.traits.weapontags.value.includes('artifact')) {
+                        if (!sectionList[`weaponArtifact${item.system.weighttype}`]) {
+                            sectionList[`weaponArtifact${item.system.weighttype}`] = {
+                                name: `${game.i18n.localize(CONFIG.EXALTEDESSENCE.weightTypes[item.system.weighttype])} Artifact Weapons`,
+                                list: [],
+                                collapse: true
+                            }
+                        }
+                        sectionList[`weaponArtifact${item.system.weighttype}`].list.push(item);
+                    }
+                    else {
+                        if (!sectionList[`weapon${item.system.weighttype}`]) {
+                            sectionList[`weapon${item.system.weighttype}`] = {
+                                name: `${game.i18n.localize(CONFIG.EXALTEDESSENCE.weightTypes[item.system.weighttype])} Mundane Weapons`,
+                                list: [], collapse: true
+                            }
+                        }
+                        sectionList[`weapon${item.system.weighttype}`].list.push(item);
+                    }
+                    break;
+                case 'item':
+                    if (!sectionList['items']) {
+                        sectionList['items'] = { name: game.i18n.localize("ExEss.Items"), list: [], collapse: true };
+                    }
+                    sectionList['items'].list.push(item);
+                    break;
+                case 'ritual':
+                    if (!sectionList['shapingRituals']) {
+                        sectionList['shapingRituals'] = { name: game.i18n.localize("ExEss.ShapingRituals"), list: [], collapse: true };
+                    }
+                    sectionList['shapingRituals'].list.push(item);
+                    break;
+                case 'quality':
+                    if (!sectionList['qualities']) {
+                        sectionList['qualities'] = { name: game.i18n.localize("ExEss.Qualities"), list: [], collapse: true };
+                    }
+                    sectionList['qualities'].list.push(item);
+                default:
+                    if (!sectionList['otherItems']) {
+                        sectionList['otherItems'] = { name: game.i18n.localize("ExEss.Other"), list: [], collapse: true };
+                    }
+                    sectionList['otherItems'].list.push(item);
+                    break;
+            }
+        }
+    }
+    return sectionList;
+}

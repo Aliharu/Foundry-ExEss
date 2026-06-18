@@ -15,6 +15,13 @@ export const EXALTEDESSENCE = {};
 //     "localtongue": "ExEss.LocalTongue",
 // };
 
+EXALTEDESSENCE.weightTypes = {
+    light: "ExEss.Light",
+    medium: "ExEss.Medium",
+    heavy: "ExEss.Heavy",
+    other: "ExEss.Other",
+};
+
 EXALTEDESSENCE.activeEffectChanges = {
     '': 'ExEss.None',
     'system.attributes.force.value': 'ExEss.Force',

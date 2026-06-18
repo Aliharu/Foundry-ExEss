@@ -1,3 +1,5 @@
+import { createListSections, toggleDisplay } from "../utils/utils.js";
+
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 export default class ItemSearch extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -48,6 +50,9 @@ export default class ItemSearch extends HandlebarsApplicationMixin(ApplicationV2
       submitOnChange: true,
       closeOnSubmit: false
     },
+    actions: {
+      toggleCollapse: this.toggleCollapse,
+    },
     classes: ['exaltedessence-dialog', `leaves-background`],
     position: { width: 850, height: 900 },
   };
@@ -81,6 +86,7 @@ export default class ItemSearch extends HandlebarsApplicationMixin(ApplicationV2
       selects: CONFIG.EXALTEDESSENCE.selects,
       items: this.items,
       filteredItems: this.applyFilter(),
+      itemSections: this.getListSections(),
     };
   }
 
@@ -139,6 +145,32 @@ export default class ItemSearch extends HandlebarsApplicationMixin(ApplicationV2
       this.filterId++;
     }
     this.items = this.items.concat(itemList)
+  }
+
+  getListSections() {
+    const filteredItems = this.applyFilter();
+
+    const listSections = createListSections(filteredItems);
+
+    // Step 1: Convert to entries
+    const sortedEntries = Object.entries(listSections).sort(([, valA], [, valB]) =>
+      valA.name.localeCompare(valB.name)
+    );
+
+    return Object.fromEntries(sortedEntries);
+  }
+
+  static toggleCollapse(event, target) {
+    const collapseType = target.dataset.collapsetype;
+    const itemType = target.dataset.itemtype;
+    // if (collapseType === 'itemSection') {
+    //   const li = target.nextElementSibling;
+    //   if (itemType && li.getAttribute('id')) {
+    //     this.collapseStates[itemType][li.getAttribute('id')] = (li.offsetWidth || li.offsetHeight || li.getClientRects().length);
+    //   }
+    // }
+
+    toggleDisplay(target);
   }
 
   applyFilter() {
