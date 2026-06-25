@@ -243,6 +243,10 @@ Handlebars.registerHelper('healthCheck', function (health, type, options) {
   return 'i'
 });
 
+Handlebars.registerHelper('isBooleanTrigger', function (bonusEffect, options) {
+  return CONFIG.EXALTEDESSENCE.booleanTriggers.includes(bonusEffect) ? options.fn(this) : options.inverse(this);
+});
+
 Hooks.on('updateCombat', (async (combat, update) => {
   // Handle non-gm users.
   if (!game.user.isGM) return;

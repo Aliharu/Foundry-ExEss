@@ -178,7 +178,7 @@
     {{#ifEquals actor.system.details.exalt 'dragonblooded'}}
     <div class="resource-label">{{localize "ExEss.ActivateAura"}}</div>
     <select name="object.activateAura" data-type="String">
-        {{selectOptions selects.elements selected=data.activateAura localize=true}}
+        {{selectOptions selects.elements selected=data.activateAura localize=true blank='ExEss.None'}}
     </select>
     {{/ifEquals}}
 </div>

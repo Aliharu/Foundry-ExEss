@@ -56,6 +56,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 this.object.triggerSelfDefensePenalty = 0;
                 this.object.totalDice = 0;
                 this.object.rollButtonTooltip = "";
+                this.object.triggerMessages = [];
 
                 this.object.unusedDiceRoll = null;
                 this.object.unusedDiceRollDisplay = null;
@@ -102,7 +103,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             this.object.showDamage = false;
             this.object.powerSpent = 0;
             this.object.gambit = '';
-            this.object.activateAura = 'none';
+            this.object.activateAura = '';
             this.object.addOppose = {
                 addedBonus: {
                     dice: 0,
@@ -230,6 +231,12 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             }
         }
 
+        if (this.object.addedCharms === undefined) {
+            this.object.addedCharms = [];
+        }
+        if (this.object.opposingCharms === undefined) {
+            this.object.opposingCharms = [];
+        }
         if (this.object.addStatuses === undefined) {
             this.object.addStatuses = []
         }
@@ -250,7 +257,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             this.object.weaponTags = {};
         }
         if (this.object.activateAura === undefined) {
-            this.object.activateAura = 'none';
+            this.object.activateAura = '';
         }
         if (this.object.cost === undefined) {
             this.object.cost = {
@@ -341,10 +348,10 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             }
             if (this.object.specialAttacksList === undefined) {
                 this.object.specialAttacksList = [
-                    { id: 'aim', name: "Aim", added: false, show: this._isAttackRoll(), description: '+3 Dice, Cannot be used on the same turn as a reflexive move or flurry.', img: 'systems/exaltedessence/assets/icons/targeting.svg' },
-                    { id: 'chopping', name: "Chopping/Powerful", added: false, show: false, description: game.settings.get("exaltedessence", "combatReforged") ? 'Reduce defense by 1.  Gain +1 Overwhelming on withering or increase threshold to restore Poise by 1 on a successful decisive attack' : `Reduce defense by 1. Increase dice by 2 on withering (+1 OVW in combat reforged).  -1 enemy hardness on decisive`, img: 'systems/exaltedessence/assets/icons/battered-axe.svg' },
-                    { id: 'piercing', name: "Piercing", added: false, show: false, description: 'Reduce defense by 1.  Ignore 2 soak.', img: 'systems/exaltedessence/assets/icons/fast-arrow.svg' },
-                    { id: 'rush', name: "Rush", added: false, show: this._isAttackRoll(), description: 'Special attack, move 1 range band closer and gain +3 dice on attack.', img: 'systems/exaltedessence/assets/icons/running-ninja.svg' },
+                    { id: 'aim', name: game.i18n.localize("Aim"), added: false, show: this._isAttackRoll(), description: '+3 Dice, Cannot be used on the same turn as a reflexive move or flurry.', img: 'systems/exaltedessence/assets/icons/targeting.svg' },
+                    { id: 'chopping', name: game.i18n.localize("ExEss.ChoppingPowerful"), added: false, show: false, description: game.settings.get("exaltedessence", "combatReforged") ? 'Reduce defense by 1.  Gain +1 Overwhelming on withering or increase threshold to restore Poise by 1 on a successful decisive attack' : `Reduce defense by 1. Increase dice by 2 on withering (+1 OVW in combat reforged).  -1 enemy hardness on decisive`, img: 'systems/exaltedessence/assets/icons/battered-axe.svg' },
+                    { id: 'piercing', name: game.i18n.localize("ExEss.Piercing"), added: false, show: false, description: 'Reduce defense by 1.  Ignore 2 soak.', img: 'systems/exaltedessence/assets/icons/fast-arrow.svg' },
+                    { id: 'rush', name: game.i18n.localize("ExEss.Rush"), added: false, show: this._isAttackRoll(), description: 'Special attack, move 1 range band closer and gain +3 dice on attack.', img: 'systems/exaltedessence/assets/icons/running-ninja.svg' },
                 ];
             }
 
@@ -1206,14 +1213,13 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 this.object.damage.damageDice += item.system.diceroller.damage.bonusdice;
                 this.object.damage.damageSuccessModifier += item.system.diceroller.damage.bonussuccesses;
                 this.object.overwhelming += item.system.diceroller.damage.overwhelming;
-                this.object.damage.postSoakDamage += item.system.diceroller.damage.postsoakdamage;
                 if (item.system.diceroller.damage.doubleextrasuccess) {
                     this.object.damage.doubleExtraSuccess = item.system.diceroller.damage.doubleextrasuccess;
                 }
                 if (item.system.diceroller.damage.ignoresoak > 0) {
                     this.object.damage.ignoreSoak += item.system.diceroller.damage.ignoresoak;
                 }
-                if (item.system.diceroller.activateaura !== 'none') {
+                if (item.system.diceroller.activateaura) {
                     this.object.activateAura = item.system.diceroller.activateaura;
                 }
                 if (this.object.rollType === 'useOpposingCharms') {
@@ -1223,9 +1229,558 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     this.object.addOppose.addedBonus.poise += item.system.diceroller.opposedbonuses.hardness;
                 }
             }
+            await this._addBonuses(item, 'itemAdded', "benefit");
+
             this.render();
         }
     }
+
+
+    _getHealthFormula(formula) {
+        let numberValue = formula.replace(/[^0-9]/g, '');
+        if (numberValue) {
+            if (formula.includes('a')) {
+                this.object.cost.healthaggravated += parseInt(numberValue);
+            } else {
+                this.object.cost.healthlethal += parseInt(numberValue);
+            }
+        }
+    }
+
+
+    _getFormulaValue(charmValue, overrideActor, item) {
+        if (!charmValue || charmValue === "0") return 0;
+
+        // Check for negative value notation and clean up
+        let negativeValue = false;
+        if (charmValue.startsWith('-(') && charmValue.endsWith(')')) {
+            charmValue = charmValue.slice(2, -1); // Remove `-(...)`
+            negativeValue = true;
+        }
+
+        // Helper function to evaluate a single operation
+        const evaluate = (leftVar, operand, rightVar) => {
+            switch (operand) {
+                case '+': return leftVar + rightVar;
+                case '-': return leftVar - rightVar;
+                case '*': return leftVar * rightVar;
+                case '/>': return Math.ceil(leftVar / rightVar);
+                case '/<': return Math.floor(leftVar / rightVar);
+                case '|': return Math.max(leftVar, rightVar);
+                case 'cap': return Math.min(leftVar, rightVar);
+                default: throw new Error(`Unknown operator: ${operand}`);
+            }
+        };
+
+        // Helper function to parse values (operands)
+        const parseValue = (token) => this._getActorFormulaValue(token.trim(), overrideActor, item);
+
+        // Recursive function to evaluate expressions with parentheses and operations
+        const evaluateExpression = (expression) => {
+            // Match parentheses and solve inner expressions first
+            while (expression.includes('(')) {
+                expression = expression.replace(/\(([^()]+)\)/g, (_, inner) => evaluateExpression(inner));
+            }
+
+            // Split expression into tokens by operators, respecting order of operations
+            const operators = [['*', '/>', '/<'], ['+', '-'], ['|', 'cap']]; // Order of precedence
+            let tokens = expression.split(/(\s+)/).filter(token => token.trim() !== ''); // Split and filter whitespace
+
+            for (const operatorGroup of operators) {
+                let i = 0;
+                while (i < tokens.length) {
+                    const token = tokens[i];
+                    if (operatorGroup.includes(token)) {
+                        const leftVar = parseValue(tokens[i - 1]);
+                        const rightVar = parseValue(tokens[i + 1]);
+                        const result = evaluate(leftVar, token, rightVar);
+                        tokens.splice(i - 1, 3, result.toString()); // Replace operation with result
+                        i = i - 1; // Adjust index after splice
+                    } else {
+                        i++;
+                    }
+                }
+            }
+
+            return parseValue(tokens[0]);
+        };
+
+        // Evaluate the expression and apply the negative sign if necessary
+        const rollerValue = evaluateExpression(charmValue);
+        return negativeValue ? -rollerValue : rollerValue;
+    }
+
+    _getActorFormulaValue(formula, overrideActor = null, item = null) {
+        let formulaVal = 0;
+        let forumlaActor = this.actor;
+        if (overrideActor) {
+            forumlaActor = overrideActor;
+        }
+        if (parseInt(formula)) {
+            return parseInt(formula);
+        }
+        if (formula?.toLowerCase() === 'thresholdsuccesses' || formula?.toLowerCase() === 'extrasuccesses') {
+            return this.object.thresholdSuccesses || 0;
+        }
+        // if (formula?.toLowerCase() === 'damagedealt') {
+        //     return this.object.damageLevelsDealt || 0;
+        // }
+        if (formula?.toLowerCase() === 'rollsuccesses') {
+            return this.object.diceRollTotal || 0;
+        }
+        if (formula?.toLowerCase() === 'unuseddicerollsuccesses') {
+            return this.object.unusedDiceRollTotal || 0;
+        }
+        if (formula?.toLowerCase() === 'gambitdifficulty') {
+            return this.object.diceRollTotal || 0;
+        }
+        if (formula?.toLowerCase() === 'target-defense') {
+            return this.object.defense || 0;
+        }
+        if (formula?.toLowerCase() === 'overwhelming') {
+            return this.object.overwhelming || 0;
+        }
+        if (formula?.toLowerCase() === 'rangebands') {
+            return {
+                'close': 0,
+                'short': 1,
+                'medium': 2,
+                'long': 3,
+                'extreme': 4,
+            }[this.object.range];
+        }
+        if (formula?.toLowerCase() === 'weaponaccuracy') {
+            return this.object.weaponAccuracy || 0;
+        }
+        if (formula.includes('target-')) {
+            formula = formula.replace('target-', '');
+            if (this.object.target?.actor) {
+                forumlaActor = this.object.target?.actor;
+            }
+            else {
+                return 0;
+            }
+        }
+        if (formula.includes('rerollfaces-')) {
+            formula = formula.replace('rerollfaces-', '');
+            let countRerolledDice = false;
+            if (!parseInt(formula)) {
+                return 0;
+            }
+            if (this.object.diceRoll) {
+                return this.object.diceRoll.filter(die => die.rerolled && die.result === parseInt(formula)).length;
+            } else {
+                return 0;
+            }
+        }
+        else if (formula.includes('rollfaces-')) {
+            formula = formula.replace('rollfaces-', '');
+            let countRerolledDice = false;
+            if (formula.includes('-precedence')) {
+                formula = formula.replace('-precedence', '');
+                countRerolledDice = true;
+            }
+            if (!parseInt(formula)) {
+                return 0;
+            }
+            if (this.object.diceRoll) {
+                return this.object.diceRoll.filter(die => (countRerolledDice || ((!die.rerolled || die.result >= this.object.targetNumber) && !die.successCanceled)) && die.result === parseInt(formula)).length;
+            } else {
+                return 0;
+            }
+        }
+        if (formula.includes('attacker-')) {
+            formula = formula.replace('attacker-', '');
+            if (this.object.rollType === 'useOpposingCharms') {
+                if (this.object.attacker) {
+                    forumlaActor = this.object.attacker;
+                } else {
+                    return 0;
+                }
+            } else {
+                forumlaActor = this.actor;
+            }
+        }
+        let negativeValue = false;
+        if (formula.includes('-')) {
+            formula = formula.replace('-', '');
+            negativeValue = true;
+        }
+        if (forumlaActor.getRollData()[formula]?.value) {
+            formulaVal = forumlaActor.getRollData()[formula]?.value;
+        }
+        if (negativeValue) {
+            formulaVal *= -1;
+        }
+        return formulaVal;
+    }
+
+    async _addTriggerBonuses(type = 'beforeRoll') {
+        if (!this.object.bonusesTriggered) {
+            this.object.bonusesTriggered = {
+                beforeRoll: false,
+                afterRoll: false,
+                beforeDefense: false,
+                beforeDamageRoll: false,
+                attackMissed: false,
+                afterDamageRoll: false
+            }
+        }
+        for (const charm of this.object.addedCharms) {
+            await this._addBonuses(charm, type, "benefit");
+        }
+        for (const charm of this.object.opposingCharms) {
+            await this._addBonuses(charm, type, "opposed");
+        }
+        // Triggers should only happen once, except for ones involving defense charms
+        this.object.bonusesTriggered[type] = true;
+    }
+
+    async _addBonuses(charm, type, bonusType = "benefit") {
+        if (!charm.system.triggers) {
+            return;
+        }
+        const doublesChart = {
+            '7': 'sevens',
+            '8': 'eights',
+            '9': 'nines',
+            '10': 'tens',
+        };
+        let triggerHasBeenActivatedOnItem = false;
+        for (const trigger of Object.values(charm.system.triggers.dicerollertriggers).filter(trigger => trigger.triggerTime === type)) {
+            let triggerActor = charm.actor || this.actor;
+            if (trigger.actorType === 'target') {
+                if (this.object.rollType === 'useOpposingCharms') {
+                    if (!this.object.attacker) {
+                        continue;
+                    }
+                    triggerActor = this.object.attacker;
+                } else if (bonusType === 'benefit') {
+                    if (!this.object.target?.actor) {
+                        continue;
+                    }
+                    triggerActor = this.object.target.actor;
+                } else {
+                    triggerActor = this.actor;
+                }
+            }
+            try {
+                if (await this._triggerRequirementsMet(charm, trigger, bonusType, 1, false, triggerHasBeenActivatedOnItem, triggerActor)) {
+                    triggerHasBeenActivatedOnItem = true;
+                    for (const bonus of Object.values(trigger.bonuses)) {
+                        if ((type === 'itemAdded' || !this.object.bonusesTriggered[type] || ['defense', 'soak', 'hardness', 'resolve'].includes(bonus.effect))) {
+                            let cleanedValue = bonus.value.toLowerCase().trim();
+                            if (cleanedValue === 'true' || cleanedValue === 'false') {
+                                cleanedValue = cleanedValue === "true";
+                            }
+                            if (cleanedValue === 'prompt') {
+                                cleanedValue = await foundry.applications.api.DialogV2.prompt({
+                                    window: { title: game.i18n.localize(charm.name) },
+                                    content: `<div class="resource-label">Trigger: ${trigger.name}</div><label class="resource-label">Input value for: ${game.i18n.localize(CONFIG.EXALTEDESSENCE.numberBonusTypeLabels[bonus.effect])}</label><input name="promptValue" type="text" placeholder="Insert number or formula" autofocus>`,
+                                    ok: {
+                                        label: "Submit",
+                                        callback: (event, button, dialog) => button.form.elements.promptValue.value
+                                    }
+                                });
+                                cleanedValue = cleanedValue.toString().toLowerCase().trim();
+                            }
+                            if (cleanedValue === 'intimacy' || cleanedValue === '-intimacy') {
+                                cleanedValue = await foundry.applications.api.DialogV2.wait({
+                                    window: { title: game.i18n.localize("ExEss.Intimacy"), resizable: true },
+                                    content: `Select intimacy bonus for ${charm.name}`,
+                                    classes: [this.actor.getSheetBackground(), 'button-select-dialog'],
+                                    modal: true,
+                                    buttons: [
+                                        {
+                                            action: 'none',
+                                            label: `${game.i18n.localize("ExEss.None")} (0)`,
+                                            callback: (event, button, dialog) => `0`
+                                        },
+                                        {
+                                            action: 'minor',
+                                            label: `${game.i18n.localize("ExEss.Minor")} (${cleanedValue === '-intimacy' ? '-1' : '1'})`,
+                                            callback: (event, button, dialog) => `${cleanedValue === '-intimacy' ? '-1' : '1'}`
+                                        },
+                                        {
+                                            action: 'major',
+                                            label: `${game.i18n.localize("ExEss.Major")} (${cleanedValue === '-intimacy' ? '-2' : '2'})`,
+                                            callback: (event, button, dialog) => `${cleanedValue === '-intimacy' ? '-2' : '2'}`
+                                        },
+                                        {
+                                            action: 'defining',
+                                            label: `${game.i18n.localize("ExEss.Defining")} (${cleanedValue === '-intimacy' ? '-3' : '3'})`,
+                                            callback: (event, button, dialog) => `${cleanedValue === '-intimacy' ? '-3' : '3'}`
+                                        },
+                                    ]
+                                });
+                            }
+                            switch (bonus.effect) {
+                                case 'diceModifier':
+                                case 'nonCharmDiceModifier':
+                                    if (this.object.rollType === 'useOpposingCharms') {
+                                        // this.object.addOppose.addedBonus.dice += this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                    } else {
+                                        this.object.diceModifier += this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                    }
+                                    break;
+                                case 'penaltyModifier':
+                                case 'diceToSuccesses':
+                                case 'rerollNumber':
+                                case 'overwhelming':
+                                    this.object[bonus.effect] += this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                    break;
+                                case 'successModifier':
+                                    if (this.object.diceRollTotal) {
+                                        this.object.diceRollTotal += this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                    }
+                                    this.object.successModifier += this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                    break;
+                                case 'doubleSuccess':
+                                    if (cleanedValue < this.object.doubleSuccess) {
+                                        this.object.doubleSuccess = cleanedValue;
+                                    }
+                                    break;
+                                case 'decreaseTargetNumber':
+                                    this.object.targetNumber -= this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                    break;
+                                case 'rerollFailed':
+                                case 'rollTwice':
+                                    this.object[bonus.effect] = (typeof cleanedValue === "boolean" ? cleanedValue : true);
+                                    break;
+                                case 'activateAura':
+                                    this.object[bonus.effect] = cleanedValue;
+                                    break;
+                                case 'damageDice':
+                                case 'damageSuccessModifier':
+                                    this.object.damage[bonus.effect] += this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                    break;
+                                case 'rerollNumber-damage':
+                                    this.object.damage.rerollNumber += this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                    break;
+                                case 'doubleSuccess-damage':
+                                    if (cleanedValue < this.object.damage.doubleSuccess) {
+                                        this.object.damage.doubleSuccess = cleanedValue;
+                                    }
+                                    break;
+                                case 'decreaseTargetNumber-damage':
+                                    this.object.damage.targetNumber -= this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                    break;
+                                case 'rollTwice-damage':
+                                    this.object.damage.rollTwice = (typeof cleanedValue === "boolean" ? cleanedValue : true);
+                                    break;
+                                case 'ignoreSoak':
+                                    this.object.damage[bonus.effect] += this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                    break;
+                                case 'doubleExtraSuccess-damage':
+                                    this.object.damage.doubleExtraSuccess = (typeof cleanedValue === "boolean" ? cleanedValue : true);
+                                    break;
+                                case 'motes-spend':
+                                case 'anima-spend':
+                                case 'power-spend':
+                                case 'stunt-spend':
+                                    const spendKey = bonus.effect.replace('-spend', '');
+                                    this.object.cost[spendKey] += this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                    break;
+                                case 'health-spend':
+                                    this._getHealthFormula(cleanedValue);
+                                    break;
+                                case 'motes-gain':
+                                case 'health-gain':
+                                case 'anima-gain':
+                                case 'power-gain':
+                                    const gainKey = bonus.effect.replace('-gain', '');
+                                    this.object.gain[gainKey] += this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                    break;
+                                case 'defense':
+                                case 'soak':
+                                case 'resolve':
+                                case 'hardness':
+                                    if (this.object.rollType === 'useOpposingCharms') {
+                                        this.object.addOppose.addedBonus[bonus.effect] += this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                    } else {
+                                        this.object[bonus.effect] += this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                        if (bonus.effect === 'hardness') {
+                                            this.object.poise += this._getFormulaValue(cleanedValue, triggerActor, charm);
+                                        }
+                                    }
+                                    break;
+                                case 'setDamageType':
+                                    this.object.damage.type = cleanedValue;
+                                    break;
+                                // case 'inflictStatus':
+                                //     if (CONFIG.EXALTEDESSENCE.statusEffects.some(status => status.id === cleanedValue)) {
+                                //         this._addStatusEffect(cleanedValue);
+                                //     }
+                                //     break;
+                                case 'displayMessage':
+                                    const getValue = (obj, path) => {
+                                        return path.split('.').reduce((o, k) => o?.[k], obj);
+                                    };
+
+                                    const result = bonus.value.replace(/\${(.*?)}/g, (_, key) => {
+                                        const value = getValue(this.object, key.trim());
+                                        return value ?? `\${${key}}`;
+                                    });
+                                    // const result = bonus.value.replace(/\${(.*?)}/g, (_, key) => this.object[key.trim()] ?? `\${${key}}`);
+                                    (this.object.triggerMessages || []).push(result);
+                                    break;
+                                case 'addSpecialAttack':
+                                    this._enableSpecialAttack(bonus.value);
+                                    break;
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                ui.notifications.error(`<p>Error in Trigger:</p><pre>${trigger?.name || 'No Name Trigger'}</pre><p>See the console (F12) for details</p>`);
+                console.error(e);
+            }
+        }
+    }
+
+    async _triggerRequirementsMet(charm, trigger, bonusType = "benefit", triggerAmountIndex, display, triggerHasBeenActivatedOnItem, triggerActor) {
+        let fufillsRequirements = true;
+        let opposingActor = this.object.target?.actor;
+        if (bonusType === 'benefit' && this.object.rollType === 'useOpposingCharms') {
+            opposingActor = this.object.attacker;
+        }
+        if (bonusType === 'opposed' && this.object.rollType !== 'useOpposingCharms') {
+            opposingActor = this.actor;
+        }
+
+        for (const requirementObject of Object.values(trigger.requirements)) {
+            if (!fufillsRequirements) {
+                break;
+            }
+            let cleanedValue = requirementObject.value.toLowerCase().trim();
+            if (cleanedValue === 'true' || cleanedValue === 'false') {
+                cleanedValue = cleanedValue === "true";
+            }
+            switch (requirementObject.requirement) {
+                case 'rollType':
+                    if (requirementObject.value === 'abilityRoll') {
+                        if (this.object.rollType === 'useOpposingCharms') {
+                            fufillsRequirements = false;
+                        }
+                    }
+                    else if (requirementObject.value === 'attack') {
+                        if (!this._isAttackRoll()) {
+                            fufillsRequirements = false;
+                        }
+                    }
+                    else {
+                        if (this.object.rollType.toLowerCase() !== requirementObject.value) {
+                            fufillsRequirements = false;
+                        }
+                    }
+                    break;
+                case 'gambitType':
+                    if (this.object.gambit === 'none' || this.object.gambit !== requirementObject.value) {
+                        fufillsRequirements = false;
+                    }
+                    break;
+                case 'hasSpecialAttack':
+                    if (!this.object.specialAttacksList.some(attack => attack.added && attack.id === requirementObject.value)) {
+                        fufillsRequirements = false;
+                    }
+                    break;
+                case 'ability':
+                    if (this.actor.type === 'character' && this.object.ability !== requirementObject.value) {
+                        fufillsRequirements = false;
+                    }
+                    break;
+                case 'attribute':
+                    if (this.actor.type === 'character' && this.object.attribute !== requirementObject.value) {
+                        fufillsRequirements = false;
+                    }
+                    break;
+                case 'formula':
+                    if (!this._getBooleanFormulaValue(cleanedValue, bonusType === "opposed" ? triggerActor : null, charm)) {
+                        fufillsRequirements = false;
+                    }
+                    break;
+                case 'hasStatus':
+                    if (cleanedValue === 'anycover') {
+                        if (!triggerActor.effects.some(e => e.statuses.has('lightcover')) && !triggerActor.effects.some(e => e.statuses.has('heavycover'))) {
+                            fufillsRequirements = false;
+                        }
+                    } else {
+                        if (!triggerActor.effects.some(e => e.statuses.has(cleanedValue))) {
+                            fufillsRequirements = false;
+                        }
+                    }
+                    break;
+                case 'isExalt':
+                    if (this.actor?.system.details.exalt !== requirementObject.value) {
+                        fufillsRequirements = false;
+                    }
+                    break;
+                case 'hasAura':
+                    if (triggerActor.system.details.aura !== cleanedValue) {
+                        fufillsRequirements = false;
+                    }
+                    break;
+                case 'hasNature':
+                    if (triggerActor.system.details.nature !== cleanedValue) {
+                        fufillsRequirements = false;
+                    }
+                    break;
+                case 'isControlSpell':
+                    if (charm?.type !== 'spell') {
+                        fufillsRequirements = false;
+                    } else if (charm.system.controlspell !== cleanedValue) {
+                        fufillsRequirements = false;
+                    }
+                    break;
+
+            }
+            if ((trigger.requirementMode || 'and') === 'or' && fufillsRequirements) {
+                return true;
+            }
+        }
+        return fufillsRequirements;
+    }
+
+    _getBooleanFormulaValue(charmValue, opposedCharmActor = null, item = null) {
+        if (typeof charmValue === 'boolean') {
+            return charmValue;
+        }
+        if (charmValue) {
+            const operandRegex = /(==|!=|<=|>=|<|>)/;
+
+            // Check if the operand exists in the string
+            if (!operandRegex.test(charmValue)) {
+                return false;
+            }
+
+            // Split the formula string based on operand
+            const [leftOperand, operand, rightOperand] = charmValue.split(operandRegex);
+
+            let leftVar = this._getFormulaValue(leftOperand.trim(), opposedCharmActor, item);
+            let rightVar = this._getFormulaValue(rightOperand.trim(), opposedCharmActor, item);
+
+            // Perform operation based on operand
+            switch (operand) {
+                case "==":
+                    return leftVar == rightVar;
+                case "!=":
+                    return leftVar != rightVar;
+                case "<=":
+                    return leftVar <= rightVar;
+                case ">=":
+                    return leftVar >= rightVar;
+                case "<":
+                    return leftVar < rightVar;
+                case ">":
+                    return leftVar > rightVar;
+                default:
+                    console.log("Invalid Operator");
+                    return false;
+            }
+        }
+        return false;
+    }
+
 
     async addOpposingCharm(charm) {
         if (this.object.rollType === 'useOpposingCharms') {
@@ -1270,8 +1825,12 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
 
     static addSpecialAttack(event, target) {
         event.stopPropagation();
-        let li = $(target).parents(".item");
-        let id = li.data("item-id");
+        let li = target.closest(".item");
+        this._enableSpecialAttack(li.dataset.itemId);
+        this.render();
+    }
+
+    _enableSpecialAttack(id) {
         for (let specialAttack of this.object.specialAttacksList) {
             if (specialAttack.id === id) {
                 specialAttack.added = true;
@@ -1293,7 +1852,6 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             }
             this.object.triggerSelfDefensePenalty += 1;
         }
-        this.render();
     }
 
     static removeSpecialAttack(event, target) {
@@ -1441,7 +1999,6 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 this.object.damage.damageDice -= item.system.diceroller.damage.bonusdice;
                 this.object.damage.damageSuccessModifier -= item.system.diceroller.damage.bonussuccesses;
                 this.object.overwhelming -= item.system.diceroller.damage.overwhelming;
-                this.object.damage.postSoakDamage -= item.system.diceroller.damage.postsoakdamage;
                 if (item.system.diceroller.damage.doubleextrasuccess) {
                     this.object.damage.doubleExtraSuccess = false;
                 }
@@ -1449,7 +2006,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     this.object.damage.ignoreSoak -= item.system.diceroller.damage.ignoresoak;
                 }
                 if (item.system.diceroller.activateaura === this.object.activateAura) {
-                    this.object.activateAura = 'none';
+                    this.object.activateAura = '';
                 }
                 if (this.object.rollType === 'useOpposingCharms') {
                     this.object.addOppose.addedBonus.defense -= item.system.diceroller.opposedbonuses.defense;
@@ -1573,7 +2130,6 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 this.object.damage.damageDice -= item.system.diceroller.damage.bonusdice;
                 this.object.damage.damageSuccessModifier -= item.system.diceroller.damage.bonussuccesses;
                 this.object.overwhelming -= item.system.diceroller.damage.overwhelming;
-                this.object.damage.postSoakDamage -= item.system.diceroller.damage.postsoakdamage;
                 if (item.system.diceroller.damage.doubleextrasuccess) {
                     this.object.damage.doubleExtraSuccess = false;
                 }
@@ -1581,7 +2137,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     this.object.damage.ignoreSoak -= item.system.diceroller.damage.ignoresoak;
                 }
                 if (item.system.diceroller.activateaura === this.object.activateAura) {
-                    this.object.activateAura = 'none';
+                    this.object.activateAura = '';
                 }
             }
             this.render();
@@ -1934,6 +2490,8 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
     }
 
     async _baseAbilityDieRoll() {
+        await this._addTriggerBonuses('beforeRoll');
+
         let dice = await this._assembleDicePool(false);
         this.object.dice = dice;
 
@@ -1941,7 +2499,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             this.object.successModifier += this.actor.system.drill.value;
         }
 
-        var rollModifiers = {
+        let rollModifiers = {
             successModifier: this.object.successModifier,
             doubleSuccess: this.object.doubleSuccess,
             targetNumber: this.object.targetNumber,
@@ -1994,6 +2552,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         }
         this.object.roll.dice[0].options.rollOrder = 1;
 
+        await this._addTriggerBonuses('afterRoll');
         if (this.object.rollType !== 'base' && !this._isAttackRoll()) {
             this._updateRollerResources();
         }
@@ -2814,7 +3373,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             actorData.system.health.lethal = Math.max(0, actorData.system.health.lethal - this.object.gain.health);
         }
         this.actor.system.power.value = actorData.system.power.value;
-        if (this.object.activateAura !== 'none') {
+        if (this.object.activateAura) {
             actorData.system.details.aura = this.object.activateAura;
         }
         await this.actor.update(actorData);

@@ -3,7 +3,8 @@
     <div class="grid grid-3col" style="text-align:center;">
         <div>
             <div>
-                <img class="borderless-image roll-card-icon" src="{{rollingActor.img}}" title="{{rollingActor.name}}" width="64" height="64" />
+                <img class="borderless-image roll-card-icon" src="{{rollingActor.img}}" title="{{rollingActor.name}}"
+                    width="64" height="64" />
             </div>
             <div>
                 <b>{{rollingActor.name}}</b>
@@ -17,7 +18,8 @@
         </div>
         <div>
             <div>
-                <img class="borderless-image roll-card-icon" class="list-item-image" src="{{rollData.target.actor.img}}" title="{{rollData.target.actor.name}}" width="64" height="64" />
+                <img class="borderless-image roll-card-icon" class="list-item-image" src="{{rollData.target.actor.img}}"
+                    title="{{rollData.target.actor.name}}" width="64" height="64" />
             </div>
             <div>
                 <b>{{rollData.target.actor.name}}</b>
@@ -25,28 +27,38 @@
         </div>
     </div>
     {{else}}
-        {{#ifNotEquals rollData.rollType 'base'}}
-            <div class="grid grid-2col" style="text-align:center;">
-                <div>
-                    <div>
-                        <img class="borderless-image roll-card-icon" src="{{rollingActor.img}}" title="{{rollingActor.name}}" width="64" height="64" />
-                    </div>
-                    <div>
-                        <b>{{rollingActor.name}}</b>
-                    </div>
-                </div>
-                <div>
-                    <img class="borderless-image roll-card-icon black-icon" src="{{rollTypeImgUrl}}" width="64" height="64" />
-                    <div>
-                        <b>{{localize rollTypeLabel}}</b>
-                    </div>
-                </div>
+    {{#ifNotEquals rollData.rollType 'base'}}
+    <div class="grid grid-2col" style="text-align:center;">
+        <div>
+            <div>
+                <img class="borderless-image roll-card-icon" src="{{rollingActor.img}}" title="{{rollingActor.name}}"
+                    width="64" height="64" />
             </div>
-        {{/ifNotEquals}}
+            <div>
+                <b>{{rollingActor.name}}</b>
+            </div>
+        </div>
+        <div>
+            <img class="borderless-image roll-card-icon black-icon" src="{{rollTypeImgUrl}}" width="64" height="64" />
+            <div>
+                <b>{{localize rollTypeLabel}}</b>
+            </div>
+        </div>
+    </div>
+    {{/ifNotEquals}}
     {{/if}}
     <div class="card-buttons">
         <div class="flexrow 1">
             {{{messageContent}}}
         </div>
+        {{#each rollData.triggerMessages as |message index|}}
+        <div class="dice-roll" style="margin-top: 5px;">
+            <div class="dice-result">
+                <h4 class="dice-total">
+                    {{message}}
+                </h4>
+            </div>
+        </div>
+        {{/each}}
     </div>
 </div>

@@ -75,3 +75,12 @@
     padding: 0;
   }
 }
+
+.triggers {
+  .trigger-value-field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    justify-content: center;
+  }
+}

@@ -22,6 +22,111 @@ EXALTEDESSENCE.weightTypes = {
     other: "ExEss.Other",
 };
 
+EXALTEDESSENCE.triggerBonusTypes = {
+    none: {
+        label: "ExEss.None",
+        bonuses: {
+            "": "ExEss.None",
+        }
+    },
+    diceRoll: {
+        label: "ExEss.DiceRoll",
+        bonuses: {
+            diceModifier: "ExEss.DiceModifier",
+            successModifier: "ExEss.SuccessModifier",
+            doubleSuccess: "ExEss.DoubleSuccess",
+            decreaseTargetNumber: "ExEss.DecreaseTargetNumber",
+            rerollNumber: "ExEss.RerollNumberDice",
+            diceToSuccesses: "ExEss.DicetoSuccesses",
+            rollTwice: "ExEss.RollTwiceKeepHighest",
+            rerollFailed: "ExEss.RerollFailed",
+        },
+    },
+    damage: {
+        label: "ExEss.AttackDamage",
+        bonuses: {
+            damageDice: "ExEss.DamageDiceModifier",
+            damageSuccessModifier: "ExEss.DamageSuccessModifier",
+            'decreaseTargetNumber-damage': "ExEss.DamageDecreaseTargetNumber",
+            ignoreSoak: "ExEss.IgnoreSoak",
+            overwhelming: "ExEss.Overwhelming",
+            setDamageType: "ExEss.SetDamageType",
+            'doubleExtraSuccess-damage': "ExEss.DoubleExtraSuccess",
+        }
+    },
+    spend: {
+        label: "ExEss.Spend",
+        bonuses: {
+            'motes-spend': "ExEss.SpendMotes",
+            'anima-spend': "ExEss.SpendAnima",
+            'power-spend': "ExEss.SpendPower",
+            'stunt-spend': "ExEss.SpendStunt",
+            'health-spend': "ExEss.SpendHealth",
+        }
+    },
+    restore: {
+        label: "ExEss.Gain",
+        bonuses: {
+            'motes-gain': "ExEss.GainMotes",
+            'health-gain': "ExEss.GainHealth",
+            'anima-gain': "ExEss.GainAnima",
+            'power-gain': "ExEss.GainPower",
+        }
+    },
+    defense: {
+        label: "ExEss.Defense",
+        bonuses: {
+            defense: "ExEss.Defense",
+            soak: "ExEss.Soak",
+            hardness: "ExEss.Hardness/Poise",
+            resolve: "ExEss.Resolve",
+        }
+    },
+    other: {
+        label: "ExEss.Other",
+        bonuses: {
+            activateAura: "ExEss.ActivateAura",
+            displayMessage: "ExEss.DisplayMessage",
+            addSpecialAttack: "ExEss.AddSpecialAttack"
+        }
+    },
+}
+
+EXALTEDESSENCE.triggerRequirementTypes = {
+    none: {
+        label: "ExEss.None",
+        requirements: {
+            "": "ExEss.None"
+        }
+    },
+    roll: {
+        label: "ExEss.Roll",
+        requirements: {
+            rollType: "ExEss.RollType",
+            gambitType: "ExEss.GambitType",
+            hasSpecialAttack: "ExEss.HasSpecialAttack",
+            attribute: "ExEss.Attribute",
+            ability: "ExEss.Ability",
+        },
+    },
+    character: {
+        label: "ExEss.Character",
+        requirements: {
+            formula: "ExEss.Formula",
+            hasAura: 'ExEss.HasAura',
+            hasNature: 'ExEss.HasNature',
+            isExalt: "ExEss.IsExalt",
+            hasStatus: "ExEss.HasStatus",
+        },
+    },
+    item: {
+        label: "ExEss.Item",
+        requirements: {
+            isControlSpell: "ExEss.IsControlSpell"
+        }
+    }
+}
+
 EXALTEDESSENCE.activeEffectChanges = {
     '': 'ExEss.None',
     'system.attributes.force.value': 'ExEss.Force',
@@ -371,7 +476,6 @@ EXALTEDESSENCE.selects = {
         other: "ExEss.Other"
     },
     elements: {
-        none: 'ExEss.None',
         air: 'ExEss.Air',
         earth: 'ExEss.Earth',
         fire: 'ExEss.Fire',
@@ -412,9 +516,9 @@ EXALTEDESSENCE.selects = {
         other: 'ExEss.Other',
     },
     weaponTypes: {
-        'melee': "ExEss.Melee",
-        'ranged': "ExEss.Ranged",
-        'thrown': "ExEss.Thrown",
+        melee: "ExEss.Melee",
+        ranged: "ExEss.Ranged",
+        thrown: "ExEss.Thrown",
     },
     attackEffectPresets: {
         'arrow': "ExEss.Arrow",
@@ -439,9 +543,9 @@ EXALTEDESSENCE.selects = {
         'none': "ExEss.None",
     },
     itemWeights: {
-        'light': "ExEss.Light",
-        'medium': "ExEss.Medium",
-        'heavy': "ExEss.Heavy",
+        light: "ExEss.Light",
+        medium: "ExEss.Medium",
+        heavy: "ExEss.Heavy",
     },
     artifactTypes: {
         mundane: "ExEss.Mundane",
@@ -476,13 +580,13 @@ EXALTEDESSENCE.selects = {
     },
     autoAddToRollOptions: {
         '': "ExEss.None",
-        'action': "ExEss.CharacterRolls",
-        // 'opposedRolls': "ExEss.OpposedRolls",
-        'sameAbility': "ExEss.SameAbilityAttribute",
-        'attacks': "ExEss.Attacks",
-        'social': "ExEss.Social",
-        'buildPower': "ExEss.BuildPower",
-        'focusWill': "ExEss.FocusWill",
+        action: "ExEss.CharacterRolls",
+        opposedRolls: "ExEss.OpposedRolls",
+        sameAbility: "ExEss.SameAbilityAttribute",
+        attacks: "ExEss.Attacks",
+        social: "ExEss.Social",
+        buildPower: "ExEss.BuildPower",
+        focusWill: "ExEss.FocusWill",
     },
     exaltCharmTypes: {
         abyssal: "ExEss.Abyssal",
@@ -529,14 +633,85 @@ EXALTEDESSENCE.selects = {
         other: "ExEss.Other",
     },
     damageTypes: {
-        'lethal': "ExEss.Lethal",
-        'aggravated': "ExEss.Aggravated",
+        lethal: "ExEss.Lethal",
+        aggravated: "ExEss.Aggravated",
     },
     ranges: {
-        "close": "ExEss.CloseRange",
-        "short": "ExEss.ShortRange",
-        "medium": "ExEss.MediumRange",
-        "long": "ExEss.LongRange",
-        "extreme": "ExEss.ExtremeRange",
+        close: "ExEss.CloseRange",
+        short: "ExEss.ShortRange",
+        medium: "ExEss.MediumRange",
+        long: "ExEss.LongRange",
+        extreme: "ExEss.ExtremeRange",
     },
+    triggerTimes: {
+        beforeRoll: "ExEss.BeforeRoll",
+        afterRoll: "ExEss.AfterRoll",
+        beforeDamageRoll: "ExEss.BeforeDamageRoll",
+        itemAdded: "ExEss.WhenItemAdded"
+    },
+    triggerRequirementModes: {
+        and: "ExEss.RequirementAND",
+        or: "ExEss.RequirementOR",
+    },
+    booleanTriggerSelects: {
+        true: "ExEss.True",
+        false: "ExEss.False",
+    },
+    specialAttacks: {
+        aim: "ExEss.Aim",
+        chopping: "ExEss.ChoppingPowerful",
+        piercing: "ExEss.Piercing",
+        rush: "ExEss.Rush",
+    },
+    statuses: {
+        disarmed: "ExEss.Disarmed",
+        ensnared: "ExEss.Ensnared",
+        prone: "ExEss.Prone",
+        lightcover: "ExEss.LightCover",
+        heavycover: "ExEss.HeavyCover",
+        surprised: "ExEss.Surprised",
+        concealment: "ExEss.Concealment",
+        bleeding: "EFFECT.StatusBleeding",
+        poisoned: "EFFECT.StatusPoison",
+        burning: "EFFECT.StatusBurning",
+        dematerialized: "ExEss.Dematerialized",
+        hindered: "ExEss.Hindered",
+        routing: "ExEss.Routing",
+        break: "ExEss.Break",
+        incapacitated: "ExEss.Incapacitated",
+        grappling: "ExEss.Grappling"
+    },
+    rollTypes: {
+        attack: "ExEss.Attack",
+        ability: "ExEss.Ability",
+        readIntentions: "ExEss.ReadIntentions",
+        social: "ExEss.Social",
+        command: "ExEss.Command",
+        withering: "ExEss.Withering",
+        decisive: "ExEss.Decisive",
+        gambit: "ExEss.Gambit",
+        buildPower: "ExEss.BuildPower",
+        focusWill: 'ExEss.FocusWill',
+        joinBattle: 'ExEss.JoinBattle',
+    }
 }
+
+EXALTEDESSENCE.numberBonusTypeLabels = {
+    diceModifier: "ExEss.DiceModifier",
+}
+
+EXALTEDESSENCE.booleanTriggers = [
+    'rollTwice',
+    'rerollFailed',
+    'ignoreLegendarySize',
+    'targetIsCrashed',
+    'targetTakenTurn',
+    'rollSucceeded',
+    'gambitSucceeded',
+    'incapacitatedTarget',
+    'noTriggersActivated',
+    'attackClash',
+    'targetIsBattlegroup',
+    'isControlSpell',
+    'doubleExtraSuccess-damage',
+];

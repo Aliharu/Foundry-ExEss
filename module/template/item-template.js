@@ -143,7 +143,7 @@ export class ItemCharmData extends CommonItemData {
             ...commonData,
             ...activatableData(),
             ...costData(),
-            // ...triggerData(),
+            ...triggerData(),
             charmtype: new fields.StringField({ initial: "other" }),
             ability: new fields.StringField({ initial: "athletics" }),
             requirement: new fields.NumberField({ initial: 0 }),

@@ -153,6 +153,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
       isNPC: this.actor.type === 'npc',
       collapseStates: this.collapseStates,
       selects: CONFIG.EXALTEDESSENCE.selects,
+      rollData: this.actor.getRollData(),
       isExalt: this.actor.type === 'character' || this.actor.system.creaturetype === 'exalt',
       useAlternateAnima: game.settings.get("exaltedessence", "alternateAnima"),
       useCombatReforged: game.settings.get("exaltedessence", "combatReforged"),

@@ -29,6 +29,7 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
       editTraits: this.editTraits,
       effectControl: this.effectControl,
       triggerAction: this.triggerAction,
+      triggerSubItemAction: this.triggerSubItemAction,
     },
     dragDrop: [{ dragSelector: '[data-drag]', dropSelector: null }],
     form: {
@@ -93,6 +94,8 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
       tabs: this._getTabs(options.parts),
       selects: CONFIG.EXALTEDESSENCE.selects,
       traitHeader: itemData.type === 'armor' || itemData.type === 'weapon',
+      triggerBonusTypes: CONFIG.EXALTEDESSENCE.triggerBonusTypes,
+      triggerRequirementTypes: CONFIG.EXALTEDESSENCE.triggerRequirementTypes,
       isActivatable: ['spell', 'ritual', 'item', 'quality', 'weapon', 'charm'].includes(itemData.type),
       useCombatReforged: game.settings.get("exaltedessence", "combatReforged"),
       hardnessLabel: game.settings.get("exaltedessence", "combatReforged") ? game.i18n.localize("ExEss.Poise") : game.i18n.localize("ExEss.Hardness"),
@@ -186,74 +189,77 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
     onManageActiveEffect(target, this.item);
   }
 
-  static async triggerAction(event, target) {
-    event.preventDefault();
-    event.stopPropagation();
-    const functionType = target.dataset.function;
-    const index = target.dataset.itemIndex;
+  static triggerAction(event, target) {
+    const actionType = target.dataset.actiontype;
+    const triggerType = target.dataset.type;
 
-    let currentTriggerData = null;
-
-    if (functionType === 'add' || functionType === 'edit') {
-      if (functionType === 'edit') {
-        currentTriggerData = this.item.system.triggers.dicerollertriggers[index];
-      }
-
-      const template = "systems/exaltedessence/templates/dialogues/edit-dice-trigger.html";
-      const html = await foundry.applications.handlebars.renderTemplate(template, { name: currentTriggerData ? currentTriggerData.name : "New Roll Trigger", system: currentTriggerData ? currentTriggerData : this.item.system, selects: CONFIG.EXALTEDESSENCE.selects });
-
-      new foundry.applications.api.DialogV2({
-        window: { title: game.i18n.localize("ExEss.DiceTrigger"), resizable: true },
-        content: html,
-        classes: [this.item.getSheetBackground()],
-        render: (event, dialog) => {
-        },
-        buttons: [{
-          action: "choice",
-          label: game.i18n.localize("ExEss.Save"),
-          default: true,
-          callback: (event, button, dialog) => button.form.elements
-        }, {
-          action: "cancel",
-          label: game.i18n.localize("ExEss.Cancel"),
-          callback: (event, button, dialog) => false
-        }],
-        submit: result => {
-          if (result) {
-            const triggerData = {
-              id: currentTriggerData?.id || foundry.utils.randomID(16),
-              name: result.name.value,
-            };
-            if (!triggerData.name) {
-              ui.notifications.error(`New trigger requires name.`)
-              return;
-            }
-
-            let formData = {};
-
-            let items = this.item?.system.triggers.dicerollertriggers;
-            if (!items) {
-              items = [];
-            }
-            if (index) {
-              items[index] = triggerData;
-            } else {
-              items.push(triggerData);
-            }
-
-            foundry.utils.setProperty(formData, `system.triggers.dicerollertriggers`, items);
-
-            this.item.update(formData);
+    if (actionType === 'add') {
+      if (triggerType) {
+        const newList = this.item.system.triggers[triggerType];
+        let listIndex = 0;
+        let indexAdd = "0";
+        for (const key of Object.keys(newList)) {
+          if (key !== listIndex.toString()) {
+            break;
           }
+          listIndex++;
         }
-      }).render({ force: true });
+        indexAdd = listIndex.toString();
+        newList[indexAdd] = {
+          name: "",
+          triggerTime: "beforeRoll",
+          requirementMode: 'and',
+          bonuses: {},
+          requirements: {}
+        };
+        this.item.update({ [`system.triggers.${triggerType}`]: newList });
+      }
+    }
+    if (actionType === 'delete') {
+      let index = target.dataset.index;
+      this.item.update({
+        [`system.triggers.${triggerType}.${index}`]: foundry.data.operators.ForcedDeletion.create(),
+      });
+    }
+  }
+
+  static triggerSubItemAction(event, target) {
+    let functionType = target.dataset.functiontype;
+    let triggerType = target.dataset.type;
+    let index = target.dataset.index;
+    let subType = target.dataset.subtype;
+    let subindex = target.dataset.subindex;
+
+    if (functionType === 'add') {
+      const newList = this.item.system.triggers[triggerType][index][subType];
+      let listIndex = 0;
+      let indexAdd = "0";
+      //Add Bonuses and requirements
+      for (const key of Object.keys(newList)) {
+        if (key !== listIndex.toString()) {
+          break;
+        }
+        listIndex++;
+      }
+      indexAdd = listIndex.toString();
+      if (subType === 'bonuses') {
+        newList[indexAdd] = {
+          effect: "",
+          value: "",
+        };
+      }
+      else {
+        newList[indexAdd] = {
+          requirement: "",
+          value: "",
+        };
+      }
+      this.item.update({ [`system.triggers.${triggerType}.${index}.${subType}`]: newList });
     }
     if (functionType === 'delete') {
-      let formData = {};
-      const items = this.item.system.triggers.dicerollertriggers;
-      items.splice(index, 1);
-      foundry.utils.setProperty(formData, `system.triggers.dicerollertriggers`, items);
-      this.item.update(formData);
+      this.item.update({
+        [`system.triggers.${triggerType}.${index}.${subType}.${subindex}`]: foundry.data.operators.ForcedDeletion.create(),
+      });
     }
   }
 

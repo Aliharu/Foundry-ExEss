@@ -95,6 +95,92 @@ export class ExaltedessenceActor extends Actor {
     }
   }
 
+  /**
+ * Override getRollData() that's supplied to rolls.
+ */
+  getRollData() {
+    const data = { ...super.getRollData() };
+    let currentDefensePenalty = 0;
+    let totalHealth = 0;
+    let currentPenalty = 0;
+    let coverBonus = 0;
+
+    for (let [key, healthLevel] of Object.entries(this.system.health.levels)) {
+      if ((this.system.health.lethal + this.system.health.aggravated) > totalHealth) {
+        currentPenalty = healthLevel.penalty;
+      }
+      totalHealth += healthLevel.value;
+    }
+
+    if (this.effects.some(e => e.statuses.has('prone'))) {
+      currentDefensePenalty += 2;
+    }
+    if (this.effects.some(e => e.statuses.has('surprised'))) {
+      currentDefensePenalty += 1;
+    }
+
+    if (this.effects.some(e => e.statuses.has('lightcover'))) {
+      coverBonus += 1;
+    }
+    if (this.effects.some(e => e.statuses.has('heavycover'))) {
+      coverBonus += 2;
+    }
+
+    if (game.settings.get("exaltedessence", "combatReforged") && this.effects.some(e => e.name === 'grappling')) {
+      currentDefensePenalty += 1;
+    }
+
+    let armorPenalty = 0;
+
+    for (let armor of this.items.filter(item => item.type === 'armor' && item.system.equipped)) {
+      armorPenalty += Math.abs(armor.system.penalty);
+    }
+
+    data.woundpenalty = { 'value': currentPenalty };
+    data.armorpenalty = { 'value': armorPenalty };
+
+    data.cover = { 'value': coverBonus };
+    data.initiative = { 'value': 0 };
+
+    if (!data.size) {
+      data.size = {
+        value: 0,
+        min: 0,
+      }
+    }
+
+    // Prepare character roll data.
+    this._getCharacterRollData(data);
+    this._getNpcRollData(data);
+
+    return data;
+  }
+
+  /**
+ * Prepare character roll data.
+ */
+  _getCharacterRollData(data) {
+    if (this.type !== 'character') return;
+
+    if (data.abilities) {
+      for (let [k, v] of Object.entries(data.abilities)) {
+        data[k] = foundry.utils.deepClone(v);
+      }
+    }
+
+    if (data.attributes) {
+      for (let [k, v] of Object.entries(data.attributes)) {
+        data[k] = foundry.utils.deepClone(v);
+      }
+    }
+  }
+
+  _getNpcRollData(data) {
+    if (this.type !== 'npc') return;
+  }
+
+
+
   _prepareBaseActorData(system) {
     system.motes.max = system.essence.value * 2 + Math.floor((system.essence.value - 1) / 2) + 3;
     let animaLevel = "";

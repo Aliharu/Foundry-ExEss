@@ -77,19 +77,20 @@ export function costData() {
 export function triggerData() {
     return {
         triggers: new fields.SchemaField({
-            dicerollertriggers: new fields.ArrayField(
+            dicerollertriggers: new fields.TypedObjectField(
                 new fields.SchemaField({
                     name: new fields.StringField({ initial: "" }),
                     triggerTime: new fields.StringField({ initial: "beforeRoll" }),
-                    bonuses: new fields.ArrayField(
+                    summary: new fields.StringField({ initial: "" }),
+                    bonuses: new fields.TypedObjectField(
                         new fields.SchemaField({
-                            resctriction: new fields.StringField({ initial: "" }),
+                            effect: new fields.StringField({ initial: "" }),
                             value: new fields.StringField({ initial: "" }),
                         }),
                     ),
-                    requirements: new fields.ArrayField(
+                    requirements: new fields.TypedObjectField(
                         new fields.SchemaField({
-                            resctriction: new fields.StringField({ initial: "" }),
+                            requirement: new fields.StringField({ initial: "" }),
                             value: new fields.StringField({ initial: "" }),
                         }),
                     ),

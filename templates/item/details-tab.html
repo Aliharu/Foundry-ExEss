@@ -32,6 +32,15 @@
             <input type="text" name="system.listingname" value="{{system.listingname}}"
                 placeholder="Defaults to ability name" />
         </div>
+        <div>
+            <div class="flex-center">
+                <div class="resource-label">{{localize "ExEss.OpposedBonusCharm"}}</div>
+            </div>
+            <div>
+                <input name="system.diceroller.opposedbonuses.enabled" type="checkbox" {{checked
+                    system.diceroller.opposedbonuses.enabled}}>
+            </div>
+        </div>
         {{/ifEquals}}
         {{#ifEquals type 'spell'}}
         <div>
