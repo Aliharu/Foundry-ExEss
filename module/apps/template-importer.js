@@ -351,11 +351,13 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
       }
     });
     for (const qualityName of qualities) {
-      const quality = game.items.find(item => item.name.trim().toLowerCase() === qualityName.replace(/\s*\([^)]*\)\s*/g, "").trim().toLowerCase() && item.type === 'quality');
-      if (quality) {
-        actorData.items.push(foundry.utils.duplicate(quality));
-      } else {
-        actorData.items.push({ name: qualityName.trim(), img: CONFIG.EXALTEDESSENCE.itemIcons['quality'], type: 'quality', system: { description: '' } });
+      if (qualityName) {
+        const quality = game.items.find(item => item.name.trim().toLowerCase() === qualityName.replace(/\s*\([^)]*\)\s*/g, "").trim().toLowerCase() && item.type === 'quality');
+        if (quality) {
+          actorData.items.push(foundry.utils.duplicate(quality));
+        } else {
+          actorData.items.push({ name: qualityName.trim(), img: CONFIG.EXALTEDESSENCE.itemIcons['quality'], type: 'quality', system: { description: '' } });
+        }
       }
     }
     if (folder) {
@@ -442,7 +444,7 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
     let itemDescription = '';
 
     for (const line of itemSection.split(/\r?\n/)) {
-      if ((match = itemRegex.exec(line)) !== null) {
+      if (!/Exalted:\s*Essence/i.test(line) && (match = itemRegex.exec(line)) !== null) {
         if (itemName) {
           items.push({
             name: itemName,
@@ -492,6 +494,7 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
       tacticsText,
     };
   }
+
 
   _parseWeapons(text) {
     // Remove header and normalize whitespace
@@ -563,7 +566,14 @@ export default class TemplateImporter extends HandlebarsApplicationMixin(Applica
           }
         }
       };
-      let weaponSplit = weapon.split('(');
+      const weaponSplitIndex = weapon.indexOf('(');
+
+      const weaponSplit = weaponSplitIndex === -1
+        ? [weapon]
+        : [
+          weapon.slice(0, weaponSplitIndex),
+          weapon.slice(weaponSplitIndex + 1)
+        ];
       newWeapon.name = weaponSplit[0];
       if (weaponSplit[1]) {
         const statArray = weaponSplit[1].replace(/[()]/g, "").replace(/Tags:/gi, "").split(',');
