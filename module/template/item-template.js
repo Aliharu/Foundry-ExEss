@@ -17,6 +17,8 @@ export class ItemData extends CommonItemData {
         const commonData = super.defineSchema();
 
         return {
+            ...activatableData(),
+            ...triggerData(),
             ...commonData,
             quantity: new fields.NumberField({ initial: 1 }),
         }
@@ -73,7 +75,6 @@ export class ItemMeritData extends CommonItemData {
 
         return {
             ...commonData,
-            ...activatableData(),
             merittype: new fields.StringField({ initial: "story" }),
             rating: new fields.StringField({ initial: "" }),
         }
@@ -86,7 +87,6 @@ export class ItemRitualData extends CommonItemData {
 
         return {
             ...commonData,
-            ...activatableData(),
             will: new fields.NumberField({ initial: 0 }),
         }
     }
@@ -113,6 +113,7 @@ export class ItemQualityData extends CommonItemData {
         return {
             ...commonData,
             ...activatableData(),
+            ...triggerData(),
             ...costData(),
             ...triggerData(),
         }
@@ -126,6 +127,7 @@ export class ItemSpellData extends CommonItemData {
         return {
             ...commonData,
             ...activatableData(),
+            ...triggerData(),
             circle: new fields.StringField({ initial: "first" }),
             cost: new fields.NumberField({ initial: 0 }),
             spelltype: new fields.StringField({ initial: "universal" }),

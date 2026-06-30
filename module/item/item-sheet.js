@@ -96,10 +96,9 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
       traitHeader: itemData.type === 'armor' || itemData.type === 'weapon',
       triggerBonusTypes: CONFIG.EXALTEDESSENCE.triggerBonusTypes,
       triggerRequirementTypes: CONFIG.EXALTEDESSENCE.triggerRequirementTypes,
-      isActivatable: ['spell', 'ritual', 'item', 'quality', 'weapon', 'charm'].includes(itemData.type),
+      isActivatable: ['spell', 'item', 'quality', 'weapon', 'charm'].includes(itemData.type),
       useCombatReforged: game.settings.get("exaltedessence", "combatReforged"),
       hardnessLabel: game.settings.get("exaltedessence", "combatReforged") ? game.i18n.localize("ExEss.Poise") : game.i18n.localize("ExEss.Hardness"),
-      hasDiceTriggers: ['charm', 'quality'].includes(itemData.type),
     };
 
     context.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(

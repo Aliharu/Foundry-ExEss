@@ -301,7 +301,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             }
             if (this.object.charmList === undefined) {
                 this.object.charmList = this.actor.charms;
-                if (this.actor.qualities) {
+                if (this.actor.qualities?.length > 0) {
                     this.object.charmList['qualities'] = {
                         name: game.i18n.localize("ExEss.Qualities"),
                         list: this.actor.items.filter(quality => quality.type === 'quality'),
@@ -309,10 +309,26 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                         collapse: true,
                     }
                 }
-                if (this.actor.merits) {
+                if (this.actor.merits?.length > 0) {
                     this.object.charmList['merits'] = {
                         name: game.i18n.localize("ExEss.Merits"),
                         list: this.actor.items.filter(quality => quality.type === 'merit'),
+                        visible: true,
+                        collapse: true,
+                    }
+                }
+                if (this.actor.items.filter(item => item.type === 'spell')) {
+                    this.object.charmList['spells'] = {
+                        name: game.i18n.localize("ExEss.Spells"),
+                        list: this.actor.items.filter(spell => spell.type === 'spell'),
+                        visible: true,
+                        collapse: true,
+                    }
+                }
+                if (this.actor.items.filter(item => item.type === 'item')) {
+                    this.object.charmList['items'] = {
+                        name: game.i18n.localize("ExEss.Items"),
+                        list: this.actor.items.filter(spell => spell.type === 'item'),
                         visible: true,
                         collapse: true,
                     }
