@@ -36,7 +36,13 @@
             </div>
         </div>
         {{/if}}
-
+        <div class="resource-label list-section-header d-flex flex-between">
+            <div>
+                {{localize "ExEss.Rituals"}}
+            </div>
+            <a class="item-control" data-action="createItem" title="Create ritual" data-type="ritual"><i
+                    class="fas fa-plus"></i>Add</a>
+        </div>
         {{#each actor.rituals as |item id|}}
         <li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item"
             data-collapsetype="itemDescription" data-item-id="{{item._id}}" data-drag="true">
