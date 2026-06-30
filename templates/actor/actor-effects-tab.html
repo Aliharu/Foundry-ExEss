@@ -26,6 +26,16 @@
     </div>
     <div class="grid grid-2col flex-group-center">
         <div>
+            <label class="resource-label">{{localize "ExEss.DiceModifier"}}</label>
+            <input type="number" name="system.dicemodifier.value" value="{{system.dicemodifier.value}}"
+                data-dtype="Number" />
+        </div>
+        <div>
+            <label class="resource-label">{{localize "ExEss.PenaltyModifier"}}</label>
+            <input type="number" name="system.penaltymodifier.value" value="{{system.penaltymodifier.value}}"
+                data-dtype="Number" />
+        </div>
+        <div>
             <button class="roll-button" data-action="updateDefensePenalty"><i
                     class="fas fa-shield-slash"></i>+{{localize
                 "ExEss.DefensePenalty"}}</button>

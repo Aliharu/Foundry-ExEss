@@ -117,6 +117,7 @@ EXALTEDESSENCE.triggerRequirementTypes = {
             hasNature: 'ExEss.HasNature',
             isExalt: "ExEss.IsExalt",
             hasStatus: "ExEss.HasStatus",
+            materialResonance: "ExEss.MaterialResonance",
         },
     },
     item: {
@@ -159,6 +160,8 @@ EXALTEDESSENCE.activeEffectChanges = {
     'system.health.levels.zero.value': 'ExEss.PenaltyZeroHealth',
     'system.health.levels.one.value': 'ExEss.PenaltyOneHealth',
     'system.health.levels.two.value': 'ExEss.PenaltyTwoHealth',
+    'system.penaltymodifier.value': 'ExEss.DicePenalty',
+    'system.dicemodifier.value': 'ExEss.DiceModifier',
 }
 
 EXALTEDESSENCE.languages = {
@@ -175,6 +178,19 @@ EXALTEDESSENCE.languages = {
     "localtongue": "Local Tongue",
     'autocthonic': "Autocthonic"
 };
+
+EXALTEDESSENCE.resonance = {
+    "adamant": "Adamant",
+    "orichalcum": "Orichalcum",
+    "moonsilver": "Moonsilver",
+    "starmetal": "Starmetal",
+    "soulsteel": "Soulsteel",
+    "blackjade": "Black Jade",
+    "bluejade": "Blue Jade",
+    "greenjade": "Green Jade",
+    "redjade": "Red Jade",
+    "whitejade": "White Jade",
+}
 
 EXALTEDESSENCE.weapontags = {
     "aggravated": "Aggravated",

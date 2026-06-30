@@ -238,6 +238,7 @@
     "ExEss.MiscPenalty": "Misc Penalty",
     "ExEss.DicePenalty": "Dice Penalty",
     "ExEss.DiceModifier": "Dice Modifier",
+    "ExEss.PenaltyModifier": "Penalty Modifier",
     "ExEss.SuccessModifier": "Success Modifier",
     "ExEss.MiscBonus": "Misc Bonus",
     "ExEss.BonusDice": "Bonus Dice",

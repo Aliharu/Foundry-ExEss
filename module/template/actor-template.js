@@ -58,9 +58,12 @@ class CommonActorData extends foundry.abstract.TypeDataModel {
       poise: resourceField(3, 3),
       stunt: statField(0),
       resolve: statField(2),
+      dicemodifier: statField(0),
+      penaltymodifier: statField(0),
       savedRolls: new fields.ObjectField({ initial: {} }),
       traits: new fields.SchemaField({
         languages: traitField(),
+        resonance: traitField(),
       }),
       settings: new fields.SchemaField({
         charmspendpool: new fields.StringField({ initial: "flowing" }),

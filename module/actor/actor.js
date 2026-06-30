@@ -68,6 +68,8 @@ export class ExaltedessenceActor extends Actor {
 
   async _preUpdate(updateData, options, user) {
     await super._preUpdate(updateData, options, user);
+    const exalt = updateData.system?.details?.exalt || this.system.details.exalt;
+
     if (updateData?.system?.motes?.committed !== undefined && updateData?.system?.motes?.committed !== this.system.motes.committed && this.system.details.exalt !== 'getimian') {
       const commitChange = updateData.system.motes.committed - this.system.motes.committed;
       const newMotes = Math.max(0, this.system.motes.value - commitChange);
@@ -88,6 +90,13 @@ export class ExaltedessenceActor extends Actor {
         const animaChange = Math.max(0, this.system.still.value - updateData?.system?.still?.value);
         const newAnima = Math.min(10, this.system.anima.value + animaChange);
         updateData.system.anima = { 'value': newAnima };
+      }
+    }
+    if (exalt !== this.system.details.exalt) {
+      if (exalt) {
+        updateData.system.traits = {
+          resonance: this.calculateResonance(exalt),
+        };
       }
     }
     if (updateData?.system?.anima?.value !== undefined && updateData?.system?.anima?.value !== this.system.anima.value) {
@@ -319,6 +328,83 @@ export class ExaltedessenceActor extends Actor {
 
   updateAnima(direction) {
     this.update({ [`system.anima.value`]: direction === 'up' ? Math.min((game.settings.get("exaltedessence", "alternateAnima") ? 3 : 10), this.system.anima.value + 1) : Math.max(0, this.system.anima.value - 1) });
+  }
+
+  async calculateDerivedStats(type) {
+    const actorData = foundry.utils.duplicate(this);
+    if (type === 'resonance' || type === 'all') {
+      actorData.system.traits.resonance = this.calculateResonance(this.system.details.exalt);
+    }
+    await this.update(actorData);
+  }
+
+  calculateResonance(exaltType, caste = null) {
+    if (!caste) {
+      caste = this.system.details.caste?.toLowerCase();
+    }
+    let resonance = {
+      value: [],
+      custom: "",
+    }
+    const resonanceChart = {
+      "abyssal": ['soulsteel'],
+      "alchemical": [],
+      "dragonblooded": ['blackjade', 'bluejade', 'greenjade', 'redjade', 'whitejade'],
+      "dreamsouled": ['moonsilver'],
+      "getimian": ['starmetal'],
+      "hearteater": ['adamant'],
+      "infernal": ['orichalcum'],
+      "liminal": ['soulsteel'],
+      "lunar": ['moonsilver'],
+      "mortal": [],
+      "other": [],
+      "sidereal": ['starmetal'],
+      "soverign": ['adamant'],
+      "solar": ['adamant', 'orichalcum', 'moonsilver', 'starmetal', 'soulsteel', 'blackjade', 'bluejade', 'greenjade', 'redjade', 'whitejade'],
+      "umbral": ['soulsteel'],
+      //Exigents
+      "strawmaiden": ['orichalcum', 'blackjade', 'bluejade', 'greenjade', 'redjade', 'whitejade'],
+      "puppeteer": [],
+      "knives": [],
+      "wounds": ['soulsteel', 'redjade'],
+      "marchlord": [],
+      "bleakWarden": ['soulsteel', 'whitejade'],
+      "mysteries": ['orichalcum'],
+      "masks": [],
+      "reaver": ['blackjade'],
+      "dice": ['starmetal'],
+      "dragonking": ['orichalcum']
+    }
+
+    if (exaltType === 'exigent' || exaltType === 'marchlord') {
+      resonance.value = resonanceChart[caste] ?? [];
+      if (caste === 'puppeteer') {
+        resonance.custom = 'Artifact Puppets';
+      }
+      if (caste === 'knives') {
+        resonance.custom = 'Artifact Knives';
+      }
+      if (caste === 'godAdmiral') {
+        resonance.custom = 'Artifact Ships';
+      }
+      if (caste === 'masks') {
+        resonance.custom = 'Artifact Masks';
+      }
+      if (caste === 'reaver') {
+        resonance.custom = 'Trophies of the Dead';
+      }
+    }
+    else if (exaltType === 'alchemical') {
+      if (caste === 'jade') {
+        resonance.value = ['blackjade', 'bluejade', 'greenjade', 'redjade', 'whitejade'];
+      } else if (caste) {
+        resonance.value = [caste];
+      }
+    }
+    else {
+      resonance.value = resonanceChart[exaltType] ?? [];
+    }
+    return resonance;
   }
 
   altAnimaSpendConversion(animaCost) {

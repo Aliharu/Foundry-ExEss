@@ -320,6 +320,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
   _prepareTraits(traits) {
     const map = {
       "languages": CONFIG.EXALTEDESSENCE.languages,
+      "resonance": CONFIG.EXALTEDESSENCE.resonance,
     };
     for (let [t, choices] of Object.entries(map)) {
       const trait = traits[t];

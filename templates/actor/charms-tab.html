@@ -49,6 +49,24 @@
             </div>
         </li>
         {{/if}}
+        <div class="mt-1">
+            <label class="resource-label">{{localize "ExEss.Resonance"}}</label>
+            <a data-action="editTraits" data-options="resonance" data-target="system.traits.resonance">
+                <i class="fas fa-edit"></i>
+            </a>
+            <div class="mt-1">
+                {{#each system.traits.resonance.selected as |v k|}}
+                <li class="tag {{k}}">{{v}}</li>
+                {{/each}}
+            </div>
+        </div>
+        <div class="resource-label list-section-header d-flex flex-between">
+            <div>
+                {{localize "ExEss.Rituals"}}
+            </div>
+            <a class="item-control" data-action="createItem" title="Create ritual" data-type="ritual"><i
+                    class="fas fa-plus"></i>Add</a>
+        </div>
         {{> systems/exaltedessence/templates/actor/charm-list.html}}
     </ol>
 </div>

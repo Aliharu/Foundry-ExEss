@@ -293,6 +293,12 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         }
         if (this.object.rollType !== 'base') {
             this.object.opposingCharms = [];
+            if (this.actor?.system.dicemodifier.value) {
+                this.object.diceModifier += this.actor.system.dicemodifier.value;
+            }
+            if (this.actor?.system.penaltymodifier.value) {
+                this.object.diceModifier -= this.actor.system.penaltymodifier.value;
+            }
             if (this.object.charmList === undefined) {
                 this.object.charmList = this.actor.charms;
                 if (this.actor.qualities) {
@@ -1722,6 +1728,11 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     break;
                 case 'hasNature':
                     if (triggerActor.system.details.nature !== cleanedValue) {
+                        fufillsRequirements = false;
+                    }
+                    break;
+                case 'materialResonance':
+                    if (!triggerActor.system.traits.resonance.value.includes(cleanedValue)) {
                         fufillsRequirements = false;
                     }
                     break;

@@ -1,139 +1,156 @@
 <div class="resource-label list-section-header d-flex flex-between">
-    <div>
-        {{localize "ExEss.Charms"}}
-    </div>
-    <a class="item-control" data-action="createItem" title="Create charm" data-type="charm"><i
-            class="fas fa-plus"></i>Add</a>
+        <div>
+                {{localize "ExEss.Charms"}}
+        </div>
+        <a class="item-control" data-action="createItem" title="Create charm" data-type="charm"><i
+                        class="fas fa-plus"></i>Add</a>
 </div>
-{{#each actor.charms as |charm ability|}}
-{{#if charm.visible}}
-<li class="item flexrow item-header flex-center">
-    <div class="item-name">{{localize charm.name}}</div>
-</li>
-{{#each charm.list as |item id|}}
-<li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-drag="true"
-    data-item-id="{{item._id}}">
-    <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
-            height="24" /></div>
-    <h4 class="item-name">{{item.name}}</h4>
-    <div class="item-controls">
-        {{#if item.system.diceroller.opposedbonuses.enabled}}
-        <a class="item-control" data-action="itemAction" data-actiontype="addOpposingCharm" title="Add charm's opposed bonuses to other characters rolls"><i
-                class="fas fa-shield-plus"></i></a>
-        {{/if}}
-        {{#if item.system.activatable}}
-        {{#if item.system.active}}
-        <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Deactivate"><i
-                class="fas fa-lightbulb-on"></i></a>
-        {{else}}
-        <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Activate"><i
-                class="fas fa-lightbulb"></i></a>
-        {{/if}}
-        {{else}}
-        <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Spend Charm"><i
-                class="fas fa-burn"></i></a>
-        {{/if}}
-        <a class="item-control" data-action="itemAction" data-actiontype="chatItem" title="Chat Item"><i
-                class="fas fa-comment"></i></a>
-        <a class="item-control" data-action="itemAction" data-actiontype="editItem" title="Edit Item"><i
-                class="fas fa-edit"></i></a>
-        <a class="item-control" data-action="itemAction" data-actiontype="deleteItem" title="Delete Item"><i
-                class="fas fa-trash"></i></a>
-    </div>
-</li>
-<li class="item-description">
-    <div>
-        {{{enrichedHTMLItems ../../this "description" item._id}}}
-    </div>
-</li>
-{{/each}}
+{{#each actor.charms as |charmSection ability|}}
+{{#if charmSection.visible}}
+<div class="item d-flex flex-between mb-1 cursor-pointer list-section" data-action="toggleCollapse"
+        data-collapsetype="itemSection" data-itemtype="charm" data-section-name="{{ability}}">
+        <div class="flexrow item-header">
+                <div class="item-name">{{localize charmSection.name}}</div>
+        </div>
+        <div>
+                <a><i class="fas fa-caret-down"></i></a>
+        </div>
+</div>
+<div id="{{ability}}" {{#if charmSection.collapse }} style="display:none;" {{/if}}>
+        {{#each charmSection.list as |item id|}}
+        <li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item"
+                data-collapsetype="itemDescription" data-drag="true" data-item-id="{{item._id}}">
+                <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
+                                height="24" /></div>
+                <h4 class="item-name">{{item.name}}</h4>
+                <div class="item-controls">
+                        {{#if item.system.diceroller.opposedbonuses.enabled}}
+                        <a class="item-control" data-action="itemAction" data-actiontype="addOpposingCharm"
+                                title="Add charm's opposed bonuses to other characters rolls"><i
+                                        class="fas fa-shield-plus"></i></a>
+                        {{/if}}
+                        {{#if item.system.activatable}}
+                        {{#if item.system.active}}
+                        <a class="item-control" data-action="itemAction" data-actiontype="spendItem"
+                                title="Deactivate"><i class="fas fa-lightbulb-on"></i></a>
+                        {{else}}
+                        <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Activate"><i
+                                        class="fas fa-lightbulb"></i></a>
+                        {{/if}}
+                        {{else}}
+                        <a class="item-control" data-action="itemAction" data-actiontype="spendItem"
+                                title="Spend Charm"><i class="fas fa-burn"></i></a>
+                        {{/if}}
+                        <a class="item-control" data-action="itemAction" data-actiontype="chatItem" title="Chat Item"><i
+                                        class="fas fa-comment"></i></a>
+                        <a class="item-control" data-action="itemAction" data-actiontype="editItem" title="Edit Item"><i
+                                        class="fas fa-edit"></i></a>
+                        <a class="item-control" data-action="itemAction" data-actiontype="deleteItem"
+                                title="Delete Item"><i class="fas fa-trash"></i></a>
+                </div>
+        </li>
+        <li class="item-description">
+                <div>
+                        {{{enrichedHTMLItems ../../this "description" item._id}}}
+                </div>
+        </li>
+        {{/each}}
+</div>
 {{/if}}
 {{/each}}
 <div class="resource-label list-section-header d-flex flex-between">
-    <div>
-        {{localize "ExEss.Spells"}}
-    </div>
-    <a class="item-control" data-action="createItem" title="Create spell" data-type="spell"><i
-            class="fas fa-plus"></i>Add</a>
+        <div>
+                {{localize "ExEss.Spells"}}
+        </div>
+        <a class="item-control" data-action="createItem" title="Create spell" data-type="spell"><i
+                        class="fas fa-plus"></i>Add</a>
 </div>
-{{#each actor.spells as |spell circle|}}
-{{#if spell.visible}}
-<li class="item flexrow item-header flex-center">
-    <div class="item-name">{{localize spell.name}}</div>
-</li>
-{{#each spell.list as |item id|}}
-<li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-drag="true"
-    data-item-id="{{item._id}}">
-    <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
-            height="24" /></div>
-    <h4 class="item-name">{{item.name}} ({{item.system.spelltype}})</h4>
-    <div class="item-controls">
-        {{#if item.system.activatable}}
-        {{#if item.system.active}}
-        <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Deactivate"><i
-                class="fas fa-lightbulb-on"></i></a>
-        {{else}}
-        <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Activate"><i
-                class="fas fa-lightbulb"></i></a>
-        {{/if}}
-        {{else}}
-        <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Spend"><i
-                class="fas fa-burn"></i></a>
-        {{/if}}
-        <a class="item-control" data-action="itemAction" data-actiontype="chatItem" title="Chat Item"><i
-                class="fas fa-comment"></i></a>
-        <a class="item-control" data-action="itemAction" data-actiontype="editItem" title="Edit Item"><i
-                class="fas fa-edit"></i></a>
-        <a class="item-control" data-action="itemAction" data-actiontype="deleteItem" title="Delete Item"><i
-                class="fas fa-trash"></i></a>
-    </div>
-</li>
-<li class="item-description">
-    <div>
-        {{{enrichedHTMLItems ../../this "description" item._id}}}
-    </div>
-</li>
-{{/each}}
+{{#each actor.spells as |spellSection circle|}}
+{{#if spellSection.visible}}
+<div class="item d-flex flex-between mb-1 cursor-pointer list-section" data-action="toggleCollapse"
+        data-collapsetype="itemSection" data-itemtype="spell" data-section-name="{{circle}}">
+        <li class="flexrow item-header">
+                <div class="item-name">{{localize spellSection.name}}</div>
+        </li>
+        <div>
+                <i class="fas fa-caret-down"></i>
+        </div>
+</div>
+<div id="{{circle}}" {{#if spellSection.collapse }} style="display:none;" {{/if}}>
+        {{#each spellSection.list as |item id|}}
+        <li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item"
+                data-collapsetype="itemDescription" data-drag="true" data-item-id="{{item._id}}">
+                <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
+                                height="24" /></div>
+                <h4 class="item-name">{{item.name}} ({{item.system.spelltype}})</h4>
+                <div class="item-controls">
+                        {{#if item.system.activatable}}
+                        {{#if item.system.active}}
+                        <a class="item-control" data-action="itemAction" data-actiontype="spendItem"
+                                title="Deactivate"><i class="fas fa-lightbulb-on"></i></a>
+                        {{else}}
+                        <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Activate"><i
+                                        class="fas fa-lightbulb"></i></a>
+                        {{/if}}
+                        {{else}}
+                        <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Spend"><i
+                                        class="fas fa-burn"></i></a>
+                        {{/if}}
+                        <a class="item-control" data-action="itemAction" data-actiontype="chatItem" title="Chat Item"><i
+                                        class="fas fa-comment"></i></a>
+                        <a class="item-control" data-action="itemAction" data-actiontype="editItem" title="Edit Item"><i
+                                        class="fas fa-edit"></i></a>
+                        <a class="item-control" data-action="itemAction" data-actiontype="deleteItem"
+                                title="Delete Item"><i class="fas fa-trash"></i></a>
+                </div>
+        </li>
+        <li class="item-description">
+                <div>
+                        {{{enrichedHTMLItems ../../this "description" item._id}}}
+                </div>
+        </li>
+        {{/each}}
+</div>
 {{/if}}
 {{/each}}
 <div class="resource-label list-section-header d-flex flex-between">
-    <div>
-        {{localize "ExEss.Qualities"}}
-    </div>
-    <a class="item-control" data-action="createItem" title="Create quality"
-        data-type="quality"><i class="fas fa-plus"></i>Add</a>
+        <div>
+                {{localize "ExEss.Qualities"}}
+        </div>
+        <a class="item-control" data-action="createItem" title="Create quality" data-type="quality"><i
+                        class="fas fa-plus"></i>Add</a>
 </div>
 {{#each actor.qualities as |item id|}}
-<li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item" data-collapsetype="itemDescription" data-drag="true"
-    data-item-id="{{item._id}}">
-    <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
-            height="24" />
-    </div>
-    <h4 class="item-name">{{item.name}}</h4>
-    <div class="item-controls">
-        {{#if item.system.activatable}}
-        {{#if item.system.active}}
-        <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Deactivate"><i
-                class="fas fa-lightbulb-on"></i></a>
-        {{else}}
-        <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Activate"><i
-                class="fas fa-lightbulb"></i></a>
-        {{/if}}
-        {{else}}
-        <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Spend Quality"><i
-                class="fas fa-burn"></i></a>
-        {{/if}}
-        <a class="item-control" data-action="itemAction" data-actiontype="chatItem" title="Chat Item"><i
-                class="fas fa-comment"></i></a>
-        <a class="item-control" data-action="itemAction" data-actiontype="editItem" title="Edit Item"><i
-                class="fas fa-edit"></i></a>
-        <a class="item-control" data-action="itemAction" data-actiontype="deleteItem" title="Delete Item"><i
-                class="fas fa-trash"></i></a>
-    </div>
+<li class="item flexrow item-row" data-action="toggleCollapse" data-document-class="Item"
+        data-collapsetype="itemDescription" data-drag="true" data-item-id="{{item._id}}">
+        <div class="item-image"><img class="list-item-image" src="{{item.img}}" title="{{item.name}}" width="24"
+                        height="24" />
+        </div>
+        <h4 class="item-name">{{item.name}}</h4>
+        <div class="item-controls">
+                {{#if item.system.activatable}}
+                {{#if item.system.active}}
+                <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Deactivate"><i
+                                class="fas fa-lightbulb-on"></i></a>
+                {{else}}
+                <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Activate"><i
+                                class="fas fa-lightbulb"></i></a>
+                {{/if}}
+                {{else}}
+                <a class="item-control" data-action="itemAction" data-actiontype="spendItem" title="Spend Quality"><i
+                                class="fas fa-burn"></i></a>
+                {{/if}}
+                <a class="item-control" data-action="itemAction" data-actiontype="chatItem" title="Chat Item"><i
+                                class="fas fa-comment"></i></a>
+                <a class="item-control" data-action="itemAction" data-actiontype="editItem" title="Edit Item"><i
+                                class="fas fa-edit"></i></a>
+                <a class="item-control" data-action="itemAction" data-actiontype="deleteItem" title="Delete Item"><i
+                                class="fas fa-trash"></i></a>
+        </div>
 </li>
 <li class="item-description">
-    <div>
-        {{{enrichedHTMLItems ../this "description" item._id}}}
-    </div>
+        <div>
+                {{{enrichedHTMLItems ../this "description" item._id}}}
+        </div>
 </li>
 {{/each}}

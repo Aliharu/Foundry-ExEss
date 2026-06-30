@@ -129,32 +129,12 @@ export function setupActorItemLists(actorData, items, collapseStates = null) {
     const rituals = [];
 
     const charms = {
-        force: { name: 'ExEss.Force', visible: false, list: [] },
-        finesse: { name: 'ExEss.Finesse', visible: false, list: [] },
-        fortitude: { name: 'ExEss.Fortitude', visible: false, list: [] },
-        athletics: { name: 'ExEss.Athletics', visible: false, list: [] },
-        awareness: { name: 'ExEss.Awareness', visible: false, list: [] },
-        close: { name: 'ExEss.CloseCombat', visible: false, list: [] },
-        craft: { name: 'ExEss.Craft', visible: false, list: [] },
-        embassy: { name: 'ExEss.Embassy', visible: false, list: [] },
-        integrity: { name: 'ExEss.Integrity', visible: false, list: [] },
-        navigate: { name: 'ExEss.Navigate', visible: false, list: [] },
-        performance: { name: 'ExEss.Performance', visible: false, list: [] },
-        physique: { name: 'ExEss.Physique', visible: false, list: [] },
-        presence: { name: 'ExEss.Presence', visible: false, list: [] },
-        ranged: { name: 'ExEss.RangedCombat', visible: false, list: [] },
-        sagacity: { name: 'ExEss.Sagacity', visible: false, list: [] },
-        stealth: { name: 'ExEss.Stealth', visible: false, list: [] },
-        war: { name: 'ExEss.War', visible: false, list: [] },
-        martial: { name: 'ExEss.MartialArts', visible: false, list: [] },
-        evocation: { name: 'ExEss.Evocations', visible: false, list: [] },
-        other: { name: 'ExEss.Other', visible: false, list: [] },
     }
 
     const spells = {
         first: { name: 'ExEss.First', visible: false, list: [] },
         second: { name: 'ExEss.Second', visible: false, list: [] },
-        third: { name: 'ExEss.Third', visible: false, list: [] },
+        third: { name: 'ExEss.Third', visible: false, list: []},
     }
 
     // Iterate through items, allocating to containers
@@ -193,10 +173,10 @@ export function setupActorItemLists(actorData, items, collapseStates = null) {
                 }
                 charms[i.system.listingname].list.push(i);
             } else {
-                if (i.system.ability !== undefined) {
-                    charms[i.system.ability].list.push(i);
-                    charms[i.system.ability].visible = true;
+                if (!charms[i.system.ability]) {
+                    charms[i.system.ability] = { name: CONFIG.EXALTEDESSENCE.selects.charmAbilities[i.system.ability] || 'ExEss.Other', visible: true, list: [], collapse: collapseStates?.charm[i.system.ability] ?? true };
                 }
+                charms[i.system.ability].list.push(i);
             }
         }
         else if (i.type === 'spell') {
@@ -209,6 +189,8 @@ export function setupActorItemLists(actorData, items, collapseStates = null) {
                 if (i.system.circle !== undefined) {
                     spells[i.system.circle].list.push(i);
                     spells[i.system.circle].visible = true;
+                    // spells[i.system.circle].collapse = this.actor.spells ? this.actor.spells[i.system.circle].collapse : true;
+                    spells[i.system.circle].collapse = collapseStates?.spell[i.system.circle] ?? true;
                 }
             }
 
