@@ -409,6 +409,25 @@
   }
 }
 
+.item-list-search {
+  position: relative;
+
+  .search-input {
+    text-align: start;
+    padding-left: 2em;
+  }
+
+  .fa-magnifying-glass {
+    position: absolute;
+    left: 0.7em;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-light-5);
+    font-size: 1em;
+    pointer-events: none;
+  }
+}
+
 .chat-card {
   font-style: normal;
   font-size: 12px;

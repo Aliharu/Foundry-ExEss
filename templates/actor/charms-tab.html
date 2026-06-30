@@ -60,6 +60,12 @@
                 {{/each}}
             </div>
         </div>
-        {{> systems/exaltedessence/templates/actor/charm-list.html}}
+        <div class="item-list-search mt-1">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input class="search-input" type="search" name="search" placeholder="{{localize 'ExEss.Search'}}">
+        </div>
+        <section class="item-lists">
+            {{> systems/exaltedessence/templates/actor/charm-list.html}}
+        </section>
     </ol>
 </div>
