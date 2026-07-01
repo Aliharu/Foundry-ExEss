@@ -168,8 +168,8 @@ EXALTEDESSENCE.activeEffectChanges = {
     'system.health.levels.zero.value': 'ExEss.PenaltyZeroHealth',
     'system.health.levels.one.value': 'ExEss.PenaltyOneHealth',
     'system.health.levels.two.value': 'ExEss.PenaltyTwoHealth',
-    'system.penaltymodifier.value': 'ExEss.DicePenalty',
     'system.dicemodifier.value': 'ExEss.DiceModifier',
+    'system.penaltymodifier.value': 'ExEss.DicePenalty',
 }
 
 EXALTEDESSENCE.languages = {
