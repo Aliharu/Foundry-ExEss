@@ -99,3 +99,15 @@ export function triggerData() {
         }),
     };
 }
+
+export function modesData() {
+    return {
+        modes: new fields.TypedObjectField(
+            new fields.SchemaField({
+                id: new fields.StringField({ initial: "" }),
+                name: new fields.StringField({ initial: "" }),
+                active: new fields.BooleanField({ initial: false }),
+            }),
+        ),
+    }
+}

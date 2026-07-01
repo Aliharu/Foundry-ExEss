@@ -42,5 +42,21 @@
         </div>
     </div>
     </ol>
+    <div class="resource-label list-section-header d-flex flex-between">
+        <div>
+            {{localize "ExEss.StatusEffects"}}
+        </div>
+    </div>
+    <div class="status-effects">
+        <div class="status-container">
+            {{#each statuses as |status id|}}
+            <button type="button" class="status-control {{status.active}}" {{disabled status.disabled}}
+                data-status-id="{{status.id}}" data-tooltip-html="{{status.tooltip}}" data-action="toggleStatus">
+                <img src="{{status.img}}" alt="{{status.name}}">
+                <span>{{localize status.name}}</span>
+            </button>
+            {{/each}}
+        </div>
+    </div>
     {{> systems/exaltedessence/templates/actor/active-effects.html}}
 </div>

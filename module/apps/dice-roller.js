@@ -1759,7 +1759,33 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                         fufillsRequirements = false;
                     }
                     break;
-
+                case 'booleanPrompt':
+                    if (!display) {
+                        const result = requirementObject.value.replace(/\${(.*?)}/g, (_, key) => this.object[key.trim()] || `\${${key}}`);
+                        const value = await foundry.applications.api.DialogV2.confirm({
+                            window: { title: game.i18n.localize('ExEss.Requirement') },
+                            content: `<p>${result}</p>`,
+                            classes: ["dialog", this.actor ? this.actor.getSheetBackground() : `${game.settings.get("exaltedessence", "sheetStyle")}-background`],
+                            modal: true
+                        });
+                        if (!value) {
+                            fufillsRequirements = false;
+                        }
+                    }
+                    break;
+                case 'upgradeActive':
+                    if (!Object.values(charm.system.modes).some(mode => mode.id === requirementObject.value && mode.active)) {
+                        fufillsRequirements = false;
+                    }
+                    break;
+                case 'noTriggersActivated':
+                    if (!(typeof cleanedValue === "boolean" ? cleanedValue : true) && !triggerHasBeenActivatedOnItem) {
+                        fufillsRequirements = false;
+                    }
+                    if ((typeof cleanedValue === "boolean" ? cleanedValue : true) && triggerHasBeenActivatedOnItem) {
+                        fufillsRequirements = false;
+                    }
+                    break;
             }
             if ((trigger.requirementMode || 'and') === 'or' && fufillsRequirements) {
                 return true;

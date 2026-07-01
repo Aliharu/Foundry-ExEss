@@ -172,6 +172,11 @@
                     data-type="String">
                     {{selectOptions ../../selects.attributes selected=requirement.value localize=true blank=''}}
                 </select>
+                {{else ifEquals requirement.requirement 'modeActive'}}
+                <select name="system.triggers.dicerollertriggers.{{index}}.requirements.{{requirementIndex}}.value"
+                    data-type="String">
+                    {{selectOptions ../../modeSelects selected=requirement.value localize=true blank=''}}
+                </select>
                 {{else ifEquals requirement.requirement 'ability'}}
                 <select name="system.triggers.dicerollertriggers.{{index}}.requirements.{{requirementIndex}}.value"
                     data-type="String">

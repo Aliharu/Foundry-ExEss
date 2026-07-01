@@ -30,6 +30,7 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
       effectControl: this.effectControl,
       triggerAction: this.triggerAction,
       triggerSubItemAction: this.triggerSubItemAction,
+      modeAction: this.modeAction,
     },
     dragDrop: [{ dragSelector: '[data-drag]', dropSelector: null }],
     form: {
@@ -93,10 +94,12 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
       // You can factor out context construction to helper functions
       tabs: this._getTabs(options.parts),
       selects: CONFIG.EXALTEDESSENCE.selects,
+      modeSelects: {},
       traitHeader: itemData.type === 'armor' || itemData.type === 'weapon',
       triggerBonusTypes: CONFIG.EXALTEDESSENCE.triggerBonusTypes,
       triggerRequirementTypes: CONFIG.EXALTEDESSENCE.triggerRequirementTypes,
       isActivatable: ['spell', 'item', 'quality', 'weapon', 'charm'].includes(itemData.type),
+      hasModes: ['spell', 'charm'].includes(itemData.type),
       useCombatReforged: game.settings.get("exaltedessence", "combatReforged"),
       hardnessLabel: game.settings.get("exaltedessence", "combatReforged") ? game.i18n.localize("ExEss.Poise") : game.i18n.localize("ExEss.Hardness"),
     };
@@ -112,6 +115,14 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
     if (itemData.type === 'weapon' || itemData.type === 'armor') {
       this._prepareTraits(itemData.type, context.system.traits);
     }
+
+    if (itemData.system.modes) {
+      context.modeSelects = Object.values(itemData.system.modes).reduce((acc, mode) => {
+        acc[mode.id] = mode.name; // Key is `id`, value is `name`
+        return acc;
+      }, {});
+    }
+
 
     context.effects = prepareActiveEffectCategories(this.item.effects);
 
@@ -258,6 +269,25 @@ export class ExaltedEssenceItemSheet extends HandlebarsApplicationMixin(ItemShee
     if (functionType === 'delete') {
       this.item.update({
         [`system.triggers.${triggerType}.${index}.${subType}.${subindex}`]: foundry.data.operators.ForcedDeletion.create(),
+      });
+    }
+  }
+
+  static modeAction(event, target) {
+    const actionType = target.dataset.actiontype;
+    if (actionType === 'add') {
+      const newList = this.item.system.modes;
+      newList[Object.entries(newList).length] = {
+        id: foundry.utils.randomID(16),
+        name: "",
+        active: false,
+      };
+      this.item.update({ [`system.modes`]: newList });
+    }
+    if (actionType === 'delete') {
+      let index = target.dataset.index;
+      this.item.update({
+        [`system.modes.${index}`]: foundry.data.operators.ForcedDeletion.create(),
       });
     }
   }

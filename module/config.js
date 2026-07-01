@@ -123,8 +123,16 @@ EXALTEDESSENCE.triggerRequirementTypes = {
     item: {
         label: "ExEss.Item",
         requirements: {
-            isControlSpell: "ExEss.IsControlSpell"
+            isControlSpell: "ExEss.IsControlSpell",
+            modeActive: "ExEss.ModeActive",
         }
+    },
+    other: {
+        label: "ExEss.Other",
+        requirements: {
+            booleanPrompt: "ExEss.YesOrNoPrompt",
+            noTriggersActivated: "ExEss.NoTriggersActivated",
+        },
     }
 }
 
@@ -258,92 +266,77 @@ EXALTEDESSENCE.statusEffects = [
     {
         img: 'systems/exaltedessence/assets/icons/drop-weapon.svg',
         id: 'disarmed',
-        label: 'ExEss.Disarmed',
-        name: 'disarmed'
+        name: 'ExEss.Disarmed',
     },
     {
         img: 'systems/exaltedessence/assets/icons/fishing-net.svg',
         id: 'ensnared',
-        label: 'ExEss.Ensnared',
-        name: 'ensnared'
+        name: 'ExEss.Ensnared',
     },
     {
         img: 'icons/svg/falling.svg',
         id: 'prone',
-        label: 'ExEss.Prone',
-        name: 'prone'
+        name: 'ExEss.Prone',
     },
     {
         img: 'icons/svg/ruins.svg',
         id: 'lightcover',
-        label: 'ExEss.LightCover',
-        name: 'lightcover'
+        name: 'ExEss.LightCover',
     },
     {
         img: 'icons/svg/castle.svg',
         id: 'heavycover',
-        label: 'ExEss.HeavyCover',
-        name: 'heavycover'
+        name: 'ExEss.HeavyCover',
     },
     {
         img: 'icons/svg/daze.svg',
         id: 'surprised',
-        label: 'ExEss.Surprised',
-        name: 'surprised'
+        name: 'ExEss.Surprised',
     },
     {
         img: 'systems/exaltedessence/assets/icons/hooded-figure.svg',
         id: 'concealment',
-        label: 'ExEss.Concealment',
-        name: 'concealment'
+        name: 'ExEss.Concealment',
     },
     {
         img: 'icons/svg/blood.svg',
         id: 'bleeding',
-        label: 'EFFECT.StatusBleeding',
-        name: 'bleeding'
+        name: 'EFFECT.StatusBleeding',
     },
     {
         img: 'icons/svg/poison.svg',
         id: 'poisoned',
-        label: 'EFFECT.StatusPoison',
-        name: 'poisoned'
+        name: 'EFFECT.StatusPoison',
     },
     {
         img: 'icons/svg/fire.svg',
         id: 'burning',
-        label: 'EFFECT.StatusBurning',
-        name: 'burning'
+        name: 'EFFECT.StatusBurning',
     },
     {
         img: 'icons/svg/invisible.svg',
         id: 'dematerialized',
-        label: 'ExEss.Dematerialized',
-        name: 'dematerialized'
+        name: 'ExEss.Dematerialized',
     },
     {
         img: 'systems/exaltedessence/assets/icons/despair.svg',
         id: 'hindered',
-        label: 'ExEss.Hindered',
-        name: 'hindered'
+        name: 'ExEss.Hindered',
     },
     {
         img: 'systems/exaltedessence/assets/icons/screaming.svg',
         id: 'routing',
-        label: 'ExEss.Routing',
-        name: 'routing',
+        name: 'ExEss.Routing',
     },
     {
         img: 'systems/exaltedessence/assets/icons/back-pain.svg',
         id: 'break',
-        label: 'ExEss.Break',
-        name: 'break',
+        name: 'ExEss.Break',
     },
     {
         img: 'icons/svg/skull.svg',
         id: 'incapacitated',
-        label: 'ExEss.Incapacitated',
-        name: 'incapacitated',
+        name: 'ExEss.Incapacitated',
     },
     {
         img: 'systems/exaltedessence/assets/icons/shaking-hands.svg',

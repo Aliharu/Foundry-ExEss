@@ -529,6 +529,12 @@
     "ExEss.ReadIntentions": "Read Intentions",
     "ExEss.Command": "Command",
     "ExEss.Search": "Search",
+    "ExEss.StatusEffects": "Status Effects",
+    "ExEss.Modes": "Modes",
+    "ExEss.ModeActive": "Mode Active",
+    "ExEss.YesOrNoPrompt": "Yes Or No Prompt",
+    "ExEss.NoTriggersActivated": "No Triggers Activated (On Item)",
+    "ExEss.MaterialResonance": "Material Resonance",
 
     "ExEss.Piercing": "Piercing",
     "ExEss.ChoppingPowerful": "Chopping/Powerful"

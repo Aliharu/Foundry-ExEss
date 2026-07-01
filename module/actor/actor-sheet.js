@@ -72,6 +72,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
       setSpendPool: this.setSpendPool,
       updateAnima: this.updateAnima,
       editTraits: this.editTraits,
+      toggleStatus: this.toggleStatus,
     },
     dragDrop: [{ dragSelector: '[data-drag]', dropSelector: null }],
     filters: [
@@ -162,6 +163,7 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
       collapseStates: this.collapseStates,
       selects: CONFIG.EXALTEDESSENCE.selects,
       rollData: this.actor.getRollData(),
+      statuses: await this._prepareStatusEffects(),
       isExalt: this.actor.type === 'character' || this.actor.system.creaturetype === 'exalt',
       useAlternateAnima: game.settings.get("exaltedessence", "alternateAnima"),
       useCombatReforged: game.settings.get("exaltedessence", "combatReforged"),
@@ -338,6 +340,32 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
     return context;
   }
 
+  async _prepareStatusEffects() {
+    const statusInfo = {};
+    for (const status of CONFIG.EXALTEDESSENCE.statusEffects) {
+      if ((!status.id)) continue;
+      statusInfo[status.id] = {
+        id: status.id,
+        name: status.name,
+        img: status.img,
+        disabled: false,
+        active: "",
+        tooltip: status.tooltip,
+      };
+    }
+
+    // If the actor has the status and it's not from the canonical statusEffect
+    // Then we want to force more individual control rather than allow toggleStatusEffect
+    for (const effect of this.actor.allApplicableEffects()) {
+      for (const id of effect.statuses) {
+        if (!(id in statusInfo)) continue;
+        statusInfo[id].active = "active";
+      }
+    }
+
+    return statusInfo;
+  }
+
   /**
    * Organize and classify Items for Character sheets.
    *
@@ -406,6 +434,11 @@ export class ExaltedEssenceActorSheet extends HandlebarsApplicationMixin(ActorSh
     const choices = CONFIG.EXALTEDESSENCE[target.dataset.options];
     const options = { name: target.dataset.target, title: label.innerText, choices };
     return new TraitSelector(this.actor, options).render(true);
+  }
+
+  static async toggleStatus(event, target) {
+    const status = target.dataset.statusId;
+    await this.actor.toggleStatusEffect(status);
   }
 
   static async calculateHealth() {
