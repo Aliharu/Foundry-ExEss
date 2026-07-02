@@ -617,6 +617,7 @@ EXALTEDESSENCE.selects = {
         solar: "ExEss.Solar",
         sovereign: "ExEss.Sovereign",
         umbral: "ExEss.Umbral",
+        universal: "ExEss.Universal",
         other: "ExEss.Other"
     },
     charmAbilities: {
