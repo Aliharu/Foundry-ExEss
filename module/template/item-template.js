@@ -20,6 +20,7 @@ export class ItemData extends CommonItemData {
             ...activatableData(),
             ...triggerData(),
             ...commonData,
+            itemtype: new fields.StringField({ initial: "item" }),
             quantity: new fields.NumberField({ initial: 1 }),
         }
     }
@@ -116,6 +117,7 @@ export class ItemQualityData extends CommonItemData {
             ...triggerData(),
             ...costData(),
             ...triggerData(),
+            qualitytype: new fields.StringField({ initial: "standard" }),
         }
     }
 }

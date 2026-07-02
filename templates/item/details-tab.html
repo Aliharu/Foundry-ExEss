@@ -59,6 +59,22 @@
             </div>
         </div>
         {{/ifEquals}}
+        {{#ifEquals type 'item'}}
+        <div>
+            <div class="resource-label">{{localize "ExEss.Type"}}</div>
+            <select name="system.itemtype" value="{{system.itemtype}}" data-type="String">
+                {{selectOptions selects.itemTypes selected=system.itemtype localize=true}}
+            </select>
+        </div>
+        {{/ifEquals}}
+        {{#ifEquals type 'quality'}}
+        <div>
+            <div class="resource-label">{{localize "ExEss.Type"}}</div>
+            <select name="system.qualitytype" value="{{system.qualitytype}}" data-type="String">
+                {{selectOptions selects.qualityTypes selected=system.qualitytype localize=true}}
+            </select>
+        </div>
+        {{/ifEquals}}
     </div>
     {{/if}}
 

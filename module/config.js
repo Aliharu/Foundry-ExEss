@@ -694,15 +694,24 @@ EXALTEDESSENCE.selects = {
     rollTypes: {
         attack: "ExEss.Attack",
         ability: "ExEss.Ability",
-        readIntentions: "ExEss.ReadIntentions",
         social: "ExEss.Social",
-        command: "ExEss.Command",
         withering: "ExEss.Withering",
         decisive: "ExEss.Decisive",
         gambit: "ExEss.Gambit",
         buildPower: "ExEss.BuildPower",
         focusWill: 'ExEss.FocusWill',
         joinBattle: 'ExEss.JoinBattle',
+    },
+    itemTypes: {
+        item: "ExEss.Item",
+        artifact: "ExEss.Artifact",
+        hearthstone: "ExEss.Hearthstone",
+        warstrider: "ExEss.Warstrider",
+    },
+    qualityTypes: {
+        standard: "ExEss.Standard",
+        eclipse: "ExEss.Eclipse",
+        thaumaturgy: "ExEss.Thaumaturgy",
     }
 }
 
