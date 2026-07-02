@@ -2658,8 +2658,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                       </div>
                   </div>
               </div>`
-        theContent = await this._createChatMessageContent(theContent, 'Dice Roll');
-        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: theContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER, rolls: [this.object.roll] });
+        await this._createChatMessageContent(theContent, 'Dice Roll', [this.object.roll]);
     }
 
     _buildResource(postDifficultyTotal) {
@@ -2758,7 +2757,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
 
     async _attackRoll() {
         await this._baseAbilityDieRoll();
-        var messageContent = `
+        let messageContent = `
               <div>
                   <div class="dice-roll">
                       <div class="dice-result">
@@ -2770,8 +2769,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                       </div>
                   </div>
               </div>`;
-        messageContent = await this._createChatMessageContent(messageContent, 'Dice Roll');
-        ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER, rolls: [this.object.roll] });
+        await this._createChatMessageContent(messageContent, 'Dice Roll', [this.object.roll]);
         this.object.showDamage = true;
         this.object.accuracyResult = this.object.diceRollTotal;
         this.render();
@@ -2838,8 +2836,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                           </div>
                       </div>
                   </div>`;
-            messageContent = await this._createChatMessageContent(messageContent, 'Dice Roll');
-            ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER });
+            await this._createChatMessageContent(messageContent, 'Dice Roll');
         }
         else {
             if (this.object.rollType === 'decisive') {
@@ -2903,8 +2900,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                             </div>
                         </div>
                     </div>`
-                messageContent = await this._createChatMessageContent(messageContent, 'Decisive Damage');
-                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER, rolls: diceRollResults ? [diceRollResults.roll] : [] });
+                await this._createChatMessageContent(messageContent, 'Decisive Damage', diceRollResults ? [diceRollResults.roll] : []);
             }
             else if (this.object.rollType === 'withering') {
                 let powerGained = postDefenseTotal + this.object.bonusPower + 1;
@@ -2938,8 +2934,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                               </div>
                           </div>
                       </div>`
-                messageContent = await this._createChatMessageContent(messageContent, 'Decisive Damage');
-                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER });
+                await this._createChatMessageContent(messageContent, 'Decisive Damage');
                 if (this.object.target) {
                     if (game.settings.get("exaltedessence", "combatReforged")) {
                         this._updateTargetPoise(postDefenseTotal);
@@ -2966,8 +2961,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                               </div>
                           </div>
                       </div>`
-                messageContent = await this._createChatMessageContent(messageContent, 'Withering Power');
-                ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: messageContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER });
+                await this._createChatMessageContent(messageContent, 'Withering Power');
             }
         }
         if (postDefenseTotal >= 0 && this.object.target) {
@@ -3102,7 +3096,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         }
     }
 
-    async _createChatMessageContent(content, cardName = 'Roll') {
+    async _createChatMessageContent(content, cardName = 'Roll', rollArray = [], flags={}) {
         const messageData = {
             name: cardName,
             rollTypeImgUrl: CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.rollType] || CONFIG.EXALTEDESSENCE.rollTypeTargetImages[this.object.ability] || "systems/exaltedessence/assets/icons/d10.svg",
@@ -3111,7 +3105,12 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             rollData: this.object,
             rollingActor: this.actor,
         }
-        return await foundry.applications.handlebars.renderTemplate("systems/exaltedessence/templates/chat/roll-card.html", messageData);
+        let chatMessageContents = await foundry.applications.handlebars.renderTemplate("systems/exaltedessence/templates/chat/roll-card.html", messageData);
+        const chatMessage = ChatMessage.applyMode(
+            { user: game.user.id, speaker: this.actor !== null ? ChatMessage.getSpeaker({ actor: this.actor }) : {}, content: chatMessageContents, style: CONST.CHAT_MESSAGE_STYLES.OTHER, rolls: rollArray, flags: flags },
+            game.settings.get('core', 'messageMode')
+        );
+        ChatMessage.create(chatMessage);
     }
 
     _removeOnslaught() {
@@ -3322,7 +3321,6 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             this.object.augmentattribute = true;
         }
     }
-
 
     _getHighestAttribute() {
         var highestAttributeNumber = 0;
