@@ -482,7 +482,7 @@
     "ExEss.FearsomeSize": "Fearsome Size",
     "ExEss.FearsomeSizeDescription": "If battlegroups size is greater than weapon damage bonus use size for damage bonus. Power resets to size after a decisive attack instead of 0.",
     "ExEss.AlternateAnima": "Alternate Anima",
-    "ExEss.AlternateAnimaDescription": "Alternate Anima Description",
+    "ExEss.AlternateAnimaDescription": "Use the alternate anima rules from the STG",
     "ExEss.CombatReforged": "Combat Reforged",
     "ExEss.CombatReforgedDescription": "Use the 'Essence Combat Reforged' combat system from the Storytellers Guide.",
     "ExEss.NarrativePoints": "Narrative Points",
@@ -535,6 +535,8 @@
     "ExEss.YesOrNoPrompt": "Yes Or No Prompt",
     "ExEss.NoTriggersActivated": "No Triggers Activated (On Item)",
     "ExEss.MaterialResonance": "Material Resonance",
+    "ExEss.RollingAgainst": "Rolling Against",
+    "ExEss.Difficulty": "Difficulty",
 
     "ExEss.Piercing": "Piercing",
     "ExEss.ChoppingPowerful": "Chopping/Powerful"

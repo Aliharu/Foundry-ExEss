@@ -82,7 +82,13 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 this.object.dice = 0;
             }
             this.object.targetNumber = 7;
-            this.object.difficulty = 0;
+            this.object.difficulty = 3;
+            if (this.object.rollType === 'focusWill' && game.settings.get("exaltedessence", "powerfulSpells")) {
+                this.object.difficulty++;
+            }
+            if (this._isAttackRoll() || this.object.rollType === "social" || this.object.rollType === "joinBattle") {
+                this.object.difficulty = 0;
+            }
             this.object.rerollNumber = 0;
             this.object.dice = 0;
 
@@ -1342,7 +1348,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             return parseInt(formula);
         }
         if (formula?.toLowerCase() === 'thresholdsuccesses' || formula?.toLowerCase() === 'extrasuccesses') {
-            return this.object.thresholdSuccesses || 0;
+            return this.object.extraSuccesses || 0;
         }
         // if (formula?.toLowerCase() === 'damagedealt') {
         //     return this.object.damageLevelsDealt || 0;
@@ -1871,7 +1877,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         this.object.hardness += data.hardness;
         this.object.poise += data.hardness;
         if (this.object.rollType === 'social') {
-            this.object.difficulty += data.resolve;
+            this.object.resolve += data.resolve;
         }
         this.render();
     }
@@ -2615,9 +2621,12 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
     async _abilityRoll() {
         await this._baseAbilityDieRoll();
 
-        var resourceResult = ``;
+        let resourceResult = ``;
+        let difficultyResult = ``;
+        let postDifficultyTotal = this.object.diceRollTotal - this.object.difficulty;
+        this.object.extraSuccesses = Math.max(0, postDifficultyTotal);
         if (this.object.rollType === 'buildPower' || this.object.rollType === 'focusWill') {
-            resourceResult = this._buildResource();
+            resourceResult = this._buildResource(postDifficultyTotal);
         }
         if (this.object.rollType === 'social') {
             resourceResult = this._socialInfluence();
@@ -2631,6 +2640,11 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 }
             }
         }
+        if (postDifficultyTotal < 0) {
+            difficultyResult += `<h4 class="dice-total">Roll Failed</h4>`;
+        } else {
+            difficultyResult += `<h4 class="dice-total">${postDifficultyTotal} Extra Successes</h4>`;
+        }
         let theContent = `
               <div><div class="dice-roll">
                       <div class="dice-result">
@@ -2638,7 +2652,8 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                           <div class="dice-tooltip">
                             ${this._getDiceDisplay()}
                           </div>
-                          <h4 class="dice-total">${this.object.diceRollTotal} Successes</h4>
+                          <h4 class="dice-total">${this.object.diceRollTotal} Successes ${this.object.difficulty ? `vs Difficulty ${this.object.difficulty}` : ''}</h4>
+                          ${difficultyResult}
                           ${resourceResult}
                       </div>
                   </div>
@@ -2647,15 +2662,11 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: theContent, style: CONST.CHAT_MESSAGE_STYLES.OTHER, rolls: [this.object.roll] });
     }
 
-    _buildResource() {
-        let total = this.object.diceRollTotal - 3;
-        if (this.object.rollType === 'focusWill' && game.settings.get("exaltedessence", "powerfulSpells")) {
-            total--;
-        }
+    _buildResource(postDifficultyTotal) {
         let self = (this.object.buildPowerTarget || 'self') === 'self';
 
         var message = '';
-        if (total < 0) {
+        if (postDifficultyTotal < 0) {
             if (this.object.rollType === 'buildPower') {
                 message = `<h4 class="dice-total">Build Power Failed</h4>`;
             }
@@ -2665,7 +2676,7 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
         }
         else {
             let extraPower = ``;
-            let powerGained = total + 1;
+            let powerGained = postDifficultyTotal + 1;
             if (self) {
                 const actorData = foundry.utils.duplicate(this.actor);
                 if (game.settings.get("exaltedessence", "combatReforged") && this.actor.effects.some(e => e.statuses.has('break'))) {
@@ -2677,10 +2688,10 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                         extraPower = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
                     }
                     // actorData.system.power.value = Math.min(10, total + actorData.system.power.value + 1);
-                    this._updateCharacterPower(actorData, total + 1);
+                    this._updateCharacterPower(actorData, postDifficultyTotal + 1);
                 }
                 else {
-                    actorData.system.will.value = Math.min(10, total + actorData.system.will.value + 1);
+                    actorData.system.will.value = Math.min(10, postDifficultyTotal + actorData.system.will.value + 1);
                 }
                 this.actor.update(actorData);
             }
@@ -2695,17 +2706,17 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                         extraPower = `<h4 class="dice-total">${extraPowerValue} Extra Power!</h4>`;
                     }
                     // this.object.newTargetData.system.power.value = Math.min(10, total + this.object.newTargetData.system.power.value + 1);
-                    this._updateCharacterPower(this.object.newTargetData, total + 1, true);
+                    this._updateCharacterPower(this.object.newTargetData, postDifficultyTotal + 1, true);
                 }
                 else {
-                    this.object.newTargetData.system.will.value = Math.min(10, total + this.object.newTargetData.system.will.value + 1);
+                    this.object.newTargetData.system.will.value = Math.min(10, postDifficultyTotal + this.object.newTargetData.system.will.value + 1);
                 }
             }
             if (this.object.rollType === 'buildPower') {
-                message = `<h4 class="dice-total">${total + 1} Power Built!</h4> ${extraPower}`;
+                message = `<h4 class="dice-total">${postDifficultyTotal + 1} Power Built!</h4> ${extraPower}`;
             }
             else if (this.object.rollType === 'focusWill') {
-                message = `<h4 class="dice-total">${total + 1} Will Focused!</h4>`;
+                message = `<h4 class="dice-total">${postDifficultyTotal + 1} Will Focused!</h4>`;
             }
         }
         return message;
@@ -2732,14 +2743,15 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
     }
 
     _socialInfluence() {
+        this.object.resolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedIntimacy) + parseInt(this.object.opposedVirtue) - parseInt(this.object.supportedIntimacy) - parseInt(this.object.supportedVirtue));
+        this.object.extraSuccesses = Math.max(0, this.object.diceRollTotal - this.object.resolve);
         let message = '';
-        let totalResolve = Math.max(1, this.object.resolve + parseInt(this.object.opposedIntimacy) + parseInt(this.object.opposedVirtue) - parseInt(this.object.supportedIntimacy) - parseInt(this.object.supportedVirtue));
-        if (this.object.diceRollTotal < totalResolve) {
-            message = `<h4 class="dice-total">${this.object.diceRollTotal} Successes vs ${totalResolve} Resolve</h4><h4 class="dice-total">Influence Failed</h4>`;
+        if (this.object.diceRollTotal < this.object.resolve) {
+            message = `<h4 class="dice-total">${this.object.diceRollTotal} Successes vs ${this.object.resolve} Resolve</h4><h4 class="dice-total">Influence Failed</h4>`;
         }
         else {
-            let total = this.object.diceRollTotal - totalResolve;
-            message = `<h4 class="dice-total">${this.object.diceRollTotal} Successes vs ${totalResolve} Resolve</h4> <h4 class="dice-total">${total} Extra Successes!</h4>`;
+            let total = this.object.diceRollTotal - this.object.resolve;
+            message = `<h4 class="dice-total">${this.object.diceRollTotal} Successes vs ${this.object.resolve} Resolve</h4> <h4 class="dice-total">${total} Extra Successes!</h4>`;
         }
         return message;
     }
@@ -2767,8 +2779,8 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
 
     async _damageRoll() {
         const actorData = foundry.utils.duplicate(this.actor);
-
         let postDefenseTotal = this.object.accuracyResult - this.object.defense;
+
         let title = "Decisive Attack";
         if (this.object.rollType === 'withering') {
             title = "Withering Attack";
@@ -2782,6 +2794,8 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                 postDefenseTotal += basePostDefenseTotal;
             }
         }
+        this.object.extraSuccesses = Math.max(0, postDefenseTotal);
+        await this._addTriggerBonuses('beforeDamageRoll');
         let messageContent = '';
         let combatReforgedMessage = '';
         if (this.object.target && this.object.rollType === 'withering' && game.settings.get("exaltedessence", "combatReforged")) {
@@ -2876,15 +2890,15 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
                     <div>
                         <div class="dice-roll">
                             <div class="dice-result">
-                                <h4 class="dice-total">${this.object.accuracyResult} Successes vs ${this.object.defense} defense</h4>
-                                <h4 class="dice-total">${postDefenseTotal} Extra Successes + ${this.object.power} power</h4>
-                                ${damageDicePool ? `<h4 class="dice-total">${damageDicePool + this.object.damage.damageSuccessModifier} Damage</h4>` : `<h4 class="dice-total">${damageDicePool} Damage dice + ${this.object.damage.damageSuccessModifier} successes </h4>`}
+                                <h4 class="dice-total">${this.object.accuracyResult} Successes vs ${this.object.defense} Defense</h4>
+                                <h4 class="dice-total">${postDefenseTotal} Extra Successes + ${this.object.power} Power</h4>
+                                ${damageDicePool ? `<h4 class="dice-total">${damageDicePool + this.object.damage.damageSuccessModifier} Damage</h4>` : `<h4 class="dice-total">${damageDicePool} Damage Dice + ${this.object.damage.damageSuccessModifier} Successes </h4>`}
                                 <div class="dice-tooltip">
                                   ${diceRollResults ? `<div class="dice">
                                       <ol class="dice-rolls">${diceRollResults.diceDisplay}</ol>
                                   </div>
                                 </div>` : ''}
-                                <h4 class="dice-total">${rolledDamageSuccesses} Damage - ${this.object.soak} soak ${this.object.damage.ignoreSoak ? `(Ignore ${this.object.damage.ignoreSoak})` : ''}</h4>
+                                <h4 class="dice-total">${rolledDamageSuccesses} Damage - ${this.object.soak} Soak ${this.object.damage.ignoreSoak ? `(Ignore ${this.object.damage.ignoreSoak})` : ''}</h4>
                                 <h4 class="dice-total">${damageTotal} Total Damage</h4>
                             </div>
                         </div>

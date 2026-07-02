@@ -53,28 +53,6 @@
                         <input name="object.bonusPower" value="{{data.bonusPower}}" type="number">
                     </div>
                     {{/ifEquals}}
-                    <div>
-                        <div class="flex-center resource-label">
-                            {{localize "ExEss.Defense"}}
-                        </div>
-                        <input name="object.defense" value="{{data.defense}}" type="number">
-                    </div>
-                    {{#ifEquals data.rollType 'decisive'}}
-                    <div>
-                        <div class="flex-center resource-label">
-                            {{localize "ExEss.Soak"}}
-                        </div>
-                        <input name="object.soak" value="{{data.soak}}" type="number">
-                    </div>
-                    {{/ifEquals}}
-                    {{#ifEquals data.rollType 'withering'}}
-                    <div>
-                        <div class="flex-center resource-label">
-                            {{localize "ExEss.Poise"}}
-                        </div>
-                        <input name="object.poise" value="{{data.poise}}" type="number">
-                    </div>
-                    {{/ifEquals}}
                 </div>
             </div>
             <div>
