@@ -3171,9 +3171,6 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             case 'pull':
                 this._addEndofRoundDefensePenalty(postDefenseTotal);
                 break;
-            case 'pull':
-                this._addEndofRoundDefensePenalty(postDefenseTotal);
-                break;
             case 'distract':
                 this._addEndofRoundDefensePenalty(postDefenseTotal + 1);
                 break;
