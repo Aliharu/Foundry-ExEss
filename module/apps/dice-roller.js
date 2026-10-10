@@ -2482,9 +2482,9 @@ export default class RollForm extends HandlebarsApplicationMixin(ApplicationV2) 
             }
             if (this._isAttackRoll() && game.settings.get("exaltedessence", "combatReforged")) {
                 if (this.object.weaponType !== 'melee' && this.object.range === 'close') {
-                    rollButtonTooltip += `<p>Range: -3</p>`
+                    rollButtonTooltip += `<p>Range: -3</p>`;
+                    dicePool -= 3;
                 }
-                dicePool -= 3;
             }
             if (this.object.armorPenalty) {
                 for (let armor of this.actor.armor) {
